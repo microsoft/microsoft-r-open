@@ -2,7 +2,7 @@
 
 ## Defaults for user settings.  See MkRules.dist for descriptions.
 
-LOCAL_SOFT ?= $(R_HOME)/extsoft
+LOCAL_SOFT ?= $(R_HOME)/../vendor/extsoft
 EXT_LIBS ?= $(LOCAL_SOFT)
 G_FLAG ?= -gdwarf-2
 USE_ATLAS ?= NO
