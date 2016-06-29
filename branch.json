@@ -1,0 +1,70 @@
+{
+    "version": 1.0,
+    "build": {
+        "productVersion": "3.2.2",
+        "itemsToBuild": [
+        ],
+        "tests": [
+        ],
+        "imports" : [
+        ],
+        "exports": [
+        ],
+        "sources": [
+        ]
+    },
+    "ci": {
+        "alias": {
+            "windows": [
+                "windows"
+            ],
+            "linux": [
+                "centos7"
+            ]
+        },
+        "gates": {
+            "checkin": [
+                "build"
+            ],
+            "rolling": [
+                "build",
+                "upload"
+            ]
+        },
+        "workflow": {
+            "build": {
+                "nodes": {
+                    "windows": [{
+                        "cmd": "powerShell.exe -ExecutionPolicy Bypass -file build.ps1",
+                        "archiveList": [
+                        ],
+                        "containerList": [
+                        ],
+                        "stashList": { "windows.results": "target/**/*" },
+                        "recycle": true
+                    }],
+                    "linux": [{
+                        "cmd": "./build.sh",
+                        "archiveList": [
+                        ],
+                        "containerList": [
+                            "mrsdocker.cloudapp.net:5000/mro:latest"
+                        ],
+                        "stashList": { "linux.results": "target/**/*" },
+                        "recycle": true
+                    }]
+                }
+            },
+            "upload": {
+                "nodes": {
+                    "windows": [{
+                        "cmd": "powerShell.exe -ExecutionPolicy Bypass -file build.ps1 -Target Export",
+                        "restoreList": [ "linux.results", "windows.results" ],
+                        "recycle": true
+                        
+                    }]
+                }
+            }
+        }
+    }
+}
