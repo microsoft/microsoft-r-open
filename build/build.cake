@@ -20,7 +20,7 @@ using Cake.Core.IO;
          
          CopyDirectory("vendor/rtools-3.2/R64/Tcl", "source/Tcl");
          
-         StartProcess(vendor + "/rtools-3.2/bin/make.exe", new ProcessSettings { Arguments = "-j all", WorkingDirectory = "source/src/gnuwin32" } );
+         StartProcess(vendor + "/rtools-3.2/bin/make.exe", new ProcessSettings { Arguments = "all", WorkingDirectory = "source/src/gnuwin32" } );
          StartProcess(vendor + "/rtools-3.2/bin/make.exe", new ProcessSettings { Arguments = "-j cairodevices", WorkingDirectory = "source/src/gnuwin32" } );
          StartProcess(vendor + "/rtools-3.2/bin/make.exe", new ProcessSettings { Arguments = "-j recommended", WorkingDirectory = "source/src/gnuwin32" } );
          StartProcess(vendor + "/rtools-3.2/bin/make.exe", new ProcessSettings { Arguments = "-j vignettes", WorkingDirectory = "source/src/gnuwin32" } );
