@@ -59,9 +59,9 @@ TOOL_PATH = $(VENDOR_DIR)/rtools-3.2/gcc-4.6.3/bin/
 # This can also be used to give the full path to the compiler, 
 # including a trailing / .  The experimental gcc 4.9.2 defaults are shown;
 # actual defaults are blank for both of these.
-#BINPREF = c:/Rtools/gcc463/bin/
+#BINPREF = c:/Rtools/mingw_64/bin/
 # prefix for 64-bit:
-# BINPREF64 = c:/Rtools/gcc463_64/bin/
+#BINPREF64 = c:/Rtools/mingw_64/bin/
 #BINPREF64 = C:/Rtools/gcc-4.6.3/bin/
 #BINPREF64 = i686-w64-mingw32-
 
@@ -117,7 +117,9 @@ CAIRO_HOME = $(VENDOR_DIR)/cairo
 BUILD_HTML = NO
 
 # unset this if you are *not* using MiKTeX
-MIKTEX = FALSE
+MIKTEX = TRUE
+# Recent MiKTEX does not provide texi2dvi and needs something like
+TEXI2DVI = TEXINDEX=$(VENDOR_DIR)/rtools-3.2/bin/texindex.exe texify
 
 # for texinfo >= 5.1. If the texinfo files are installed at /packages/texinfo,
 # TEXI2ANY = /path/to/perl -I/packages/texinfo /packages/texinfo/texi2any
