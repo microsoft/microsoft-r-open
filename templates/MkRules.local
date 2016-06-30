@@ -7,6 +7,8 @@
 ## some of the definitions there.  
 ##
 
+VENDOR_DIR =  <%VENDOR_DIR%>
+
 ## =========== configuration macros for building packages ================
 # Absolute path to '/usr/local' software collection.  The versions used
 # on CRAN can be found at http://www.stats.ox.ac.uk/pub/Rtools/libs.html
@@ -14,7 +16,7 @@
 # Use 'make rsync-extsoft' to populate the default directory.
 # LOCAL_SOFT = $(R_HOME)/extsoft
 #Tokenize!!!
-LOCAL_SOFT = C:/Users/Administrator/External-R/vendor/extsoft
+LOCAL_SOFT = $(VENDOR_DIR)/extsoft
 
 ## ============== configuration macros for building R ===================
 
@@ -43,7 +45,7 @@ EXT_LIBS = $(LOCAL_SOFT)
 MULTI = 64
 # If the toolchain's bin directory is not in your path, set this to the path
 # (including the trailing /, and use / not \).
-# TOOL_PATH =
+TOOL_PATH = $(VENDOR_DIR)/rtools-3.2/gcc-4.6.3/bin/
 # for other toolchains leave these empty and set the more detailed options below
 
 # With the experimental gcc 4.9.2 toolchain or another toolchain, set 
@@ -57,11 +59,11 @@ MULTI = 64
 # This can also be used to give the full path to the compiler, 
 # including a trailing / .  The experimental gcc 4.9.2 defaults are shown;
 # actual defaults are blank for both of these.
-BINPREF = c:/Rtools/gcc463/bin/
+#BINPREF = c:/Rtools/gcc463/bin/
 # prefix for 64-bit:
 # BINPREF64 = c:/Rtools/gcc463_64/bin/
 #BINPREF64 = C:/Rtools/gcc-4.6.3/bin/
-BINPREF64 = i686-w64-mingw32-
+#BINPREF64 = i686-w64-mingw32-
 
 # Others use a -m64 or -m32 option to select architectures
 # M_ARCH =
@@ -97,7 +99,7 @@ WIN = 64
 # set to use libcurl
 USE_LIBCURL = YES
 # path to parent of libcurl headers
-CURL_PATH = ../../../../vendor/curl
+CURL_PATH = $(VENDOR_DIR)/curl
 # libs: for 32-bit
 # CURL_LIBS = -lcurl -lrtmp -lssl -lssh2 -lcrypto -lgdi32 -lcrypt32 -lz -lws2_32 -lgdi32 -lcrypt32 -lwldap32 -lwinmm -lidn
 # libs: for 64-bit
@@ -109,7 +111,7 @@ CURL_LIBS = -lcurl -lrtmp -lssl -lssh2 -lcrypto -lgdi32 -lcrypt32 -lz -lws2_32 -
 # and set CAIRO_HOME to the parent of the win32/win64 directories
 #
 # If CAIRO_HOME is not set the devices are not built.
-CAIRO_HOME = C:/Users/Administrator/External-R/vendor/cairo
+CAIRO_HOME = $(VENDOR_DIR)/cairo
 
 # set this to YES to build static HTML help
 BUILD_HTML = NO
@@ -121,7 +123,7 @@ MIKTEX = FALSE
 # TEXI2ANY = /path/to/perl -I/packages/texinfo /packages/texinfo/texi2any
 # if you do not have texinfo (default),
 # TEXI2ANY = missing
-TEXI2ANY = perl -IC:/Users/Administrator/External-R/vendor/texinfo-5.2/tp C:/Users/Administrator/External-R/vendor/texinfo-5.2/tp/texi2any.pl
+TEXI2ANY = $(VENDOR_DIR)/strawberryperl/perl/bin/perl -I$(VENDOR_DIR)/texinfo-5.2/tp $(VENDOR_DIR)/texinfo-5.2/tp/texi2any.pl
 # additional optimization flags (use -mtune=native for a private build)
 # EOPTS = -mtune=core2
 
@@ -137,7 +139,7 @@ TEXI2ANY = perl -IC:/Users/Administrator/External-R/vendor/texinfo-5.2/tp C:/Use
 ISDIR = C:/Program Files (x86)/Inno Setup 5
 
 # optional location where qpdf was installed (in $(QPDF)/bin). Spaces allowed.
-QPDF = C:/Users/Administrator/External-R/vendor/qpdf-5.1.3
+QPDF = $(VENDOR_DIR)/qpdf-5.1.3
 
 # home of 32-bit files for combined installer on 64-bit build
 # HOME32 =
