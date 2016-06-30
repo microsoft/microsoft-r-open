@@ -1,7 +1,7 @@
 {
     "version": 1.0,
     "build": {
-        "productVersion": "3.2.2",
+        "productVersion": "3.3.0",
         "itemsToBuild": [
         ],
         "tests": [
@@ -42,16 +42,6 @@
                         ],
                         "stashList": { "windows.results": "target/**/*" },
                         "recycle": true
-                    }],
-                    "linux": [{
-                        "cmd": "./build.sh",
-                        "archiveList": [
-                        ],
-                        "containerList": [
-                            "mrsdocker.cloudapp.net:5000/mro:latest"
-                        ],
-                        "stashList": { "linux.results": "target/**/*" },
-                        "recycle": true
                     }]
                 }
             },
@@ -59,7 +49,7 @@
                 "nodes": {
                     "windows": [{
                         "cmd": "powerShell.exe -ExecutionPolicy Bypass -file build.ps1 -Target Export",
-                        "restoreList": [ "linux.results", "windows.results" ],
+                        "restoreList": [ "windows.results" ],
                         "recycle": true
                         
                     }]
