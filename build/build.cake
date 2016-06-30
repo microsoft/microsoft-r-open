@@ -11,6 +11,7 @@ using Cake.Core.IO;
      }
      else
      {
+         Environment.SetEnvironmentVariable("tmpdir", "c:\\temp", EnvironmentVariableTarget.Process);
          var targetMkRules = RBuildEnvironment.CodeRoot + "/source/src/gnuwin32/MkRules.local";
          var vendor = RBuildEnvironment.CodeRoot + "/vendor";
          Information("Windows!");
