@@ -1,6 +1,6 @@
 
-R version 3.2.2 RC (2015-08-08 r68914) -- "Fire Safety"
-Copyright (C) 2015 The R Foundation for Statistical Computing
+R version 3.3.0 beta (2016-04-19 r70517) -- "Supposedly Educational"
+Copyright (C) 2016 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -29,4 +29,4 @@ Warning messages:
 > 
 > proc.time()
    user  system elapsed 
-  0.150   0.022   0.160 
+  0.100   0.017   0.106 

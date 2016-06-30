@@ -1,5 +1,5 @@
 % File src/library/base/man/capabilities.Rd
-% Part of the R package, http://www.R-project.org
+% Part of the R package, https://www.R-project.org
 % Copyright 1995-2015 R Core Team
 % Distributed under GPL 2 or later
 
@@ -58,11 +58,11 @@ capabilities(what = NULL)
 #endif
   \item{http/ftp}{does the internal method for \code{\link{url}} and
     \code{\link{download.file}} support \samp{http://} and \samp{ftp://}
-    URLs?}
-  \item{sockets}{are \code{\link{make.socket}} and related functions
-    available?}
+    URLs?  Always \code{TRUE} as from \R 3.3.0.}
+  \item{sockets}{are  \code{\link{make.socket}} and related functions
+    available?  Always \code{TRUE} as from \R 3.3.0.}
   \item{libxml}{is there support for integrating \code{libxml} with
-    the \R event loop?}
+    the \R event loop?  Always \code{TRUE} as from \R 3.3.0.}
   \item{fifo}{are FIFO \link{connections} supported?}
   \item{cledit}{is command-line editing available in the current \R
     session?  This is false in non-interactive sessions.
@@ -90,12 +90,12 @@ capabilities(what = NULL)
   \item{ICU}{is ICU available for collation?  See the help on
     \link{Comparison} and \code{\link{icuSetCollate}}: it is never
     used for a C locale.}
-    
+
   \item{long.double}{does this build use a \code{C} \code{long double}
     type which is longer than \code{double}?  Some platforms do not
     have such a type, and on others its use can be suppressed by the
     configure option \option{--disable-long-double}.
-    
+
     Although not guaranteed, it is a reasonable assumption that if
     present long doubles will have at least as much range and accuracy
     as the ISO/IEC 60559 80-bit \sQuote{extended precision} format.
@@ -103,15 +103,18 @@ capabilities(what = NULL)
 
   \item{libcurl}{is \code{libcurl} available in this build?  Used by
     function \code{\link{curlGetHeaders}} and optionally by
-    \code{\link{download.file}} and \code{\link{url}}.}
+    \code{\link{download.file}} and \code{\link{url}}.   As from \R
+    3.3.0 always true for Unix-alikes, and true for CRAN Windows builds.}
 }
-\seealso{\code{\link{.Platform}}}
-
+\seealso{\code{\link{.Platform}} and \code{\link{extSoftVersion}} (and
+    links there) for availability capabilities \emph{external} to \R but
+    used from \R functions.
+  }
 \examples{
 capabilities()
 
-if(!capabilities("http/ftp"))
-   warning("internal download.file() method is not available")
+if(!capabilities("ICU"))
+   warning("ICU is not available")
 
 ## See also the examples for 'connections'.
 }

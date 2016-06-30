@@ -14,7 +14,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
 #ifdef HAVE_CONFIG_H
@@ -73,6 +73,7 @@ do_commandArgs(SEXP call, SEXP op, SEXP args, SEXP env)
     int i;
     SEXP vals;
 
+    checkArity(op, args);
     /* need protection as mkChar allocates */
     vals = PROTECT(allocVector(STRSXP, NumCommandLineArgs));
     for(i = 0; i < NumCommandLineArgs; i++)

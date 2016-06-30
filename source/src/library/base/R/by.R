@@ -1,5 +1,5 @@
 #  File src/library/base/R/by.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
 #  Copyright (C) 1995-2013 The R Core Team
 #
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 by <- function(data, INDICES, FUN, ..., simplify = TRUE) UseMethod("by")
 
@@ -61,7 +61,7 @@ print.by <- function(x, ..., vsep)
     dn <- dimnames(x)
     dnn <- names(dn)
     if(missing(vsep))
-        vsep <- paste(rep.int("-", 0.75*getOption("width")), collapse = "")
+        vsep <- strrep("-", 0.75 * getOption("width"))
     lapply(X = seq_along(x), FUN = function(i, x, vsep, ...) {
         if(i != 1L && !is.null(vsep)) cat(vsep, "\n")
         ii <- i - 1L

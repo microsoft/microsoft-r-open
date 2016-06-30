@@ -1,5 +1,5 @@
 #  File src/library/base/R/as.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
 #  Copyright (C) 1995-2014 The R Core Team
 #
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 as.single <- function(x,...) UseMethod("as.single")
 as.single.default <- function(x,...)
@@ -24,6 +24,7 @@ as.single.default <- function(x,...)
 # preserve the semantics that for a call with an object argument
 # dispatching is done first on as.character and then on as.vector.
 as.character.default <- function(x,...) .Internal(as.vector(x, "character"))
+### FIXME: why are we not doing this for all atomic vector types?
 
 as.expression <- function(x,...) UseMethod("as.expression")
 as.expression.default <- function(x,...) .Internal(as.vector(x, "expression"))

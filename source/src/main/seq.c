@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
 /* The x:y  primitive calls do_colon(); do_colon() calls cross_colon() if
@@ -30,6 +30,7 @@
 #include <Internal.h>
 #include <float.h>  /* for DBL_EPSILON */
 #include <Rmath.h>
+#include <R_ext/Itermacros.h>
 
 #include "RBufferUtils.h"
 static R_StringBuffer cbuff = {NULL, 0, MAXELTSIZE};
@@ -96,7 +97,7 @@ static SEXP cross_colon(SEXP call, SEXP s, SEXP t)
 static SEXP seq_colon(double n1, double n2, SEXP call)
 {
     double r = fabs(n2 - n1);
-    if(r >= R_XLEN_T_MAX) 
+    if(r >= R_XLEN_T_MAX)
 	errorcall(call, _("result would be too long a vector"));
 
     SEXP ans;
@@ -158,14 +159,14 @@ SEXP attribute_hidden do_colon(SEXP call, SEXP op, SEXP args, SEXP rho)
     if (n1 == 0 || n2 == 0)
 	errorcall(call, _("argument of length 0"));
     if (n1 > 1)
-	warningcall(call, 
+	warningcall(call,
 		    ngettext("numerical expression has %d element: only the first used",
 			     "numerical expression has %d elements: only the first used",
 			     (int) n1), (int) n1);
     if (n2 > 1)
-	warningcall(call, 
-		    ngettext("numerical expression has %d element: only the first used", 
-			     "numerical expression has %d elements: only the first used", 
+	warningcall(call,
+		    ngettext("numerical expression has %d element: only the first used",
+			     "numerical expression has %d elements: only the first used",
 			     (int) n2), (int) n2);
     n1 = asReal(s1);
     n2 = asReal(s2);
@@ -267,57 +268,49 @@ static SEXP rep3(SEXP s, R_xlen_t ns, R_xlen_t na)
 
     PROTECT(a = allocVector(TYPEOF(s), na));
 
-    // i % ns is slow, especially with long R_xlen_t
     switch (TYPEOF(s)) {
     case LGLSXP:
-	for (i = 0, j = 0; i < na;) {
+	MOD_ITERATE1(na, ns, i, j, {
 //	    if ((i+1) % NINTERRUPT == 0) R_CheckUserInterrupt();
-	    if (j >= ns) j = 0;
-	    LOGICAL(a)[i++] = LOGICAL(s)[j++];
-	}
+	    LOGICAL(a)[i] = LOGICAL(s)[j];
+	});
 	break;
     case INTSXP:
-	for (i = 0, j = 0; i < na;) {
+	MOD_ITERATE1(na, ns, i, j, {
 //	    if ((i+1) % NINTERRUPT == 0) R_CheckUserInterrupt();
-	    if (j >= ns) j = 0;
-	    INTEGER(a)[i++] = INTEGER(s)[j++];
-	}
+	    INTEGER(a)[i] = INTEGER(s)[j];
+	});
 	break;
     case REALSXP:
-	for (i = 0, j = 0; i < na;) {
+	MOD_ITERATE1(na, ns, i, j,  {
 //	    if ((i+1) % NINTERRUPT == 0) R_CheckUserInterrupt();
-	    if (j >= ns) j = 0;
-	    REAL(a)[i++] = REAL(s)[j++];
-	}
+	    REAL(a)[i] = REAL(s)[j];
+	});
 	break;
     case CPLXSXP:
-	for (i = 0, j = 0; i < na;) {
+	MOD_ITERATE1(na, ns, i, j, {
 //	    if ((i+1) % NINTERRUPT == 0) R_CheckUserInterrupt();
-	    if (j >= ns) j = 0;
-	    COMPLEX(a)[i++] = COMPLEX(s)[j++];
-	}
+	    COMPLEX(a)[i] = COMPLEX(s)[j];
+	});
 	break;
     case RAWSXP:
-	for (i = 0, j = 0; i < na;) {
+	MOD_ITERATE1(na, ns, i, j, {
 //	    if ((i+1) % NINTERRUPT == 0) R_CheckUserInterrupt();
-	    if (j >= ns) j = 0;
-	    RAW(a)[i++] = RAW(s)[j++];
-	}
+	    RAW(a)[i] = RAW(s)[j];
+	});
 	break;
     case STRSXP:
-	for (i = 0, j = 0; i < na;) {
+	MOD_ITERATE1(na, ns, i, j, {
 //	    if ((i+1) % NINTERRUPT == 0) R_CheckUserInterrupt();
-	    if (j >= ns) j = 0;
-	    SET_STRING_ELT(a, i++, STRING_ELT(s, j++));
-	}
+	    SET_STRING_ELT(a, i, STRING_ELT(s, j));
+	});
 	break;
     case VECSXP:
     case EXPRSXP:
-	for (i = 0, j = 0; i < na;) {
+	MOD_ITERATE1(na, ns, i, j, {
 //	    if ((i+1) % NINTERRUPT == 0) R_CheckUserInterrupt();
-	    if (j >= ns) j = 0;
-	    SET_VECTOR_ELT(a, i++, lazy_duplicate(VECTOR_ELT(s, j++)));
-	}
+	    SET_VECTOR_ELT(a, i, lazy_duplicate(VECTOR_ELT(s, j)));
+	});
 	break;
     default:
 	UNIMPLEMENTED_TYPE("rep3", s);
@@ -337,15 +330,15 @@ SEXP attribute_hidden do_rep_int(SEXP call, SEXP op, SEXP args, SEXP rho)
 	error(_("incorrect type for second argument"));
 
     if (!isVector(s) && s != R_NilValue)
-	error(_("attempt to replicate an object of type '%s'"), 
+	error(_("attempt to replicate an object of type '%s'"),
 	      type2char(TYPEOF(s)));
 
     nc = xlength(ncopy); // might be 0
-    if (nc == xlength(s)) 
+    if (nc == xlength(s))
 	PROTECT(a = rep2(s, ncopy));
     else {
 	if (nc != 1) error(_("invalid '%s' value"), "times");
-	
+
 #ifdef LONG_VECTOR_SUPPORT
 	double snc = asReal(ncopy);
 	if (!R_FINITE(snc) || snc < 0)
@@ -604,7 +597,7 @@ SEXP attribute_hidden do_rep(SEXP call, SEXP op, SEXP args, SEXP rho)
        rep(x, times, length.out, each, ...)
     */
     if (do_rep_formals == NULL)
-        do_rep_formals = allocFormalsList5(install("x"), install("times"),
+	do_rep_formals = allocFormalsList5(install("x"), install("times"),
 					   install("length.out"),
 					   install("each"), R_DotsSymbol);
     PROTECT(args = matchArgs(do_rep_formals, args, call));
@@ -627,7 +620,7 @@ SEXP attribute_hidden do_rep(SEXP call, SEXP op, SEXP args, SEXP rho)
 	    errorcall(call, _("invalid '%s' argument"), "length.out");
     }
     if(length(CADDR(args)) != 1)
-	warningcall(call, _("first element used of '%s' argument"), 
+	warningcall(call, _("first element used of '%s' argument"),
 		    "length.out");
 
     each = asInteger(CADDDR(args));
@@ -638,7 +631,7 @@ SEXP attribute_hidden do_rep(SEXP call, SEXP op, SEXP args, SEXP rho)
     if(each == NA_INTEGER) each = 1;
 
     if(lx == 0) {
-	if(len > 0 && x == R_NilValue) 
+	if(len > 0 && x == R_NilValue)
 	    warningcall(call, "'x' is NULL so the result will be NULL");
 	SEXP a;
 	PROTECT(a = duplicate(x));
@@ -676,7 +669,7 @@ SEXP attribute_hidden do_rep(SEXP call, SEXP op, SEXP args, SEXP rho)
 		    errorcall(call, _("invalid '%s' argument"), "times");
 		sum += it;
 	    }
-            len = sum;
+	    len = sum;
 	}
     }
 
@@ -727,7 +720,7 @@ SEXP attribute_hidden do_seq(SEXP call, SEXP op, SEXP args, SEXP rho)
        seq(from, to, by, length.out, along.with, ...)
     */
     if (do_seq_formals == NULL)
-        do_seq_formals = allocFormalsList6(install("from"), install("to"),
+	do_seq_formals = allocFormalsList6(install("from"), install("to"),
 					   install("by"), install("length.out"),
 					   install("along.with"), R_DotsSymbol);
     PROTECT(args = matchArgs(do_seq_formals, args, call));
@@ -763,7 +756,7 @@ SEXP attribute_hidden do_seq(SEXP call, SEXP op, SEXP args, SEXP rho)
 	if(ISNAN(rout) || rout <= -0.5)
 	    errorcall(call, _("'length.out' must be a non-negative number"));
 	if(length(len) != 1)
-	    warningcall(call, _("first element used of '%s' argument"), 
+	    warningcall(call, _("first element used of '%s' argument"),
 			"length.out");
 	lout = (R_xlen_t) ceil(rout);
     }
@@ -993,7 +986,7 @@ SEXP attribute_hidden do_seq_len(SEXP call, SEXP op, SEXP args, SEXP rho)
 	ans = allocVector(REALSXP, len);
 	double *p = REAL(ans);
 	for(R_xlen_t i = 0; i < len; i++) {
-//	    if ((i+1) % NINTERRUPT == 0) R_CheckUserInterrupt();	    
+//	    if ((i+1) % NINTERRUPT == 0) R_CheckUserInterrupt();
 	    p[i] = (double) (i+1);
 	}
     } else

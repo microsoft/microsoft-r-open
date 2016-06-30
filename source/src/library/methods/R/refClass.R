@@ -1,5 +1,5 @@
 #  File src/library/methods/R/refClass.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
 #  Copyright (C) 1995-2015 The R Core Team
 #
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 
 ## Classes to support OOP-style classes with reference-semantics for fields
@@ -47,14 +47,12 @@ self from reference class thisClass.'
 }
 
 installClassMethod <- function(def, self, me, selfEnv, thisClass) {
-    if(!is(def, "refMethodDef")) {  #should not happen? => need warning
-        warning(sprintf("method %s from class %s was not processed into a class method until being installed.  Possible corruption of the methods in the class.",
-                         me, thisClass@className),
-                domain = NA)
-        def <- makeClassMethod(def, me, thisClass@className, "", names(thisClass@refMethods))
-        .checkFieldsInMethod(def, names(thisClass@fieldClasses))
-        ## cache the analysed method definition
+    if(is(def, "externalMethodDef") || !is(def, "refMethodDef")) {
+        ## Don't process either an external method (not needed),
+        ## or a special object in the class refMethods
+        ## environment (will cause an error).  Assign it unchanged.
         assign(me, def, envir = thisClass@refMethods)
+        return(def)
     }
     depends <- def@mayCall
     environment(def) <- selfEnv # for access to fields and methods
@@ -202,7 +200,7 @@ envRefSetField <- function(object, field,
         }
     }
     if(is.function(classDef@refMethods$finalize))
-        reg.finalizer(selfEnv, function(x) x$.self$finalize())
+        reg.finalizer(selfEnv, function(x) x$.self$finalize(), TRUE)
     lockBinding(".self", selfEnv)
     lockBinding(".refClassDef", selfEnv)
     .Object
@@ -300,7 +298,7 @@ Class.  No effect on the object itself.
                  value
              }
              else if(is(classDef, "classRepresentation")) # use standard S4 as()
-                 methods::as(.self, Class)
+                  methods::as(.self, Class)
              else if(is.character(Class) && length(Class) == 1)
                  stop(gettextf("%s is not a defined class in this environment",
                                dQuote(Class)),
@@ -707,7 +705,7 @@ accessors = function(...) {
     methods(accessors)
     invisible(accessors)
 }
-)
+)## end{ .GeneratorMethods }
 
 .localRefMethods <-
     list(
@@ -772,6 +770,7 @@ class method modifies a field.
             if(missing(value))
                 dummyFieldName
             else {
+                ## this is not eval()ed in this namespace
                 methods:::.setDummyField(.self, dummyField, dummyClass, thisField, TRUE, value)
                 value
             }
@@ -782,6 +781,7 @@ class method modifies a field.
             if(missing(value))
                 dummyFieldName
             else {
+                ## this is not eval()ed in this namespace
                 methods:::.setDummyField(.self, dummyField, dummyClass, thisField, FALSE, value)
                 value
             }
@@ -803,12 +803,15 @@ class method modifies a field.
     if(is(value, fieldClass))
         value <- as(value, fieldClass, strict = FALSE) # could be more efficient?
     else
-        stop(gettextf("invalid assignment for reference class field %s, should be from class %s or a subclass (was class %s)",
-                       sQuote(fieldName), dQuote(fieldClass), dQuote(class(value))), call. = FALSE)
+        stop(gettextf(
+	"invalid assignment for reference class field %s, should be from class %s or a subclass (was class %s)",
+		      sQuote(fieldName), dQuote(fieldClass), dQuote(class(value))),
+             call. = FALSE)
     selfEnv <- as.environment(self)
     if(onceOnly) {
         if(bindingIsLocked(metaName, selfEnv))
-            stop(gettextf("invalid replacement: reference class field %s is read-only", sQuote(fieldName)),
+            stop(gettextf("invalid replacement: reference class field %s is read-only",
+                          sQuote(fieldName)),
                  call. = FALSE)
         else {
             assign(metaName, value, envir = selfEnv)
@@ -928,19 +931,14 @@ insertClassMethods <- function(methods, Class, value, fieldNames, returnAll) {
     theseMethods <- names(value)
     prevMethods <- names(methods) # catch refs to inherited methods as well
     allMethods <- unique(c(theseMethods, prevMethods))
-    if(returnAll)
-        returnMethods <- methods
-    else
-        returnMethods <- value
+    returnMethods <- if(returnAll) methods else value
     check <- TRUE
     for(method in theseMethods) {
         prevMethod <- methods[[method]] # NULL or superClass method
         if(is.null(prevMethod)) {
             ## kludge because default version of $initialize() breaks bootstrapping of methods package
-            if(identical(method, "initialize"))
-                superClassMethod <- "initFields"
-            else
-                superClassMethod <- ""
+            superClassMethod <- if(identical(method, "initialize"))
+                "initFields" else ""
         }
         else if(identical(prevMethod@refClassName, Class))
             superClassMethod <- prevMethod@superClassMethod
@@ -1116,10 +1114,9 @@ showRefClassDef <- function(object, title = "Reference Class") {
 
 .mergeAssigns <- function(previous, new) {
     for(what in names(new)) {
-        if(is.null(previous[[what]]))
-            previous[[what]] <- new[[what]]
-        else
-            previous[[what]] <- paste(previous[[what]], new[[what]], sep="; ")
+	previous[[what]] <-
+	    if(is.null(previous[[what]])) new[[what]]
+	    else paste(previous[[what]],  new[[what]], sep="; ")
     }
     previous
 }

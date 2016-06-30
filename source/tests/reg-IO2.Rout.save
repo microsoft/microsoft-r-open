@@ -1,6 +1,6 @@
 
-R version 3.2.2 RC (2015-08-08 r68914) -- "Fire Safety"
-Copyright (C) 2015 The R Foundation for Statistical Computing
+R version 3.3.0 beta (2016-04-19 r70517) -- "Supposedly Educational"
+Copyright (C) 2016 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -64,7 +64,7 @@ Error in read.table("foo1") : no lines available in input
 > 
 > # wrong col.names
 > try(read.table("foo3", header=TRUE, col.names=letters[1:4]))
-Error in scan(file, what, nmax, sep, dec, quote, skip, nlines, na.strings,  : 
+Error in scan(file = file, what = what, sep = sep, quote = quote, dec = dec,  : 
   line 1 did not have 4 elements
 In addition: Warning message:
 In read.table("foo3", header = TRUE, col.names = letters[1:4]) :

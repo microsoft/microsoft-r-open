@@ -1,6 +1,6 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
- *  Copyright (C) 2000-2014  The R Core Team.
+ *  Copyright (C) 2000-2015  The R Core Team.
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  *
  *
  *      Interfaces to time functions.
@@ -126,7 +126,7 @@ double currentTime(void)
     /* No known current OSes */
     /* Disallowed by POSIX (1988-):
        http://www.mail-archive.com/leapsecs@rom.usno.navy.mil/msg00109.html
-       http://en.wikipedia.org/wiki/Unix_time
+       https://en.wikipedia.org/wiki/Unix_time
     */
     if (!ISNAN(ans)) {
 	ans -= n_leapseconds;
@@ -137,6 +137,7 @@ double currentTime(void)
 
 SEXP attribute_hidden do_systime(SEXP call, SEXP op, SEXP args, SEXP env)
 {
+    checkArity(op, args);
     return ScalarReal(currentTime());
 }
 

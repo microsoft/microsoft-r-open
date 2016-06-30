@@ -1,7 +1,7 @@
 #  File src/library/stats/R/smooth.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2013 The R Core Team
+#  Copyright (C) 1995-2016 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -14,23 +14,22 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 ## do.ends = TRUE  is compatible with older behavior in R
 ## --------------  but *NOT*  with Colin Goodalls "smoother" "spl()"
 
 smooth <- function(x, kind = c("3RS3R", "3RSS", "3RSR", "3R", "3", "S"),
                    twiceit = FALSE,
-                   endrule = "Tukey", do.ends = FALSE)
+                   endrule = c("Tukey", "copy"), do.ends = FALSE)
 {
     if(!is.numeric(x)) stop("attempt to smooth non-numeric values")
     if(anyNA(x)) stop("attempt to smooth NA values")
+    endrule <- match.arg(endrule)
     rules <- c("copy","Tukey")#- exact order matters!
     if(is.na(iend <- pmatch(endrule, rules))) stop("invalid 'endrule' argument")
-    n <- as.integer(length(x))
-    if(is.na(n)) stop("invalid length(x)")
     kind <- match.arg(kind)
-    if(substr(kind ,1L, 3L) == "3RS" && !do.ends) iend <- -iend
+    if(substr(kind, 1L, 3L) == "3RS" && !do.ends) iend <- -iend
     else if(kind == "S") iend <- as.logical(do.ends)
     type <- match(kind, c("3RS3R", "3RSS", "3RSR", "3R", "3", "S"))
     smo <- .Call(C_Rsm, as.double(x), type, iend)

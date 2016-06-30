@@ -1,5 +1,5 @@
 % File src/library/stats/man/deriv.Rd
-% Part of the R package, http://www.R-project.org
+% Part of the R package, https://www.R-project.org
 % Copyright 1995-2013 R Core Team
 % Distributed under GPL 2 or later
 
@@ -133,6 +133,11 @@ deriv((y ~ sin(cos(x) * y)), c("x","y"), func = TRUE)
 (fx <- deriv(y ~ b0 + b1 * 2^(-x/th), c("b0", "b1", "th"),
              function(b0, b1, th, x = 1:7){} ) )
 fx(2, 3, 4)
+
+## First derivative
+
+D(expression(x^2), "x")
+stopifnot(D(as.name("x"), "x") == 1)
 
 ## Higher derivatives
 deriv3(y ~ b0 + b1 * 2^(-x/th), c("b0", "b1", "th"),

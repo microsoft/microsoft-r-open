@@ -1,6 +1,6 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
- *  Copyright (C) 2001-2 The R Core Team.
+ *  Copyright (C) 2001-2016 The R Core Team.
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
 /* 
@@ -72,8 +72,8 @@ R_ToplevelCallbackEl* Rf_addTaskCallback(R_ToplevelCallback cb, void *data, void
   separate package on Omegahat and these declarations allow the package
   to interface to the internal R code.
   
-  See http://developer.r-project.org/RObjectTables.pdf,
-  http://www.omegahat.org/RObjectTables/
+  See https://developer.r-project.org/RObjectTables.pdf,
+  http://www.omegahat.net/RObjectTables/
 */
 
 typedef struct  _R_ObjectTable R_ObjectTable;

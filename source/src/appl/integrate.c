@@ -14,11 +14,11 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  *
  *  Most of this file is C translations of Fortran routines in
  *  QUADPACK: the latter is part of SLATEC 'and therefore in the public
- *  domain' (http://en.wikipedia.org/wiki/QUADPACK).
+ *  domain' (https://en.wikipedia.org/wiki/QUADPACK).
  *
  *
  */

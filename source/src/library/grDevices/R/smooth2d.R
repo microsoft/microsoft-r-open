@@ -1,5 +1,5 @@
 #  File src/library/grDevices/R/smooth2d.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
 #  Copyright (C) 1995-2012 The R Core Team
 #
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 
 ## need some standard blues to plot ; output of brewer.pal(9, "Blues"):
@@ -29,7 +29,7 @@ blues9 <- c("#F7FBFF", "#DEEBF7", "#C6DBEF", "#9ECAE1", "#6BAED6",
 	stop("'nbin' must be numeric of length 1 or 2")
 
     if (missing(bandwidth)) { ## cheap
-	bandwidth <- diff(apply(x, 2, quantile,
+	bandwidth <- diff(apply(x, 2, stats::quantile,
 				probs = c(0.05, 0.95),
                                 na.rm = TRUE, names = FALSE)) / 25
 	bandwidth[bandwidth==0] <- 1

@@ -1,5 +1,5 @@
 #  File src/library/utils/R/package.skeleton.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
 #  Copyright (C) 1995-2014 The R Core Team
 #
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 package.skeleton <-
     function(name = "anRpackage", list = character(), environment = .GlobalEnv,
@@ -35,7 +35,7 @@ package.skeleton <-
 
     if(missing(list)) {
         if(use_code_files) {
-            environment <- new.env(hash = TRUE)
+            environment <- new.env(hash = TRUE, parent = globalenv())
             methods::setPackageName(name, environment)
             for(cf in code_files)
                 sys.source(cf, envir = environment)
@@ -46,10 +46,10 @@ package.skeleton <-
     if(!is.character(list))
 	stop("'list' must be a character vector naming R objects")
     if(use_code_files || !envIsMissing) {
-        classesList <- getClasses(environment)
+        classesList <- methods::getClasses(environment)
         classes0 <- .fixPackageFileNames(classesList)
         names(classes0) <- classesList
-        methodsList <- getGenerics(environment)
+        methodsList <- methods::getGenerics(environment)
         methods0 <- .fixPackageFileNames(methodsList)
         names(methods0) <- methodsList
     }
@@ -215,14 +215,14 @@ package.skeleton <-
 					  filename =
 					  file.path(docs_dir,
 						    sprintf("%s-methods.Rd", methods0[item])),
-					  findMethods(item, where = environment))
+					  methods::findMethods(item, where = environment))
 	       })
     }))
     ## don't document generic functions from other packages
     for(item in methodsList) {
         if(exists(item, envir = environment, inherits = FALSE)) {
             ff <- get(item, envir = environment)
-            if(is(ff, "genericFunction") && !identical(ff@package, name)) # don't document
+            if(methods::is(ff, "genericFunction") && !identical(ff@package, name)) # don't document
                 file.remove(file.path(docs_dir, sprintf("%s.Rd", list0[item])))
         }
     }

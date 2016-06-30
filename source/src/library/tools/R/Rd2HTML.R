@@ -1,7 +1,7 @@
 #  File src/library/tools/R/Rd2HTML.R
 #
-#  Copyright (C) 1995-2015 The R Core Team
-#  Part of the R package, http://www.R-project.org
+#  Copyright (C) 1995-2016 The R Core Team
+#  Part of the R package, https://www.R-project.org
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 ## also used by Rd2latex, but only 'topic' and 'dest'
 get_link <- function(arg, tag, Rdfile) {
@@ -526,7 +526,7 @@ Rd2HTML <-
                    of1('" ')
                	   if (length(block) > 1L
                	       && length(imgoptions <- .Rd_get_latex(block[[2]]))
-		       && grepl("^options: ", imgoptions)) {
+		       && startsWith(imgoptions, "options: ")) {
 		       # There may be escaped percent signs within
 		       imgoptions <- gsub("\\%", "%", imgoptions, fixed=TRUE)
                        of1(sub("^options: ", "", imgoptions))
@@ -621,7 +621,7 @@ Rd2HTML <-
             tag <- tags[i]
             block <- blocks[[i]]
             if (length(pendingOpen)) { # Handle $, [ or [[ methods
-            	if (tag == "RCODE" && grepl("^\\(", block)) {
+            	if (tag == "RCODE" && startsWith(block, "(")) {
             	    block <- sub("^\\(", "", block)
             	    arg1 <- sub("[,)[:space:]].*", "", block)
 		    block <- sub(paste0(arg1, "[[:space:]]*,[[:space:]]*"),

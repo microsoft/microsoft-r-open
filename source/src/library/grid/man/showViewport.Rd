@@ -1,5 +1,5 @@
 % File src/library/grid/man/showViewport.Rd
-% Part of the R package, http://www.R-project.org
+% Part of the R package, https://www.R-project.org
 % Copyright 1995-2011 R Core Team
 % Distributed under GPL 2 or later
 
@@ -67,6 +67,11 @@ showViewport(vp = NULL, recurse = TRUE, depth = NULL,
 }
 \examples{
 showViewport(viewport(width=.5, height=.5, name="vp"))
+
+grid.newpage()
+pushViewport(viewport(width=.5, height=.5, name="vp"))
+upViewport()
+showViewport(vpPath("vp"))
 
 showViewport(vpStack(viewport(width=.5, height=.5, name="vp1"),
                      viewport(width=.5, height=.5, name="vp2")),

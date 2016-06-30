@@ -1,6 +1,6 @@
 % File src/library/utils/man/download.file.Rd
-% Part of the R package, http://www.R-project.org
-% Copyright 1995-2015 R Core Team
+% Part of the R package, https://www.R-project.org
+% Copyright 1995-2016 R Core Team
 % Distributed under GPL 2 or later
 
 \name{download.file}
@@ -56,27 +56,36 @@ download.file(url, destfile, method, quiet = FALSE, mode = "w",
   \samp{http://}, \samp{https://}, \samp{ftp://} or \samp{file://}.
 
 #ifdef unix
-  If \code{method = "auto"} is chosen (the default), method
-  \code{"libcurl"} is chosen for \samp{https://} and \samp{ftps://} URLs
-  provided \code{\link{capabilities}("libcurl")} is true, and the
-  internal method is chosen for \samp{file://} URLs and for the others
-  provided \code{\link{capabilities}("http/ftp")} is true (which it
-  almost always is).
+  If \code{method = "auto"} is chosen (the default), on a Unix-alike
+  method \code{"libcurl"} is chosen for \samp{https://} and
+  \samp{ftps://} URLs and the \code{"internal"} method is chosen for
+  other schemes.
 #endif
 #ifdef windows
-  If \code{method = "auto"} is chosen (the default), the
-  \code{"wininet"} method is used on Windows (unless
-  \code{setInternet2(FALSE)} was used). 
+  If \code{method = "auto"} is chosen (the default), on Windows the
+  \code{"wininet"} method is used apart from for \samp{ftps://} URLs
+  where \code{"libcurl"} is tried.  The \code{"wininet"} method uses the
+  WinINet functions (part of the OS).
 #endif
+% https://msdn.microsoft.com/en-us/library/windows/desktop/aa383630%28v=vs.85%29.aspx
   
-  Support for method \code{"libcurl"} is optional: use
+#ifdef unix
+  Method \code{"libcurl"} uses the library of that name
+  (\url{http://curl.haxx.se/libcurl/}).
+  It provides
+#endif
+#ifdef windows
+  Support for method \code{"libcurl"} is optional on Windows: use
   \code{\link{capabilities}("libcurl")} to see if it is supported on
-  your build.  It will usually provide (non-blocking) access to
-  \samp{https://} and \samp{ftps://} URLs.  There is support for
-  simultaneous downloads, so \code{url} and \code{destfile} can be
-  character vectors of the same length greater than one.  For a single
-  URL and \code{quiet = FALSE} a progress bar is shown in interactive
-  use.
+  your build.  It uses an external library of that name
+  (\url{http://curl.haxx.se/libcurl/}) against which \R can be compiled.
+  If supported it will provide
+#endif
+  (non-blocking) access to \samp{https://} and (usually) \samp{ftps://}
+  URLs.  There is support for simultaneous downloads, so \code{url} and
+  \code{destfile} can be character vectors of the same length greater
+  than one.  For a single URL and \code{quiet = FALSE} a progress
+  bar is shown in interactive use.
   
   For methods \code{"wget"} and \code{"curl"} a system call is made to
   the tool given by \code{method}, and the respective program must be
@@ -90,26 +99,24 @@ download.file(url, destfile, method, quiet = FALSE, mode = "w",
   \code{\link{available.packages}}.
 
   The \code{"libcurl"} and \code{"wget"} methods follow \samp{http://}
-  and \samp{https://} redirections: the \code{"internal"} does not.
+  and \samp{https://} redirections: the \code{"internal"} method does not.
   (For method \code{"curl"} use argument \code{extra = "-L"}. To disable
   redirection in \command{wget}, use \code{extra = "--max-redirect=0"}.)
-
-  Note that \samp{https://} URLs are
-#ifdef unix
-  not supported by the internal method.
-#endif
-#ifdef windows
-  supported by default.  (Prior to \R 3.2.2, this required that
-  option \option{--internet2} or environment variable
-  \env{R_WIN_INTERNET2} was set or \code{\link{setInternet2}(TRUE)} was
-  used.  That option and environment variable are now ignored.)  
-#endif
+  (The \code{"wininet"} method supports some redirections but not all.)
+  
+  Note that \samp{https://} URLs are not supported by the
+  \code{"internal"} method but are supported by the \code{"libcurl"}
+  method and the \code{"wininet"} method on Windows.
 
   See \code{\link{url}} for how \samp{file://} URLs are interpreted,
   especially on Windows.  The \code{"internal"} and \code{"wininet"}
-  methods do not decode \samp{file://} URLs, but the \code{"libcurl"}
-  and \code{"curl"} methods do: method \code{"wget"} does not support
-  them.
+  methods do not percent-decode \samp{file://} URLs, but the
+  \code{"libcurl"} and \code{"curl"} methods do: method \code{"wget"}
+  does not support them.
+
+  Most methods do not percent-encode special characters such as spaces
+  in URLs (see \code{\link{URLencode}}), but it seems the
+  \code{"wininet"} method does.
 
   The remaining details apply to the \code{"internal"}, \code{"wininet"}
   and \code{"libcurl"} methods only.
@@ -141,12 +148,6 @@ download.file(url, destfile, method, quiet = FALSE, mode = "w",
   (unlike Unix-alikes) does distinguish between text and binary files,
   care is needed that other binary file types are transferred with
   \code{mode = "wb"}.
-
-  There is a Windows-only method \code{"wininet"}.  (This selected for
-  \code{method = "internal"} unless \code{\link{setInternet2}(FALSE)} is
-  called.)  Then the \sQuote{Internet Options} of the system are used to
-  choose proxies and so on; these are set in the Control Panel and are
-  those used for Internet Explorer.
 #endif
 #ifdef unix
   A progress bar tracks the transfer.  If the file length is known, an
@@ -161,10 +162,9 @@ download.file(url, destfile, method, quiet = FALSE, mode = "w",
    Files of more than 2GB are supported on 64-bit builds of \R; they
   may be truncated on some 32-bit builds.
   
-  Method \code{"wget"} is mainly for historical compatibility, but it
-  and \code{"curl"} can be used for URLs (e.g., \samp{https://} URLs or
-  those that use cookies or redirection) which the internal method does
-  not support and where the \code{"libcurl"} method is not available.
+  Methods \code{"wget"} and \code{"curl"} are mainly for historical
+  compatibility but provide may provide capabilities not supported by
+  the \code{"libcurl"} or \code{"wininet"} methods.
 
   Method \code{"wget"} can be used with proxy firewalls which require
   user/password authentication if proper values are stored in the
@@ -236,12 +236,26 @@ download.file(url, destfile, method, quiet = FALSE, mode = "w",
   \file{curl-ca-bundle.crt}.  (This is normally done for a binary
   installation of \R, which installs
   \file{\var{R_HOME}/etc/curl-ca-bundle.crt} and sets
-  \env{CURL_CA_BUNDLE} to point to it if that enironment variable is not
+  \env{CURL_CA_BUNDLE} to point to it if that environment variable is not
   already set.)  For an updated certificate bundle, see
   \url{http://curl.haxx.se/docs/sslcerts.html}.
   Currently one can download a copy from
   \url{https://raw.githubusercontent.com/bagder/ca-bundle/master/ca-bundle.crt}
   and set \env{CURL_CA_BUNDLE} to the full path to the downloaded file.
+  
+  Note that the root certificates used by \R may or may not be the same
+  as used in a browser, and indeed different browsers may use different
+  certificate bundles (there is typically a build option to choose
+  either their own or the system ones).
+}
+\section{FTP sites}{
+  \samp{ftp:} URLs are accessed using the FTP protocol which has a
+  number of variants.  One distinction is between \sQuote{active} and
+  \sQuote{(extended) passive} modes: which is used is chosen by the
+  client.  The \code{"internal"} and \code{"libcurl"} method use passive
+  mode, and that is almost universally used by browsers.  Prior to \R
+  3.2.3 the \code{"wininet"} method used active mode: since it first
+  tries passive and then active.
 }
 \value{
   An (invisible) integer code, \code{0} for success and non-zero for

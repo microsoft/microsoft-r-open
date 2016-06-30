@@ -16,7 +16,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
 #ifdef HAVE_CONFIG_H
@@ -133,8 +133,10 @@ SEXP CreateAtVector(double *axp, double *usr, int nint, Rboolean logflag)
 	    n = 0;
 	    if (0.5 * dn >= umin) n++;
 	    for (;;) {
-		if (dn > umax) break;		n++;
-		if (5 * dn > umax) break;	n++;
+		if (dn > umax) break;
+		n++;
+		if (5 * dn > umax) break;
+		n++;
 		dn *= 10;
 	    }
 	    if (!n)
@@ -159,9 +161,12 @@ SEXP CreateAtVector(double *axp, double *usr, int nint, Rboolean logflag)
 	    if (0.2 * dn >= umin) n++;
 	    if (0.5 * dn >= umin) n++;
 	    for (;;) {
-		if (dn > umax) break;		n++;
-		if (2 * dn > umax) break;	n++;
-		if (5 * dn > umax) break;	n++;
+		if (dn > umax) break;
+		n++;
+		if (2 * dn > umax) break;
+		n++;
+		if (5 * dn > umax) break;
+		n++;
 		dn *= 10;
 	    }
 	    if (!n)

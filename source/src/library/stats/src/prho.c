@@ -1,6 +1,6 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
- *  Copyright (C) 2000		R Core Team
+ *  Copyright (C) 2000-2016     The R Core Team
  *  Copyright (C) 2003		The R Foundation
  *  based on AS 89 (C) 1975 Royal Statistical Society
  *
@@ -16,10 +16,11 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  *
  */
 
+#include <math.h>
 #include <Rmath.h>
 
 /* Was

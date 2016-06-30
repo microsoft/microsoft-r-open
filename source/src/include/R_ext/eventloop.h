@@ -14,7 +14,7 @@
  *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
 /* 
@@ -28,9 +28,9 @@
 #define R_EXT_EVENTLOOP_H
 
 #ifndef NO_C_HEADERS
-#ifdef HAVE_SYS_SELECT_H
-# include <sys/select.h>	/* for fd_set according to recent POSIX */
-#endif
+# ifdef HAVE_SYS_SELECT_H
+#  include <sys/select.h>	/* for fd_set according to recent POSIX */
+# endif
 /* NOTE: Needed at least on FreeBSD so that fd_set is defined. */
 # include <sys/types.h>
 #endif

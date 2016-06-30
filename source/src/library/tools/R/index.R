@@ -1,5 +1,5 @@
 #  File src/library/tools/R/index.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
 #  Copyright (C) 1995-2015 The R Core Team
 #
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 ### Miscellaneous indexing functions.
 
@@ -144,13 +144,13 @@ function(demoDir)
 print.check_demo_index <-
 function(x, ...)
 {
-    if(length(x$missing_from_index)) {
-        writeLines("Demos with missing or empty index information:")
-        print(x$missing_from_index, ...)
+    if(length(bad <- x$missing_from_index)) {
+        writeLines(c("Demos with missing or empty index information:",
+                     paste(" ", bad)))
     }
-    if(length(x$missing_from_demos)) {
-        writeLines("Demo index entries without corresponding demo:")
-        print(x$missing_from_demos, ...)
+    if(length(bad <- x$missing_from_demos)) {
+        writeLines(c("Demo index entries without corresponding demo:",
+                     paste(" ", bad)))
     }
     invisible(x)
 }

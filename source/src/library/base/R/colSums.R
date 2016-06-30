@@ -1,5 +1,5 @@
 #  File src/library/base/R/colSums.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
 #  Copyright (C) 1995-2015 The R Core Team
 #
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 
 ## NB: we now have  implicitGeneric() on these,
@@ -100,12 +100,12 @@ rowMeans <- function(x, na.rm = FALSE, dims = 1L)
     z
 }
 
-.colSums <- function(X, m, n, na.rm = FALSE)
-    .Internal(colSums(X, m, n, na.rm))
-.colMeans <- function(X, m, n, na.rm = FALSE)
-    .Internal(colMeans(X, m, n, na.rm))
+.colSums <- function(x, m, n, na.rm = FALSE)
+    .Internal(colSums(x, m, n, na.rm))
+.colMeans <- function(x, m, n, na.rm = FALSE)
+    .Internal(colMeans(x, m, n, na.rm))
 
-.rowSums <- function(X, m, n, na.rm = FALSE)
-    .Internal(rowSums(X, m, n, na.rm))
-.rowMeans <- function(X, m, n, na.rm = FALSE)
-    .Internal(rowMeans(X, m, n, na.rm))
+.rowSums <- function(x, m, n, na.rm = FALSE)
+    .Internal(rowSums(x, m, n, na.rm))
+.rowMeans <- function(x, m, n, na.rm = FALSE)
+    .Internal(rowMeans(x, m, n, na.rm))

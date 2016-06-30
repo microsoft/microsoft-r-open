@@ -15,9 +15,10 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
+#include <R.h>
 #include <Rconfig.h>
 #include <Rinternals.h>
 #include <Rmath.h>
@@ -610,6 +611,8 @@ void getDeviceSize(pGEDevDesc dd, double *devWidthCM, double *devHeightCM);
 
 /* This is, confusingly, a wrapper for GEcurrentDevice */
 pGEDevDesc getDevice();
+
+void dirtyGridDevice(pGEDevDesc dd);
 
 void getViewportTransform(SEXP currentvp, 
 			  pGEDevDesc dd, 

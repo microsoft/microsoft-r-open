@@ -16,7 +16,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  *
  *
  *  Symbolic Differentiation
@@ -637,6 +637,8 @@ SEXP doD(SEXP args)
     args = CDR(args);
     if (isExpression(CAR(args))) expr = VECTOR_ELT(CAR(args), 0);
     else expr = CAR(args);
+    if (!(isLanguage(expr) || isSymbol(expr) || isNumeric(expr) || isComplex(expr)))
+        error(_("'expr' must be an expression or call"));
     var = CADR(args);
     if (!isString(var) || length(var) < 1)
 	error(_("variable must be a character string"));

@@ -13,9 +13,10 @@
 
    You should have received a copy of the GNU Library General Public
    License along with this library; if not, a copy is available at
-   http://www.r-project.org/Licenses/
+   https://www.R-project.org/Licenses/
 */
 
+#include <string.h>
 #include <R.h>
 
 static double R_pp_sum (double *u, int n, int l)

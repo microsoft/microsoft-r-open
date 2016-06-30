@@ -1,5 +1,5 @@
 #  File src/library/base/R/format.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
 #  Copyright (C) 1995-2015 The R Core Team
 #
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 format <- function(x, ...) UseMethod("format")
 
@@ -164,10 +164,10 @@ formatC <- function (x, digits = NULL, width = NULL,
     else if(digits < 0L)
 	digits <- 6L
     else {
-	maxDigits <- if(format != "f") 50L else ceiling(-(.Machine$double.neg.ulp.digits + .Machine$double.min.exp) / log2(10))
+	maxDigits <- if(format != "f") 50L else
+	    ceiling(-(.Machine$double.neg.ulp.digits + .Machine$double.min.exp) / log2(10))
 	if (digits > maxDigits) {
-            warning(gettextf("'digits' reduced to %d", maxDigits),
-                    domain = NA)
+            warning(gettextf("'digits' reduced to %d", maxDigits), domain = NA)
 	    digits <- maxDigits
 	}
     }
@@ -221,8 +221,9 @@ format.factor <- function (x, ...)
 
 format.data.frame <- function(x, ..., justify = "none")
 {
-    nr <- .row_names_info(x, 2L)
     nc <- length(x)
+    if(!nc) return(x) # 0 columns: evade problems, notably for nrow() > 0
+    nr <- .row_names_info(x, 2L)
     rval <- vector("list", nc)
     for(i in seq_len(nc))
 	rval[[i]] <- format(x[[i]], ..., justify = justify)
@@ -246,20 +247,9 @@ format.data.frame <- function(x, ..., justify = "none")
 	if(is.character(rval[[i]]) && inherits(rval[[i]], "character"))
 	    oldClass(rval[[i]]) <- "AsIs"
     }
-    cn <- names(x)
-    m <- match(c("row.names", "check.rows", "check.names", ""), cn, 0L)
-    if(any(m)) cn[m] <- paste0("..dfd.", cn[m])
-    ## This requires valid symbols for the columns, so we need to
-    ## truncate any of more than 256 bytes.
-    long <- nchar(cn, "bytes", keepNA = FALSE) > 256L
-    cn[long] <- paste(substr(cn[long], 1L, 250L), "...")
-    names(rval) <- cn
-    rval$check.names <- FALSE
-    rval$row.names <- row.names(x)
-    x <- do.call("data.frame", rval)
-    ## x will have more cols than rval if there are matrix/data.frame cols
-    if(any(m)) names(x) <- sub("^..dfd.", "", names(x))
-    x
+    as.data.frame.list(rval, row.names = row.names(x), col.names = names(x),
+		       optional = TRUE, # <=> check.names = FALSE
+		       fix.empty.names = FALSE, cut.names = TRUE)
 }
 
 format.AsIs <- function(x, width = 12, ...)
@@ -292,10 +282,8 @@ format.AsIs <- function(x, width = 12, ...)
 	nz <- nchar(zero.print, "c")
 	nc <- nchar(x[i0], "c")
 	ind0 <- regexpr("0", x[i0], fixed = TRUE)# first '0' in string
-	blank.chars <- function(no) # as in formatC()
-	    vapply(no+1L, function(n) paste(character(n), collapse=" "), "")
 	substr(x[i0], ind0, (i1 <- ind0+nz-1L)) <- zero.print
-	substr(x[i0], ind0+nz, nc) <- blank.chars(nc - i1)
+	substr(x[i0], ind0+nz, nc) <- strrep(" ", nc - i1)
     }
     x
 }
@@ -304,7 +292,7 @@ prettyNum <-
     function(x,
 	     big.mark = "", big.interval = 3L,
 	     small.mark = "", small.interval = 5L,
-             decimal.mark = getOption("OutDec"), input.d.mark = ".",
+             decimal.mark = getOption("OutDec"), input.d.mark = decimal.mark,
 	     preserve.width = c("common", "individual", "none"),
 	     zero.print = NULL, drop0trailing = FALSE, is.cmplx = NA, ...)
 {
@@ -336,7 +324,7 @@ prettyNum <-
 	ina <- is.na(x) | x == "NA"
 	is.cmplx <-
 	    if(all(ina)) FALSE
-	    else length(grep("[0-9].*[-+][0-9].*i$", x)) > 0
+	    else any(grepl("[0-9].*[-+][0-9].*i$", x))
     }
     preserve.width <- match.arg(preserve.width)
     if(is.cmplx) {
@@ -345,7 +333,7 @@ prettyNum <-
 	z.sp <- strsplit(sub("([0-9] *)([-+])( *[0-9])",
 			     "\\1::\\2::\\3", x), "::", fixed=TRUE)
 	## be careful, if x had an  "	NA":
-	i3 <- vapply(z.sp, length, 0L) == 3L # those are re + im *i
+	i3 <- lengths(z.sp) == 3L # those are re + im *i
 	if(any(i3)) {
 	    z.sp <- z.sp[i3]
 	    z.im <- vapply(z.sp, `[[`, "", 3L)
@@ -369,6 +357,14 @@ prettyNum <-
     if(nchar(input.d.mark) == 0)
         stop("'input.d.mark' has no characters")
     x.sp <- strsplit(x, input.d.mark, fixed=TRUE)
+    ## can have "1.005.987" here, if all *.mark == "."
+    if(any((lx.sp <- lengths(x.sp)) > 2)) { # partly more than two parts
+	x.sp <- lapply(x.sp, function(xs) {
+	    lx <- length(xs)
+	    if(lx <= 2) xs else c(paste(xs[1:(lx-1)], collapse=input.d.mark),
+				  xs[lx])
+	})
+    }
     B. <- vapply(x.sp, `[`, "", 1L)	# Before input.d.mark (".")
     A. <- vapply(x.sp, `[`, "", 2L)	# After  "." ; empty == NA
     if(any(iN <- is.na(A.))) A.[iN] <- ""

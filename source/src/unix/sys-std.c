@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
 /* <UTF8> char here is mainly handled as a whole string.
@@ -1101,7 +1101,10 @@ void attribute_hidden NORET Rstd_CleanUp(SA_TYPE saveact, int status, int runLas
     R_CleanTempDir();
     if(saveact != SA_SUICIDE && R_CollectWarnings)
 	PrintWarnings();	/* from device close and (if run) .Last */
-    if(ifp) fclose(ifp);        /* input file from -f or --file= */
+    if(ifp) { 
+	fclose(ifp);    /* input file from -f or --file= */
+	ifp = NULL; 	/* To avoid trying to close it again */
+    }
     fpu_setup(FALSE);
 
     exit(status);

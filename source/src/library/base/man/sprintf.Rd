@@ -1,6 +1,6 @@
 % File src/library/base/man/sprintf.Rd
-% Part of the R package, http://www.R-project.org
-% Copyright 1995-2014 R Core Team
+% Part of the R package, https://www.R-project.org
+% Copyright 1995-2016 R Core Team
 % Distributed under GPL 2 or later
 
 \name{sprintf}
@@ -19,7 +19,7 @@ gettextf(fmt, \dots, domain = NULL)
   \item{fmt}{a character vector of format strings, each of up to 8192 bytes.}
   \item{\dots}{values to be passed into \code{fmt}.  Only logical,
     integer, real and character vectors are supported, but some coercion
-    will be done: see the \sQuote{Details} section.}
+    will be done: see the \sQuote{Details} section. Up to 100.}
   \item{domain}{see \code{\link{gettext}}.}
 }
 \details{
@@ -133,7 +133,7 @@ gettextf(fmt, \dots, domain = NULL)
     }
   }
   Further, immediately after \code{\%} may come \code{1$} to \code{99$}
-  to refer to numbered argument: this allows arguments to be
+  to refer to a numbered argument: this allows arguments to be
   referenced out of order and is mainly intended for translators of
   error messages.  If this is done it is best if all formats are
   numbered: if not the unnumbered ones process the arguments in order.
@@ -186,7 +186,7 @@ gettextf(fmt, \dots, domain = NULL)
   Describes the format options in table B-1 in the Appendix.
 
   The C Standards, especially ISO/IEC 9899:1999 for \sQuote{C99}.  Links
-  can be found at \url{http://developer.r-project.org/Portability.html}.
+  can be found at \url{https://developer.r-project.org/Portability.html}.
 
   \command{man sprintf} on a Unix-alike system.
 }

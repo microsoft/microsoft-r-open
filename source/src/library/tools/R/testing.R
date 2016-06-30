@@ -1,7 +1,7 @@
 #  File src/library/tools/R/testing.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2015 The R Core Team
+#  Copyright (C) 1995-2016 The R Core Team
 #
 # NB: also copyright date in Usage.
 #
@@ -16,7 +16,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 ## functions principally for testing R and packages
 
@@ -44,7 +44,7 @@ massageExamples <-
     lines <- c(paste0('pkgname <- "', pkg, '"'),
                'source(file.path(R.home("share"), "R", "examples-header.R"))',
                if (use_gct) {
-                   gct_n <- as.integer(Sys.getenv("_R_CHECK_GCT_N_", 0))
+                   gct_n <- as.integer(Sys.getenv("_R_CHECK_GCT_N_", "0"))
                    if(!is.na(gct_n) && gct_n > 0L)
                        sprintf("gctorture2(%s)", gct_n)
                    else "gctorture(TRUE)"
@@ -158,7 +158,7 @@ Rdiff <- function(from, to, useDiff = FALSE, forEx = FALSE,
         if(length(ll)) txt <- txt[seq_len(max(ll) - 1L)]
         ## remove BATCH footer
         nl <- length(txt)
-        if(nl > 3L && grepl("^> proc.time\\(\\)", txt[nl-2L])) txt <- txt[1:(nl-3L)]
+        if(nl > 3L && startsWith(txt[nl-2L], "> proc.time()")) txt <- txt[1:(nl-3L)]
         if (nullPointers)
         ## remove pointer addresses from listings
             txt <- gsub("<(environment|bytecode|pointer|promise): [x[:xdigit:]]+>", "<\\1: 0>", txt)
@@ -228,7 +228,8 @@ Rdiff <- function(from, to, useDiff = FALSE, forEx = FALSE,
             list(status = status, out = c(out, readLines(tf)))
         } else system(paste("diff -bw", shQuote(a), shQuote(b)))
     }
-}
+} ## {Rdiff}
+
 
 testInstalledPackages <-
     function(outDir = ".", errorsAreFatal = TRUE,
@@ -246,7 +247,7 @@ testInstalledPackages <-
         pkgs <- known_packages$base
     if (scope %in% c("both", "recommended"))
         pkgs <- c(pkgs, known_packages$recommended)
-    mc.cores <- as.integer(Sys.getenv("TEST_MC_CORES", 1L))
+    mc.cores <- as.integer(Sys.getenv("TEST_MC_CORES", "1"))
     if (.Platform$OS.type != "windows" &&
         !is.na(mc.cores) && mc.cores > 1L) {
         do_one <- function(pkg) {
@@ -292,7 +293,7 @@ testInstalledPackage <-
     pkgdir <- find.package(pkg, lib.loc)
     owd <- setwd(outDir)
     on.exit(setwd(owd))
-    strict <- as.logical(Sys.getenv("R_STRICT_PACKAGE_CHECK", FALSE))
+    strict <- as.logical(Sys.getenv("R_STRICT_PACKAGE_CHECK", "FALSE"))
 
     if ("examples" %in% types) {
         message(gettextf("Testing examples for package %s", sQuote(pkg)),
@@ -675,7 +676,7 @@ detachPackages <- function(pkgs, verbose = TRUE)
 
     ## The items need not all be packages
     ## and non-packages can be on the list multiple times.
-    isPkg <- grepl("^package:", pkgs)
+    isPkg <- startsWith(pkgs,"package:")
     for(item in pkgs[!isPkg]) {
         pos <- match(item, search())
         if(!is.na(pos)) .detach(pos)
@@ -696,7 +697,7 @@ detachPackages <- function(pkgs, verbose = TRUE)
         unl <- unlist(deps)
         for(i in seq_along(deps)) {
             this <- names(deps)[i]
-            if(sub("^package:", "", this) %in% unl) next else break
+	    if(.rmpkg(this) %in% unl) next else break
         }
         ## hopefully force = TRUE is never needed, but it does ensure
         ## that progress gets made

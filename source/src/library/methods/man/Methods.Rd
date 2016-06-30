@@ -1,5 +1,5 @@
 % File src/library/methods/man/Methods.Rd
-% Part of the R package, http://www.R-project.org
+% Part of the R package, https://www.R-project.org
 % Copyright 1995-2015 R Core Team
 % Distributed under GPL 2 or later
 
@@ -540,7 +540,7 @@ stopifnot(identical(f3(mLt), f3.POSIXt(mLt)))
 
 
 setClass("classA", contains = "numeric",
-   representation(realData = "numeric"))
+         representation(realData = "numeric"))
 
 Math.classA <- function(x) {(getFunction(.Generic))(x@realData)}
 setMethod("Math", "classA", Math.classA)
@@ -554,7 +554,7 @@ setClass("classB", contains = "classA")
 
 y <- new("classB", x)
 
-stopifnot(identical(abs(y), 1:10)) # (version 2.9.0 or earlier fails here)
+stopifnot(identical(abs(y), abs(x))) # (version 2.9.0 or earlier fails here)
 
 ## an S3 generic: just for demonstration purposes
 f3 <- function(x, ...) UseMethod("f3")
@@ -620,7 +620,7 @@ removeMethod("Math", "data.frame"); rm(Math.data.frame, MathFun, logIris)
 
  Chambers, John M.(2009)
  \emph{Developments in Class Inheritance and Method Selection}
- \url{http://statweb.stanford.edu/~jmc4/classInheritance.pdf}.
+ \url{https://statweb.stanford.edu/~jmc4/classInheritance.pdf}.
 
  Chambers, John M. (1998)
  \emph{Programming with Data}

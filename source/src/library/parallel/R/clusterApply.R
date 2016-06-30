@@ -1,7 +1,7 @@
 #  File src/library/parallel/R/clusterApply.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2015 The R Core Team
+#  Copyright (C) 1995-2016 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 ## Derived from snow 0.3-6 by Luke Tierney
 
@@ -143,7 +143,7 @@ splitIndices <- function(nx, ncl) {
     else if (ncl == 1L || nx == 1L) list(i)
     else {
         fuzz <- min((nx - 1L) / 1000, 0.4 * nx / ncl)
-        breaks <- seq(1 - fuzz, nx + fuzz, length = ncl + 1L)
+        breaks <- seq(1 - fuzz, nx + fuzz, length.out = ncl + 1L)
         structure(split(i, cut(i, breaks)), names = NULL)
     }
 }

@@ -1,5 +1,5 @@
 % File src/library/base/man/formatDL.Rd
-% Part of the R package, http://www.R-project.org
+% Part of the R package, https://www.R-project.org
 % Copyright 1995-2014 R Core Team
 % Distributed under GPL 2 or later
 
@@ -24,7 +24,7 @@ formatDL(x, y, style = c("table", "list"),
     description information.  Can be abbreviated.
     If \code{"table"}, a two-column table with
     items and descriptions as columns is produced (similar to Texinfo's
-    \verb{@table} environment.  If \code{"list"}, a LaTeX-style tagged
+    \verb{@table} environment).  If \code{"list"}, a LaTeX-style tagged
     description list is obtained.}
   \item{width}{a positive integer giving the target column for wrapping
     lines in the output.}

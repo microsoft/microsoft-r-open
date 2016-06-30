@@ -1,7 +1,7 @@
 /*
  *  R : A Computer Langage for Statistical Data Analysis
  *  Copyright (C) 1998--2005  Guido Masarotto and Brian Ripley
- *  Copyright (C) 2004--2014  The R Foundation
+ *  Copyright (C) 2004--2015  The R Foundation
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
 #ifdef HAVE_CONFIG_H
@@ -917,7 +917,7 @@ int RguiPackageMenu(PkgMenuItems pmenu)
     MCHECK(pmenu->mpkgu = newmenuitem(G_("Update packages..."), 0,
 			       menupkgupdate));
     MCHECK(newmenuitem("-", 0, NULL));
-    MCHECK(pmenu->mpkgil = newmenuitem(G_("Install package(s) from local zip files..."),
+    MCHECK(pmenu->mpkgil = newmenuitem(G_("Install package(s) from local files..."),
 				0, menupkginstalllocal));
     return 0;
 }
@@ -1126,7 +1126,7 @@ int setupui(void)
     MCHECK(mdisplay = newmenuitem(G_("Display file(s)..."), 0, menudisplay));
     MCHECK(newmenuitem("-", 0, NULL));
     MCHECK(mload = newmenuitem(G_("Load Workspace..."), 0, menuloadimage));
-    MCHECK(msave = newmenuitem(G_("Save Workspace..."), 0, menusaveimage));
+    MCHECK(msave = newmenuitem(G_("Save Workspace..."), 'S', menusaveimage));
     MCHECK(newmenuitem("-", 0, NULL));
     MCHECK(mloadhistory = newmenuitem(G_("Load History..."), 0,
 				      menuloadhistory));
@@ -1135,7 +1135,7 @@ int setupui(void)
     MCHECK(newmenuitem("-", 0, NULL));
     MCHECK(newmenuitem(G_("Change dir..."), 0, menuchangedir));
     MCHECK(newmenuitem("-", 0, NULL));
-    MCHECK(newmenuitem(G_("Print..."), 0, menuprint));
+    MCHECK(newmenuitem(G_("Print..."), 'P', menuprint));
     MCHECK(newmenuitem(G_("Save to File..."), 0, menusavefile));
     MCHECK(newmenuitem("-", 0, NULL));
     MCHECK(newmenuitem(G_("Exit"), 0, menuexit));

@@ -18,7 +18,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  *
  *
  *  DESCRIPTION
@@ -55,8 +55,7 @@ double dnf(double x, double df1, double df2, double ncp, int give_log)
      */
     if (!R_FINITE(df1) && !R_FINITE(df2)) { /* both +Inf */
 	/* PR: not sure about this (taken from  ncp==0)  -- FIXME ? */
-	if(x == 1.) return ML_POSINF;
-	/* else */  return R_D__0;
+	if(x == 1.) return ML_POSINF; else return R_D__0;
     }
     if (!R_FINITE(df2)) /* i.e.  = +Inf */
 	return df1* dnchisq(x*df1, df1, ncp, give_log);

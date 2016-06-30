@@ -5,7 +5,7 @@
  *  Copyright 1999-2001 Douglas M. Bates
  *                      Saikat DebRoy
  *
- *  Copyright 2005--2014  The R Core Team
+ *  Copyright 2005--2016  The R Core Team
  *  Copyright 2006	  The R Foundation
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -21,13 +21,15 @@
  *
  *  You should have received a copy of the GNU General Public
  *  License along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+#include <float.h>
 #include <R.h>
 #include <Rinternals.h>
-#include <stdlib.h>
-#include <float.h>
 #include "nls.h"
 
 #ifndef MIN

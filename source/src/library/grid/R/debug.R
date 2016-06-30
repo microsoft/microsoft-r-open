@@ -1,5 +1,5 @@
 #  File src/library/grid/R/debug.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
 #  Copyright (C) 1995-2013 The R Core Team
 #
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 ### Label grobs in a scene
 
@@ -124,7 +124,7 @@ showGrob <- function(x=NULL,
         # To remove labels use grid.redraw()
         if (is.null(gPath)) {
             # Show the current scene
-            dl <- grid.Call(L_getDisplayList)[1L:grid:::grid.Call(L_getDLindex)]
+            dl <- grid.Call(L_getDisplayList)[1L : grid.Call(L_getDLindex)]
             grid.newpage(recording=FALSE)
             # -1 because first element on DL is ROOT viewport
             lapply(dl[-1],

@@ -1,5 +1,5 @@
 % File src/library/stats/man/coef.Rd
-% Part of the R package, http://www.R-project.org
+% Part of the R package, https://www.R-project.org
 % Copyright 1995-2012 R Core Team
 % Distributed under GPL 2 or later
 
@@ -33,6 +33,7 @@ coefficients(object, \dots)
   Coefficients extracted from the model object \code{object}.
 
   For standard model fitting classes this will be a named numeric vector.
+  For \code{"maov"} objects (produced by \code{\link{aov}}) it will be a matrix.
 }
 \seealso{
   \code{\link{fitted.values}} and \code{\link{residuals}} for related methods;

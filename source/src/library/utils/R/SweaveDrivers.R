@@ -1,7 +1,7 @@
 #   File src/library/utils/R/SweaveDrivers.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2014 The R Core Team
+#  Copyright (C) 1995-2016 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 RweaveLatex <- function()
 {
@@ -232,7 +232,7 @@ makeRweaveLatexCodeRunner <- function(evalFunc = RweaveEvalWithOpt)
         echoComments <- function(showto) {
             if (options$echo && !is.na(lastshown) && lastshown < showto) {
                 dce <- trySrcLines(srcfile, lastshown + 1L, showto, NULL)
-                linedirs <- grepl("^#line ", dce)
+                linedirs <- startsWith(dce, "#line ")
 		dce <- dce[!linedirs]
 		if (length(dce))
                     putSinput(dce, length(dce)) # These are all trailing comments
@@ -281,7 +281,7 @@ makeRweaveLatexCodeRunner <- function(evalFunc = RweaveEvalWithOpt)
                 lastshown <- showto
                 srcline <- srcref[3L]
 
-                linedirs <- grepl("^#line ", dce)
+                linedirs <- startsWith(dce, "#line ")
                 dce <- dce[!linedirs]
                 # Need to reduce leading lines if some were just removed
                 leading <- leading - sum(linedirs[seq_len(leading)])
@@ -633,7 +633,7 @@ RweaveEvalWithOpt <- function (expr, options)
         if (inherits(res, "try-error")) return(res)
         if (options$print || (options$term && res$visible)) {
             if (.isMethodsDispatchOn() && isS4(res$value))
-                methods:::show(res$value) else print(res$value)
+                methods::show(res$value) else print(res$value)
         }
     }
     res

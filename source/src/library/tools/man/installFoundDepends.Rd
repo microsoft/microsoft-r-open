@@ -1,5 +1,5 @@
 % File src/library/tools/man/installFoundDepends.Rd
-% Part of the R package, http://www.R-project.org
+% Part of the R package, https://www.R-project.org
 % Copyright 1995-2007 R Core Team
 % Distributed under GPL 2 or later
 
@@ -10,6 +10,8 @@
   This function will take the \code{Found} element of a
   \code{pkgDependsList} object and attempt to install
   all of the listed packages from the specified repositories.
+
+  \emph{This function is deprecated since \code{pkgDependsList} objects are.}
 }
 \usage{
 installFoundDepends(depPkgList, ...)

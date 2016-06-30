@@ -1,7 +1,7 @@
 #  File src/library/base/R/mapply.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2012 The R Core Team
+#  Copyright (C) 1995-2015 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 mapply <- function(FUN,..., MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE)
 {
@@ -50,7 +50,13 @@ Vectorize <- function(FUN, vectorize.args = arg.names, SIMPLIFY = TRUE,
 
     if (!all(vectorize.args %in% arg.names))
     	stop("must specify names of formal arguments for 'vectorize'")
-
+    	
+    collisions <- arg.names %in% c("FUN", "SIMPLIFY", "USE.NAMES", 
+                                   "vectorize.args")
+    if (any(collisions))
+	stop(sQuote("FUN"), " may not have argument(s) named ", 
+	     paste(sQuote(arg.names[collisions]), collapse = ", "))
+	     
     FUNV <- function() { ## will set the formals below
         args <- lapply(as.list(match.call())[-1L], eval, parent.frame())
         names <- if(is.null(names(args))) character(length(args))

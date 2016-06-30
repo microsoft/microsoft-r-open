@@ -1,6 +1,6 @@
 % File src/library/base/man/options.Rd
-% Part of the R package, http://www.R-project.org
-% Copyright 1995-2015 R Core Team
+% Part of the R package, https://www.R-project.org
+% Copyright 1995-2016 R Core Team
 % Distributed under GPL 2 or later
 
 \name{options}
@@ -102,10 +102,9 @@ getOption(x, default = NULL)
       environment variable \env{R_DEFAULT_PACKAGES}, or if that is unset
       to \code{c("datasets", "utils", "grDevices", "graphics", "stats",
         "methods")}.  (Set \env{R_DEFAULT_PACKAGES} to \code{NULL} or
-      a comma-separated list of package names.)   A call to
-      \code{options} should be in your \file{.Rprofile} file to ensure
-      that the change takes effect before the base package is
-      initialized (see \code{\link{Startup}}).}
+      a comma-separated list of package names.)  It will not work to set
+      this in a \file{.Rprofile} file, as its value is consulted before
+      that file is read.}
 
     \item{\code{deparse.cutoff}:}{integer value controlling the
       printing of language constructs which are \code{\link{deparse}}d.
@@ -152,9 +151,9 @@ getOption(x, default = NULL)
       value is \code{NULL}: see \code{\link{stop}} for the behaviour in
       that case.  The functions \code{\link{dump.frames}} and
       \code{\link{recover}} provide alternatives that allow post-mortem
-      debugging.  Note that these need to specified as e.g.
-      \code{options(error = utils::recover)} in startup files such as
-      \file{\link{.Rprofile}}.}
+      debugging.  Note that these need to specified as
+      e.g.\sspace{}\code{options(error = utils::recover)} in startup
+      files such as \file{\link{.Rprofile}}.}
 
     \item{\code{expressions}:}{sets a limit on the number of nested
       expressions that will be evaluated.  Valid values are
@@ -301,7 +300,11 @@ getOption(x, default = NULL)
     \item{\code{texi2dvi}:}{used by functions
       \code{\link{texi2dvi}} and \code{\link{texi2pdf}} in package \pkg{tools}.
 #ifdef unix
-      Set at startup from the environment variable \env{R_TEXI2DVICMD}.
+      Set at startup from the environment variable \env{R_TEXI2DVICMD},
+      which defaults first to the value of environment variable
+      \env{TEXI2DVI}, and then to a value set when \R was installed (the
+      full path to a \command{texi2dvi} script if one was found).  If
+      necessary, that environment variable can be set to \code{"emulation"}.
 #endif
     }
 
@@ -364,7 +367,8 @@ getOption(x, default = NULL)
       line used in printing vectors, matrices and arrays, and when
       filling by \code{\link{cat}}.
 
-      Columns are normally the same as characters except in CJK languages.
+      Columns are normally the same as characters except in East Asian
+      languages.
 
       You may want to change this if you re-size the window that \R is
       running in.  Valid values are 10\dots10000 with default normally
@@ -428,6 +432,12 @@ getOption(x, default = NULL)
       configurable via environment variables
       \env{R_INTERACTIVE_DEVICE} and \env{R_DEFAULT_DEVICE}
       respectively.
+
+      The search logic for \sQuote{the normal screen device} is that
+      this is \code{windows} on Windows, and \code{quartz} if available
+      on OS X (running at the console, and compiled into the build).
+      Otherwise \code{X11} is used if environment variable \env{DISPLAY}
+      is set.
     }
 
     \item{\code{device.ask.default}:}{logical.  The default for
@@ -494,9 +504,9 @@ getOption(x, default = NULL)
   \describe{
     \item{\code{BioC_mirror}:}{The URL of a Bioconductor mirror
       for use by \code{\link{setRepositories}},
-      e.g.\sspace{}the default \samp{"http://bioconductor.org"}
+      e.g.\sspace{}the default \samp{"https://bioconductor.org"}
       or the European mirror
-      \samp{"http://bioconductor.statistik.tu-dortmund.de"}.  Can be set
+      \samp{"https://bioconductor.statistik.tu-dortmund.de"}.  Can be set
       by \code{\link{chooseBioCmirror}}.}
 
     \item{\code{browser}:}{The HTML browser to be used by
@@ -618,8 +628,8 @@ getOption(x, default = NULL)
       \code{local({r <- getOption("repos"); r["CRAN"] <- "http://my.local.cran";
                    options(repos = r)})}.
 
-      Note that you can add more repositories (Bioconductor and
-      Omegahat, R-Forge, Rforge.net \dots)
+      Note that you can add more repositories (Bioconductor,
+      R-Forge, Rforge.net \dots)
       using \code{\link{setRepositories}}.
     }
     \item{\code{SweaveHooks}, \code{SweaveSyntax}:}{

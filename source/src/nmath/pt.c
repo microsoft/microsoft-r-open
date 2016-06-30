@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
 #include "nmath.h"
@@ -60,7 +60,7 @@ double pt(double x, double n, int lower_tail, int log_p)
 	*/
 	double lval;
 	lval = -0.5*n*(2*log(fabs(x)) - log(n))
-	        - lbeta(0.5*n, 0.5) - log(0.5*n);
+		- lbeta(0.5*n, 0.5) - log(0.5*n);
 	val = log_p ? lval : exp(lval);
     } else {
 	val = (n > x * x)

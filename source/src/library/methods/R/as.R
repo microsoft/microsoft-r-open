@@ -1,5 +1,5 @@
 #  File src/library/methods/R/as.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
 #  Copyright (C) 1995-2015 The R Core Team
 #
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 as <-
   ## Returns the version of this object coerced to be the given `Class'.
@@ -125,7 +125,7 @@ as <-
     ## be the equivalent of new("toClass", fromObject)
     ## But must check that replacement is defined, in the case
     ## of nonstandard superclass relations
-    replaceMethod <- elNamed(ClassDef@contains, fromClass)
+    replaceMethod <- ClassDef@contains[[fromClass]]
     if(is(replaceMethod, "SClassExtension") &&
        !identical(as(replaceMethod@replace, "function"), .ErrorReplace)) {
         f <- function(from, to) NULL
@@ -261,7 +261,7 @@ setAs <-
                             domain = NA)
                 }
                 method <- eval(function(from, to, value)NULL)
-                functionBody(method, envir = .GlobalEnv) <- replace
+                body(method, envir = .GlobalEnv) <- replace
             }
             setMethod("coerce<-", c(from, to), method, where = where)
         }
@@ -338,6 +338,17 @@ setAs <-
             as.name(from)
         })
   setMethod("coerce", c("ANY","name"), method, where = where)
+  ## Proposed on R-devel, Dec. 7, 2015, by JMC, this is too radical,
+  ## coercing to "double" in too many cases where "numeric" data remained "integer":
+  ## setMethod("coerce", c("integer", "numeric"),
+  ##           ## getMethod("coerce", c("ANY", "numeric"), where = envir) -- not yet available
+  ##           function (from, to, strict = TRUE) {
+  ##               value <- as.numeric(from)
+  ##               if(strict)
+  ##                   attributes(value) <- NULL
+  ##               value
+  ##           }, where = where)
+
   ## not accounted for and maybe not needed:  real, pairlist, double
 }
 

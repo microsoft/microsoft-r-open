@@ -1,5 +1,5 @@
 #  File src/library/stats/R/lag.plot.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
 #  Copyright (C) 1999-2012 The R Core Team
 #
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 ## Function exists in S-plus
 
@@ -53,7 +53,7 @@ lag.plot <- function(x, lags = 1, layout = NULL, set.lags = 1L:lags,
     if(is.null(layout))
         layout <-
             if(prod(pmf <- par("mfrow")) >= tot.lags) pmf
-            else grDevices::n2mfrow(tot.lags)
+            else n2mfrow(tot.lags)
 
     ## Plotting
     ## avoid resetting mfrow and using outer margins for just one plot

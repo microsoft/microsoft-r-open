@@ -1,5 +1,5 @@
 #  File src/library/stats/R/ts.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
 #  Copyright (C) 1995-2015 The R Core Team
 #
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 start	  <- function(x, ...) UseMethod("start")
 end	  <- function(x, ...) UseMethod("end")
@@ -90,10 +90,13 @@ tsp <- function(x) attr(x, "tsp")
 {
     cl <- oldClass(x)
     attr(x, "tsp") <- value # does error-checking internally
-    if (inherits(x, "ts") && is.null(value))
-        class(x) <- if(!identical(cl,"ts")) cl["ts" != cl]
-    else if (inherits(x, "mts") && is.null(value))
-        class(x) <- if(!identical(cl,"mts")) cl["mts" != cl]
+    if (is.null(value)) {
+        if (inherits(x, "ts"))
+	    cl <- cl["ts" != cl]
+        if (inherits(x, "mts"))
+	    cl <- cl["mts" != cl]
+        class(x) <- cl
+    }
     x
 }
 
@@ -495,10 +498,10 @@ plot.ts <-
 		do.xax <- i %% nr == 0 || i == nser
 		if(axes) {
 		    axis(y.side, xpd = NA, cex.axis = cex.axis,
-                         col.axis = col.axis, font.axis = font.axis)
+			 col.axis = col.axis, font.axis = font.axis, ...)
 		    if(do.xax)
 			axis(1, xpd = NA, cex.axis = cex.axis,
-                             col.axis = col.axis, font.axis = font.axis)
+			     col.axis = col.axis, font.axis = font.axis, ...)
 		}
 		if(ann) {
 		    mtext(nm[i], y.side, line=3, cex=cex.lab, col=col.lab,

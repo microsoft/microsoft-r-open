@@ -1,7 +1,7 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
  *  Copyright (C) 1995, 1996  Robert Gentleman and Ross Ihaka
- *  Copyright (C) 1998-2013  The R Core Team
+ *  Copyright (C) 1998-2016   The R Core Team
  *  Copyright (C) 2002, 2004  The R Foundation
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -16,18 +16,17 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-/* do this first to get the right options for math.h */
-#include <R_ext/Arith.h>
+
+#include <float.h>
 
 #include <R.h>
 #include <Rmath.h>
-#include <float.h>
 #include "stats.h"
 #ifdef _OPENMP
 # include <R_ext/MathThreads.h>
@@ -124,7 +123,7 @@ static double R_canberra(double *x, int nr, int nc, int i1, int i2)
 		dev = diff/sum;
 		if(!ISNAN(dev) ||
 		   (!R_FINITE(diff) && diff == sum &&
-		    /* use Inf = lim x -> oo */ (dev = 1.))) {
+		    /* use Inf = lim x -> oo */ (int) (dev = 1.))) {
 		    dist += dev;
 		    count++;
 		}
@@ -153,9 +152,9 @@ static double R_dist_binary(double *x, int nr, int nc, int i1, int i2)
 		warning(_("treating non-finite values as NA"));
 	    }
 	    else {
-		if(x[i1] || x[i2]) {
+		if(x[i1] != 0. || x[i2] != 0.) {
 		    count++;
-		    if( ! (x[i1] && x[i2]) ) dist++;
+		    if( ! (x[i1] != 0. && x[i2] != 0.) ) dist++;
 		}
 		total++;
 	    }

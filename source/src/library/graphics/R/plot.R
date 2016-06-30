@@ -1,7 +1,7 @@
 #  File src/library/graphics/R/plot.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2014 The R Core Team
+#  Copyright (C) 1995-2015 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 ### xy.coords() is now in the imported 'grDevices' package
 
@@ -206,7 +206,15 @@ function(formula, data = parent.frame(), ..., subset,
                 do.call(funname,
                         c(list(mf[[i]], y, ylab = yl, xlab = xl), dots))
                }
-	} else do.call(funname, c(list(y, ylab = ylab), dots))
+	} else {
+	    if(length(varnames) == 1L && length(formula) == 3L &&
+	       identical(formula[[2L]], formula[[3L]]))
+		warning(gettextf("the formula '%s' is treated as '%s'",
+				 format(formula),
+				 format(local({ f <- formula; f[[3L]] <- quote(1); f}))),
+			domain=NA)
+	    do.call(funname, c(list(y, ylab = ylab), dots))
+	}
     } else do.call("plot.data.frame", c(list(mf), dots))
     invisible()
 }

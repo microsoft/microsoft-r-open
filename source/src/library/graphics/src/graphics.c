@@ -1,7 +1,7 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
  *  Copyright (C) 1995, 1996  Robert Gentleman and Ross Ihaka
- *  Copyright (C) 1997--2014  The R Core Team
+ *  Copyright (C) 1997--2016  The R Core Team
  *  Copyright (C) 2002--2011  The R Foundation
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -16,7 +16,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
 
 
  *  This is an extensive reworking by Paul Murrell of an original
@@ -2547,12 +2547,21 @@ void GLine(double x1, double y1, double x2, double y2, int coords, pGEDevDesc dd
 */
 static void (*old_close)(pDevDesc) = NULL;
 
-static void NORET locator_close(pDevDesc dd)
+static void 
+#ifndef WIN32
+NORET 
+#endif
+locator_close(pDevDesc dd)
 {
     if(old_close) old_close(dd);
     dd->close = old_close;
     old_close = NULL;
+    /* It's not safe to call error() in a Windows event handler, so 
+       the GA_Close method records the close event separately.
+    */
+#ifndef WIN32
     error(_("graphics device closed during call to locator or identify"));
+#endif
 }
 
 
@@ -3379,7 +3388,7 @@ double GExpressionHeight(SEXP expr, GUnit units, pGEDevDesc dd)
  * Could be removed if Rgraphics.h ever gets REPLACED by new API
  * NOTE that base graphics code no longer calls this -- the base
  * graphics system directly calls the graphics engine for mathematical
- * annotation (GEMathText)
+ * annotation (GEMathText in ../../../main/plotmath.c )
  */
 void GMathText(double x, double y, int coords, SEXP expr,
 	       double xc, double yc, double rot,

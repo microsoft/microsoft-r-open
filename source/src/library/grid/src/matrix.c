@@ -15,10 +15,11 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
 #include "grid.h" 
+#include <math.h>
 
 /* Code for matrices, matrix multiplication, etc for performing
  *  2D affine transformations:  translations, scaling, and rotations.

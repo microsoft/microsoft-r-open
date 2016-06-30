@@ -1,5 +1,5 @@
 #  File src/library/stats/R/add.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
 #  Copyright (C) 1994-8 W. N. Venables and B. D. Ripley
 #  Copyright (C) 1998-2012 The R Core Team
@@ -15,7 +15,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 
 ## version to return NA for df = 0, as R did before 2.7.0
@@ -58,7 +58,7 @@ add1.default <- function(object, scope, scale = 0, test=c("none", "Chisq"),
 	tt <- scope[i]
 	if(trace > 1) {
 	    cat("trying +", tt, "\n", sep = "")
-	    utils::flush.console()
+	    flush.console()
 	}
 	nfit <- update(object, as.formula(paste("~ . +", tt)),
                        evaluate = FALSE)
@@ -384,7 +384,7 @@ drop1.default <- function(object, scope, scale = 0, test=c("none", "Chisq"),
 	tt <- scope[i]
 	if(trace > 1) {
 	    cat("trying -", tt, "\n", sep = "")
-	    utils::flush.console()
+	    flush.console()
         }
         nfit <- update(object, as.formula(paste("~ . -", tt)),
                        evaluate = FALSE)
@@ -779,7 +779,7 @@ step <- function(object, scope, scale = 0,
     if(trace) {
 	cat("Start:  AIC=", format(round(bAIC, 2)), "\n",
 	    cut.string(deparse(formula(fit))), "\n\n", sep = "")
-        utils::flush.console()
+        flush.console()
     }
 
     ## FIXME think about df.residual() here
@@ -843,7 +843,7 @@ step <- function(object, scope, scale = 0,
 	if(trace) {
 	    cat("\nStep:  AIC=", format(round(bAIC, 2)), "\n",
 		cut.string(deparse(formula(fit))), "\n\n", sep = "")
-            utils::flush.console()
+            flush.console()
         }
         ## add a tolerance as dropping 0-df terms might increase AIC slightly
 	if(bAIC >= AIC + 1e-7) break

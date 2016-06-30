@@ -16,7 +16,7 @@
 ###
 ### You should have received a copy of the GNU General Public License
 ### along with R; if not, a copy is available at
-### http://www.r-project.org/Licenses/
+### https://www.r-project.org/Licenses/
 
 
 AC_DEFUN([R_PANGO_CAIRO], [
@@ -126,6 +126,7 @@ int main(void) {
       case "${host_os}" in
         darwin*)
           ## This is for static OS X build
+	  ## FIXME: doing that unconditionally is really not a good idea
           CAIRO_LIBS=`"${PKGCONF}" --static --libs ${modlist}`
           CAIROX11_LIBS=`"${PKGCONF}" --static --libs ${xmodlist}`
           ;;

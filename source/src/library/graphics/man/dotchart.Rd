@@ -1,5 +1,5 @@
 % File src/library/graphics/man/dotchart.Rd
-% Part of the R package, http://www.R-project.org
+% Part of the R package, https://www.R-project.org
 % Copyright 1995-2011 R Core Team
 % Distributed under GPL 2 or later
 
@@ -11,7 +11,8 @@
 }
 \usage{
 dotchart(x, labels = NULL, groups = NULL, gdata = NULL,
-         cex = par("cex"), pch = 21, gpch = 21, bg = par("bg"),
+         cex = par("cex"), pt.cex = cex,
+         pch = 21, gpch = 21, bg = par("bg"),
          color = par("fg"), gcolor = par("fg"), lcolor = "gray",
          xlim = range(x[is.finite(x)]),
          main = NULL, xlab = NULL, ylab = NULL, \dots)
@@ -37,6 +38,8 @@ dotchart(x, labels = NULL, groups = NULL, gdata = NULL,
     to a value smaller than one can be a useful way of avoiding label
     overlap.  Unlike many other graphics functions, this sets the actual
     size, not a multiple of \code{par("cex")}.}
+  \item{pt.cex}{the \code{cex} to be applied to plotting symbols.
+    This behaves like \code{cex} in \code{plot()}.}
   \item{pch}{the plotting character or symbol to be used.}
   \item{gpch}{the plotting character or symbol to be used for group
     values.}
@@ -48,7 +51,7 @@ dotchart(x, labels = NULL, groups = NULL, gdata = NULL,
     values.}
   \item{lcolor}{the color(s) to be used for the horizontal lines.}
   \item{xlim}{horizontal range for the plot, see
-    \code{\link{plot.window}}, e.g.}
+    \code{\link{plot.window}}, for example.}
   \item{main}{overall title for the plot, see \code{\link{title}}.}
   \item{xlab, ylab}{axis annotations as in \code{title}.}
   \item{\dots}{\link{graphical parameters} can also be specified as arguments.}

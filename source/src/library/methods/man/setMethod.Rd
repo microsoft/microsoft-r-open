@@ -1,5 +1,5 @@
 % File src/library/methods/man/setMethod.Rd
-% Part of the R package, http://www.R-project.org
+% Part of the R package, https://www.R-project.org
 % Copyright 1995-2007 R Core Team
 % Distributed under GPL 2 or later
 
@@ -18,7 +18,9 @@ setMethod(f, signature=character(), definition,
 removeMethod(f, signature, where)
 }
 \arguments{
-  \item{f}{ A generic function or the character-string name of the function. }
+  \item{f}{ A generic function or the character-string name of the
+  function. Non-primitive base functions that dispatch internally need
+  to be specified by character-string.}
   \item{signature}{ A match of formal argument names for \code{f} with
     the character-string names of corresponding classes.  See the
     details below; however, if the signature is not trivial, you should use \code{\link{method.skeleton}} to generate a valid call to \code{setMethod}.}

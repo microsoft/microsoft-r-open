@@ -1,7 +1,7 @@
 #  File src/library/base/R/datetime.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2015 The R Core Team
+#  Copyright (C) 1995-2016 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 Sys.time <- function() .POSIXct(.Internal(Sys.time()))
 
@@ -162,21 +162,22 @@ length.POSIXlt <- function(x) length(x[[1L]])
 format.POSIXlt <- function(x, format = "", usetz = FALSE, ...)
 {
     if(!inherits(x, "POSIXlt")) stop("wrong class")
-    if(format == "") {
+    if(any(f0 <- format == "")) {
         ## need list [ method here.
-        times <- unlist(unclass(x)[1L:3L])
-        secs <- x$sec; secs <- secs[!is.na(secs)]
+	times <- unlist(unclass(x)[1L:3L])[f0]
+	secs <- x$sec[f0]; secs <- secs[!is.na(secs)]
         np <- getOption("digits.secs")
-        if(is.null(np)) np <- 0L else np <- min(6L, np)
+        np <- if(is.null(np)) 0L else min(6L, np)
         if(np >= 1L)
             for (i in seq_len(np)- 1L)
                 if(all( abs(secs - round(secs, i)) < 1e-6 )) {
                     np <- i
                     break
                 }
-        format <- if(all(times[!is.na(times)] == 0)) "%Y-%m-%d"
-        else if(np == 0L) "%Y-%m-%d %H:%M:%S"
-        else paste0("%Y-%m-%d %H:%M:%OS", np)
+	format[f0] <-
+	    if(all(times[!is.na(times)] == 0)) "%Y-%m-%d"
+	    else if(np == 0L) "%Y-%m-%d %H:%M:%S"
+	    else paste0("%Y-%m-%d %H:%M:%OS", np)
     }
     ## <FIXME>
     ## Move names handling to C code eventually ...
@@ -652,6 +653,32 @@ Summary.difftime <- function (..., na.rm)
     }
 }
 
+c.difftime <-
+function(..., recursive = FALSE)
+{
+    coerceTimeUnit <- function(x) {
+        switch(attr(x, "units"),
+               secs = x, mins = 60*x, hours = 60*60*x,
+               days = 60*60*24*x, weeks = 60*60*24*7*x)
+    }
+    args <- list(...)
+    if(!length(args)) return(.difftime(double(), "secs"))
+    ind <- sapply(args, inherits, "difftime")
+    pos <- which(!ind)
+    units <- sapply(args[ind], attr, "units")
+    if(all(units == (un1 <- units[1L]))) {
+        if(length(pos))
+            args[pos] <-
+                lapply(args[pos], as.difftime, units = un1)
+        .difftime(unlist(args), un1)
+    } else {
+        if(length(pos))
+            args[pos] <-
+                lapply(args[pos], as.difftime, units = "secs")
+        args[ind] <- lapply(args[ind], coerceTimeUnit)
+        .difftime(unlist(args), "secs")
+    }
+}
 
 ## ----- convenience functions -----
 
@@ -792,7 +819,7 @@ cut.POSIXt <-
         if(valid == 6L) {               # months
             start$mday <- 1L
             end <- as.POSIXlt(max(x, na.rm = TRUE))
-            step <- ifelse(length(by2) == 2L, as.integer(by2[1L]), 1L)
+            step <- if(length(by2) == 2L) as.integer(by2[1L]) else 1L
             end <- as.POSIXlt(end + (31 * step * 86400))
             end$mday <- 1L
             end$isdst <- -1L
@@ -801,7 +828,7 @@ cut.POSIXt <-
             start$mon <- 0L
             start$mday <- 1L
             end <- as.POSIXlt(max(x, na.rm = TRUE))
-            step <- ifelse(length(by2) == 2L, as.integer(by2[1L]), 1L)
+            step <- if(length(by2) == 2L) as.integer(by2[1L]) else 1L
             end <- as.POSIXlt(end + (366 * step* 86400))
             end$mon <- 0L
             end$mday <- 1L
@@ -813,7 +840,7 @@ cut.POSIXt <-
             start$mday <- 1L
             maxx <- max(x, na.rm = TRUE)
             end <- as.POSIXlt(maxx)
-            step <- ifelse(length(by2) == 2L, as.integer(by2[1L]), 1L)
+            step <- if(length(by2) == 2L) as.integer(by2[1L]) else 1L
             end <- as.POSIXlt(end + (93 * step * 86400))
             end$mon <- qtr[end$mon + 1L]
             end$mday <- 1L
@@ -885,13 +912,12 @@ trunc.POSIXt <- function(x, units = c("secs", "mins", "hours", "days"), ...)
 
 round.POSIXt <- function(x, units = c("secs", "mins", "hours", "days"))
 {
-    ## this gets the default from the generic, as that has two args.
-    if(is.numeric(units) && units == 0.0) units <-"secs"
-    units <- match.arg(units)
-    x <- as.POSIXct(x)
-    x <- x + switch(units,
-                    "secs" = 0.5, "mins" = 30, "hours" = 1800, "days" = 43200)
-    trunc.POSIXt(x, units = units)
+    ## this gets the default from the generic's 2nd arg 'digits = 0' :
+    units <- if(is.numeric(units) && units == 0.) "secs" else match.arg(units)
+    trunc.POSIXt(as.POSIXct(x) +
+		 switch(units,
+			"secs" = 0.5, "mins" = 30, "hours" = 1800, "days" = 43200),
+		 units = units)
 }
 
 ## ---- additions in 1.5.0 -----

@@ -1,6 +1,6 @@
 % File src/library/base/man/strptime.Rd
-% Part of the R package, http://www.R-project.org
-% Copyright 1995-2015 R Core Team
+% Part of the R package, https://www.R-project.org
+% Copyright 1995-2016 R Core Team
 % Distributed under GPL 2 or later
 
 \name{strptime}
@@ -71,7 +71,7 @@ strptime(x, format, tz = "")
   \code{\link{LC_TIME}} locale category.  The \sQuote{current locale} of
   the descriptions might mean the locale in use at the start of the \R
   session or when these functions are first used.
-  
+
   % strftime is C99: strptime is POSIX.
   The details of the formats are platform-specific, but the following are
   likely to be widely available: most are defined by the POSIX standard.
@@ -96,8 +96,9 @@ strptime(x, format, tz = "")
     \item{\code{\%C}}{Century (00--99): the integer part of the year
       divided by 100.}
     \item{\code{\%d}}{Day of the month as decimal number (01--31).}
-    \item{\code{\%D}}{Date format such as \code{\%m/\%d/\%y}: ISO C99
-      says it should be that exact format.}
+    \item{\code{\%D}}{Date format such as \code{\%m/\%d/\%y}: the C99
+      standard says it should be that exact format (but not all OSes
+      comply).}
     \item{\code{\%e}}{Day of the month as decimal number (1--31), with
       a leading space for a single-digit number.}
     \item{\code{\%F}}{Equivalent to \%Y-\%m-\%d (the ISO 8601 date
@@ -131,7 +132,7 @@ strptime(x, format, tz = "")
     \item{\code{\%t}}{Tab on output, arbitrary whitespace on input.}
     \item{\code{\%T}}{Equivalent to \code{\%H:\%M:\%S}.}
     \item{\code{\%u}}{Weekday as a decimal number (1--7, Monday is 1).}
-    % see http://en.wikipedia.org/wiki/Week_number#Week_number
+    % see https://en.wikipedia.org/wiki/Week_number#Week_number
     \item{\code{\%U}}{Week of the year as decimal number (00--53) using
       Sunday as the first day 1 of the week (and typically with the
       first Sunday of the year as day 1 of week 1).  The US convention.}
@@ -157,7 +158,7 @@ strptime(x, format, tz = "")
     \item{\code{\%Y}}{Year with century.  Note that whereas there was no
       zero in the original Gregorian calendar, ISO 8601:2004 defines it
       to be valid (interpreted as 1BC): see
-      \url{http://en.wikipedia.org/wiki/0_(year)}.  Note that the standards
+      \url{https://en.wikipedia.org/wiki/0_(year)}.  Note that the standards
       also say that years before 1582 in its calendar should only be used
       with agreement of the parties involved.
   
@@ -209,7 +210,7 @@ strptime(x, format, tz = "")
   truncated to \code{0 <= n <= 6} decimal places (and if \code{\%OS} is
   not followed by a digit, it uses the setting of
   \code{\link{getOption}("digits.secs")}, or if that is unset, \code{n =
-  3}).  Further, for \code{strptime} \code{\%OS} will input seconds
+  0}).  Further, for \code{strptime} \code{\%OS} will input seconds
   including fractional seconds.  Note that \code{\%S} does not read
   fractional parts on output. 
 
@@ -230,7 +231,7 @@ strptime(x, format, tz = "")
   \code{strptime} turns character representations into an object of
   class \code{"\link{POSIXlt}"}.  The time zone is used to set the
   \code{isdst} component and to set the \code{"tzone"} attribute if
-  \code{tz != ""}. If the specified time is invalid (for example
+  \code{tz != ""}.  If the specified time is invalid (for example
   \samp{"2010-02-30 08:00"}) all the components of the result are
   \code{NA}.  (NB: this does means exactly what it says -- if it is an
   invalid time, not just a time that does not exist in some time zone.)
@@ -245,7 +246,7 @@ strptime(x, format, tz = "")
   
   OS facilities will probably not print years before 1 CE (aka 1 AD)
   \sQuote{correctly} (they tend to assume the existence of a year 0: see
-  \url{http://en.wikipedia.org/wiki/0_(year)}, and some OSes get them
+  \url{https://en.wikipedia.org/wiki/0_(year)}, and some OSes get them
   completely wrong).  Common formats are \code{-45} and \code{-045}.
 
   Years after 9999 and before -999 are normally printed with five or

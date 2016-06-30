@@ -1,5 +1,5 @@
 % File src/library/methods/man/refClass.Rd
-% Part of the R package, http://www.R-project.org
+% Part of the R package, https://www.R-project.org
 % Copyright 2010-2014 R Core Team
 % Distributed under GPL 2 or later
 
@@ -99,9 +99,11 @@ discussion of method \code{$new(...)} %$
 in the section \dQuote{Reference Object Generators}.
 
 If a \code{finalize} method is defined, a function will be
-\link[=reg.finalizer]{registered} to invoke it before the environment
-in the object is discarded by the garbage collector. See the matrix
-viewer example for both initialize and finalize methods.}
+\link[=reg.finalizer]{registered} to invoke it before the environment in
+the object is discarded by the garbage collector; finalizers are
+registered with \code{atexit=TRUE}, and so are also run at the end of
+\R{} sessions. See the matrix viewer example for both initialize and
+finalize methods.}
 
   \item{where}{
 the environment in which to store the class definition (or to begin the
@@ -562,6 +564,12 @@ External methods can be supplied for any reference class, but there is no
 obvious advantage unless they are needed.
 They are more work to write, harder to read and (slightly) slower to
 execute.
+
+\emph{NOTE:} If you are the author of a package whose reference
+classes are likely to be subclassed in other packages, you can avoid
+these questions entirely by writing methods that \emph{only} use
+exported functions from your package, so that all the methods will
+work from another package that imports yours.
 
 }
 

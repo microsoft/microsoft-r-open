@@ -9,7 +9,7 @@
 
 ## =========== configuration macros for building packages ================
 # Absolute path to '/usr/local' software collection.  The versions used
-# on CRAN can be found at http://www.stats.ox.ac.uk/pub/Rtools/libs.html
+# on CRAN can be found at https://www.stats.ox.ac.uk/pub/Rtools/libs.html
 # It can be interrogated by 'R CMD config LOCAL_SOFT'
 # Use 'make rsync-extsoft' to populate the default directory.
 # LOCAL_SOFT = $(R_HOME)/extsoft
@@ -19,7 +19,7 @@
 # Path of library directory containing zlib, bzlib, liblzma, pcre,
 # libpng, libjpeg, libtiff.
 # A suitable version can be found at
-# http://www.stats.ox.ac.uk/pub/Rtools/libs.html
+# https://www.stats.ox.ac.uk/pub/Rtools/libs.html
 # or use 'make rsync-extsoft' to populate the default directory.
 # EXT_LIBS = $(LOCAL_SOFT)
 
@@ -57,6 +57,8 @@
 # BINPREF = c:/Rtools/gcc492_32/bin/
 # prefix for 64-bit:
 # BINPREF64 = c:/Rtools/gcc492_64/bin/
+# Set this to indicate a non-gcc compiler and version
+# COMPILED_BY = <determined automatically>
 
 # Others use a -m64 or -m32 option to select architectures
 # M_ARCH =
@@ -70,10 +72,10 @@
 # 32- or 64-bit Windows?
 # WIN = 32
 
-# The gcc 4.9.2 64 bit toolchain is set up for the 'medium code' model and needs
-# to remove the .refptr entries from the exports list; this is the default
+# The gcc 4.9.3 64 bit toolchain is set up for the 'medium code' model and needs
+# to remove the .refptr and .weak entries from the exports list; this is the default
 # when WIN = 64, with blank for WIN = 32:
-# NM_FILTER = | $(SED) -e '/.refptr./d'
+# NM_FILTER = | $(SED) -e '/[.]refptr[.]/d' -e '/[.]weak[.]/d'
 
 # We normally link directly against DLLs, 
 # but this macro forces the use of import libs
@@ -100,7 +102,7 @@
 
 # For the cairographics devices
 # Optionally use a static build of cairographics from
-#   http://www.rforge.net/Cairo/files/cairo-current-win.tar.gz
+#   https://www.rforge.net/Cairo/files/cairo-current-win.tar.gz
 # and set CAIRO_HOME to the parent of the win32/win64 directories
 #
 # If CAIRO_HOME is not set the devices are not built.
@@ -111,6 +113,8 @@
 
 # unset this if you are *not* using MiKTeX
 # MIKTEX = TRUE
+# Recent MiKTEX does not provide texi2dvi and needs something like
+# TEXI2DVI = TEXINDEX=/Rtools/bin/texindex.exe texify
 
 # for texinfo >= 5.1. If the texinfo files are installed at /packages/texinfo,
 # TEXI2ANY = /path/to/perl -I/packages/texinfo /packages/texinfo/texi2any
