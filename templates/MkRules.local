@@ -59,9 +59,9 @@ TOOL_PATH = $(VENDOR_DIR)/rtools-3.2/gcc-4.6.3/bin/
 # This can also be used to give the full path to the compiler, 
 # including a trailing / .  The experimental gcc 4.9.2 defaults are shown;
 # actual defaults are blank for both of these.
-#BINPREF = c:/Rtools/gcc463/bin/
+#BINPREF = c:/Rtools/mingw_64/bin/
 # prefix for 64-bit:
-# BINPREF64 = c:/Rtools/gcc463_64/bin/
+#BINPREF64 = c:/Rtools/mingw_64/bin/
 #BINPREF64 = C:/Rtools/gcc-4.6.3/bin/
 #BINPREF64 = i686-w64-mingw32-
 
