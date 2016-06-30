@@ -1,7 +1,7 @@
 #  File src/library/base/R/character.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2013 The R Core Team
+#  Copyright (C) 1995-2016 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 substr <- function(x, start, stop)
 {
@@ -30,6 +30,9 @@ substring <- function(text, first, last=1000000L)
     .Internal(substr(text, as.integer(first), as.integer(last)))
 }
 
+startsWith <- function(x, prefix) .Internal(startsWith(x, prefix))
+endsWith   <- function(x, suffix) .Internal(endsWith  (x, suffix))
+
 `substr<-` <- function(x, start, stop, value)
     .Internal(`substr<-`(x, as.integer(start), as.integer(stop), value))
 
@@ -40,19 +43,19 @@ abbreviate <-
     function(names.arg, minlength = 4L, use.classes = TRUE, dot = FALSE,
              strict = FALSE, method = c("left.kept", "both.sides"))
 {
-    ## we just ignore use.classes
-    if(minlength <= 0L)
-	return(rep.int("", length(names.arg)))
+    if(minlength <= 0L) {
+        x <- rep.int("", length(names.arg))
+        names(x) <- names.arg
+        return(x)
+    }
     ## need to remove leading/trailing spaces before we check for dups
-    ## This is inefficient but easier than modifying do_abbrev (=> FIXME !)
     names.arg <- sub("^ +", "", sub(" +$", "", as.character(names.arg)))
     dups <- duplicated(names.arg)
     old <- names.arg
-    if(any(dups))
-	names.arg <- names.arg[!dups]
+    if(any(dups)) names.arg <- names.arg[!dups]
     x <- names.arg
     if(strict) {
-	x[] <- .Internal(abbreviate(x, minlength, use.classes))
+        x[] <- .Internal(abbreviate(x, minlength, use.classes))
     } else {
 	method <- match.arg(method)
 	if(method == "both.sides")
@@ -77,7 +80,7 @@ abbreviate <-
 	}
     }
     if(any(dups))
-	x <- x[match(old,names.arg)]
+	x <- x[match(old, names.arg)]
     if(dot) {			    # add "." where we did abbreviate:
 	chgd <- x != old
 	x[chgd] <- paste0(x[chgd],".")
@@ -191,3 +194,10 @@ dQuote <- function(x)
 strtoi <-
 function(x, base = 0L)
     .Internal(strtoi(as.character(x), as.integer(base)))
+
+strrep <-
+function(x, times)
+{
+    if(!is.character(x)) x <- as.character(x)
+    .Internal(strrep(x, as.integer(times)))
+}

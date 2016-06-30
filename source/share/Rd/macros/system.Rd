@@ -16,7 +16,7 @@
 
 
 % To refer to a package on CRAN
-\newcommand{\CRANpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
+\newcommand{\CRANpkg}{\href{https://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
 % To refer to a bug report by number
 \newcommand{\PR}{\Sexpr[results=rd]{tools:::Rd_expr_PR(#1)}}
@@ -44,4 +44,4 @@
 \newcommand{\packageIndices}{\Sexpr[results=rd,stage=build]{tools:::Rd_package_indices("#1")}}
 
 % To indicate a DOI.
-\newcommand{\doi}{doi:\sspace\href{http://doi.org/#1}{#1}}
+\newcommand{\doi}{\Sexpr[results=rd,stage=build]{tools:::Rd_expr_doi("#1")}}

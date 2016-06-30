@@ -1,6 +1,6 @@
 R FAQ
 Frequently Asked Questions on R
-Version 3.2.2015-08-09
+Version 2016-04-24
 Kurt Hornik
 
 
@@ -100,6 +100,7 @@ R FAQ
   7.41 Why does summary() report strange results for the R^2 estimate when I fit a linear model with no intercept?
   7.42 Why is R apparently not releasing memory?
   7.43 How can I enable secure https downloads in R?
+  7.44 How can I get CRAN package binaries for outdated versions of R?
 8 R Programming
   8.1 How should I write summary methods?
   8.2 How can I debug dynamically loaded code?
@@ -122,7 +123,7 @@ questions about R.
 1.1 Legalese
 ============
 
-This document is copyright © 1998-2015 by Kurt Hornik.
+This document is copyright © 1998-2016 by Kurt Hornik.
 
    This document is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by the
@@ -155,13 +156,13 @@ CRAN site (*note What is CRAN?::).
 1.3 Citing this document
 ========================
 
-In publications, please refer to this FAQ as Hornik (2015), "The R FAQ",
+In publications, please refer to this FAQ as Hornik (2016), "The R FAQ",
 and give the above, _official_ URL:
 
      @Misc{,
        author        = {Kurt Hornik},
        title         = {{R} {FAQ}},
-       year          = {2015},
+       year          = {2016},
        url           = {https://CRAN.R-project.org/doc/FAQ/R-FAQ.html}
      }
 
@@ -199,7 +200,7 @@ script files.
    The design of R has been heavily influenced by two existing
 languages: Becker, Chambers & Wilks' S (*note What is S?::) and
 Sussman's Scheme
-(http://www.cs.indiana.edu/scheme-repository/home.html).  Whereas the
+(https://www.cs.indiana.edu/scheme-repository/home.html).  Whereas the
 resulting language is very similar in appearance to S, the underlying
 implementation and semantics are derived from Scheme.  *Note What are
 the differences between R and S?::, for further details.
@@ -256,12 +257,15 @@ mips-sgi-irix, i386-freebsd, rs6000-ibm-aix, and sparc-sun-solaris.
 2.3 What is the current version of R?
 =====================================
 
-The current released version is 3.2.2.  Based on this
-'major.minor.patchlevel' numbering scheme, there are two development
-versions of R, a patched version of the current release ('r-patched')
-and one working towards the next minor or eventually major ('r-devel')
-releases of R, respectively.  Version r-patched is for bug fixes mostly.
-New features are typically introduced in r-devel.
+R uses a 'major.minor.patchlevel' numbering scheme.  Based on this,
+there are the current release version of R ('r-release') as well as two
+development versions of R, a patched version of the current release
+('r-patched') and one working towards the next minor or eventually major
+('r-devel') releases of R, respectively.  New features are typically
+introduced in r-devel, while r-patched is for bug fixes mostly.
+
+   See <https://CRAN.R-project.org/sources.html> for the current
+versions of r-release, r-patched and r-devel.
 
 2.4 How can R be obtained?
 ==========================
@@ -378,7 +382,7 @@ Iacus).  The "R for Mac OS X FAQ
 details.
 
    Snapshots of the r-patched and r-devel versions of R are available as
-Apple installer packages at <http://r.research.att.com>.
+Apple installer packages at <https://r.research.att.com>.
 
 2.6 Are there Unix-like binaries for R?
 =======================================
@@ -401,7 +405,7 @@ install r-base-dev' to obtain the additional tools required for this.
 So-called "backports" of the current R packages for at least the
 "stable" distribution of Debian are provided by Johannes Ranke, and
 available from CRAN.  See
-<https://CRAN.R-project.org/bin/linux/debian/README.html> for details on
+<https://CRAN.R-project.org/bin/linux/debian/index.html> for details on
 R Debian packages and installing the backports, which should also be
 suitable for other Debian derivatives.  Native backports for Ubuntu are
 provided by Michael Rutter.
@@ -478,7 +482,7 @@ can be found at
 
      John M. Chambers (2008), "Software for Data Analysis: Programming
      with R". Springer, New York, ISBN 978-0-387-75935-7,
-     <https://statweb.stanford.edu/~jmc4/Rbook/>.
+     <http://statweb.stanford.edu/~jmc4/Rbook/>.
 
      Peter Dalgaard (2008), "Introductory Statistics with R", 2nd
      edition.  Springer, ISBN 978-0-387-79053-4,
@@ -526,9 +530,11 @@ To cite R in publications, use
        author       = {{R Core Team}},
        organization = {R Foundation for Statistical Computing},
        address      = {Vienna, Austria},
-       year         = 2015,
+       year         = YEAR,
        url          = {https://www.R-project.org}
      }
+where YEAR is the release year of the version of R used and can
+determined as 'R.version$year'.
 
    Citation strings (or BibTeX entries) for R and R packages can also be
 obtained by 'citation()'.
@@ -537,7 +543,7 @@ obtained by 'citation()'.
 ===================================
 
 Thanks to Martin Maechler <Martin.Maechler@R-project.org>, there are
-four mailing lists devoted to R.
+several mailing lists devoted to R, including the following:
 
 'R-announce'
      A moderated list for major announcements about the development of R
@@ -553,6 +559,9 @@ four mailing lists devoted to R.
 'R-devel'
      This list is for questions and discussion about code development in
      R.
+'R-package-devel'
+     A list which which provides a forum for learning about the R
+     package development process.
 
 Please read the posting guide
 (https://www.R-project.org/posting-guide.html) _before_ sending anything
@@ -613,25 +622,8 @@ can be found at the URL
 
      <https://CRAN.R-project.org/>
 
-Daily mirrors are available at URLs including
-
-     <http://cran.at.R-project.org/>  (Wirtschaftsuniversität
-                                      Wien, Austria)
-     <http://cran.au.R-project.org/>  (University of Melbourne,
-                                      Australia)
-     <http://cran.br.R-project.org/>  (Universidade Federal do
-                                      Paraná, Brazil)
-     <http://cran.ch.R-project.org/>  (ETH Zürich, Switzerland)
-     <http://cran.dk.R-project.org/>  (dotsrc.org, Aalborg,
-                                      Denmark)
-     <http://cran.es.R-project.org/>  (Spanish National Research
-                                      Network, Madrid, Spain)
-     <http://cran.pt.R-project.org/>  (Universidade do Porto,
-                                      Portugal)
-     <http://cran.uk.R-project.org/>  (U of Bristol, United
-                                      Kingdom)
-
-See <https://CRAN.R-project.org/mirrors.html> for a complete list of
+and is mirrored daily to many sites around the world.  See
+<https://CRAN.R-project.org/mirrors.html> for a complete list of
 mirrors.  Please use the CRAN site closest to you to reduce network
 load.
 
@@ -641,6 +633,9 @@ bzipped tar files, a wealth of additional contributed code, as well as
 prebuilt binaries for various operating systems (Linux, Mac OS Classic,
 OS X, and MS Windows).  CRAN also provides access to documentation on R,
 existing mailing lists and the R Bug Tracking system.
+
+   Since March 2016, "old" material is made available from a central
+CRAN archive server (<https://CRAN-archive.R-project.org/>).
 
    Please always use the URL of the master site when referring to CRAN.
 
@@ -658,7 +653,7 @@ all Open Source licenses, permits all and any use of the package.  It
 only restricts distribution of R or of other programs containing code
 from R. This is made clear in clause 6 ("No Discrimination Against
 Fields of Endeavor") of the Open Source Definition
-(http://www.opensource.org/docs/definition.html):
+(https://opensource.org/docs/definition.html):
 
      The license must not restrict anyone from making use of the program
      in a specific field of endeavor.  For example, it may not restrict
@@ -756,13 +751,13 @@ S.
 
    * John M. Chambers (1998), "Programming with Data," New York:
      Springer, ISBN 0-387-98503-4
-     (<https://statweb.stanford.edu/~jmc4/Sbook/>).
+     (<http://statweb.stanford.edu/~jmc4/Sbook/>).
 
      This "_Green Book_" describes version 4 of S, a major revision of S
      designed by John Chambers to improve its usefulness at every stage
      of the programming process.
 
-   See <https://statweb.stanford.edu/~jmc4/papers/96.7.ps> for further
+   See <http://statweb.stanford.edu/~jmc4/papers/96.7.ps> for further
 information on the "Evolution of the S Language".
 
    There is a huge amount of user-contributed code for S, available at
@@ -1192,7 +1187,7 @@ enterprise-class statistical analysis system based on R, suitable for
 deployment in professional, commercial and regulated environments.
 
    See also
-<http://en.wikipedia.org/wiki/R_programming_language#Commercialized_versions_of_R>
+<https://en.wikipedia.org/wiki/R_programming_language#Commercialized_versions_of_R>
 for pointers to commercialized versions of R.
 
 4 R Web Interfaces
@@ -1244,8 +1239,8 @@ installer has the necessary security permissions.  David's paper
 "CGIwithR: Facilities for Processing Web Forms Using R" was published in
 the Journal of Statistical Software
 (<http://www.jstatsoft.org/v08/i10/>).  The package is now maintained by
-Duncan Temple Lang <duncan@wald.ucdavis.edu> and has a web page at
-<http://www.omegahat.org/CGIwithR/>.
+Duncan Temple Lang <duncan@wald.ucdavis.edu>.  and has a web page at
+<http://www.omegahat.net/CGIwithR/>.
 
    Jeff Horner is working on the R/Apache Integration Project which
 embeds the R interpreter inside Apache 2 (and beyond).  A tutorial and
@@ -1422,12 +1417,12 @@ default repository for recent versions of R for Windows.
 5.1.3 Add-on packages from Omegahat
 -----------------------------------
 
-The Omega Project for Statistical Computing (http://www.omegahat.org/)
+The Omega Project for Statistical Computing (http://www.omegahat.net/)
 provides a variety of open-source software for statistical applications,
 with special emphasis on web-based software, Java, the Java virtual
 machine, and distributed computing.  A CRAN style R package repository
-is available via <http://www.omegahat.org/R/>.  See
-<http://www.omegahat.org/> for information on most R packages available
+is available via <http://www.omegahat.net/R/>.  See
+<http://www.omegahat.net/> for information on most R packages available
 from the Omega project.
 
 5.1.4 Add-on packages from Bioconductor
@@ -1437,13 +1432,14 @@ Bioconductor (https://www.bioconductor.org/) is an open source and open
 development software project for the analysis and comprehension of
 genomic data.  Most Bioconductor components are distributed as R add-on
 packages.  Initially most of the Bioconductor software packages
-(https://www.bioconductor.org/packages/bioc/) focused primarily on DNA
-microarray data analysis.  As the project has matured, the functional
-scope of the software packages broadened to include the analysis of all
-types of genomic data, such as SAGE, sequence, or SNP data.  In
-addition, there are metadata (annotation, CDF and probe) and experiment
-data packages.  See <https://www.bioconductor.org/download/> for
-available packages and a complete taxonomy via BioC Views.
+(https://bioconductor.org/packages/release/BiocViews.html#___Software)
+focused primarily on DNA microarray data analysis.  As the project has
+matured, the functional scope of the software packages broadened to
+include the analysis of all types of genomic data, such as SAGE,
+sequence, or SNP data.  In addition, there are metadata (annotation, CDF
+and probe) and experiment data packages.  See
+<https://www.bioconductor.org/download/> for available packages and a
+complete taxonomy via BioC Views.
 
 5.1.5 Other add-on packages
 ---------------------------
@@ -1634,7 +1630,7 @@ from transcript files).
 
    The latest stable version of ESS is available via CRAN or the ESS web
 page (http://ESS.R-project.org/).  The HTML version of the documentation
-can be found at <http://stat.ethz.ch/ESS/>.
+can be found at <https://stat.ethz.ch/ESS/>.
 
    ESS comes with detailed installation instructions.
 
@@ -2651,8 +2647,10 @@ default: this is done automatically for such URLs as from R 3.2.2.
 recommend that you use these methods.  The requisite code to add to
 '.Rprofile' or 'Rprofile.site' is:
 
-     options(download.file.method = "wininet", url.method = "wininet")     (Windows)
-     options(download.file.method = "libcurl", url.method = "libcurl")     (Linux and OS X)
+     options(download.file.method = "wininet", url.method = "wininet")
+     (Windows)
+     options(download.file.method = "libcurl", url.method = "libcurl")
+     (Linux and OS X)
 
 (Method '"wininet"' is the default on Windows as from R 3.2.2.)
 
@@ -2662,6 +2660,20 @@ FALSE', we recommend method '"wget"' on Linux and '"curl"' on OS X. It
 is possible that system versions of '"libcurl"', 'wget' or 'curl' may
 have been compiled without HTTPS support, but this is unlikely.  As from
 R 3.3.0 '"libcurl"' with HTTPS support is required except on Windows.
+
+7.44 How can I get CRAN package binaries for outdated versions of R?
+====================================================================
+
+Since March 2016, Windows and OS X binaries of CRAN packages for old
+versions of R (released more than 5 years ago) are made available from a
+central CRAN archive server instead of the CRAN mirrors.  To get these,
+one should set the CRAN "mirror" element of the 'repos' option
+accordingly, by something like
+     local({r <- getOption("repos")
+            r["CRAN"] <- "http://CRAN-archive.R-project.org"
+            options(repos = r)
+           })
+(see '?options' for more information).
 
 8 R Programming
 ***************
@@ -2836,8 +2848,8 @@ maintainers, mentioning the package in the subject line.
 
    A bug report can be generated using the function 'bug.report()'.  For
 reports on R this will open the Web page at
-<http://bugs.R-project.org/>: for a contributed package it will open the
-package's bug tracker Web page or help you compose an email to the
+<https://bugs.R-project.org/>: for a contributed package it will open
+the package's bug tracker Web page or help you compose an email to the
 maintainer.
 
    There is a section of the bug repository for suggestions for

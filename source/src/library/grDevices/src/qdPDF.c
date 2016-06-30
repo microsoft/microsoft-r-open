@@ -14,7 +14,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  *
  *  PDF output Quartz device module
  *
@@ -28,9 +28,9 @@
 
 #include "qdPDF.h"
 
-#include <R.h>
+//#include <R.h>
 #include <Rinternals.h>
-#include <R_ext/QuartzDevice.h>
+//#include <R_ext/QuartzDevice.h>
 #define _(String) (String)
 
 typedef struct {

@@ -10,7 +10,7 @@ pdf("reg-examples-3.pdf", encoding = "ISOLatin1.enc")
 if(require("survival")) {
   model3 <- clogit(case ~ spontaneous+induced+strata(stratum), data = infert)
   print(summary(model3))
-  detach("package:survival")  # survival (conflicts)
+  detach("package:survival", unload = TRUE)  # survival (conflicts)
 }
 
 
@@ -180,7 +180,8 @@ Matrix::drop0(zapsmall(6*splineDesign(knots = 1:40, x = 4:37, sparse = TRUE)))
 library(tools)
 ## there are few dependencies in a vanilla R installation:
 ## lattice may not be installed
-dependsOnPkgs("lattice")
+## Avoid possibly large list from R_HOME/site-library, which --vanilla includes.
+dependsOnPkgs("lattice", lib.loc = .Library)
 
 ## This may not be installed
 gridEx <- system.file("doc", "grid.Rnw", package = "grid")

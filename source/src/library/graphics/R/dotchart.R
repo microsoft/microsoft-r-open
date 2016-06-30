@@ -1,5 +1,5 @@
 #  File src/library/graphics/R/dotchart.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
 #  Copyright (C) 1995-2014 The R Core Team
 #
@@ -14,10 +14,11 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 dotchart <-
-function(x, labels = NULL, groups = NULL, gdata = NULL, cex = par("cex"),
+function(x, labels = NULL, groups = NULL, gdata = NULL,
+         cex = par("cex"), pt.cex = cex,
 	 pch = 21, gpch = 21, bg = par("bg"), color = par("fg"),
 	 gcolor = par("fg"), lcolor = "gray",
 	 xlim = range(x[is.finite(x)]),
@@ -97,7 +98,7 @@ function(x, labels = NULL, groups = NULL, gdata = NULL, cex = par("cex"),
               col = color, las = 2, cex = cex, ...)
     }
     abline(h = y, lty = "dotted", col = lcolor)
-    points(x, y, pch = pch, col = color, bg = bg)
+    points(x, y, pch = pch, col = color, bg = bg, cex = pt.cex/cex)
     if (!is.null(groups)) {
 	gpos <- rev(cumsum(rev(tapply(groups, groups, length)) + 2) - 1)
 	ginch <- max(strwidth(glabels, "inch"), na.rm = TRUE)
@@ -106,7 +107,8 @@ function(x, labels = NULL, groups = NULL, gdata = NULL, cex = par("cex"),
               adj = 0, col = gcolor, las = 2, cex = cex, ...)
 	if (!is.null(gdata)) {
 	    abline(h = gpos, lty = "dotted")
-	    points(gdata, gpos, pch = gpch, col = gcolor, bg = bg, ...)
+	    points(gdata, gpos, pch = gpch, col = gcolor, bg = bg,
+                   cex = pt.cex/cex, ...)
 	}
     }
     axis(1)

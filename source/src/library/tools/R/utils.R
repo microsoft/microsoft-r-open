@@ -1,7 +1,7 @@
 #  File src/library/tools/R/utils.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2015 The R Core Team
+#  Copyright (C) 1995-2016 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 ### * File utilities.
 
@@ -238,8 +238,13 @@ function(file, pdf = FALSE, clean = FALSE, quiet = TRUE,
 
     ## Run texi2dvi on a latex file, or emulate it.
 
-    if(is.null(texi2dvi) || !nzchar(texi2dvi) || texi2dvi == "texi2dvi")
-        texi2dvi <- Sys.which("texi2dvi")
+    if(identical(texi2dvi, "emulation")) texi2dvi <- ""
+    else {
+        if(is.null(texi2dvi) || !nzchar(texi2dvi) || texi2dvi == "texi2dvi")
+            texi2dvi <- Sys.which("texi2dvi")
+        if(.Platform$OS.type == "windows" && !nzchar(texi2dvi))
+            texi2dvi <- Sys.which("texify")
+    }
 
     envSep <- .Platform$path.sep
     texinputs0 <- texinputs
@@ -258,19 +263,19 @@ function(file, pdf = FALSE, clean = FALSE, quiet = TRUE,
     bstinputs <- paste(c(texinputs0, Rbstinputs, ""),
                        collapse = envSep)
 
-    otexinputs <- Sys.getenv("TEXINPUTS", unset = NA)
+    otexinputs <- Sys.getenv("TEXINPUTS", unset = NA_character_)
     if(is.na(otexinputs)) {
         on.exit(Sys.unsetenv("TEXINPUTS"))
         otexinputs <- "."
     } else on.exit(Sys.setenv(TEXINPUTS = otexinputs))
     Sys.setenv(TEXINPUTS = paste(otexinputs, texinputs, sep = envSep))
-    obibinputs <- Sys.getenv("BIBINPUTS", unset = NA)
+    obibinputs <- Sys.getenv("BIBINPUTS", unset = NA_character_)
     if(is.na(obibinputs)) {
         on.exit(Sys.unsetenv("BIBINPUTS"), add = TRUE)
         obibinputs <- "."
     } else on.exit(Sys.setenv(BIBINPUTS = obibinputs, add = TRUE))
     Sys.setenv(BIBINPUTS = paste(obibinputs, bibinputs, sep = envSep))
-    obstinputs <- Sys.getenv("BSTINPUTS", unset = NA)
+    obstinputs <- Sys.getenv("BSTINPUTS", unset = NA_character_)
     if(is.na(obstinputs)) {
         on.exit(Sys.unsetenv("BSTINPUTS"), add = TRUE)
         obstinputs <- "."
@@ -285,14 +290,16 @@ function(file, pdf = FALSE, clean = FALSE, quiet = TRUE,
         opt_quiet <- if(quiet) "--quiet" else ""
         opt_extra <- ""
         out <- .system_with_capture(texi2dvi, "--help")
+
         if(length(grep("--no-line-error", out$stdout)))
             opt_extra <- "--no-line-error"
-        ## This is present in texinfo after late 2009, so really 5.x.
-        if(length(grep("--max-iterations=N", out$stdout)))
-            opt_extra <- c(opt_extra, "--max-iterations=20")
         ## (Maybe change eventually: the current heuristics for finding
         ## error messages in log files should work for both regular and
         ## file line error indicators.)
+
+        ## This is present in texinfo after late 2009, so really >= 5.0.
+        if(any(grepl("--max-iterations=N", out$stdout)))
+            opt_extra <- c(opt_extra, "--max-iterations=20")
 
         ## and work around a bug in texi2dvi
         ## https://stat.ethz.ch/pipermail/r-devel/2011-March/060262.html
@@ -306,6 +313,24 @@ function(file, pdf = FALSE, clean = FALSE, quiet = TRUE,
                                     c(opt_pdf, opt_quiet, opt_extra,
                                       shQuote(file)),
                                     env = env0)
+
+        log <- paste(file_path_sans_ext(file), "log", sep = ".")
+
+        ## With Texinfo 6.1 (precisely, c6637), texi2dvi may not rerun
+        ## often enough and give a non-zero status value when it should
+        ## have continued iterating.
+        ## Try to catch and correct cases seen on CRAN ...
+        ## (Note that texi2dvi may have been run quietly, in which case
+        ## diagnostics will only be in the log file.)
+        if(out$status &&
+           file_test("-f", log) &&
+           any(grepl("(Rerun to get|biblatex.*\\(re\\)run)",
+                     readLines(log, warn = FALSE)))) {
+            out <- .system_with_capture(texi2dvi,
+                                        c(opt_pdf, opt_quiet, opt_extra,
+                                          shQuote(file)),
+                                        env = env0)
+        }
 
         ## We cannot necessarily rely on out$status, hence let us
         ## analyze the log files in any case.
@@ -374,7 +399,7 @@ function(file, pdf = FALSE, clean = FALSE, quiet = TRUE,
             texinputs <- gsub("\\", "/", texinputs, fixed = TRUE)
             paths <- paste ("-I", shQuote(texinputs))
             extra <- "--max-iterations=20"
-           extra <- paste(extra, paste(paths, collapse = " "))
+            extra <- paste(extra, paste(paths, collapse = " "))
         }
         ## 'file' could be a file path
         base <- basename(file_path_sans_ext(file))
@@ -412,11 +437,7 @@ function(file, pdf = FALSE, clean = FALSE, quiet = TRUE,
         }
     } else {
         ## Do not have texi2dvi or don't want to index
-        ## Needed on Windows except for MiKTeX
-        ## Note that this does not do anything about running quietly,
-        ## nor cleaning, but is probably not used much anymore.
-
-        ## If it is called with MiKTeX then TEXINPUTS etc will be ignored.
+        ## Needed on Windows except for MiKTeX (prior to Sept 2015)
 
         texfile <- shQuote(file)
         ## 'file' could be a file path
@@ -427,29 +448,42 @@ function(file, pdf = FALSE, clean = FALSE, quiet = TRUE,
         if(!nzchar(Sys.which(latex)))
             stop(if(pdf) "pdflatex" else "latex", " is not available",
                  domain = NA)
+
+        sys2 <- if(quiet)
+            function(...) system2(..., stdout = FALSE, stderr = FALSE)
+        else system2
         bibtex <- Sys.getenv("BIBTEX", "bibtex")
         makeindex <- Sys.getenv("MAKEINDEX", "makeindex")
-        if(system(paste(shQuote(latex), "-interaction=nonstopmode", texfile)))
+        ltxargs <- c("-interaction=nonstopmode", texfile)
+        if(sys2(latex, ltxargs))
             stop(gettextf("unable to run '%s' on '%s'", latex, file),
                  domain = NA)
-        nmiss <- length(grep("^LaTeX Warning:.*Citation.*undefined",
+        nmiss <- length(grep("Warning:.*Citation.*undefined",
                              readLines(paste0(base, ".log"))))
         for(iter in 1L:10L) { ## safety check
             ## This might fail as the citations have been included in the Rnw
-            if(nmiss) system(paste(shQuote(bibtex), shQuote(base)))
+            if(nmiss) sys2(bibtex, shQuote(base))
             nmiss_prev <- nmiss
             if(index && file.exists(idxfile)) {
-                if(system(paste(shQuote(makeindex), shQuote(idxfile))))
+                if(sys2(makeindex, shQuote(idxfile)))
                     stop(gettextf("unable to run '%s' on '%s'",
                                   makeindex, idxfile),
                          domain = NA)
             }
-            if(system(paste(shQuote(latex), "-interaction=nonstopmode", texfile)))
-                stop(gettextf("unable to run %s on '%s'", latex, file), domain = NA)
+            if(sys2(latex, ltxargs)) {
+                lines <- .get_LaTeX_errors_from_log_file(paste0(base, ".log"))
+                errors <- if(length(lines))
+                    paste("LaTeX errors:",
+                          paste(lines, collapse = "\n"), sep = "\n")
+                else character()
+                stop(paste(gettextf("unable to run %s on '%s'", latex, file),
+                           errors, sep = "\n"),
+                     domain = NA)
+            }
             Log <- readLines(paste0(base, ".log"))
-            nmiss <- length(grep("^LaTeX Warning:.*Citation.*undefined", Log))
+            nmiss <- length(grep("Warning:.*Citation.*undefined", Log))
             if(nmiss == nmiss_prev &&
-               !length(grep("Rerun to get", Log)) ) break
+               !any(grepl("(Rerun to get|biblatex.*\\(re\\)run)", Log)) ) break
         }
         do_cleanup(clean)
     }
@@ -461,7 +495,7 @@ function(file, pdf = FALSE, clean = FALSE, quiet = TRUE,
 ### ** .BioC_version_associated_with_R_version
 
 .BioC_version_associated_with_R_version <-
-    function() numeric_version(Sys.getenv("R_BIOC_VERSION", "3.1"))
+    function() numeric_version(Sys.getenv("R_BIOC_VERSION", "3.3"))
 ## Things are more complicated from R-2.15.x with still two BioC
 ## releases a year, so we do need to set this manually.
 ## Wierdly, 3.0 is the second version (after 2.14) for the 3.1.x series.
@@ -550,6 +584,15 @@ function(val) {
     }
 }
 
+### ** .canonicalize_doi
+
+.canonicalize_doi <-
+function(x)    
+{
+    x <- sub("^((doi|DOI):)?[[:space:]]*http://(dx[.])?doi[.]org/", "",
+             x)
+    sub("^(doi|DOI):", "", x)
+}
 
 ### ** .canonicalize_quotes
 
@@ -612,7 +655,7 @@ function(db)
     db <- db[, c("Target", "Anchor"), drop = FALSE]
     ## See .check_Rd_xrefs().
     anchor <- db[, 2L]
-    have_equals <- grepl("^=", anchor)
+    have_equals <- startsWith(anchor, "=")
     if(any(have_equals))
         db[have_equals, ] <-
             cbind(sub("^=", "", anchor[have_equals]), "")
@@ -795,13 +838,20 @@ function(primitive = TRUE) # primitive means 'include primitives'
 ### ** .get_namespace_package_depends
 
 .get_namespace_package_depends <-
-function(dir)
+function(dir, selective_only = FALSE)
 {
     nsInfo <- .check_namespace(dir)
-    depends <- c(sapply(nsInfo$imports, "[[", 1L),
-                 sapply(nsInfo$importClasses, "[[", 1L),
-                 sapply(nsInfo$importMethods, "[[", 1L))
-    unique(sort(as.character(depends)))
+    getter <- if(selective_only) {
+        function(e) {
+            if(is.list(e) && length(e[[2L]])) e[[1L]] else character()
+        }
+    } else {
+        function(e) e[[1L]]
+    }
+    depends <- c(lapply(nsInfo$imports, getter),
+                 lapply(nsInfo$importClasses, getter),
+                 lapply(nsInfo$importMethods, getter))
+    unique(sort(as.character(unlist(depends, use.names = FALSE))))
 }
 
 ### ** .get_namespace_S3_methods_db
@@ -849,7 +899,7 @@ function(dir, installed = FALSE)
 .get_repositories <-
 function()
 {
-    rfile <- Sys.getenv("R_REPOSITORIES", unset = NA)
+    rfile <- Sys.getenv("R_REPOSITORIES", unset = NA_character_)
     if(is.na(rfile) || !file_test("-f", rfile)) {
         rfile <- file.path(Sys.getenv("HOME"), ".R", "repositories")
         if(!file_test("-f", rfile))
@@ -1127,6 +1177,20 @@ function(texi = NULL)
     sort(unique(sub(re, "", lines[grepl(re, lines)])))
 }
 
+### ** .gregexec_at_pos
+
+.gregexec_at_pos <-
+function(pattern, x, m, pos)
+{
+    unlist(lapply(regmatches(x, m),
+                  function(e)
+                      do.call(rbind,
+                              regmatches(e,
+                                         regexec(pattern, e)))[, pos]
+                  ),
+           use.names = FALSE)
+}
+
 ### ** .gsub_with_transformed_matches
 
 .gsub_with_transformed_matches <-
@@ -1165,6 +1229,28 @@ function(pattern, replacement, x, trafo, count, ...)
                 })
     regmatches(x, m) <- v
     x
+}
+
+### imports_for_undefined_globals
+
+imports_for_undefined_globals <-
+function(txt, lst, selective = TRUE)
+{
+    if(!missing(txt))
+        lst <- scan(what = character(), text = txt, quiet = TRUE)
+    lst <- sort(unique(lst))
+    nms <- lapply(lst, utils::find)
+    ind <- sapply(nms, length) > 0L
+    imp <- split(lst[ind], substring(unlist(nms[ind]), 9L))
+    if(selective) {
+        sprintf("importFrom(%s)",
+                vapply(Map(c, names(imp), imp),
+                       function(e)
+                           paste0("\"", e, "\"", collapse = ", "),
+                       ""))
+    } else {
+        sprintf("import(\"%s\")", names(imp))
+    }
 }
 
 ### ** .is_ASCII
@@ -1212,7 +1298,7 @@ function(fname, envir, mustMatch = TRUE)
     ## 'envir' is (to be considered) an S3 generic function.  Note,
     ## found *in* not found *from*, so envir does not have a default.
     ##
-    ## If it is, does it despatch methods of fname?  We need that to
+    ## If it is, does it dispatch methods of fname?  We need that to
     ## look for possible methods as functions named fname.* ....
     ##
     ## Provided by LT with the following comments:
@@ -1258,6 +1344,25 @@ function(fname, envir, mustMatch = TRUE)
     }
     res <- isUME(body(f))
     if(mustMatch) res == fname else nzchar(res)
+}
+
+### ** .load_namespace_rather_quietly
+
+.load_namespace_rather_quietly <-
+function(package)
+{
+    ## Suppress messages and warnings from loading namespace
+    ## dependencies.
+    .whandler <- function(e) {
+        calls <- sys.calls()
+        if(sum(.call_names(calls) == "loadNamespace") == 1L)
+            signalCondition(e)
+        else
+            invokeRestart("muffleWarning")
+    }
+    expr <- substitute(loadNamespace(package), list(package = package))
+    invisible(withCallingHandlers(suppressMessages(eval(expr)),
+                                  warning = .whandler))
 }
 
 ### ** .load_package_quietly
@@ -1344,7 +1449,7 @@ function(parent = parent.frame(), fixup = FALSE)
     env <- list2env(as.list(base::.GenericArgsEnv, all.names=TRUE),
                     hash=TRUE, parent=parent)
     if(fixup) {
-        ## now fixup the operators
+        ## now fixup the operators from (e1,e2) to (x,y)
         for(f in c('+', '-', '*', '/', '^', '%%', '%/%', '&', '|',
                    '==', '!=', '<', '<=', '>=', '>')) {
             fx <- get(f, envir = env)
@@ -1357,6 +1462,7 @@ function(parent = parent.frame(), fixup = FALSE)
 
 ### ** .make_S3_primitive_nongeneric_env
 
+## why not just use  base::.ArgsEnv -- is the parent really important if(is_base)?
 .make_S3_primitive_nongeneric_env <-
 function(parent = parent.frame())
 {
@@ -1366,27 +1472,23 @@ function(parent = parent.frame())
              hash=TRUE, parent=parent)
 }
 
-### ** .make_S3_methods_stop_list
+### ** nonS3methods [was .make_S3_methods_stop_list ]
 
-.make_S3_methods_stop_list <-
-function(package)
+nonS3methods <- function(package)
 {
     ## Return a character vector with the names of the functions in
     ## @code{package} which 'look' like S3 methods, but are not.
     ## Using package = NULL returns all known examples
 
     stopList <-
-        list(base = c("all.equal", "all.names", "all.vars",
+        list(base = c("all.equal", "all.names", "all.vars", "expand.grid",
              "format.char", "format.info", "format.pval",
              "max.col",
              ## the next two only exist in *-defunct.Rd.
              "print.atomic", "print.coefmat",
              "qr.Q", "qr.R", "qr.X", "qr.coef", "qr.fitted", "qr.qty",
              "qr.qy", "qr.resid", "qr.solve",
-             ## round.POSIXt is a method for S3 and S4 group generics with
-             ## deliberately different arg names.
-             "rep.int", "round.POSIXt",
-             "seq.int", "sort.int", "sort.list"),
+             "rep.int", "seq.int", "sort.int", "sort.list"),
              AMORE = "sim.MLPnet",
              BSDA = "sign.test",
              ChemometricsWithR = "lda.loofun",
@@ -1398,6 +1500,7 @@ function(package)
              HyperbolicDist = "log.hist",
              MASS = c("frequency.polygon", "gamma.dispersion", "gamma.shape",
                       "hist.FD", "hist.scott"),
+             LinearizedSVR = "sigma.est",
              ## FIXME: since these are already listed with 'base',
              ##        they should not need to be repeated here:
              Matrix = c("qr.Q", "qr.R", "qr.coef", "qr.fitted",
@@ -1405,7 +1508,10 @@ function(package)
              RCurl = "merge.list",
              RNetCDF = c("close.nc", "dim.def.nc", "dim.inq.nc",
                          "dim.rename.nc", "open.nc", "print.nc"),
+             Rmpfr = c("mpfr.is.0", "mpfr.is.integer"),
              SMPracticals = "exp.gibbs",
+             TANOVA = "sigma.hat",
+             TeachingDemos = "sigma.test",
              XML = "text.SAX",
              ape = "sort.index",
              arm = "sigma.hat", # lme4 has sigma()
@@ -1418,6 +1524,8 @@ function(package)
              crossdes = "all.combn",
              ctv = "update.views",
              deSolve = "plot.1D",
+             effects = "all.effects", # already deprecated
+             elliptic = "sigma.laurent",
              equivalence = "sign.boot",
              fields = c("qr.q2ty", "qr.yq2"),
              gbm = c("pretty.gbm.tree", "quantile.rug"),
@@ -1444,9 +1552,10 @@ function(package)
              sm = "print.graph",
              splusTimeDate = "sort.list",
              splusTimeSeries = "sort.list",
-             stats = c("anova.lmlist", "fitted.values", "lag.plot",
-                       "influence.measures", "t.test",
+	     stats = c("anova.lmlist", "expand.model.frame", "fitted.values",
+		       "influence.measures", "lag.plot", "t.test",
                        "plot.spec.phase", "plot.spec.coherency"),
+             stremo = "sigma.hat",
              supclust = c("sign.change", "sign.flip"),
              tensorA = "chol.tensor",
              utils = c("close.socket", "flush.console", "update.packages")
@@ -1477,13 +1586,13 @@ function(packages = NULL, FUN, ...)
     out
 }
 
-### ** .pandoc_README_md_for_CRAN
+### ** .pandoc_md_for_CRAN
 
-.pandoc_README_md_for_CRAN <-
+.pandoc_md_for_CRAN <-
 function(ifile, ofile)
 {
     .system_with_capture("pandoc",
-                         paste(shQuote(ifile), "-s",
+                         paste(shQuote(normalizePath(ifile)), "-s",
                                "--email-obfuscation=references",
                                "--css=../../CRAN_web.css",
                                "-o", shQuote(ofile)))
@@ -1527,6 +1636,12 @@ function(con)
     }
     .try_quietly(readLines(con, warn=FALSE))
 }
+
+### ** .read_additional_repositories_field
+
+.read_additional_repositories_field <-
+function(txt)
+    unique(unlist(strsplit(txt, ",[[:space:]]*")))
 
 ### ** .read_citation_quietly
 
@@ -1633,12 +1748,13 @@ function(file)
     db
 }
 
+### default changed to https: for R 3.3.0
 .expand_BioC_repository_URLs <-
 function(x)
 {
     x <- sub("%bm",
              as.character(getOption("BioC_mirror",
-                                    "http://bioconductor.org")),
+                                    "https://bioconductor.org")),
              x, fixed = TRUE)
     sub("%v",
         as.character(.BioC_version_associated_with_R_version()),
@@ -1772,7 +1888,7 @@ function(x)
     if(x2 != x1) {
         pat <- "[[:space:]]*([[<>=!]+)[[:space:]]+(.*)"
         version <- sub(pat, "\\2", x2)
-        if (!grepl("^r", version)) version <- package_version(version)
+        if (!startsWith(version, "r")) version <- package_version(version)
         list(name = x1, op = sub(pat, "\\1", x2), version = version)
     } else list(name = x1)
 }
@@ -1900,6 +2016,17 @@ function(args, msg)
               msg)
 }
 
+### * Miscellania
+
+### ** Rcmd
+
+Rcmd <- function(args, ...)
+{
+    if(.Platform$OS.type == "windows")
+        system2(file.path(R.home("bin"), "Rcmd.exe"), args, ...)
+    else
+        system2(file.path(R.home("bin"), "R"), c("CMD", args), ...)
+}
 
 ### ** pskill
 
@@ -1944,7 +2071,7 @@ toTitleCase <- function(text)
                        tolower(substring(x, 3L)))
             else paste0(toupper(x1), tolower(substring(x, 2L)))
         }
-        xx <- .Call(splitString, x, ' -/"()')
+        xx <- .Call(splitString, x, ' -/"()\n')
         ## for 'alone' we could insist on that exact capitalization
         alone <- xx %in% c(alone, either)
         alone <- alone | grepl("^'.*'$", xx)

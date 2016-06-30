@@ -1,5 +1,5 @@
 #  File src/library/stats/R/factanal.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
 #  Copyright (C) 1995-2015 The R Core Team
 #
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 ## Hmm, MM thinks diag(.) needs checking { diag(vec) when length(vec)==1 !}
 ## However, MM does not understand that factor analysis
@@ -250,7 +250,7 @@ print.loadings <- function(x, digits = 3L, cutoff = 0.1, sort = FALSE, ...)
     cat("\nLoadings:\n")
     fx <- setNames(format(round(Lambda, digits)), NULL)
     nc <- nchar(fx[1L], type="c")
-    fx[abs(Lambda) < cutoff] <- paste(rep(" ", nc), collapse = "")
+    fx[abs(Lambda) < cutoff] <- strrep(" ", nc)
     print(fx, quote = FALSE, ...)
     vx <- colSums(x^2)
     varex <- rbind("SS loadings" = vx)

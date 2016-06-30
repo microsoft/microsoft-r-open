@@ -1,5 +1,5 @@
 % File src/library/methods/man/languageEl.Rd
-% Part of the R package, http://www.R-project.org
+% Part of the R package, https://www.R-project.org
 % Copyright 1995-2007 R Core Team
 % Distributed under GPL 2 or later
 
@@ -15,7 +15,6 @@
 languageEl(object, which)
 
 isGrammarSymbol(symbol)
-
 }
 \section{Summary of Functions}{
   \describe{

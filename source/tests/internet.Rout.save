@@ -1,6 +1,6 @@
 
-R version 3.2.2 RC (2015-08-08 r68914) -- "Fire Safety"
-Copyright (C) 2015 The R Foundation for Statistical Computing
+R version 3.3.0 beta (2016-04-19 r70517) -- "Supposedly Educational"
+Copyright (C) 2016 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -15,21 +15,15 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 'help.start()' for an HTML browser interface to help.
 Type 'q()' to quit R.
 
-> ## These are tests that require internet functionality, and
-> ## a working Internet connection.
-> ## We attempt to test for those.
-> 
-> if(!capabilities()["http/ftp"]) {
-+     warning("no internet capabilities")
-+     q()
-+ }
+> ## These are tests that require a working Internet connection.
+> ## We attempt to test for that.
 > 
 > if(.Platform$OS.type == "unix" &&
 +    is.null(nsl("cran.r-project.org"))) q()
 > 
 > # test do_download.
 > nrow(available.packages(contrib.url("http://cran.r-project.org")))
-[1] 6968
+[1] 8269
 > 
 > # test url connections on http
 > zz <- url("http://cran.r-project.org/")
@@ -44,7 +38,7 @@ Type 'q()' to quit R.
  [8] "<link rel=\"stylesheet\" type=\"text/css\" href=\"R.css\">"                                               
  [9] "</head>"                                                                                                  
 [10] ""                                                                                                         
-[11] "<FRAMESET cols=\"1*, 4*\" border=0>"                                                                      
+[11] "<FRAMESET cols=\"1*, 4*\" style=\"border: none;\">"                                                       
 [12] "<FRAMESET rows=\"120, 1*\">"                                                                              
 [13] "<FRAME src=\"logo.html\" name=\"logo\" frameborder=0>"                                                    
 [14] "<FRAME src=\"navbar.html\" name=\"contents\" frameborder=0>"                                              

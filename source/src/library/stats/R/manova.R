@@ -1,7 +1,7 @@
 #  File src/library/stats/R/manova.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2013 The R Core Team
+#  Copyright (C) 1995-2016 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 manova <- function(...)
 {
@@ -56,7 +56,7 @@ summary.manova <-
     nmeffect <- c("(Intercept)", attr(object$terms, "term.labels"))
     resid <- as.matrix(object$residuals)
     wt <- object$weights
-    if (!is.null(wt)) resid <- resid * wt^0.5
+    if (!is.null(wt)) resid <- resid * sqrt(wt)
     nresp <- NCOL(resid)
     if(nresp <= 1) stop("need multiple responses")
 

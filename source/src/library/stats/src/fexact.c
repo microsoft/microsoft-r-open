@@ -16,7 +16,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
 /* -*- mode: c; kept-new-versions: 25; kept-old-versions: 20 -*-
@@ -30,9 +30,10 @@
 
 /* <UTF8> chars are handled as whole strings */
 
-#include <R.h>
 #include <stdio.h>
 #include <limits.h>
+#include <math.h>
+#include <R.h>
 
 static void f2xact(int nrow, int ncol, int *table, int ldtabl,
 		   double *expect, double *percnt, double *emin,

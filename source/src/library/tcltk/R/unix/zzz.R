@@ -1,5 +1,5 @@
 #  File src/library/tcltk/R/unix/zzz.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
 #  Copyright (C) 1995-2014 The R Core Team
 #
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 .TkUp <- FALSE
 
@@ -42,10 +42,9 @@
         ## common cause of problems with CRAN binary installs reported
         ## for Rcmdr.
         if (file.exists("/usr/bin/otool")) {
-            ## This is part of the OS nowadays.
-            r_arch <- .Platform$r_arch
-            DLL <- file.path(libname, pkgname, "libs", r_arch, "tcltk.so")
-            out <- system2("/usr/bin/otool", c("-L", shQuote(DLL)), stdout = TRUE)
+            ## otool is part of the OS nowadays.
+            DSO <- file.path(libname, pkgname, "libs", .Platform$r_arch, "tcltk.so")
+            out <- system2("/usr/bin/otool", c("-L", shQuote(DSO)), stdout = TRUE)
             ind <- grep("libtk[.0-9]+[.]dylib", out)
             if(length(ind)) {
                 this <- sub(" .*", "", sub("^\t", "", out[ind]))

@@ -3,7 +3,7 @@
  *  Copyright (C) 1995, 1996  Robert Gentleman and Ross Ihaka
  *  Copyright (C) 1998--2003  Guido Masarotto and Brian Ripley
  *  Copyright (C) 2004        The R Foundation
- *  Copyright (C) 2004-2015   The R Core Team
+ *  Copyright (C) 2004-2016   The R Core Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
 /*--- Device Driver for Windows; this file started from
@@ -1663,7 +1663,7 @@ setupScreenDevice(pDevDesc dd, gadesc *xd, double w, double h,
     MCHECK(xd->mclpwm = newmenuitem(G_("as a Metafile\tCTRL+W"), 0, menuclpwm));
     addto(m);
     MCHECK(newmenuitem("-", 0, NULL));
-    MCHECK(xd->mprint = newmenuitem(G_("Print...\tCTRL+P"), 0, menuprint));
+    MCHECK(xd->mprint = newmenuitem(G_("Print..."), 'P', menuprint));
     MCHECK(newmenuitem("-", 0, NULL));
     MCHECK(xd->mclose = newmenuitem(G_("close Device"), 0, menuclose));
     MCHECK(newmenu(G_("History")));
@@ -1705,7 +1705,7 @@ setupScreenDevice(pDevDesc dd, gadesc *xd, double w, double h,
     MCHECK(xd->grmenustayontop = newmenuitem(G_("Stay on top"), 0, menustayontop));
     setdata(xd->grmenustayontop, (void *) dd);
     MCHECK(newmenuitem("-", 0, NULL));
-    MCHECK(m = newmenuitem(G_("Print..."), 0, menuprint));
+    MCHECK(m = newmenuitem(G_("Print..."), 'P', menuprint));
     setdata(m, (void *) dd);
     gchangepopup(xd->gawin, xd->grpopup);
 
@@ -2251,9 +2251,11 @@ static void GA_Close(pDevDesc dd)
     gadesc *xd = (gadesc *) dd->deviceSpecific;
     SEXP vDL;
 
+    if (xd->cntxt)
+    	((RCNTXT *)xd->cntxt)->cend = NULL;  /* Don't try to run cleanup; it will have already happened */
+
     if (dd->onExit) {
 	dd->onExit(dd);
-	UserBreak = TRUE;
     }
 
     if (xd->kind == SCREEN) {
@@ -2287,6 +2289,7 @@ static void GA_Close(pDevDesc dd)
        device (but also on the console and others) */
     doevent();
     free(xd);
+    dd->deviceSpecific = NULL;
 }
 
 	/********************************************************/
@@ -3156,6 +3159,11 @@ static Rboolean GA_Locator(double *x, double *y, pDevDesc dd)
 	SH;
 	R_WaitEvent();
 	R_ProcessEvents();
+	if (!dd->deviceSpecific) { /* closing the window on other systems calls error().  
+	                             But that is not safe on Windows, so we NULL the device
+	                             specific field and call error() here instead. */
+	    error(_("graphics device closed during call to locator or identify"));
+	}
     }
 
     dd->onExit = NULL;

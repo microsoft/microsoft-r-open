@@ -1,17 +1,16 @@
 % File src/library/methods/man/MethodSupport.Rd
-% Part of the R package, http://www.R-project.org
+% Part of the R package, https://www.R-project.org
 % Copyright 1995-2009 R Core Team
 % Distributed under GPL 2 or later
 
 \name{MethodSupport}
 \title{Additional (Support) Functions for Methods}
-\alias{OldEvalSelectedMethod}
 \alias{getMethodsForDispatch}
 \alias{cacheMethod}
 \alias{resetGeneric}
 \alias{listFromMethods}
 \description{
-  These are support routines for computations on formal methods.
+  These are \emph{internal} support routines for computations on formal methods.
 }
 \usage{
 listFromMethods(generic, where, table)

@@ -1,7 +1,7 @@
 #  File src/library/graphics/R/mosaicplot.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2014 The R Core Team
+#  Copyright (C) 1995-2015 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 ## Original code copyright (C) 1998 John W. Emerson
 ## This version distributed under GPL (version 2 or later)
@@ -180,12 +180,7 @@ function(x, main = deparse(substitute(x)), sub = NULL, xlab = NULL,
     dimd <- length(dx <- dim(x))
     if(dimd == 0L || any(dx == 0L))
         stop("'x' must not have 0 dimensionality")
-    if(!missing(...))
-        warning(sprintf(ngettext(length(list(...)),
-                                 "extra argument %s will be disregarded",
-                                 "extra arguments %s will be disregarded"),
-                         paste(sQuote(names(list(...))), collapse = ", ")),
-                domain = NA)
+    chkDots(...)
     ##-- Set up 'Ind' matrix : to contain indices and data
     Ind <- 1L:dx[1L]
     if(dimd > 1L) {
@@ -400,7 +395,7 @@ function(formula, data = NULL, ...,
        || inherits(edata, "table")
        || length(dim(edata)) > 2) {
         data <- as.table(data)
-        varnames <- attr(stats:::terms.formula(formula), "term.labels")
+        varnames <- attr(stats::terms.formula(formula), "term.labels")
         if(all(varnames != "."))
             data <- margin.table(data,
                                  match(varnames, names(dimnames(data))))

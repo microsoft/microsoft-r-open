@@ -14,7 +14,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  *
  *  SYNOPSIS
  *
@@ -50,10 +50,7 @@ double pbeta_raw(double x, double a, double b, int lower_tail, int log_p)
 	if (b == 0 || b/a == 0) // point mass 1 at 1 ==> P(X <= x) = 0, all x < 1
 	    return R_DT_0;
 	// else, remaining case:  a = b = Inf : point mass 1 at 1/2
-	if (x < 0.5)
-	    return R_DT_0;
-	// else,  x >= 0.5 :
-	    return R_DT_1;
+	if (x < 0.5) return R_DT_0; else return R_DT_1;
     }
     // Now:  0 < a < Inf;  0 < b < Inf
 

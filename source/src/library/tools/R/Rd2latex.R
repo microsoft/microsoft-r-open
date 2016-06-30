@@ -1,7 +1,7 @@
 #  File src/library/tools/R/Rd2latex.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2015 The R Core Team
+#  Copyright (C) 1995-2016 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 ## TODO: can we do something useful with cross-package links?
 
@@ -316,9 +316,9 @@ Rd2latex <- function(Rd, out="", defines=.Platform$OS.type, stages="render",
     writeAlias <- function(block, tag) {
         alias <- as.character(block)
         aa <- "\\aliasA{"
-        ## some versions of hyperref (from 6.79d) have trouble indexing these
+        ## Some versions of hyperref (from 6.79d) have trouble indexing these
         ## |, || in base, |.bit, %||% in ggplot2 ...
-        ## And texindy used by texi2dvi > 1.135 chokes on {/(
+        ## And texindy used by some versions of texi2dvi chokes on {/(
         if(grepl("[|{(]", alias)) aa <- "\\aliasB{"
         if(is.na(currentAlias)) currentAlias <<- name
         if (pmatch(paste0(currentAlias, "."), alias, 0L)) {
@@ -438,7 +438,7 @@ Rd2latex <- function(Rd, out="", defines=.Platform$OS.type, stages="render",
                	   if (length(block) > 1L) {
 		       includeoptions <- .Rd_get_latex(block[[2]])
 		       if (length(includeoptions)
-			   && grepl("^options: ", includeoptions))
+			   && startsWith(includeoptions, "options: "))
 			   of0(sub("^options: ", "", includeoptions))
                    }
                	   of0('}')

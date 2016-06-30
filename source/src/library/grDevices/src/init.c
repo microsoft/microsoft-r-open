@@ -1,6 +1,6 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
- *  Copyright (C) 2004-13   The R Core Team.
+ *  Copyright (C) 2004-2015   The R Core Team.
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
 #ifdef HAVE_CONFIG_H
@@ -90,7 +90,7 @@ static const R_ExternalMethodDef ExtEntries[] = {
     EXTDEF(PostScript, 19),
     EXTDEF(XFig, 14),
     EXTDEF(PDF, 20),
-    EXTDEF(devCairo, 10),
+    EXTDEF(devCairo, 11),
     EXTDEF(devcap, 0),
     EXTDEF(devcapture, 1),
     EXTDEF(devcontrol, 1),

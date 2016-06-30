@@ -1,5 +1,5 @@
 #  File src/library/stats/R/diffinv.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -12,10 +12,10 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
-## Copyright (C) 1997-1999  Adrian Trapletti
-## Cppyright (C) 2003-2013  R Core Team
+## Copyright     1997-1999  Adrian Trapletti
+## Cppyright (C) 2003-2015  R Core Team
 ## This version distributed under GPL (version 2 or later)
 
 diffinv <- function (x, ...) { UseMethod("diffinv") }
@@ -73,17 +73,9 @@ diffinv.ts <- function (x, lag = 1, differences = 1, xi, ...)
     ts(y, frequency = frequency(x), end = end(x))
 }
 
-toeplitz <- function (x, ...)
+toeplitz <- function (x)
 {
     if(!is.vector(x)) stop("'x' is not a vector")
-    if(!missing(...)) {
-        na <- length(list(...))
-        warning(sprintf(ngettext(na,
-                                 "extra argument %s will be disregarded",
-                                 "extra arguments %s will be disregarded"),
-                        paste(sQuote(names(list(...))), collapse = ", ")),
-		domain = NA)
-    }
     n <- length(x)
     A <- matrix(raw(), n, n)
     matrix(x[abs(col(A) - row(A)) + 1L], n, n)

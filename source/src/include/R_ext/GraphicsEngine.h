@@ -14,7 +14,7 @@
  *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
 /* Used by graphics.c, grid and by third-party graphics devices */
@@ -57,9 +57,16 @@ extern "C" {
  *             haveCapture, haveLocator.  (R 2.14.0)
  * Version 10: For R 3.0.0.  Typedef and use 'rcolor',
  *             Remove name2col (R_GE_str2col does the job).
+ * Version 11: For R 3.3.0.
+ *             Official support for saving/restoring display lists
+ *             across R sessions (via recordPlot() and replayPlot())
+ *             - added grid DL to snapshots (used to be NULL)
+ *             - added this version number to snapshots (as attribute)
+ *             - added R version number to snapshots (as attribute)
+ *             - added pkgName to graphics system state info (as attribute)
  */
 
-#define R_GE_version 10
+#define R_GE_version 11
 
 int R_GE_getVersion(void);
 

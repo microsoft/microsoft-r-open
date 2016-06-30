@@ -1,5 +1,5 @@
 #  File src/library/base/R/connections.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
 #  Copyright (C) 1995-2015 The R Core Team
 #
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 stdin <- function() .Internal(stdin())
 stdout <- function() .Internal(stdout())
@@ -75,9 +75,10 @@ flush.connection <- function (con)
     .Internal(flush(con))
 
 file <- function(description = "", open = "", blocking = TRUE,
-                 encoding = getOption("encoding"), raw = FALSE)
-    .Internal(file(description, open, blocking, encoding, raw))
-
+                 encoding = getOption("encoding"), raw = FALSE,
+                 method = getOption("url.method", "default")) {
+    .Internal(file(description, open, blocking, encoding, method, raw))
+}
 pipe <- function(description, open = "", encoding = getOption("encoding"))
     .Internal(pipe(description, open, encoding))
 
@@ -86,10 +87,9 @@ fifo <- function(description, open = "", blocking = FALSE,
     .Internal(fifo(description, open, blocking, encoding))
 
 url <- function(description, open = "", blocking = TRUE,
-                encoding = getOption("encoding"), method)
+                encoding = getOption("encoding"),
+                method = getOption("url.method", "default"))
 {
-    if(missing(method))
-        method <- getOption("url.method", "default")
     method <- match.arg(method, c("default", "internal", "libcurl", "wininet"))
     .Internal(url(description, open, blocking, encoding, method))
 }
@@ -162,7 +162,7 @@ pushBack <- function(data, connection, newLine = TRUE,
 {
     # match.arg doesn't work on "" default
     if (length(encoding) > 1L) encoding <- encoding[1]
-    if (nchar(encoding)) encoding <- match.arg(encoding)
+    if (nzchar(encoding)) encoding <- match.arg(encoding)
     type <- match(encoding, c("", "bytes", "UTF-8"))
     .Internal(pushBack(data, connection, newLine, type))
 }
@@ -267,8 +267,8 @@ writeChar <- function(object, con, nchars = nchar(object, type="chars"),
     .Internal(writeChar(object, con, as.integer(nchars), eos, useBytes))
 }
 
-gzcon <- function(con, level = 6, allowNonCompressed = TRUE)
-    .Internal(gzcon(con, level, allowNonCompressed))
+gzcon <- function(con, level = 6, allowNonCompressed = TRUE, text = FALSE)
+    .Internal(gzcon(con, level, allowNonCompressed, text))
 
 socketSelect <- function(socklist, write = FALSE, timeout = NULL) {
     if (is.null(timeout))

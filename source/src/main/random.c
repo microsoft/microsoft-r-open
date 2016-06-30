@@ -1,7 +1,7 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
  *  Copyright (C) 1995, 1996  Robert Gentleman and Ross Ihaka
- *  Copyright (C) 1997--2014  The R Core Team
+ *  Copyright (C) 1997--2015  The R Core Team
  *  Copyright (C) 2003--2008  The R Foundation
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -16,7 +16,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
 #ifdef HAVE_CONFIG_H
@@ -24,6 +24,8 @@
 #endif
 
 #include <Defn.h>
+
+#include <R_ext/Itermacros.h>
 #include <R_ext/Random.h>
 #include <R_ext/RS.h>		/* for Calloc() */
 #include <Rmath.h>		/* for rxxx functions */
@@ -37,18 +39,18 @@ static void NORET invalid(SEXP call)
     error(_("invalid arguments"));
 }
 
-static Rboolean 
+static Rboolean
 random1(double (*f) (double), double *a, R_xlen_t na, double *x, R_xlen_t n)
 {
     Rboolean naflag = FALSE;
     double ai;
-    R_xlen_t i;
+    R_xlen_t i, ia;
     errno = 0;
-    for (i = 0; i < n; i++) {
-	ai = a[i % na];
+    MOD_ITERATE1(n, na, i, ia, {
+	ai = a[ia];
 	x[i] = f(ai);
 	if (ISNAN(x[i])) naflag = TRUE;
-    }
+    });
     return(naflag);
 }
 
@@ -120,15 +122,16 @@ static Rboolean random2(double (*f) (double, double),
 			double *a, R_xlen_t na, double *b, R_xlen_t nb,
 			double *x, R_xlen_t n)
 {
-    double ai, bi; R_xlen_t i;
+    double ai, bi;
+    R_xlen_t i, ia, ib;
     Rboolean naflag = FALSE;
     errno = 0;
-    for (i = 0; i < n; i++) {
-	ai = a[i % na];
-	bi = b[i % nb];
+    MOD_ITERATE2(n, na, nb, i, ia, ib, {
+	ai = a[ia];
+	bi = b[ib];
 	x[i] = f(ai, bi);
 	if (ISNAN(x[i])) naflag = TRUE;
-    }
+    });
     return(naflag);
 }
 
@@ -207,22 +210,22 @@ SEXP attribute_hidden do_random2(SEXP call, SEXP op, SEXP args, SEXP rho)
     return x;
 }
 
-static Rboolean 
-random3(double (*f) (double, double, double), double *a, 
+static Rboolean
+random3(double (*f) (double, double, double), double *a,
 	R_xlen_t na, double *b, R_xlen_t nb, double *c, R_xlen_t nc,
 	double *x, R_xlen_t n)
 {
     double ai, bi, ci;
-    R_xlen_t i;
+    R_xlen_t i, ia, ib, ic;
     Rboolean naflag = FALSE;
     errno = 0;
-    for (i = 0; i < n; i++) {
-	ai = a[i % na];
-	bi = b[i % nb];
-	ci = c[i % nc];
+    MOD_ITERATE3(n, na, nb, nc, i, ia, ib, ic, {
+	ai = a[ia];
+	bi = b[ib];
+	ci = c[ic];
 	x[i] = f(ai, bi, ci);
 	if (ISNAN(x[i])) naflag = TRUE;
-    }
+    });
     return(naflag);
 }
 
@@ -501,7 +504,7 @@ SEXP attribute_hidden do_sample(SEXP call, SEXP op, SEXP args, SEXP rho)
     else {  // uniform sampling
 	double dn = asReal(sn);
 	R_xlen_t k = asVecSize(sk);
-	if (!R_FINITE(dn) || dn < 0 || dn > 4.5e15 || (k > 0 && dn == 0)) 
+	if (!R_FINITE(dn) || dn < 0 || dn > 4.5e15 || (k > 0 && dn == 0))
 	    error(_("invalid first argument"));
 	if (k < 0) error(_("invalid '%s' argument"), "size");
 	if (!replace && k > dn)

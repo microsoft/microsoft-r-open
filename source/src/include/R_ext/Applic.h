@@ -1,6 +1,6 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
- *  Copyright (C) 1998-2013   The R Core Team
+ *  Copyright (C) 1998-2015   The R Core Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  *
  *
  * Application Routines, typically implemented in  ../appl/
@@ -42,7 +42,7 @@ extern "C" {
 
 /* Entry points in the R API */
 
-/* appl/integrate.c */
+/* ../../appl/integrate.c */
 typedef void integr_fn(double *x, int n, void *ex);
 /* vectorizing function   f(x[1:n], ...) -> x[]  {overwriting x[]}. */
 
@@ -84,6 +84,7 @@ void samin(int n, double *pb, double *yb, optimfn fn, int maxit,
 int findInterval(double *xt, int n, double x,
 		 Rboolean rightmost_closed,  Rboolean all_inside, int ilo,
 		 int *mflag);
+// findInterval2() is only in Utils.h (and hence Rinternals.h)
 
 
 /* ------------------ Entry points NOT in the R API --------------- */
@@ -135,7 +136,7 @@ void optif9(int nr, int n, double *x,
 	    double steptl, double *xpls, double *fpls, double *gpls,
 	    int *itrmcd, double *a, double *wrk, int *itncnt);
 
-/* find qr decomposition, dqrdc2() is basis of R's qr(), 
+/* find qr decomposition, dqrdc2() is basis of R's qr(),
    also used by nlme and many other packages. */
 void F77_NAME(dqrdc2)(double *x, int *ldx, int *n, int *p,
 		      double *tol, int *rank,

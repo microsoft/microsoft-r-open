@@ -1,6 +1,6 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
- *  Copyright (C) 2005-12   The R Core Team
+ *  Copyright (C) 2005-2016   The R Core Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -14,32 +14,29 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
+/* Internal header, not installed */
 
 /*  This file was contributed by Ei-ji Nakama.
- *  See also the comments in src/main/rlocale.c.
+ *  See also the comments in  ../main/rlocale.c.
 
  *  It does 2 things:
  * (a) supplies wrapper/substitute wc[s]width functions for use in 
  *    character.c, errors.c, printutils.c, devPS.c, RGui console.
  * (b) Defines a replacment for iswctype to be used on Windows, OS X and AIX.
  * in gram.c 
+ *
+ * It is not an installed header.
  */
 
 #ifndef R_LOCALE_H
 #define R_LOCALE_H
 
-#ifndef NO_C_HEADERS
 #include <wchar.h>
 #include <ctype.h>
 #include <wctype.h>
-#endif
-
-#ifdef  __cplusplus
-extern "C" {
-#endif
 
 /*
  * Windows CJK
@@ -58,12 +55,15 @@ extern "C" {
  *  The display widths of characters are not prescribed in Unicode.
  *  Double-width characters are used in the CJK area: their width can
  *  be font-specific, with different fonts in use in different parts
- *  of the CJK area.  The tables supplied in many OSes and by Marcus
+ *  of the CJK area.  The tables supplied in many OSes and by Markus
  *  Kuhn are not do not take the exact locale into account.  The
  *  tables supplied in rlocale_data.h allow different widths for
  *  different parts of the CJK area, and also where needed different
  *  widths on Windows.  (The Windows differences are in zh_CN, and
  *  apply to European characters.)
+ *
+ * The differences are mainly (but not exclusively) in the
+ * Unicode 'East Asian Ambiguous' class.
  *
  */
 extern int Ri18n_wcwidth(wchar_t);
@@ -114,7 +114,4 @@ extern int      Ri18n_iswctype(wint_t, wctype_t);
 #define iswctype(__x,__y) Ri18n_iswctype(__x,__y)
 #endif
 
-#ifdef  __cplusplus
-}
-#endif
 #endif /* R_LOCALE_H */

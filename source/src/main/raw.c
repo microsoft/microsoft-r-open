@@ -14,7 +14,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
 #ifdef HAVE_CONFIG_H
@@ -39,7 +39,7 @@ SEXP attribute_hidden do_charToRaw(SEXP call, SEXP op, SEXP args, SEXP env)
 	warning(_("argument should be a character vector of length 1\nall but the first element will be ignored"));
     nc = LENGTH(STRING_ELT(x, 0));
     ans = allocVector(RAWSXP, nc);
-    memcpy(RAW(ans), CHAR(STRING_ELT(x, 0)), nc);
+    if (nc) memcpy(RAW(ans), CHAR(STRING_ELT(x, 0)), nc);
     return ans;
 }
 
@@ -81,9 +81,10 @@ SEXP attribute_hidden do_rawToChar(SEXP call, SEXP op, SEXP args, SEXP env)
 
 SEXP attribute_hidden do_rawShift(SEXP call, SEXP op, SEXP args, SEXP env)
 {
+    checkArity(op, args);
+
     SEXP ans, x = CAR(args);
     int shift = asInteger(CADR(args));
-
 
     if (!isRaw(x))
 	error(_("argument 'x' must be a raw vector"));
@@ -102,6 +103,8 @@ SEXP attribute_hidden do_rawShift(SEXP call, SEXP op, SEXP args, SEXP env)
 
 SEXP attribute_hidden do_rawToBits(SEXP call, SEXP op, SEXP args, SEXP env)
 {
+    checkArity(op, args);
+
     SEXP ans, x = CAR(args);
     R_xlen_t i, j = 0;
     unsigned int tmp;
@@ -124,6 +127,7 @@ SEXP attribute_hidden do_intToBits(SEXP call, SEXP op, SEXP args, SEXP env)
     R_xlen_t i, j = 0;
     unsigned int tmp;
 
+    checkArity(op, args);
     PROTECT(x = coerceVector(CAR(args), INTSXP));
     if (!isInteger(x))
 	error(_("argument 'x' must be an integer vector"));
@@ -139,6 +143,7 @@ SEXP attribute_hidden do_intToBits(SEXP call, SEXP op, SEXP args, SEXP env)
 
 SEXP attribute_hidden do_packBits(SEXP call, SEXP op, SEXP args, SEXP env)
 {
+    checkArity(op, args);
     SEXP ans, x = CAR(args), stype = CADR(args);
     Rboolean useRaw;
     R_xlen_t i, len = XLENGTH(x), slen;
@@ -285,7 +290,7 @@ SEXP attribute_hidden do_utf8ToInt(SEXP call, SEXP op, SEXP args, SEXP env)
     }
     if (used < 0) error(_("invalid UTF-8 string"));
     ans = allocVector(INTSXP, j);
-    memcpy(INTEGER(ans), ians, sizeof(int) * j);
+    if (j) memcpy(INTEGER(ans), ians, sizeof(int) * j);
     return ans;
 }
 

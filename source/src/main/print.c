@@ -1,7 +1,7 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
  *  Copyright (C) 1995-1998	Robert Gentleman and Ross Ihaka.
- *  Copyright (C) 2000-2015	The R Core Team.
+ *  Copyright (C) 2000-2016	The R Core Team.
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  *
  *
  *  print.default()  ->	 do_printdefault (with call tree below)
@@ -66,8 +66,7 @@
 #include "Print.h"
 #include "Fileio.h"
 #include "Rconnections.h"
-#include <S.h>
-
+#include <R_ext/RS.h>
 
 /* Global print parameter struct: */
 R_print_par_t R_print;
@@ -119,13 +118,6 @@ SEXP attribute_hidden do_invisible(SEXP call, SEXP op, SEXP args, SEXP rho)
     }
 }
 
-#if 0
-SEXP attribute_hidden do_visibleflag(SEXP call, SEXP op, SEXP args, SEXP rho)
-{
-    return ScalarLogical(R_Visible);
-}
-#endif
-
 /* This is *only* called via outdated R_level prmatrix() : */
 SEXP attribute_hidden do_prmatrix(SEXP call, SEXP op, SEXP args, SEXP rho)
 {
@@ -167,6 +159,7 @@ SEXP attribute_hidden do_prmatrix(SEXP call, SEXP op, SEXP args, SEXP rho)
 /* .Internal( print.function(f, useSource, ...)) */
 SEXP attribute_hidden do_printfunction(SEXP call, SEXP op, SEXP args, SEXP rho)
 {
+    checkArity(op,args);
     SEXP s = CAR(args);
     switch (TYPEOF(s)) {
     case CLOSXP:
@@ -193,9 +186,9 @@ static void PrintLanguageEtc(SEXP s, Rboolean useSource, Rboolean isClosure)
     if (!isInteger(t) || !useSource)
 	t = deparse1w(s, 0, useSource | DEFAULTDEPARSE);
     else {
-        PROTECT(t = lang2(install("as.character"), t));
-        t = eval(t, R_BaseEnv);
-        UNPROTECT(1);
+	PROTECT(t = lang2(install("as.character"), t));
+	t = eval(t, R_BaseEnv);
+	UNPROTECT(1);
     }
     PROTECT(t);
     for (i = 0; i < LENGTH(t); i++)
@@ -456,7 +449,7 @@ static void PrintGenericVector(SEXP s, SEXP env)
 		    */
 		    const char *ss = EncodeChar(STRING_ELT(names, i));
 		    if (taglen + strlen(ss) > TAGBUFLEN) {
-		    	if (taglen <= TAGBUFLEN)
+			if (taglen <= TAGBUFLEN)
 			    sprintf(ptag, "$...");
 		    } else {
 			/* we need to distinguish character NA from "NA", which
@@ -472,7 +465,7 @@ static void PrintGenericVector(SEXP s, SEXP env)
 		}
 		else {
 		    if (taglen + IndexWidth(i) > TAGBUFLEN) {
-		    	if (taglen <= TAGBUFLEN)
+			if (taglen <= TAGBUFLEN)
 			    sprintf(ptag, "$...");
 		    } else
 			sprintf(ptag, "[[%d]]", i+1);
@@ -742,8 +735,8 @@ void attribute_hidden PrintValueRec(SEXP s, SEXP env)
 	Rprintf("<CHARSXP: ");
 	Rprintf("%s", EncodeString(s, 0, '"', Rprt_adj_left));
 	Rprintf(">\n");
-        return; /* skip attribute printing for CHARSXP; they are used */
-                /* in managing the CHARSXP cache. */
+	return; /* skip attribute printing for CHARSXP; they are used */
+		/* in managing the CHARSXP cache. */
     case EXPRSXP:
 	PrintExpression(s);
 	break;

@@ -1,9 +1,962 @@
 % -*- coding: utf-8 -*-
-\newcommand{\Rlogo}{\if{html}{\figure{../../html/logo.jpg}}\if{latex}{\figure{logo.jpg}{options: width=0.5in}}}
+\newcommand{\Rlogo}{\if{html}{\figure{../../html/Rlogo.svg}{options: class="toplogo" alt="[R logo]"}}\if{latex}{\figure{Rlogo.pdf}{options: width=0.5in}}}
 
 \name{NEWS}
 \title{R News}
 \encoding{UTF-8}
+
+\section{\Rlogo CHANGES IN R 3.3.0}{
+  \subsection{SIGNIFICANT USER-VISIBLE CHANGES}{
+    \itemize{
+      \item \code{nchar(x, *)}'s argument \code{keepNA} governing how
+      the result for \code{NA}s in \code{x} is determined, gets a new
+      default \code{keepNA = NA} which returns \code{NA} where
+      \code{x} is \code{NA}, except for \code{type = "width"} which still
+      returns \code{2}, the formatting / printing width of \code{NA}.
+
+      \item All builds have support for \samp{https:} URLs in the
+      default methods for \code{download.file()}, \code{url()} and code
+      making use of them.
+
+      Unfortunately that cannot guarantee that any particular
+      \samp{https:} URL can be accessed.  For example, server and client
+      have to successfully negotiate a cryptographic protocol (TLS/SSL,
+      \dots) and the server's identity has to be verifiable \emph{via}
+      the available certificates.  Different access methods may allow
+      different protocols or use private certificate bundles: we
+      encountered a \samp{https:} CRAN mirror which could be accessed by
+      one browser but not by another nor by \code{download.file()} on
+      the same Linux machine.
+    }
+  }
+
+  \subsection{NEW FEATURES}{
+    \itemize{
+      \item The \code{print} method for \code{methods()} gains a
+      \code{byclass} argument.
+
+      \item New functions \code{validEnc()} and \code{validUTF8()} to
+      give access to the validity checks for inputs used by
+      \code{grep()} and friends.
+
+      \item Experimental new functionality for S3 method checking, notably
+      \code{isS3method()}.
+
+      Also, the names of the \R \sQuote{language elements} are exported
+      as character vector \code{tools::langElts}.
+
+      \item \code{str(x)} now displays \code{"Time-Series"} also for
+      matrix (multivariate) time-series, i.e. when \code{is.ts(x)} is true.
+
+      \item (Windows only)  The GUI menu item to install local packages
+      now accepts \file{*.tar.gz} files as well as \file{*.zip} files
+      (but defaults to the latter).
+
+      \item New programmeR's utility function \code{chkDots()}.
+
+      \item \code{D()} now signals an error when given invalid input,
+      rather than silently returning \code{NA}.  (Request of John Nash.)
+
+      \item \code{formula} objects are slightly more \dQuote{first class}:
+      e.g., \code{formula()} or \code{new("formula", y ~ x)} are now
+      valid.  Similarly, for \code{"table"}, \code{"ordered"} and
+      \code{"summary.table"}.  Packages defining S4 classes with the above
+      S3/S4 classes as slots should be reinstalled.
+      % notably if their classes are reused in other
+      % packages. e.g. re-install arules for arulesSequence, flexmix for betareg
+
+      \item New function \code{strrep()} for repeating the elements of a
+      character vector.
+
+      \item \code{rapply()} preserves attributes on the list when
+      \code{how = "replace"}.
+
+      \item New S3 generic function \code{sigma()} with methods for
+      extracting the estimated standard deviation aka \dQuote{residual
+	standard deviation} from a fitted model.
+
+      \item \code{news()} now displays \R and package news files within
+      the HTML help system if it is available.  If no news file is found,
+      a visible \code{NULL} is returned to the console.
+
+      \item \code{as.raster(x)} now also accepts \code{raw} arrays
+      \code{x} assuming values in \code{0:255}.
+
+      \item Subscripting of matrix/array objects of type
+      \code{"expression"} is now supported.
+
+      \item \code{type.convert("i")} now returns a factor instead of a
+      complex value with zero real part and missing imaginary part.
+
+      \item Graphics devices \code{cairo_pdf()} and \code{cairo_ps()}
+      now allow non-default values of the cairographics \sQuote{fallback
+	resolution} to be set.
+
+      This now defaults to 300 on all platforms: that is the default
+      documented by cairographics, but apparently was not used by all
+      system installations.
+
+      \item \code{file()} gains an explicit \code{method} argument
+      rather than implicitly using
+      \code{getOption("url.method", "default")}.
+
+      \item Thanks to a patch from Tomas Kalibera, \code{x[x != 0]} is
+      now typically faster than \code{x[which(x != 0)]} (in the case
+      where \code{x} has no NAs, the two are equivalent).
+
+      \item \code{read.table()} now always uses the names for a named
+      \code{colClasses} argument (previously names were only used when
+      \code{colClasses} was too short). (In part, wish of \PR{16478}.)
+
+      \item (Windows only) \code{download.file()} with default
+      \code{method = "auto"} and a \samp{ftps://} URL chooses
+      \code{"libcurl"} if that is available.
+
+      \item The out-of-the box Bioconductor mirror has been changed to
+      one using \samp{https://}: use \code{chooseBioCmirror()} to choose
+      a \samp{http://} mirror if required.
+
+      \item The data frame and formula methods for \code{aggregate()}
+      gain a \code{drop} argument.
+
+      \item \code{available.packages()} gains a \code{repos} argument.
+
+      \item The undocumented switching of methods for \code{url()} on
+      \samp{https:} and \samp{ftps:} URLs is confined to
+      \code{method = "default"} (and documented).
+
+      \item \code{smoothScatter()} gains a \code{ret.selection} argument.
+
+      \item \code{qr()} no longer has a \code{\dots} argument to pass
+      additional arguments to methods.
+
+      \item \code{[} has a method for class \code{"table"}.
+
+      \item It is now possible (again) to \code{replayPlot()} a
+      display list snapshot that was created by \code{recordPlot()}
+      in a different \R session.
+
+      It is still not a good idea to use snapshots as a persistent
+      storage format for \R plots, but it is now not completely silly to
+      use a snapshot as a format for transferring an R plot between two
+      R sessions.
+
+      The underlying changes mean that packages providing graphics
+      devices (e.g., \CRANpkg{Cairo}, \CRANpkg{RSvgDevice},
+      \CRANpkg{cairoDevice}, \CRANpkg{tikzDevice}) will need to be
+      reinstalled.
+
+      Code for restoring snapshots was contributed by Jeroen Ooms
+      and JJ Allaire.
+
+      Some testing code is available at
+      \url{https://github.com/pmur002/R-display-list}.
+
+      \item \code{tools::undoc(dir = D)} and \code{codoc(dir = D)} now
+      also work when \code{D} is a directory whose \code{normalizePath()}ed
+      version does not end in the package name, e.g.\sspace{}from a symlink.
+
+      \item \code{abbreviate()} has more support for multi-byte
+      character sets -- it no longer removes bytes within characters and
+      knows about Latin vowels with accents.  It is still only
+      really suitable for (most) European languages, and still warns on
+      non-ASCII input.
+
+      \code{abbreviate(use.classes = FALSE)} is now implemented, and
+      that is more suitable for non-European languages.
+
+      \item \code{match(x, table)} is faster (sometimes by an order of
+      magnitude) when \code{x} is of length one and \code{incomparables}
+      is unchanged, thanks to Peter Haverty (\PR{16491}).
+
+      \item More consistent, partly not back-compatible behavior of
+      \code{NA} and \code{NaN} coercion to complex numbers, operations
+      less often resulting in complex \code{NA} (\code{NA_complex_}).
+
+      \item \code{lengths()} considers methods for \code{length} and
+      \code{[[} on \code{x}, so it should work automatically on any
+      objects for which appropriate methods on those generics are
+      defined.
+
+      \item The logic for selecting the default screen device on OS X
+      has been simplified: it is now \code{quartz()} if that is
+      available even if environment variable \env{DISPLAY} has been set
+      by the user.
+
+      The choice can easily be overridden \emph{via} environment
+      variable \env{R_INTERACTIVE_DEVICE}.
+
+      \item On Unix-like platforms which support the \command{getline} C
+      library function, \code{system(*,intern = TRUE)} no longer
+      truncates (output) lines longer than 8192 characters, thanks to
+      Karl Millar. (\PR{16544})
+
+      \item \code{rank()} gains a \code{ties.method = "last"} option,
+      for convenience (and symmetry).
+
+      %% \item \code{getRcode(vignette(..))} is the \R source file name of
+      %% a vignette.
+
+      \item \code{regmatches(invert = NA)} can now be used to extract
+      both non-matched and matched substrings.
+
+      \item \code{data.frame()} gains argument \code{fix.empty.names};
+      \code{as.data.frame.list()} gets new \code{cut.names},
+      \code{col.names} and \code{fix.empty.names}.
+
+      \item \code{plot(x ~ x, *)} now warns that it is the same as
+      \code{plot(x ~ 1, *)}.
+
+      \item \code{recordPlot()} has new arguments \code{load} and
+      \code{attach} to allow package names to be stored as part of a
+      recorded plot.  \code{replayPlot()} has new argument
+      \code{reloadPkgs} to load/attach any package names that were
+      stored as part of a recorded plot.
+
+      \item S4 dispatch works within calls to \code{.Internal()}. This
+      means explicit S4 generics are no longer needed for
+      \code{unlist()} and \code{as.vector()}.
+
+      \item Only font family names starting with \samp{"Hershey"} (and
+      not \samp{"Her"} as before) are given special treatment by the
+      graphics engine.
+
+      \item S4 values are automatically coerced to vector (via
+      \code{as.vector}) when subassigned into atomic vectors.
+
+      \item \code{findInterval()} gets a \code{left.open} option.
+
+      \item The version of LAPACK included in the sources has been
+      updated to 3.6.0, including those \sQuote{deprecated} routines
+      which were previously included.  \emph{Ca} 40 double-complex
+      routines have been added at the request of a package maintainer.
+
+      As before, the details of what is included are in
+      \file{src/modules/lapack/README} and this now gives information on
+      earlier additions.
+
+      \item \code{tapply()} has been made considerably more efficient
+      without changing functionality, thanks to proposals from Peter
+      Haverty and Suharto Anggono.  (\PR{16640})
+
+      \item \code{match.arg(arg)} (the one-argument case) is faster; so
+      is \code{sort.int()}.  (\PR{16640})
+
+      \item The \code{format} method for \code{object_size} objects now
+      also accepts \dQuote{binary} units such as \code{"KiB"} and e.g.,
+      \code{"Tb"}.  (Partly from \PR{16649}.)
+
+      \item Profiling now records calls of the form \code{foo::bar} and
+      some similar cases directly rather than as calls to
+      \code{<Anonymous>}.  Contributed by Winston Chang.
+
+      \item New string utilities \code{startsWith(x, prefix)} and
+      \code{endsWith(x, suffix)}.  Also provide speedups for some
+      \code{grepl("^...",*)} uses (related to proposals in \PR{16490}).
+
+      \item Reference class finalizers run at exit, as well as on
+      garbage collection.
+
+      \item Avoid \pkg{parallel} dependency on \pkg{stats} for port
+      choice and random number seeds.  (\PR{16668})
+
+      \item The radix sort algorithm and implementation from
+      \CRANpkg{data.table} (\code{forder}) replaces the previous radix
+      (counting) sort and adds a new method for \code{order()}.
+      Contributed by Matt Dowle and Arun Srinivasan, the new algorithm
+      supports logical, integer (even with large values), real, and
+      character vectors.  It outperforms all other methods, but there
+      are some caveats (see \code{?sort}).
+
+      \item The \code{order()} function gains a \code{method} argument
+      for choosing between \code{"shell"} and \code{"radix"}.
+
+      \item New function \code{grouping()} returns a permutation that
+      stably rearranges data so that identical values are adjacent.  The
+      return value includes extra partitioning information on the
+      groups.  The implementation came included with the new radix sort.
+
+      \item \code{rhyper(nn, m, n, k)} no longer returns \code{NA} when
+      one of the three parameters exceeds the maximal integer.
+
+      \item \code{switch()} now warns when no alternatives are provided.
+
+      \item \code{parallel::detectCores()} now has default \code{logical
+	= TRUE} on all platforms -- as this was the default on Windows,
+      this change only affects Sparc Solaris.
+
+      Option \code{logical = FALSE} is now supported on Linux and recent
+      versions of OS X (for the latter, thanks to a suggestion of Kyaw
+      Sint).
+
+      \item \code{hist()} for \code{"Date"} or \code{"POSIXt"} objects
+      would sometimes give misleading labels on the breaks, as they
+      were set to the day before the start of the period being
+      displayed.  The display format has been changed, and the shift of the
+      start day has been made conditional on \code{right = TRUE} (the
+      default).  (\PR{16679})
+
+      \item \R now uses a new version of the logo (donated to the R
+      Foundation by RStudio).  It is defined in \file{.svg} format, so
+      will resize without unnecessary degradation when displayed on
+      HTML pages---there is also a vector PDF version.  Thanks to
+      Dirk Eddelbuettel for producing the corresponding X11 icon.
+
+      \item New function \code{.traceback()} returns the stack trace
+      which \code{traceback()} prints.
+
+      \item \code{lengths()} dispatches internally.
+
+      \item \code{dotchart()} gains a \code{pt.cex} argument to control
+      the size of points separately from the size of plot labels.
+      Thanks to Michael Friendly and Milan Bouchet-Valat for ideas
+      and patches.
+
+      \item \code{as.roman(ch)} now correctly deals with more diverse
+      character vectors \code{ch}; also arithmetic with the resulting
+      roman numbers works in more cases.  (\PR{16779})
+
+      \item \code{prcomp()} gains a new option \code{rank.} allowing to
+      directly aim for less than \code{min(n,p)} PC's.  The
+      \code{summary()} and its \code{print()} method have been amended,
+      notably for this case.
+
+      \item \code{gzcon()} gains a new option \code{text}, which marks
+      the connection as text-oriented (so e.g.\sspace{}\code{pushBack()}
+      works).  It is still always opened in binary mode.
+      
+      \item The \code{import()} namespace directive now accepts an
+      argument \code{except} which names symbols to exclude from the
+      imports. The \code{except} expression should evaluate to a
+      character vector (after substituting symbols for strings). See
+      Writing R Extensions.
+
+      \item New convenience function \code{Rcmd()} in package
+      \pkg{tools} for invoking \command{R CMD} tools from within \R.
+
+      \item New functions \code{makevars_user()} and
+      \code{makevars_site()} in package \pkg{tools} to determine the
+      location of the user and site specific \file{Makevars} files for
+      customizing package compilation.
+    }
+  }
+
+  \subsection{UTILITIES}{
+    \itemize{
+      \item \command{R CMD check} has a new option
+      \option{--ignore-vignettes} for use with non-Sweave vignettes
+      whose \samp{VignetteBuilder} package is not available.
+
+      \item \command{R CMD check} now by default checks code usage
+      (\emph{via} \CRANpkg{codetools}) with only the base package
+      attached.  Functions from default packages other than \pkg{base}
+      which are used in the package code but not imported are reported
+      as undefined globals, with a suggested addition to the
+      \code{NAMESPACE} file.
+
+      \item \command{R CMD check --as-cran} now also checks DOIs in
+      package \file{CITATION} and Rd files.
+
+      \item \command{R CMD Rdconv} and \command{R CMD Rd2pdf} each have
+      a new option \option{--RdMacros=pkglist} which allows Rd macros
+      to be specified before processing.
+    }
+  }
+
+  \subsection{DEPRECATED AND DEFUNCT}{
+    \itemize{
+      \item The previously included versions of \code{zlib},
+      \code{bzip2}, \code{xz} and PCRE have been removed, so suitable
+      external (usually system) versions are required (see the
+      \sQuote{R Installation and Administration} manual).
+
+      \item The unexported and undocumented Windows-only devices
+      \code{cairo_bmp()}, \code{cairo_png()} and \code{cairo_tiff()}
+      have been removed.  (These devices should be used as
+      e.g.\sspace{}\code{bmp(type = "cairo")}.)
+
+      \item (Windows only)  Function \code{setInternet2()} has no effect
+      and will be removed in due course.  The choice between methods
+      \code{"internal"} and \code{"wininet"} is now made by the
+      \code{method} arguments of \code{url()} and \code{download.file()}
+      and their defaults can be set \emph{via} options.  The
+      out-of-the-box default remains \code{"wininet"} (as it has been
+      since \R 3.2.2).
+
+      \item \code{[<-} with an S4 value into a list currently embeds the
+      S4 object into its own list such that the end result is roughly
+      equivalent to using \code{[[<-}.  That behavior is deprecated.  In
+      the future, the S4 value will be coerced to a list with
+      \code{as.list()}.
+
+      \item Package \pkg{tools}' functions
+      \code{package.dependencies()}, \code{pkgDepends()}, etc are
+      deprecated now, mostly in favor of \code{package_dependencies()}
+      which is both more flexible and efficient.
+    }
+  }
+
+  \subsection{INSTALLATION and INCLUDED SOFTWARE}{
+    \itemize{
+      \item Support for very old versions of \command{valgrind}
+      (e.g., 3.3.0) has been removed.
+
+      \item The included \command{libtool} script (generated by
+      \command{configure}) has been updated to version 2.4.6 (from 2.2.6a).
+
+      \item \code{libcurl} version 7.28.0 or later with support for the
+      \code{https} protocol is required for installation (except on
+      Windows).
+
+      \item BSD networking is now required (except on Windows) and so
+      \code{capabilities("http/ftp")} is always true.
+
+      \item \command{configure} uses \command{pkg-config} for PNG, TIFF
+      and JPEG where this is available.  This should work better with
+      multiple installs and with those using static libraries.
+
+      \item The minimum supported version of OS X is 10.6 (\sQuote{Snow
+	Leopard}): even that has been unsupported by Apple since 2012.
+
+      \item The \command{configure} default on OS X is
+      \option{--disable-R-framework}: enable this if you intend to
+      install under \file{/Library/Frameworks} and use with \code{R.app}.
+
+      \item The minimum preferred version of PCRE has since \R 3.0.0
+      been 8.32 (released in Nov 2012).  Versions 8.10 to 8.31 are now
+      deprecated (with warnings from \command{configure}), but will
+      still be accepted until \R 3.4.0.
+
+      \item \command{configure} looks for C functions \code{__cospi},
+      \code{__sinpi} and \code{__tanpi} and uses these if \code{cospi}
+      \emph{etc} are not found.  (OS X is the main instance.)
+
+      \item (Windows) R is now built using \command{gcc}
+      4.9.3.  This build will require recompilation of at least those packages
+      that include C++ code, and possibly others.  A build of R-devel using
+      the older toolchain will be temporarily available for comparison
+      purposes.
+
+      During the transition, the environment variable
+      \env{R_COMPILED_BY} has been defined to indicate which toolchain
+      was used to compile R (and hence, which should be used to compile
+      code in packages).  The \code{COMPILED_BY} variable described below
+      will be a permanent replacement for this.
+
+      \item (Windows) A \command{make} and \command{R CMD config} variable
+      named \code{COMPILED_BY} has been added.  This indicates
+      which toolchain was used to compile R (and hence, which should be
+      used to compile code in packages).
+    }
+  }
+
+  \subsection{PACKAGE INSTALLATION}{
+    \itemize{
+      \item The \command{make} macro \code{AWK} which used to be made
+      available to files such as \file{src/Makefile} is no longer set.
+    }
+  }
+
+  \subsection{C-LEVEL FACILITIES}{
+    \itemize{
+      \item The API call \code{logspace_sum} introduced in \R 3.2.0 is
+      now remapped as an entry point to \code{Rf_logspace_sum}, and its
+      first argument has gained a \code{const} qualifier.  (\PR{16470})
+
+      Code using it will need to be reinstalled.
+
+      Similarly, entry point \code{log1pexp} also defined in
+      \file{Rmath.h} is remapped there to \code{Rf_log1pexp}
+
+      \item \code{R_GE_version} has been increased to \code{11}.
+
+      \item New API call \code{R_orderVector1}, a faster
+      one-argument version of \code{R_orderVector}.
+
+      \item When \R{} headers such as \file{R.h} and \file{Rmath.h} are
+      called from C++ code in packages they include the C++ versions of
+      system headers such as \file{<cmath>} rather than the legacy
+      headers such as \file{<math.h>}.  (Headers \file{Rinternals.h} and
+      \file{Rinterface.h} already did, and inclusion of system headers
+      can still be circumvented by defining \code{NO_C_HEADERS},
+      including as from this version for those two headers.)
+
+      The manual has long said that \R{} headers should \bold{not} be
+      included within an \code{extern "C"} block, and almost all the
+      packages affected by this change were doing so.
+
+      \item Including header \file{S.h} from C++ code would fail on some
+      platforms, and so gives a compilation error on all.
+
+      \item The deprecated header \file{Rdefines.h} is now compatible
+      with defining \code{R_NO_REMAP}.
+
+      \item The connections API now includes a function
+      \code{R_GetConnection()} which allows packages implementing
+      connections to convert R \code{connection} objects to
+      \code{Rconnection} handles used in the API. Code which previously
+      used the low-level R-internal \code{getConnection()} entry point
+      should switch to the official API.
+    }
+  }
+
+  \subsection{BUG FIXES}{
+    \itemize{
+      \item C-level \code{asChar(x)} is fixed for when \code{x} is not a
+      vector, and it returns \code{"TRUE"}/\code{"FALSE"} instead of
+      \code{"T"}/\code{"F"} for logical vectors.
+
+      \item The first arguments of \code{.colSums()} etc (with an
+      initial dot) are now named \code{x} rather than \code{X} (matching
+      \code{colSums()}): thus error messages are corrected.
+
+      \item A \code{coef()} method for class \code{"maov"} has been
+      added to allow \code{vcov()} to work with multivariate
+      results. (\PR{16380})
+
+      \item \code{method = "libcurl"} connections signal errors rather
+      than retrieving HTTP error pages (where the ISP reports the
+      error).
+
+      \item \code{xpdrows.data.frame()} was not checking for unique
+      row names; in particular, this affected assignment to non-existing
+      rows via numerical indexing. (\PR{16570})
+
+      \item \code{tail.matrix()} did not work for zero rows matrices,
+      and could produce row \dQuote{labels} such as \code{"[1e+05,]"}.
+
+      \item Data frames with a column named \code{"stringsAsFactors"}
+      now format and print correctly.  (\PR{16580})
+
+      \item \code{cor()} is now guaranteed to return a value with
+      absolute value less than or equal to 1. (\PR{16638})
+
+      \item Array subsetting now keeps \code{names(dim(.))}.
+
+      \item Blocking socket connection selection recovers more
+      gracefully on signal interrupts.
+
+      \item The \code{data.frame} method of \code{rbind()} construction
+      \code{row.names} works better in borderline integer cases, but
+      may change the names assigned.  (\PR{16666})
+
+      \item (X11 only)  \code{getGraphicsEvent()} miscoded buttons and
+      missed mouse motion events.  (\PR{16700})
+
+      \item \code{methods(round)} now also lists \code{round.POSIXt}.
+
+      \item \code{tar()} now works with the default \code{files = NULL}.
+      (\PR{16716})
+
+      \item Jumps to outer contexts, for example in error recovery, now
+      make intermediate jumps to contexts where \code{on.exit()} actions
+      are established instead of trying to run all \code{on.exit()}
+      actions before jumping to the final target. This unwinds the stack
+      gradually, releases resources held on the stack, and significantly
+      reduces the chance of a segfault when running out of C stack
+      space. Error handlers established using
+      \code{withCallingHandlers()} and \code{options("error")}
+      specifications are ignored when handling a C stack overflow error
+      as attempting one of these would trigger a cascade of C stack
+      overflow errors.  (These changes resolve \PR{16753}.)
+
+      \item The spacing could be wrong when printing a complex array.
+      (Report and patch by Lukas Stadler.)
+
+      \item \code{pretty(d, n, min.n, *)} for date-time objects \code{d}
+      works again in border cases with large \code{min.n}, returns a
+      \code{labels} attribute also for small-range dates and in such cases
+      its returned length is closer to the desired \code{n}.  (\PR{16761})
+      Additionally, it finally does cover the range of \code{d}, as it
+      always claimed.
+
+      \item \code{tsp(x) <- NULL} did not handle correctly objects
+      inheriting from both \code{"ts"} and \code{"mts"}.  (\PR{16769})
+
+      \item \code{install.packages()} could give false errors when
+      \code{options("pkgType")} was \code{"binary"}.  (Reported by
+      Jose Claudio Faria.)
+      
+      \item A bug fix in \R 3.0.2 fixed problems with \code{locator()}
+      in X11, but introduced problems in Windows.  Now both should be
+      fixed.  (\PR{15700})
+
+      \item \code{download.file()} with \code{method = "wininet"}
+      incorrectly warned of download file length difference when
+      reported length was unknown. (\PR{16805})
+      
+      \item \code{diag(NULL, 1)} crashed because of missed type
+      checking.  (\PR{16853})
+    }
+  }
+}
+
+\section{\Rlogo CHANGES IN R 3.2.4 patched}{
+  \subsection{BUG FIXES}{
+    \itemize{
+      \item \code{format.POSIXlt()} behaved incorrectly in \R 3.2.4.
+      E.g.\sspace{}the output of
+      \code{format(as.POSIXlt(paste0(1940:2000,"-01-01"), tz = "CET"),
+	usetz = TRUE)} ended in two \code{"CEST"} time formats.
+    }
+  }
+}
+
+\section{\Rlogo CHANGES IN R 3.2.4}{
+  \subsection{NEW FEATURES}{
+    \itemize{
+      \item \code{install.packages()} and related functions now give a
+      more informative warning when an attempt is made to install a base
+      package.
+
+      \item \code{summary(x)} now prints with less rounding when
+      \code{x} contains infinite values. (Request of \PR{16620}.)
+
+      \item \code{provideDimnames()} gets an optional \code{unique} argument.
+
+      \item \code{shQuote()} gains \code{type = "cmd2"} for quoting
+      in \command{cmd.exe} in Windows.  (Response to \PR{16636}.)
+
+      \item The \code{data.frame} method of \code{rbind()} gains an
+      optional argument \code{stringsAsFactors} (instead of only
+      depending on \code{getOption("stringsAsFactors")}).
+
+      \item \code{smooth(x, *)} now also works for long vectors.
+
+      \item \code{tools::texi2dvi()} has a workaround for problems with
+      the \command{texi2dvi} script supplied by \pkg{texinfo 6.1}.
+
+      It extracts more error messages from the LaTeX logs when in
+      emulation mode.
+    }
+  }
+
+  \subsection{UTILITIES}{
+    \itemize{
+      \item \command{R CMD check} will leave a log file
+      \file{build_vignettes.log} from the re-building of vignettes in
+      the \file{.Rcheck} directory if there is a problem, and always if
+      environment variable \env{_R_CHECK_ALWAYS_LOG_VIGNETTE_OUTPUT_} is
+      set to a true value.
+    }
+  }
+
+  \subsection{DEPRECATED AND DEFUNCT}{
+    \itemize{
+      \item Use of \samp{SUPPORT_OPENMP} from header \file{Rconfig.h} is
+      deprecated in favour of the standard OpenMP define \samp{_OPENMP}.
+
+      (This has been the recommendation in the manual for a while now.)
+
+      \item The \command{make} macro \code{AWK} which is long unused by
+      \R itself but recorded in file \file{etc/Makeconf} is deprecated
+      and will be removed in \R 3.3.0.
+
+      \item The C header file \file{S.h} is no longer documented: its
+      use should be replaced by \file{R.h}.
+    }
+  }
+
+  \subsection{BUG FIXES}{
+    \itemize{
+      \item \code{kmeans(x, centers = <1-row>)} now works. (\PR{16623})
+
+      \item \code{Vectorize()} now checks for clashes in argument names.
+      (\PR{16577})
+
+      \item \code{file.copy(overwrite = FALSE)} would signal a successful
+      copy when none had taken place.  (\PR{16576})
+
+      \item \code{ngettext()} now uses the same default domain as
+      \code{gettext()}.  (\PR{14605})
+
+      \item \code{array(.., dimnames = *)} now warns about
+      non-\code{list} dimnames and, from \R 3.3.0, will signal the same
+      error for invalid dimnames as \code{matrix()} has always done.
+
+      \item \code{addmargins()} now adds dimnames for the extended
+      margins in all cases, as always documented.
+
+      \item \code{heatmap()} evaluated its \code{add.expr} argument
+      in the wrong environment.  (\PR{16583})
+
+      \item \code{require()} etc now give the correct entry of
+      \code{lib.loc} in the warning about an old version of a package
+      masking a newer required one.
+
+      \item The internal deparser did not add parentheses when
+      necessary,  e.g. before \code{[]} or \code{[[]]}.  (Reported by
+      Lukas Stadler; additional fixes included as well).
+
+      \item \code{as.data.frame.vector(*, row.names=*)} no longer
+      produces \sQuote{corrupted} data frames from row names of incorrect
+      length, but rather warns about them.  This will become an error.
+
+      \item \code{url} connections with \code{method = "libcurl"} are
+      destroyed properly. (\PR{16681})
+
+      \item \code{withCallingHandler()} now (again) handles warnings
+      even during S4 generic's argument evaluation.  (\PR{16111})
+
+      \item \code{deparse(..., control = "quoteExpressions")}
+      incorrectly quoted empty expressions.  (\PR{16686})
+
+      \item \code{format()}ting datetime objects (\code{"POSIX[cl]?t"})
+      could segfault or recycle wrongly.  (\PR{16685})
+
+      \item \code{plot.ts(<matrix>, las = 1)} now does use \code{las}.
+
+      \item \code{saveRDS(*, compress = "gzip")} now works as
+      documented.  (\PR{16653})
+
+      \item (Windows only) The \command{Rgui} front end did not
+      always initialize the console properly, and could cause
+      \R to crash.  (\PR{16698})
+
+      \item \code{dummy.coef.lm()} now works in more cases, thanks to a
+      proposal by Werner Stahel (\PR{16665}).  In addition, it now works
+      for multivariate linear models (\code{"mlm"}, \code{\link{manova}})
+      thanks to a proposal by Daniel Wollschlaeger.
+
+      \item The \code{as.hclust()} method for \code{"dendrogram"}s
+      failed often when there were ties in the heights.
+
+      \item \code{reorder()} and \code{midcache.dendrogram()} now are
+      non-recursive and hence applicable to somewhat deeply nested
+      dendrograms, thanks to a proposal by Suharto Anggono in \PR{16424}.
+
+      \item \code{cor.test()} now calculates very small p values
+      more accurately (affecting the result only in extreme not
+      statistically relevant cases).  (\PR{16704})
+
+      \item \code{smooth(*, do.ends=TRUE)} did not always work correctly
+      in \R versions between 3.0.0 and 3.2.3.
+
+      \item \code{pretty(D)} for date-time objects \code{D} now also
+      works well if \code{range(D)} is (much) smaller than a second.  In
+      the case of only one unique value in \code{D}, the pretty range
+      now is more symmetric around that value than previously.
+      \cr
+      Similarly, \code{pretty(dt)} no longer returns a length 5 vector
+      with duplicated entries for \code{Date} objects \code{dt} which
+      span only a few days.
+
+      \item The figures in help pages such as \code{?points} were
+      accidentally damaged, and did not appear in \R 3.2.3.
+      (\PR{16708})
+
+      \item \code{available.packages()} sometimes deleted the wrong
+      file when cleaning up temporary files.  (\PR{16712})
+
+      \item The \code{X11()} device sometimes froze on Red Hat
+      Enterprise Linux 6. It now waits for \code{MapNotify} events
+      instead of \code{Expose} events, thanks to Siteshwar
+      Vashisht. (\PR{16497})
+
+      \item \code{[dpqr]nbinom(*, size=Inf, mu=.)} now works as limit
+      case, for \sQuote{dpq} as the Poisson.  (\PR{16727})\cr
+      \code{pnbinom()} no longer loops infinitely in border cases.
+
+      \item \code{approxfun(*, method="constant")} and hence \code{ecdf()}
+      which calls the former now correctly \dQuote{predict} \code{NaN}
+      values as \code{NaN}.
+
+      \item \code{summary.data.frame()} now displays \code{NA}s in
+      \code{Date} columns in all cases.  (\PR{16709})
+    }
+  }
+}
+
+\section{\Rlogo CHANGES IN R 3.2.3}{
+  \subsection{NEW FEATURES}{
+    \itemize{
+      \item Some recently-added Windows time zone names have been added
+      to the conversion table used to convert these to Olson names.
+      (Including those relating to changes for Russia in Oct 2014, as in
+      \PR{16503}.)
+
+      \item (Windows) Compatibility information has been added to the
+      manifests for \file{Rgui.exe}, \file{Rterm.exe} and
+      \file{Rscript.exe}.  This should allow \code{win.version()} and
+      \code{Sys.info()} to report the actual Windows version up to
+      Windows 10.
+
+      \item Windows \code{"wininet"} FTP first tries EPSV / PASV mode
+      rather than only using active mode (reported by Dan Tenenbaum).
+      %% https://stat.ethz.ch/pipermail/r-devel/2015-August/071595.html
+
+      \item \code{which.min(x)} and \code{which.max(x)} may be much
+      faster for logical and integer \code{x} and now also work for long
+      vectors.
+
+      \item The \sQuote{emulation} part of \code{tools::texi2dvi()} has
+      been somewhat enhanced, including supporting \code{quiet = TRUE}.
+      It can be selected by \code{texi2dvi = "emulation"}.
+
+      (Windows) MiKTeX removed its \code{texi2dvi.exe} command in Sept
+      2015: \code{tools::texi2dvi()} tries \code{texify.exe} if it is
+      not found.
+
+      \item (Windows only) Shortcuts for printing and saving have
+      been added to menus in \command{Rgui.exe}.  (Request of \PR{16572}.)
+
+      \item \code{loess(..., iterTrace=TRUE)} now provides diagnostics
+      for robustness iterations, and the \code{print()} method for
+      \code{summary(<loess>)} shows slightly more.
+
+      \item The included version of PCRE has been updated to 8.38, a
+      bug-fix release.
+
+      \item \code{View()} now displays nested data frames in a more
+      friendly way.  (Request with patch in \PR{15915}.)
+    }
+  }
+
+  \subsection{INSTALLATION and INCLUDED SOFTWARE}{
+    \itemize{
+      \item The included configuration code for \code{libintl} has been
+      updated to that from \code{gettext} version 0.19.5.1 --- this
+      should only affect how an external library is detected (and the
+      only known instance is under OpenBSD).  (Wish of \PR{16464}.)
+
+      \item \command{configure} has a new argument
+      \option{--disable-java} to disable the checks for Java.
+
+      \item The \command{configure} default for \code{MAIN_LDFLAGS} has
+      been changed for the FreeBSD, NetBSD and Hurd OSes to one more
+      likely to work with compilers other than \command{gcc} (FreeBSD 10
+      defaults to \command{clang}).
+
+      \item \command{configure} now supports the OpenMP flags
+      \option{-fopenmp=libomp} (clang) and \option{-qopenmp} (Intel C).
+
+      \item Various macros can be set to override the default
+      behaviour of \command{configure} when detecting OpenMP: see file
+      \file{config.site}.
+
+      \item Source installation on Windows has been modified to allow
+      for MiKTeX installations without \command{texi2dvi.exe}.  See file
+      \file{MkRules.dist}.
+    }
+  }
+
+  \subsection{BUG FIXES}{
+    \itemize{
+      \item \code{regexpr(pat, x, perl = TRUE)} with Python-style named
+      capture did not work correctly when \code{x} contained \code{NA}
+      strings.  (\PR{16484})
+
+      \item The description of dataset \code{ToothGrowth} has been
+      improved/corrected.  (\PR{15953})
+
+      \item \code{model.tables(type = "means")} and hence
+      \code{TukeyHSD()} now support \code{"aov"} fits without an
+      intercept term.  (\PR{16437})
+
+      \item \code{close()} now reports the status of a \code{pipe()}
+      connection opened with an explicit \code{open} argument.
+      (\PR{16481})
+
+      \item Coercing a list without names to a data frame is faster if
+      the elements are very long. (\PR{16467})
+
+      \item (Unix-only) Under some rare circumstances piping the output
+      from \command{Rscript} or \command{R -f} could result in
+      attempting to close the input file twice, possibly crashing the
+      process.  (\PR{16500})
+
+      \item (Windows) \code{Sys.info()} was out of step with
+      \code{win.version()} and did not report Windows 8.
+
+      \item \code{topenv(baseenv())} returns \code{baseenv()} again as
+      in \R 3.1.0 and earlier.  This also fixes \code{compilerJIT(3)}
+      when used in \file{.Rprofile}.
+
+      \item \code{detach()}ing the \pkg{methods} package keeps
+      \code{.isMethodsDispatchOn()} true, as long as the methods
+      namespace is not unloaded.% This keeps a sane state, see the reg-S4 test
+
+      \item Removed some spurious warnings from \command{configure} about the
+      preprocessor not finding header files.  (\PR{15989})
+
+      \item \code{rchisq(*, df=0, ncp=0)} now returns \code{0} instead
+      of \code{NaN}, and \code{dchisq(*, df=0, ncp=*)} also no longer
+      returns \code{NaN} in limit cases (where the limit is unique).
+      (\PR{16521})
+
+      \item \code{pchisq(*, df=0, ncp > 0, log.p=TRUE)} no longer
+      underflows (for ncp > ~60).
+
+      \item \code{nchar(x, "w")} returned -1 for characters it did not
+      know about (e.g.\sspace{}zero-width spaces): it now assumes 1.
+      It now knows about most zero-width characters and a few more
+      double-width characters.
+
+      \item Help for \code{which.min()} is now more precise about
+      behavior with logical arguments.  (\PR{16532})
+
+      \item The print width of character strings marked as
+      \code{"latin1"} or \code{"bytes"} was in some cases computed
+      incorrectly.
+
+      \item \code{abbreviate()} did not give names to the return value
+      if \code{minlength} was zero, unlike when it was positive.
+
+      \item (Windows only) \code{dir.create()} did not always warn
+      when it failed to create a directory.  (\PR{16537})
+
+      \item When operating in a non-UTF-8 multibyte locale
+      (e.g.\sspace{}an East Asian locale on Windows), \code{grep()} and
+      related functions did not handle UTF-8 strings properly.
+      (\PR{16264})
+
+      \item \code{read.dcf()} sometimes misread lines longer than 8191
+      characters.  (Reported by Hervé Pagès with a patch.)
+
+      \item \code{within(df, ..)} no longer drops columns whose name
+      start with a \code{"."}.
+
+      \item The built-in \code{HTTP} server converted entire
+      \code{Content-Type} to lowercase including parameters which
+      can cause issues for multi-part form boundaries (\PR{16541}).
+
+      \item Modifying slots of S4 objects could fail when the
+      \pkg{methods} package was not attached. (\PR{16545})
+
+      \item \code{splineDesign(*, outer.ok=TRUE)} (\pkg{splines}) is better now
+      (\PR{16549}), and \code{interpSpline()} now allows \code{sparse=TRUE}
+      for speedup with non-small sizes.
+
+      \item If the expression in the traceback was too long,
+      \code{traceback()} did not report the source line number.  (Patch
+      by Kirill Müller.)
+
+      \item The browser did not truncate the display of the function when
+      exiting with \code{options("deparse.max.lines")} set.
+      (\PR{16581})
+
+      \item When \code{bs(*, Boundary.knots=)} had boundary knots inside
+      the data range, extrapolation was somewhat off.  (Patch by Trevor
+      Hastie.)
+
+      \item \code{var()} and hence \code{sd()} warn about
+      \code{factor} arguments which are deprecated now. (\PR{16564})
+
+      \item \code{loess(*, weights = *)} stored wrong weights and hence
+      gave slightly wrong predictions for \code{newdata}.  (\PR{16587})
+
+      \item \code{aperm(a, *)} now preserves \code{names(dim(a))}.
+
+      \item \code{poly(x, ..)} now works when either \code{raw=TRUE} or
+      \code{coef} is specified.  (\PR{16597})
+
+      \item \code{data(package=*)} is more careful in determining the path.
+
+      \item \code{prettyNum(*, decimal.mark, big.mark)}: fixed bug
+      introduced when fixing \PR{16411}.
+    }
+  }
+}
 
 \section{\Rlogo CHANGES IN R 3.2.2}{
   \subsection{SIGNIFICANT USER-VISIBLE CHANGES}{
@@ -14,7 +967,7 @@
       packages can be installed from repositories which offer
       \samp{https://} URLs, and those listed by \code{setRepositories()}
       now do so (for some of their mirrors).
-      
+
       Support for \samp{https://} URLs is available on Windows, and on
       other platforms if support for \code{libcurl} was compiled in and
       if that supports the \code{https} protocol (system installations
@@ -27,11 +980,11 @@
       \code{download.file()} and \code{url()} has been changed to be
       \code{"wininet"} using Windows API calls.  This changes the way
       proxies need to be set and security settings made: there have been
-      some reports of sites being inaccessible under the new default
+      some reports of \samp{ftp:} sites being inaccessible under the new default
       method (but the previous methods remain available).
     }
   }
-  
+
   \subsection{NEW FEATURES}{
     \itemize{
       \item \code{cmdscale()} gets new option \code{list.} for increased
@@ -44,7 +997,7 @@
       \item (Non-Windows only) \code{download.file()} with default
       \code{method = "auto"} now chooses \code{"libcurl"} if that is
       available and a \samp{https://} or \samp{ftps://} URL is used.
-      
+
       \item (Windows only) \code{setInternet2(TRUE)} is now the default.
       The command-line option \command{--internet2} and environment
       variable \env{R_WIN_INTERNET2} are now ignored.
@@ -54,13 +1007,12 @@
       method: to revert to the previous default use
       \code{setInternet2(FALSE)}.
 
-      This means that \samp{https://} can be read by default by
-      \code{download.file()} (they have been readable by \code{file()} and
-      \code{url()} since \R 3.2.0).
+      This means that \samp{https://} URLs can be read by default by
+      \code{download.file()} (they have been readable by \code{file()}
+      and \code{url()} since \R 3.2.0).
 
       There are implications for how proxies need to be set (see
-      \code{?download.file}): also, \code{cacheOK = FALSE} is not
-      supported.
+      \code{?download.file}).
 
       \item \code{chooseCRANmirror()} and \code{chooseBioCmirror()} now
       offer HTTPS mirrors in preference to HTTP mirrors.  This changes
@@ -185,10 +1137,12 @@
 
       \item \code{nchar(x, *)} and \code{nzchar(x)} gain a new argument
       \code{keepNA} which governs how the result for \code{NA}s in
-      \code{x} is determined.  For the \R 3.2.x series, the default
+      \code{x} is determined.  For \code{nzchar()} in general and
+      \code{nchar()} in the \R 3.2.x series, the default
       remains \code{FALSE} which is fully back compatible.
-      From \R 3.3.0, the default will change to \code{keepNA = NA} and
-      you are advised to consider this for code portability.
+      From \R 3.3.0, \code{nchar()}'s default will change to
+      \code{keepNA = NA} and you are advised to consider this for code
+      portability.
 
       \item \code{news()} more flexibly extracts dates from package
       \file{NEWS.Rd} files.
@@ -1013,7 +1967,7 @@
       was complex.  (\PR{16047})
 
       \item \code{"noquote"} objects may now be used as columns in
-      dataframes.  (\PR{15997})
+      data frames.  (\PR{15997})
 
       \item Some values with extremely long names were printed
       incorrectly.  (\PR{15999})
@@ -1303,7 +2257,7 @@
 
       \item \code{sub()} and \code{gsub()} did not handle regular
       expressions like \code{"\\s{2,}"} properly if the text
-      contained \code{NA} or non-ascii elements in a UTF-8
+      contained \code{NA} or non-ASCII elements in a UTF-8
       locale.  Part of this was due to a bug in the TRE library.
       (\PR{16009})
 
@@ -2439,7 +3393,7 @@
       \code{NA} returned that time.  (The platforms affected include
       Linux and OS X, but not Windows nor Solaris.)
 
-      \item \code{rowsum()} has more support for matrices and dataframes
+      \item \code{rowsum()} has more support for matrices and data frames
       with \eqn{2^{31}}{2^31} or more elements. (\PR{15587})
 
       \item \code{predict(<lm object>, interval = "confidence", scale =
@@ -3246,7 +4200,7 @@
       which is representable as an integer (as often happens for package
       \CRANpkg{Matrix}), this is converted to an integer.
 
-      \item Matrix indexing of dataframes by two-column numeric indices
+      \item Matrix indexing of data frames by two-column numeric indices
       is now supported for replacement as well as extraction.
 
       \item \code{setNames()} now has a default for its \code{object}

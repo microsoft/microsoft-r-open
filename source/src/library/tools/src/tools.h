@@ -1,6 +1,6 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
- *  Copyright (C) 2003-2015   The R Core Team.
+ *  Copyright (C) 2003-2016   The R Core Team.
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -14,12 +14,13 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
 #ifndef R_TOOLS_H
 #define R_TOOLS_H
 
+#include <R.h>
 #include <Rinternals.h>
 #ifdef ENABLE_NLS
 #include <libintl.h>

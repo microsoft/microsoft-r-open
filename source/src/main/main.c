@@ -16,7 +16,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
 #ifdef HAVE_CONFIG_H
@@ -80,9 +80,9 @@ static void R_ReplFile(FILE *fp, SEXP rho)
     ParseStatus status;
     int count=0;
     int savestack;
-    
+
     R_InitSrcRefState();
-    savestack = R_PPStackTop;    
+    savestack = R_PPStackTop;
     for(;;) {
 	R_PPStackTop = savestack;
 	R_CurrentExpr = R_Parse1File(fp, 1, &status);
@@ -222,7 +222,7 @@ Rf_ReplIteration(SEXP rho, int savestack, int browselevel, R_ReplState *state)
 
     R_PPStackTop = savestack;
     R_CurrentExpr = R_Parse1Buffer(&R_ConsoleIob, 0, &state->status);
-    
+
     switch(state->status) {
 
     case PARSE_NULL:
@@ -246,9 +246,9 @@ Rf_ReplIteration(SEXP rho, int savestack, int browselevel, R_ReplState *state)
 		R_IoBufferWriteReset(&R_ConsoleIob);
 		return 0;
 	    }
-	    /* PR#15770 We don't want to step into expressions entered at the debug prompt. 
+	    /* PR#15770 We don't want to step into expressions entered at the debug prompt.
 	       The 'S' will be changed back to 's' after the next eval. */
-	    if (R_BrowserLastCommand == 's') R_BrowserLastCommand = 'S';  
+	    if (R_BrowserLastCommand == 's') R_BrowserLastCommand = 'S';
 	}
 	R_Visible = FALSE;
 	R_EvalDepth = 0;
@@ -265,7 +265,7 @@ Rf_ReplIteration(SEXP rho, int savestack, int browselevel, R_ReplState *state)
 	Rf_callToplevelHandlers(thisExpr, value, TRUE, wasDisplayed);
 	R_CurrentExpr = value; /* Necessary? Doubt it. */
 	UNPROTECT(2); /* thisExpr, value */
-	if (R_BrowserLastCommand == 'S') R_BrowserLastCommand = 's';  
+	if (R_BrowserLastCommand == 'S') R_BrowserLastCommand = 's';
 	R_IoBufferWriteReset(&R_ConsoleIob);
 	state->prompt_type = 1;
 	return(1);
@@ -317,9 +317,33 @@ static void R_ReplConsole(SEXP rho, int savestack, int browselevel)
 
 static unsigned char DLLbuf[CONSOLE_BUFFER_SIZE+1], *DLLbufp;
 
+static void check_session_exit()
+{
+    if (! R_Interactive) {
+	/* This funtion will be called again after a LONGJMP if an
+	   error is signaled from one of the functions called. The
+	   'exiting' variable identifies this and results in
+	   R_Suicide. */
+	static Rboolean exiting = FALSE;
+	if (exiting)
+	    R_Suicide(_("error during cleanup\n"));
+	else {
+	    exiting = TRUE;
+	    if (GetOption1(install("error")) != R_NilValue) {
+		exiting = FALSE;
+		return;
+	    }
+	    REprintf(_("Execution halted\n"));
+	    R_CleanUp(SA_NOSAVE, 1, 0); /* quit, no save, no .Last, status=1 */
+	}
+	
+    }
+}
+
 void R_ReplDLLinit(void)
 {
-    SETJMP(R_Toplevel.cjmpbuf);
+    if (SETJMP(R_Toplevel.cjmpbuf))
+	check_session_exit();
     R_GlobalContext = R_ToplevelContext = R_SessionContext = &R_Toplevel;
     R_IoBufferWriteReset(&R_ConsoleIob);
     prompt_type = 1;
@@ -593,8 +617,10 @@ static void sigactionSegv(int signum, siginfo_t *ip, void *context)
 		if(ConsoleBuf[0] == '4') R_CleanUp(SA_SAVE, 71, 0);
 	    }
 	}
+	REprintf("R is aborting now ...\n");
     }
-    REprintf("aborting ...\n");
+    else // non-interactively :
+	REprintf("An irrecoverable exception occurred. R is aborting now ...\n");
     R_CleanTempDir();
     /* now do normal behaviour, e.g. core dump */
     signal(signum, SIG_DFL);
@@ -661,7 +687,9 @@ static void R_LoadProfile(FILE *fparg, SEXP env)
 {
     FILE * volatile fp = fparg; /* is this needed? */
     if (fp != NULL) {
-	if (! SETJMP(R_Toplevel.cjmpbuf)) {
+	if (SETJMP(R_Toplevel.cjmpbuf))
+	    check_session_exit();
+	else {
 	    R_GlobalContext = R_ToplevelContext = R_SessionContext = &R_Toplevel;
 	    R_ReplFile(fp, env);
 	}
@@ -702,7 +730,7 @@ void setup_Rmainloop(void)
     /* In case this is a silly limit: 2^32 -3 has been seen and
      * casting to intptr_r relies on this being smaller than 2^31 on a
      * 32-bit platform. */
-    if(R_CStackLimit > 100000000U) 
+    if(R_CStackLimit > 100000000U)
 	R_CStackLimit = (uintptr_t)-1;
     /* make sure we have enough head room to handle errors */
     if(R_CStackLimit != -1)
@@ -718,7 +746,7 @@ void setup_Rmainloop(void)
 	char *p, Rlocale[1000]; /* Windows' locales can be very long */
 	p = getenv("LC_ALL");
 	strncpy(Rlocale, p ? p : "", 1000);
-        Rlocale[1000 - 1] = '\0';
+	Rlocale[1000 - 1] = '\0';
 	if(!(p = getenv("LC_CTYPE"))) p = Rlocale;
 	/* We'd like to use warning, but need to defer.
 	   Also cannot translate. */
@@ -811,6 +839,7 @@ void setup_Rmainloop(void)
     R_Toplevel.nextcontext = NULL;
     R_Toplevel.callflag = CTXT_TOPLEVEL;
     R_Toplevel.cstacktop = 0;
+    R_Toplevel.gcenabled = R_GCEnabled;
     R_Toplevel.promargs = R_NilValue;
     R_Toplevel.callfun = R_NilValue;
     R_Toplevel.call = R_NilValue;
@@ -823,10 +852,15 @@ void setup_Rmainloop(void)
     R_Toplevel.intstack = R_BCIntStackTop;
 #endif
     R_Toplevel.cend = NULL;
+    R_Toplevel.cenddata = NULL;
     R_Toplevel.intsusp = FALSE;
     R_Toplevel.handlerstack = R_HandlerStack;
     R_Toplevel.restartstack = R_RestartStack;
     R_Toplevel.srcref = R_NilValue;
+    R_Toplevel.prstack = NULL;
+    R_Toplevel.returnValue = NULL;
+    R_Toplevel.evaldepth = 0;
+    R_Toplevel.browserfinish = 0;
     R_GlobalContext = R_ToplevelContext = R_SessionContext = &R_Toplevel;
     R_ExitContext = NULL;
 
@@ -854,7 +888,8 @@ void setup_Rmainloop(void)
 	R_Suicide(_("unable to open the base package\n"));
 
     doneit = 0;
-    SETJMP(R_Toplevel.cjmpbuf);
+    if (SETJMP(R_Toplevel.cjmpbuf))
+	check_session_exit();
     R_GlobalContext = R_ToplevelContext = R_SessionContext = &R_Toplevel;
     if (R_SignalHandlers) init_signal_handlers();
     if (!doneit) {
@@ -883,7 +918,8 @@ void setup_Rmainloop(void)
 
     /* require(methods) if it is in the default packages */
     doneit = 0;
-    SETJMP(R_Toplevel.cjmpbuf);
+    if (SETJMP(R_Toplevel.cjmpbuf))
+	check_session_exit();
     R_GlobalContext = R_ToplevelContext = R_SessionContext = &R_Toplevel;
     if (!doneit) {
 	doneit = 1;
@@ -909,7 +945,7 @@ void setup_Rmainloop(void)
      * the copyleft.
      */
     if(!R_Quiet) PrintGreeting();
- 
+
     R_LoadProfile(R_OpenSiteFile(), baseEnv);
     R_LockBinding(install(".Library.site"), R_BaseEnv);
     R_LoadProfile(R_OpenInitFile(), R_GlobalEnv);
@@ -921,24 +957,28 @@ void setup_Rmainloop(void)
        or dropped on the application.
     */
     doneit = 0;
-    SETJMP(R_Toplevel.cjmpbuf);
+    if (SETJMP(R_Toplevel.cjmpbuf))
+	check_session_exit();
     R_GlobalContext = R_ToplevelContext = R_SessionContext = &R_Toplevel;
     if (!doneit) {
 	doneit = 1;
 	R_InitialData();
     }
     else {
-    	if (! SETJMP(R_Toplevel.cjmpbuf)) {
-	    warning(_("unable to restore saved data in %s\n"), get_workspace_name());
+	if (SETJMP(R_Toplevel.cjmpbuf))
+	    check_session_exit();
+	else {
+    	    warning(_("unable to restore saved data in %s\n"), get_workspace_name());
 	}
     }
-    
+
     /* Initial Loading is done.
        At this point we try to invoke the .First Function.
        If there is an error we continue. */
 
     doneit = 0;
-    SETJMP(R_Toplevel.cjmpbuf);
+    if (SETJMP(R_Toplevel.cjmpbuf))
+	check_session_exit();
     R_GlobalContext = R_ToplevelContext = R_SessionContext = &R_Toplevel;
     if (!doneit) {
 	doneit = 1;
@@ -956,7 +996,8 @@ void setup_Rmainloop(void)
        If there is an error we continue. */
 
     doneit = 0;
-    SETJMP(R_Toplevel.cjmpbuf);
+    if (SETJMP(R_Toplevel.cjmpbuf))
+	check_session_exit();
     R_GlobalContext = R_ToplevelContext = R_SessionContext = &R_Toplevel;
     if (!doneit) {
 	doneit = 1;
@@ -979,9 +1020,20 @@ void setup_Rmainloop(void)
 	REprintf(_("During startup - "));
 	PrintWarnings();
     }
+    if(R_Verbose)
+	REprintf(" ending setup_Rmainloop(): R_Interactive = %d {main.c}\n",
+		 R_Interactive);
 
     /* trying to do this earlier seems to run into bootstrapping issues. */
-    R_init_jit_enabled();
+    doneit = 0;
+    if (SETJMP(R_Toplevel.cjmpbuf))
+	check_session_exit();
+    R_GlobalContext = R_ToplevelContext = R_SessionContext = &R_Toplevel;
+    if (!doneit) {
+	doneit = 1;
+	R_init_jit_enabled();
+    } else
+	R_Suicide(_("unable to initialize the JIT\n"));
     R_Is_Running = 2;
 }
 
@@ -1001,7 +1053,8 @@ void run_Rmainloop(void)
 {
     /* Here is the real R read-eval-loop. */
     /* We handle the console until end-of-file. */
-    SETJMP(R_Toplevel.cjmpbuf);
+    if (SETJMP(R_Toplevel.cjmpbuf))
+	check_session_exit();
     R_GlobalContext = R_ToplevelContext = R_SessionContext = &R_Toplevel;
     R_ReplConsole(R_GlobalEnv, 0, 0);
     end_Rmainloop(); /* must go here */
@@ -1055,11 +1108,11 @@ static int ParseBrowser(SEXP CExpr, SEXP rho)
 	} else if (!strcmp(expr, "f")) {
 	    rval = 1;
 	    RCNTXT *cntxt = R_GlobalContext;
-	    while (cntxt != R_ToplevelContext 
+	    while (cntxt != R_ToplevelContext
 		      && !(cntxt->callflag & (CTXT_RETURN | CTXT_LOOP))) {
 		cntxt = cntxt->nextcontext;
 	    }
-	    cntxt->browserfinish = 1;	    
+	    cntxt->browserfinish = 1;
 	    SET_RDEBUG(rho, 1);
 	    R_BrowserLastCommand = 'f';
 	} else if (!strcmp(expr, "help")) {
@@ -1071,14 +1124,6 @@ static int ParseBrowser(SEXP CExpr, SEXP rho)
 	    R_BrowserLastCommand = 'n';
 	} else if (!strcmp(expr, "Q")) {
 
-	    /* Run onexit/cend code for everything above the target.
-	       The browser context is still on the stack, so any error
-	       will drop us back to the current browser.  Not clear
-	       this is a good thing.  Also not clear this should still
-	       be here now that jump_to_toplevel is used for the
-	       jump. */
-	    R_run_onexits(R_ToplevelContext);
-
 	    /* this is really dynamic state that should be managed as such */
 	    SET_RDEBUG(rho, 0); /*PR#1721*/
 
@@ -1086,7 +1131,7 @@ static int ParseBrowser(SEXP CExpr, SEXP rho)
 	} else if (!strcmp(expr, "s")) {
 	    rval = 1;
 	    SET_RDEBUG(rho, 1);
-	    R_BrowserLastCommand = 's';	    
+	    R_BrowserLastCommand = 's';
 	} else if (!strcmp(expr, "where")) {
 	    rval = 2;
 	    printwhere();
@@ -1096,6 +1141,16 @@ static int ParseBrowser(SEXP CExpr, SEXP rho)
     return rval;
 }
 
+/* There's another copy of this in eval.c */
+static void PrintCall(SEXP call, SEXP rho)
+{
+    int old_bl = R_BrowseLines,
+	blines = asInteger(GetOption1(install("deparse.max.lines")));
+    if(blines != NA_INTEGER && blines > 0)
+	R_BrowseLines = blines;
+    PrintValueRec(call, rho);
+    R_BrowseLines = old_bl;
+}
 
 /* browser(text = "", condition = NULL, expr = TRUE, skipCalls = 0L)
  * ------- but also called from ./eval.c */
@@ -1106,6 +1161,9 @@ SEXP attribute_hidden do_browser(SEXP call, SEXP op, SEXP args, SEXP rho)
     RCNTXT thiscontext, returncontext, *cptr;
     int savestack, browselevel;
     SEXP ap, topExp, argList;
+
+    /* Cannot call checkArity(op, args), because "op" may be a closure  */
+    /* or a primitive other than "browser".  */
 
     /* argument matching */
     PROTECT(ap = list4(R_NilValue, R_NilValue, R_NilValue, R_NilValue));
@@ -1121,15 +1179,15 @@ SEXP attribute_hidden do_browser(SEXP call, SEXP op, SEXP args, SEXP rho)
 	SETCAR(argList, mkString(""));
     if(CADR(argList) == R_MissingArg)
 	SETCAR(CDR(argList), R_NilValue);
-    if(CADDR(argList) == R_MissingArg) 
+    if(CADDR(argList) == R_MissingArg)
 	SETCAR(CDDR(argList), ScalarLogical(1));
-    if(CADDDR(argList) == R_MissingArg) 
+    if(CADDDR(argList) == R_MissingArg)
 	SETCAR(CDDDR(argList), ScalarInteger(0));
 
     /* return if 'expr' is not TRUE */
     if( !asLogical(CADDR(argList)) ) {
-        UNPROTECT(1);
-        return R_NilValue;
+	UNPROTECT(1);
+	return R_NilValue;
     }
 
     /* Save the evaluator state information */
@@ -1142,19 +1200,17 @@ SEXP attribute_hidden do_browser(SEXP call, SEXP op, SEXP args, SEXP rho)
     saveGlobalContext = R_GlobalContext;
 
     if (!RDEBUG(rho)) {
-        int skipCalls = asInteger(CADDDR(argList));
+	int skipCalls = asInteger(CADDDR(argList));
 	cptr = R_GlobalContext;
-	while ( ( !(cptr->callflag & CTXT_FUNCTION) || skipCalls--) 
+	while ( ( !(cptr->callflag & CTXT_FUNCTION) || skipCalls--)
 		&& cptr->callflag )
 	    cptr = cptr->nextcontext;
 	Rprintf("Called from: ");
-	int tmp = asInteger(GetOption(install("deparse.max.lines"), R_BaseEnv));
-	if(tmp != NA_INTEGER && tmp > 0) R_BrowseLines = tmp;
-        if( cptr != R_ToplevelContext ) {
-	    PrintValueRec(cptr->call, rho);
+	if( cptr != R_ToplevelContext ) {
+	    PrintCall(cptr->call, rho);
 	    SET_RDEBUG(cptr->cloenv, 1);
-        } else
-            Rprintf("top level \n");
+	} else
+	    Rprintf("top level \n");
 
 	R_BrowseLines = 0;
     }
@@ -1228,6 +1284,7 @@ SEXP attribute_hidden do_quit(SEXP call, SEXP op, SEXP args, SEXP rho)
     SA_TYPE ask=SA_DEFAULT;
     int status, runLast;
 
+    checkArity(op, args);
     /* if there are any browser contexts active don't quit */
     if(countContexts(CTXT_BROWSER, 1)) {
 	warning(_("cannot quit from browser"));
@@ -1526,6 +1583,7 @@ R_taskCallbackRoutine(SEXP expr, SEXP value, Rboolean succeeded,
     }
 
     val = R_tryEval(e, NULL, &errorOccurred);
+    UNPROTECT(1); /* e */
     if(!errorOccurred) {
 	PROTECT(val);
 	if(TYPEOF(val) != LGLSXP) {
@@ -1589,7 +1647,7 @@ void attribute_hidden dummy12345(void)
 
 /* Used in unix/system.c, avoid inlining by using an extern there.
 
-   This is intended to return a local address.  
+   This is intended to return a local address.
    Use -Wno-return-local-addr when compiling.
  */
 uintptr_t dummy_ii(void)

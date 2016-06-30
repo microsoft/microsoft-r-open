@@ -1,6 +1,6 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
- *  Copyright (C) 2009-12 The R Core Team.
+ *  Copyright (C) 2009-2015 The R Core Team.
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
 /* This is a small HTTP server that serves requests by evaluating
@@ -64,12 +64,10 @@
 # ifdef HAVE_UNISTD_H
 #  include <unistd.h>
 # endif
-# ifdef HAVE_BSD_NETWORKING
-#  include <netdb.h>
-#  include <sys/socket.h>
-#  include <netinet/in.h>
-#  include <arpa/inet.h>
-# endif
+# include <netdb.h>
+# include <sys/socket.h>
+# include <netinet/in.h>
+# include <arpa/inet.h>
 # include <errno.h>
 
 # define sockerrno errno
@@ -686,6 +684,7 @@ static void process_request_(void *ptr)
 				    free(fbuf);
 				    UNPROTECT(7);
 				    c->attr |= CONNECTION_CLOSE;
+				    fclose(f);
 				    return;
 				}
 				send_response(c->sock, fbuf, rd);
@@ -695,6 +694,7 @@ static void process_request_(void *ptr)
 			} else { /* allocation error - get out */
 			    UNPROTECT(7);
 			    c->attr |= CONNECTION_CLOSE;
+			    fclose(f);
 			    return;
 			}
 		    }
@@ -956,7 +956,11 @@ static void worker_input_handler(void *data) {
 			    }
 			    if (!strcmp(bol, "content-type")) {
 				char *l = k;
-				while (*l) { if (*l >= 'A' && *l <= 'Z') *l |= 0x20; l++; }
+				/* convert content-type to lowercase to facilitate comparison
+				   since MIME types are case-insensitive.
+				   However, we have to stop at ; since parameters
+				   may be case-sensitive (see PR 16541) */
+				while (*l && *l != ';') { if (*l >= 'A' && *l <= 'Z') *l |= 0x20; l++; }
 				c->attr |= CONTENT_TYPE;
 				if (c->content_type) free(c->content_type);
 				c->content_type = strdup(k);

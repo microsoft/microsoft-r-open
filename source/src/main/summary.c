@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
 #ifdef HAVE_CONFIG_H
@@ -24,8 +24,11 @@
 
 #include <Defn.h>
 #include <Internal.h>
+#include <R_ext/Itermacros.h>
 
 #include <float.h> // for DBL_MAX
+
+#include "duplicate.h"
 
 #define R_MSG_type	_("invalid 'type' (%s) of argument")
 #define imax2(x, y) ((x < y) ? y : x)
@@ -404,6 +407,7 @@ SEXP attribute_hidden do_summary(SEXP call, SEXP op, SEXP args, SEXP env)
 	/* updated := 1 , as soon as (i)tmp (do_summary),
 	   or *value ([ir]min / max) is assigned */
 
+    checkArity(op, args);
     if(PRIMVAL(op) == 1) { /* mean */
 	LDOUBLE s = 0., si = 0., t = 0., ti = 0.;
 	R_xlen_t i, n = XLENGTH(CAR(args));
@@ -803,39 +807,88 @@ SEXP attribute_hidden do_range(SEXP call, SEXP op, SEXP args, SEXP env)
     return(ans);
 }
 
-/* which.min(x) : The index (starting at 1), of the first min(x) in x */
+// which.min(x) : The index (starting at 1), of the first min(x) in x
+// which.max(x) : The index (starting at 1), of the first max(x) in x
 SEXP attribute_hidden do_first_min(SEXP call, SEXP op, SEXP args, SEXP rho)
 {
-    SEXP sx, ans;
-    double s, *r;
-    int i, n, indx;
+    SEXP sx = CAR(args), ans;
+    int nprot = 1;
+    R_xlen_t i, n, indx = -1;
 
     checkArity(op, args);
-    PROTECT(sx = coerceVector(CAR(args), REALSXP));
-    if (!isNumeric(sx))
-	error(_("non-numeric argument"));
-    r = REAL(sx);
-    n = LENGTH(sx);
-    indx = NA_INTEGER;
-
-    if(PRIMVAL(op) == 0) { /* which.min */
-	s = R_PosInf;
-	for (i = 0; i < n; i++)
-	    if ( !ISNAN(r[i]) && (r[i] < s || indx == NA_INTEGER) ) {
-		s = r[i]; indx = i;
-	    }
-    } else { /* which.max */
-	s = R_NegInf;
-	for (i = 0; i < n; i++)
-	    if ( !ISNAN(r[i]) && (r[i] > s || indx == NA_INTEGER) ) {
-		s = r[i]; indx = i;
-	    }
+    if (!isNumeric(sx)) {
+	PROTECT(sx = coerceVector(CAR(args), REALSXP)); nprot++;
     }
+    n = XLENGTH(sx);
+    switch(TYPEOF(sx)) {
+    case LGLSXP: // with only (TRUE, FALSE, NA) -- may be fast
+    {
+	int *r = LOGICAL(sx);
+	if(PRIMVAL(op) == 0) { /* which.min */
+	    for (i = 0; i < n; i++)
+		if (r[i] == FALSE) {
+		    indx = i; break; // found FALSE: done
+		} else if (indx == -1 && r[i] != NA_LOGICAL) {
+		    indx = i; // first TRUE
+		}
+	} else { /* which.max */
+	    for (i = 0; i < n; i++)
+		if (r[i] == TRUE) {
+		    indx = i; break; // found TRUE: done
+		} else if (indx == -1 && r[i] != NA_LOGICAL) {
+		    indx = i; // first FALSE
+		}
+	}
+    }
+    break;
 
-    i = (indx != NA_INTEGER);
-    PROTECT(ans = allocVector(INTSXP, i ? 1 : 0));
+    case INTSXP:
+    {
+	int s, *r = INTEGER(sx);
+	if(PRIMVAL(op) == 0) { /* which.min */
+	    s = INT_MAX;
+	    for (i = 0; i < n; i++)
+		if (r[i] != NA_INTEGER && (r[i] < s || indx == -1)) {
+		    s = r[i]; indx = i;
+		}
+	} else { /* which.max */
+	    s = INT_MIN;
+	    for (i = 0; i < n; i++)
+		if (r[i] != NA_INTEGER && (r[i] > s || indx == -1)) {
+		    s = r[i]; indx = i;
+		}
+	}
+    }
+    break;
+
+    case REALSXP:
+    {
+	double s, *r = REAL(sx);
+	if(PRIMVAL(op) == 0) { /* which.min */
+	    s = R_PosInf;
+	    for (i = 0; i < n; i++)
+		if ( !ISNAN(r[i]) && (r[i] < s || indx == -1) ) {
+		    s = r[i]; indx = i;
+		}
+	} else { /* which.max */
+	    s = R_NegInf;
+	    for (i = 0; i < n; i++)
+		if ( !ISNAN(r[i]) && (r[i] > s || indx == -1) ) {
+		    s = r[i]; indx = i;
+		}
+	}
+    }
+    } // switch()
+
+
+    i = (indx != -1);
+    Rboolean large = (indx + 1) > INT_MAX;
+    PROTECT(ans = allocVector(large ? REALSXP : INTSXP, i ? 1 : 0));
     if (i) {
-	INTEGER(ans)[0] = indx + 1;
+	if(large)
+	    REAL(ans)[0] = (double)indx + 1;
+	else
+	    INTEGER(ans)[0] = (int)indx + 1;
 	if (getAttrib(sx, R_NamesSymbol) != R_NilValue) { /* preserve names */
 	    SEXP ansnam;
 	    PROTECT(ansnam =
@@ -844,7 +897,7 @@ SEXP attribute_hidden do_first_min(SEXP call, SEXP op, SEXP args, SEXP rho)
 	    UNPROTECT(1);
 	}
     }
-    UNPROTECT(2);
+    UNPROTECT(nprot);
     return ans;
 }
 
@@ -857,29 +910,29 @@ SEXP attribute_hidden do_which(SEXP call, SEXP op, SEXP args, SEXP rho)
     checkArity(op, args);
     v = CAR(args);
     if (!isLogical(v))
-        error(_("argument to 'which' is not logical"));
+	error(_("argument to 'which' is not logical"));
     len = length(v);
     buf = (int *) R_alloc(len, sizeof(int));
 
     for (i = 0; i < len; i++) {
-        if (LOGICAL(v)[i] == TRUE) {
-            buf[j] = i + 1;
-            j++;
-        }
+	if (LOGICAL(v)[i] == TRUE) {
+	    buf[j] = i + 1;
+	    j++;
+	}
     }
 
     len = j;
     PROTECT(ans = allocVector(INTSXP, len));
-    memcpy(INTEGER(ans), buf, sizeof(int) * len);
+    if(len) memcpy(INTEGER(ans), buf, sizeof(int) * len);
 
     if ((v_nms = getAttrib(v, R_NamesSymbol)) != R_NilValue) {
-        PROTECT(ans_nms = allocVector(STRSXP, len));
-        for (i = 0; i < len; i++) {
-            SET_STRING_ELT(ans_nms, i,
-                           STRING_ELT(v_nms, INTEGER(ans)[i] - 1));
-        }
-        setAttrib(ans, R_NamesSymbol, ans_nms);
-        UNPROTECT(1);
+	PROTECT(ans_nms = allocVector(STRSXP, len));
+	for (i = 0; i < len; i++) {
+	    SET_STRING_ELT(ans_nms, i,
+			   STRING_ELT(v_nms, INTEGER(ans)[i] - 1));
+	}
+	setAttrib(ans, R_NamesSymbol, ans_nms);
+	UNPROTECT(1);
     }
     UNPROTECT(1);
     return ans;
@@ -893,7 +946,7 @@ SEXP attribute_hidden do_pmin(SEXP call, SEXP op, SEXP args, SEXP rho)
 {
     SEXP a, x, ans;
     int narm;
-    R_xlen_t i, n, len;
+    R_xlen_t i, n, len, i1;
     SEXPTYPE type, anstype;
 
     narm = asLogical(CAR(args));
@@ -959,15 +1012,15 @@ SEXP attribute_hidden do_pmin(SEXP call, SEXP op, SEXP args, SEXP rho)
 	PROTECT(x = coerceVector(CAR(args), anstype));
 	r = INTEGER(x);
 	n = XLENGTH(x);
-	for(i = 0; i < len; i++) ra[i] = r[i % n];
+	xcopyIntegerWithRecycle(ra, r, 0, len, n);
 	UNPROTECT(1);
 	for(a = CDR(args); a != R_NilValue; a = CDR(a)) {
 	    x = CAR(a);
 	    PROTECT(x = coerceVector(CAR(a), anstype));
 	    n = XLENGTH(x);
 	    r = INTEGER(x);
-	    for(i = 0; i < len; i++) {
-		tmp = r[i % n];
+	    MOD_ITERATE1(len, n, i, i1, {
+		tmp = r[i1];
 		if(PRIMVAL(op) == 1) {
 		    if( (narm && ra[i] == NA_INTEGER) ||
 			(ra[i] != NA_INTEGER && tmp != NA_INTEGER
@@ -981,7 +1034,7 @@ SEXP attribute_hidden do_pmin(SEXP call, SEXP op, SEXP args, SEXP rho)
 			(!narm && tmp == NA_INTEGER) )
 			ra[i] = tmp;
 		}
-	    }
+	    });
 	    UNPROTECT(1);
 	}
     }
@@ -992,14 +1045,14 @@ SEXP attribute_hidden do_pmin(SEXP call, SEXP op, SEXP args, SEXP rho)
 	PROTECT(x = coerceVector(CAR(args), anstype));
 	r = REAL(x);
 	n = XLENGTH(x);
-	for(i = 0; i < len; i++) ra[i] = r[i % n];
+	xcopyRealWithRecycle(ra, r, 0, len, n);
 	UNPROTECT(1);
 	for(a = CDR(args); a != R_NilValue; a = CDR(a)) {
 	    PROTECT(x = coerceVector(CAR(a), anstype));
 	    n = XLENGTH(x);
 	    r = REAL(x);
-	    for(i = 0; i < len; i++) {
-		tmp = r[i % n];
+	    MOD_ITERATE1(len, n, i, i1, {
+		tmp = r[i1];
 		if(PRIMVAL(op) == 1) {
 		    if( (narm && ISNAN(ra[i])) ||
 			(!ISNAN(ra[i]) && !ISNAN(tmp) && tmp > ra[i]) ||
@@ -1011,7 +1064,7 @@ SEXP attribute_hidden do_pmin(SEXP call, SEXP op, SEXP args, SEXP rho)
 			(!narm && ISNAN(tmp)) )
 			ra[i] = tmp;
 		}
-	    }
+	    });
 	    UNPROTECT(1);
 	}
     }
@@ -1020,14 +1073,14 @@ SEXP attribute_hidden do_pmin(SEXP call, SEXP op, SEXP args, SEXP rho)
     {
 	PROTECT(x = coerceVector(CAR(args), anstype));
 	n = XLENGTH(x);
-	for(i = 0; i < len; i++) SET_STRING_ELT(ans, i, STRING_ELT(x, i % n));
+	xcopyStringWithRecycle(ans, x, 0, len, n);
 	UNPROTECT(1);
 	for(a = CDR(args); a != R_NilValue; a = CDR(a)) {
 	    SEXP tmp, t2;
 	    PROTECT(x = coerceVector(CAR(a), anstype));
 	    n = XLENGTH(x);
-	    for(i = 0; i < len; i++) {
-		tmp = STRING_ELT(x, i % n);
+	    MOD_ITERATE1(len, n, i, i1, {
+		tmp = STRING_ELT(x, i1);
 		t2 = STRING_ELT(ans, i);
 		if(PRIMVAL(op) == 1) {
 		    if( (narm && t2 == NA_STRING) ||
@@ -1040,7 +1093,7 @@ SEXP attribute_hidden do_pmin(SEXP call, SEXP op, SEXP args, SEXP rho)
 			(!narm && tmp == NA_STRING) )
 			SET_STRING_ELT(ans, i, tmp);
 		}
-	    }
+	    });
 	    UNPROTECT(1);
 	}
     }

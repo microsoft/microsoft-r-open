@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  *
  *
  *  Contexts:
@@ -122,7 +122,7 @@ void attribute_hidden R_run_onexits(RCNTXT *cptr)
     RCNTXT *c;
 
     for (c = R_GlobalContext; c != cptr; c = c->nextcontext) {
-        // a user embedding R incorrectly triggered this (PR#15420)
+	// a user embedding R incorrectly triggered this (PR#15420)
 	if (c == NULL)
 	    error("bad target context--should NEVER happen if R was called correctly");
 	if (c->cend != NULL) {
@@ -160,14 +160,12 @@ void attribute_hidden R_run_onexits(RCNTXT *cptr)
 
 /* R_restore_globals - restore global variables from a target context
    before a LONGJMP.  The target context itself is not restored here
-   since this is done slightly differently in jumpfun below, in
-   errors.c:jump_now, and in main.c:ParseBrowser.  Eventually these
-   three should be unified so there is only one place where a LONGJMP
-   occurs. */
+   since this is done in R_jumpctxt below. */
 
-void attribute_hidden R_restore_globals(RCNTXT *cptr)
+static void R_restore_globals(RCNTXT *cptr)
 {
     R_PPStackTop = cptr->cstacktop;
+    R_GCEnabled = cptr->gcenabled;
     R_EvalDepth = cptr->evaldepth;
     vmaxset(cptr->vmax);
     R_interrupts_suspended = cptr->intsusp;
@@ -190,31 +188,48 @@ void attribute_hidden R_restore_globals(RCNTXT *cptr)
     R_Srcref = cptr->srcref;
 }
 
+static RCNTXT *first_jump_target(RCNTXT *cptr, int mask)
+{
+    RCNTXT *c;
 
-/* jumpfun - jump to the named context */
+    for (c = R_GlobalContext; c && c != cptr; c = c->nextcontext) {
+	if (c->cloenv != R_NilValue && c->conexit != R_NilValue) {
+	    c->jumptarget = cptr;
+	    c->jumpmask = mask;
+	    return c;
+	}
+    }
+    return cptr;
+}
 
-static void NORET jumpfun(RCNTXT * cptr, int mask, SEXP val)
+/* R_jumpctxt - jump to the named context */
+
+void attribute_hidden NORET R_jumpctxt(RCNTXT * targetcptr, int mask, SEXP val)
 {
     Rboolean savevis = R_Visible;
+    RCNTXT *cptr;
 
-    /* run onexit/cend code for all contexts down to but not including
-       the jump target */
-    PROTECT(val);
+    /* find the target for the first jump -- either an intermediate
+       context with an on.exit action to run or the final target if
+       there are no intermediate on.exit actions */
+    cptr = first_jump_target(targetcptr, mask);
+
+    /* run cend code for all contexts down to but not including
+       the first jump target */
     cptr->returnValue = val;/* in case the on.exit code wants to see it */
     R_run_onexits(cptr);
-    UNPROTECT(1);
     R_Visible = savevis;
 
     R_ReturnedValue = val;
-    R_GlobalContext = cptr; /* this used to be set to
-			       cptr->nextcontext for non-toplevel
-			       jumps (with the context set back at the
-			       SETJMP for restarts).  Changing this to
-			       always using cptr as the new global
-			       context should simplify some code and
-			       perhaps allow loops to be handled with
-			       fewer SETJMP's.  LT */
+    R_GlobalContext = cptr;
     R_restore_globals(R_GlobalContext);
+
+    /* if we are in the process of handling a C stack overflow we need
+       to restore the C stack limit before the jump */
+    if (R_OldCStackLimit != 0) {
+	R_CStackLimit = R_OldCStackLimit;
+	R_OldCStackLimit = 0;
+    }
 
     LONGJMP(cptr->cjmpbuf, mask);
 }
@@ -228,6 +243,7 @@ void begincontext(RCNTXT * cptr, int flags,
 		  SEXP promargs, SEXP callfun)
 {
     cptr->cstacktop = R_PPStackTop;
+    cptr->gcenabled = R_GCEnabled;
     cptr->evaldepth = R_EvalDepth;
     cptr->callflag = flags;
     cptr->call = syscall;
@@ -246,10 +262,12 @@ void begincontext(RCNTXT * cptr, int flags,
 #ifdef BC_INT_STACK
     cptr->intstack = R_BCIntStackTop;
 #endif
-    cptr->srcref = R_Srcref;    
+    cptr->srcref = R_Srcref;
     cptr->browserfinish = R_GlobalContext->browserfinish;
     cptr->nextcontext = R_GlobalContext;
     cptr->returnValue = NULL;
+    cptr->jumptarget = NULL;
+    cptr->jumpmask = 0;
 
     R_GlobalContext = cptr;
 }
@@ -274,7 +292,11 @@ void endcontext(RCNTXT * cptr)
 	R_Visible = savevis;
     }
     if (R_ExitContext == cptr)
-    	R_ExitContext = NULL;
+	R_ExitContext = NULL;
+    /* continue jumping if this was reached as an intermetiate jump */
+    if (cptr->jumptarget)
+	R_jumpctxt(cptr->jumptarget, cptr->jumpmask, cptr->returnValue);
+
     R_GlobalContext = cptr->nextcontext;
 }
 
@@ -290,7 +312,7 @@ void attribute_hidden NORET findcontext(int mask, SEXP env, SEXP val)
 	     cptr != NULL && cptr->callflag != CTXT_TOPLEVEL;
 	     cptr = cptr->nextcontext)
 	    if (cptr->callflag & CTXT_LOOP && cptr->cloenv == env )
-		jumpfun(cptr, mask, val);
+		R_jumpctxt(cptr, mask, val);
 	error(_("no loop for break/next, jumping to top level"));
     }
     else {				/* return; or browser */
@@ -298,7 +320,7 @@ void attribute_hidden NORET findcontext(int mask, SEXP env, SEXP val)
 	     cptr != NULL && cptr->callflag != CTXT_TOPLEVEL;
 	     cptr = cptr->nextcontext)
 	    if ((cptr->callflag & mask) && cptr->cloenv == env)
-		jumpfun(cptr, mask, val);
+		R_jumpctxt(cptr, mask, val);
 	error(_("no function to return from, jumping to top level"));
     }
 }
@@ -310,8 +332,8 @@ void attribute_hidden NORET R_JumpToContext(RCNTXT *target, int mask, SEXP val)
 	 cptr != NULL && cptr->callflag != CTXT_TOPLEVEL;
 	 cptr = cptr->nextcontext) {
 	if (cptr == target)
-	    jumpfun(cptr, mask, val);
-        if (cptr == R_ExitContext)
+	    R_jumpctxt(cptr, mask, val);
+	if (cptr == R_ExitContext)
 	    R_ExitContext = NULL;
     }
     error(_("target context is not on the stack"));
@@ -412,7 +434,7 @@ SEXP attribute_hidden R_syscall(int n, RCNTXT *cptr)
     /* negative n counts back from the current frame */
     /* positive n counts up from the globalEnv */
     SEXP result;
-    
+
     if (n > 0)
 	n = framedepth(cptr) - n;
     else
@@ -423,11 +445,11 @@ SEXP attribute_hidden R_syscall(int n, RCNTXT *cptr)
     while (cptr->nextcontext != NULL) {
 	if (cptr->callflag & CTXT_FUNCTION ) {
 	    if (n == 0) {
-	    	PROTECT(result = shallow_duplicate(cptr->call));
-	    	if (cptr->srcref && !isNull(cptr->srcref))
-	    	    setAttrib(result, R_SrcrefSymbol, duplicate(cptr->srcref));
-	    	UNPROTECT(1);
-	    	return result;
+		PROTECT(result = shallow_duplicate(cptr->call));
+		if (cptr->srcref && !isNull(cptr->srcref))
+		    setAttrib(result, R_SrcrefSymbol, duplicate(cptr->srcref));
+		UNPROTECT(1);
+		return result;
 	    } else
 		n--;
 	}
@@ -468,32 +490,6 @@ SEXP attribute_hidden R_sysfunction(int n, RCNTXT *cptr)
     return R_NilValue;	/* just for -Wall */
 }
 
-/* some real insanity to keep Duncan sane */
-
-/* This should find the caller's environment (it's a .Internal) and
-   then get the context of the call that owns the environment.  As it
-   is, it will restart the wrong function if used in a promise.
-   L.T. */
-SEXP attribute_hidden do_restart(SEXP call, SEXP op, SEXP args, SEXP rho)
-{
-    RCNTXT *cptr;
-
-    checkArity(op, args);
-
-    if( !isLogical(CAR(args)) || LENGTH(CAR(args))!= 1 )
-	return(R_NilValue);
-    for(cptr = R_GlobalContext->nextcontext; cptr!= R_ToplevelContext;
-	    cptr = cptr->nextcontext) {
-	if (cptr->callflag & CTXT_FUNCTION) {
-	    SET_RESTART_BIT_ON(cptr->callflag);
-	    break;
-	}
-    }
-    if( cptr == R_ToplevelContext )
-	error(_("no function to restart"));
-    return(R_NilValue);
-}
-
 /* count how many contexts of the specified type are present on the stack */
 /* browser contexts are a bit special because they are transient and for  */
 /* any closure context with the debug bit set one will be created; so we  */
@@ -504,18 +500,18 @@ int countContexts(int ctxttype, int browser) {
 
     cptr = R_GlobalContext;
     while( cptr != R_ToplevelContext) {
-        if( cptr->callflag == ctxttype ) 
-            n++;
-        else if( browser ) {
-           if(cptr->callflag & CTXT_FUNCTION && RDEBUG(cptr->cloenv) )
-              n++;
-        }
-        cptr = cptr->nextcontext;
+	if( cptr->callflag == ctxttype )
+	    n++;
+	else if( browser ) {
+	   if(cptr->callflag & CTXT_FUNCTION && RDEBUG(cptr->cloenv) )
+	      n++;
+	}
+	cptr = cptr->nextcontext;
     }
     return n;
 }
-  
-   
+
+
 /* functions to support looking up information about the browser */
 /* contexts that are in the evaluation stack */
 
@@ -532,50 +528,50 @@ SEXP attribute_hidden do_sysbrowser(SEXP call, SEXP op, SEXP args, SEXP rho)
     /* first find the closest  browser context */
     cptr = R_GlobalContext;
     while (cptr != R_ToplevelContext) {
-        if (cptr->callflag == CTXT_BROWSER) {
-                break;
-        }
-        cptr = cptr->nextcontext;
+	if (cptr->callflag == CTXT_BROWSER) {
+		break;
+	}
+	cptr = cptr->nextcontext;
     }
     /* error if not a browser context */
 
     if( !(cptr->callflag == CTXT_BROWSER) )
-        error(_("no browser context to query"));
+	error(_("no browser context to query"));
 
     switch (PRIMVAL(op)) {
     case 1: /* text */
     case 2: /* condition */
-        /* first rewind to the right place if needed */
-        /* note we want n>1, as we have already      */
-        /* rewound to the first context              */
-        if( n > 1 ) {
-           while (cptr != R_ToplevelContext && n > 0 ) {
-               if (cptr->callflag == CTXT_BROWSER) {
-                   n--;
-                   break;
-               }
-               cptr = cptr->nextcontext;
-           }
-        }
-        if( !(cptr->callflag == CTXT_BROWSER) )
-           error(_("not that many calls to browser are active"));
+	/* first rewind to the right place if needed */
+	/* note we want n>1, as we have already      */
+	/* rewound to the first context              */
+	if( n > 1 ) {
+	   while (cptr != R_ToplevelContext && n > 0 ) {
+	       if (cptr->callflag == CTXT_BROWSER) {
+		   n--;
+		   break;
+	       }
+	       cptr = cptr->nextcontext;
+	   }
+	}
+	if( !(cptr->callflag == CTXT_BROWSER) )
+	   error(_("not that many calls to browser are active"));
 
-        if( PRIMVAL(op) == 1 )
-            rval = CAR(cptr->promargs);
-        else
-            rval = CADR(cptr->promargs);
-        break;
+	if( PRIMVAL(op) == 1 )
+	    rval = CAR(cptr->promargs);
+	else
+	    rval = CADR(cptr->promargs);
+	break;
     case 3: /* turn on debugging n levels up */
-        while ( (cptr != R_ToplevelContext) && n > 0 ) {
-            if (cptr->callflag & CTXT_FUNCTION) 
-                  n--;
-            cptr = cptr->nextcontext;
-        } 
-        if( !(cptr->callflag & CTXT_FUNCTION) )
-           error(_("not that many functions on the call stack"));
-        else
-           SET_RDEBUG(cptr->cloenv, 1);
-        break;
+	while ( (cptr != R_ToplevelContext) && n > 0 ) {
+	    if (cptr->callflag & CTXT_FUNCTION)
+		  n--;
+	    cptr = cptr->nextcontext;
+	}
+	if( !(cptr->callflag & CTXT_FUNCTION) )
+	   error(_("not that many functions on the call stack"));
+	else
+	   SET_RDEBUG(cptr->cloenv, 1);
+	break;
     }
     return(rval);
 }

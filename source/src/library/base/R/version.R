@@ -1,5 +1,5 @@
 #  File src/library/base/R/version.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
 #  Copyright (C) 1995-2015 The R Core Team
 #
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 ## A simple S3 class for numeric versions (including package versions),
 ## and associated methods.
@@ -134,19 +134,11 @@ function()
 .encode_numeric_version <-
 function(x)
 {
-    strings <- function(char, n) {
-        vapply(Map(rep.int,
-                   rep_len(char, length(n)),
-                   n,
-                   USE.NAMES = FALSE),
-               paste, "", collapse = "")
-    }
-
     strlpad <- function(x, char, width)
-        paste0(strings(char, width - nchar(x)), x)
+        paste0(strrep(char, width - nchar(x)), x)
 
     strrpad <- function(x, char, width)
-        paste0(x, strings(char, width - nchar(x)))
+        paste0(x, strrep(char, width - nchar(x)))
 
     if(!is.numeric_version(x)) stop("wrong class")
 

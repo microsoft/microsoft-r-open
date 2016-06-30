@@ -1,7 +1,7 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
  *  Copyright (C) 1995, 1996  Robert Gentleman and Ross Ihaka
- *  Copyright (C) 1998--2008  R Core Team
+ *  Copyright (C) 1998--2016  R Core Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -15,17 +15,13 @@
  *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
 #ifndef RGRAPHICS_H_
 #define RGRAPHICS_H_
 
-/* This was a public header in R < 2.8.0, but no longer */
-
-#ifdef  __cplusplus
-extern "C" {
-#endif
+/* Internal header, not installed */
 
 	/* possible coordinate systems (for specifying locations) */
 typedef enum {
@@ -281,9 +277,5 @@ double xDevtoUsr(double, pGEDevDesc);
 double yDevtoUsr(double, pGEDevDesc);
 double xNPCtoUsr(double, pGEDevDesc);
 double yNPCtoUsr(double, pGEDevDesc);
-
-#ifdef  __cplusplus
-}
-#endif
 
 #endif /* RGRAPHICS_H_ */

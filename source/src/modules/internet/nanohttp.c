@@ -1,7 +1,7 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
  *  Copyright (C) 1998-2001  Daniel Veillard.
- *  Copyright (C) 2001-2014   The R Core Team.
+ *  Copyright (C) 2001-2015   The R Core Team.
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
 /* <UTF8> the only interpretation of char is ASCII 
@@ -55,7 +55,6 @@
 #endif
 
 extern void R_ProcessEvents(void);
-#if !defined(Unix) || defined(HAVE_BSD_NETWORKING)
 
 #ifdef Win32
 #include <io.h>
@@ -92,10 +91,10 @@ extern void R_FlushConsole(void);
 #include <unistd.h>
 #endif
 
-#ifdef HAVE_BSD_NETWORKING
-#  include <netdb.h>
-#  include <sys/socket.h>
-#  include <netinet/in.h>
+#ifdef Unix
+# include <netdb.h>
+# include <sys/socket.h>
+# include <netinet/in.h>
 #endif
 
 #ifdef HAVE_FCNTL_H
@@ -367,7 +366,10 @@ RxmlNanoHTTPScanURL(RxmlNanoHTTPCtxtPtr ctxt, const char *URL)
 	    break;
 	}
 	if(indx >= 40959)
-	    RxmlMessage(2, _("RxmlNanoHTTPScanURL: overlong (invalid?) URL"));	buf[indx++] = *cur++;
+	    RxmlMessage(2, _("RxmlNanoHTTPScanURL: overlong (invalid?) URL"));
+	else {
+	    buf[indx++] = *cur++;
+	}
     }
     if (*cur == 0) return;
 
@@ -395,7 +397,10 @@ RxmlNanoHTTPScanURL(RxmlNanoHTTPCtxtPtr ctxt, const char *URL)
 	    break;
 	}
 	if(indx >= 40959)
-	    RxmlMessage(2, _("RxmlNanoHTTPScanURL: overlong (invalid?) URL"));	buf[indx++] = *cur++;
+	    RxmlMessage(2, _("RxmlNanoHTTPScanURL: overlong (invalid?) URL"));
+	else { 
+	    buf[indx++] = *cur++;
+	}
     }
     if (*cur == 0)
         ctxt->path = xmlMemStrdup("/");
@@ -452,7 +457,9 @@ RxmlNanoHTTPScanProxy(const char *URL)
 	}
 	if(indx >= 4095)
 	    RxmlMessage(2, _("RxmlNanoHTTPScanProxy: overlong (invalid?) URL"));
-	buf[indx++] = *cur++;
+	else {
+	    buf[indx++] = *cur++;
+	}
     }
     if (*cur == 0) return;
 
@@ -487,7 +494,10 @@ RxmlNanoHTTPScanProxy(const char *URL)
 	    break;
 	}
 	if(indx >= 4095)
-	    RxmlMessage(2, _("RxmlNanoHTTPScanProxy: overlong (invalid?) URL"));	buf[indx++] = *cur++;
+	    RxmlMessage(2, _("RxmlNanoHTTPScanProxy: overlong (invalid?) URL"));
+	else {
+	    buf[indx++] = *cur++;
+	}
     }
 }
 
@@ -545,6 +555,7 @@ RxmlNanoHTTPFreeCtxt(RxmlNanoHTTPCtxtPtr ctxt)
     if (ctxt->mimeType != NULL) xmlFree(ctxt->mimeType);
     if (ctxt->location != NULL) xmlFree(ctxt->location);
     if (ctxt->authHeader != NULL) xmlFree(ctxt->authHeader);
+    if (ctxt->statusMsg != NULL) xmlFree(ctxt->statusMsg);
 #ifdef HAVE_ZLIB_H
     if (ctxt->strm != NULL) {
 	inflateEnd(ctxt->strm);
@@ -1537,4 +1548,3 @@ RxmlNanoHTTPContentType(void *ctx)
     RxmlNanoHTTPCtxtPtr ctxt = (RxmlNanoHTTPCtxtPtr) ctx;
     return(ctxt->contentType);
 }
-#endif /* !Unix or BSD_NETWORKING */

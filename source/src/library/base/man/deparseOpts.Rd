@@ -1,6 +1,6 @@
 % File src/library/base/man/deparseOpts.Rd
-% Part of the R package, http://www.R-project.org
-% Copyright 1995-2014 R Core Team
+% Part of the R package, https://www.R-project.org
+% Copyright 1995-2016 R Core Team
 % Distributed under GPL 2 or later
 
 \name{deparseOpts}
@@ -81,6 +81,9 @@
       with maximal opportunity to be recorded exactly to full precision.
       Complex numbers with one or both non-finite components are
       output as if this option were not set.
+
+      (This relies on that format being correctly supported: known
+      problems on Windows are worked around as from \R 3.1.2.)
     }
     \item{\code{digits17}}{
       Real and finite complex numbers are output using format
@@ -91,19 +94,19 @@
     }
   }
   For the most readable (but perhaps incomplete) display, use
-  \code{control = NULL}. This displays the object's value, but not its
+  \code{control = NULL}.  This displays the object's value, but not its
   attributes.  The default in \code{\link{deparse}} is to display the
   attributes as well, but not to use any of the other options to make
   the result parseable.  (\code{\link{dput}} and \code{\link{dump}} do
   use more default options, and printing of functions without sources
   uses \code{c("keepInteger", "keepNA")}.)
 
-  Using \code{control = "all"} comes closest to making \code{deparse()}
-  an inverse of \code{parse()}.  However, not all objects are
-  deparse-able even with this option.  A warning will be issued if the
-  function recognizes that it is being asked to do the impossible.
-  Also, representing double and complex numbers as decimals may well not
-  be exact.
+  Using \code{control = c("all", "hexNumeric")} comes closest to making
+  \code{deparse()} an inverse of \code{parse()}.  However, not all
+  objects are deparse-able even with this option.  A warning will be
+  issued if the function recognizes that it is being asked to do the
+  impossible.  Also, representing double and complex numbers as decimals
+  may well not be exact.
 
   Only one of \code{"hexNumeric"} and \code{"digits17"} can be specified.
 }

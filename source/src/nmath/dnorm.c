@@ -16,7 +16,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  *
  *  SYNOPSIS
  *
@@ -51,7 +51,7 @@ double dnorm4(double x, double mu, double sigma, int give_log)
     x = fabs (x);
     if (x >= 2 * sqrt(DBL_MAX)) return R_D__0;
     if (give_log)
-        return -(M_LN_SQRT_2PI + 0.5 * x * x + log(sigma));
+	return -(M_LN_SQRT_2PI + 0.5 * x * x + log(sigma));
     //  M_1_SQRT_2PI = 1 / sqrt(2 * pi)
 #ifdef MATHLIB_FAST_dnorm
     // and for R <= 3.0.x and R-devel upto 2014-01-01:

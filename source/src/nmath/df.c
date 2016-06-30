@@ -18,7 +18,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  *
  *
  *  DESCRIPTION
@@ -47,8 +47,7 @@ double df(double x, double m, double n, int give_log)
     if (x < 0.)  return(R_D__0);
     if (x == 0.) return(m > 2 ? R_D__0 : (m == 2 ? R_D__1 : ML_POSINF));
     if (!R_FINITE(m) && !R_FINITE(n)) { /* both +Inf */
-	if(x == 1.) return ML_POSINF;
-	/* else */  return R_D__0;
+	if(x == 1.) return ML_POSINF; else return R_D__0;
     }
     if (!R_FINITE(n)) /* must be +Inf by now */
 	return(dgamma(x, m/2, 2./m, give_log));

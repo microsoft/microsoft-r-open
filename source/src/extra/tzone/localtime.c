@@ -1,6 +1,6 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
- *  Modifications copyright (C) 2007-2015  The R Core Team
+ *  Modifications copyright (C) 2007-2016  The R Core Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
 
@@ -38,8 +38,9 @@ use of tm_zone and tm_gmtoff on all platforms.
 #include <string.h>
 #include <limits.h>	/* for CHAR_BIT et al. */
 
-// to get tm_zone, tm_gmtoff defined in glibc.
-// some other header, e.g. math.h, might define the macro.
+// To get tm_zone, tm_gmtoff defined in glibc
+// (although this file is not usually used there).
+// Some other header, e.g. math.h, might define the macro.
 #if defined HAVE_FEATURES_H
 # include <features.h>
 # ifdef __GNUC_PREREQ
@@ -78,8 +79,16 @@ use of tm_zone and tm_gmtoff on all platforms.
 #endif /* !defined FALSE */
 
 /* merged from private.h */
+#ifndef TYPE_BIT
 #define TYPE_BIT(type)	(sizeof (type) * CHAR_BIT)
+#endif /* !defined TYPE_BIT */
+
+#ifndef TYPE_SIGNED
 #define TYPE_SIGNED(type) (((type) -1) < 0)
+#endif /* !defined TYPE_SIGNED */
+
+#define TWOS_COMPLEMENT(t) ((t) ~ (t) 0 < 0)
+
 #define GRANDPARENTED	"Local time zone must be set--see zic manual page"
 #define YEARSPERREPEAT	 400	/* years before a Gregorian repeat */
 #define AVGSECSPERYEAR	 31556952L
@@ -87,15 +96,20 @@ use of tm_zone and tm_gmtoff on all platforms.
 #define SECSPERREPEAT_BITS  34	/* ceil(log2(SECSPERREPEAT)) */
 #define is_digit(c) ((unsigned)(c) - '0' <= 9)
 #define INITIALIZE(x) (x = 0)
-/* The minimum and maximum finite time values.  */
-static time_t const time_t_min =
-  (TYPE_SIGNED(time_t)
-   ? (time_t) -1 << (CHAR_BIT * sizeof (time_t) - 1)
-   : 0);
-static time_t const time_t_max =
-  (TYPE_SIGNED(time_t)
-   ? - (~ 0 < 0) - ((time_t) -1 << (CHAR_BIT * sizeof (time_t) - 1))
-   : -1);
+
+/* Max and min values of the integer type T, of which only the bottom
+   B bits are used, and where the highest-order used bit is considered
+   to be a sign bit if T is signed.  */
+#define MAXVAL(t, b)						\
+  ((t) (((t) 1 << ((b) - 1 - TYPE_SIGNED(t)))			\
+	- 1 + ((t) 1 << ((b) - 1 - TYPE_SIGNED(t)))))
+#define MINVAL(t, b)						\
+  ((t) (TYPE_SIGNED(t) ? - TWOS_COMPLEMENT(t) - MAXVAL(t, b) : 0))
+
+/* The minimum and maximum finite time values.  This assumes no padding.  */
+static time_t const time_t_min = MINVAL(time_t, TYPE_BIT(time_t));
+static time_t const time_t_max = MAXVAL(time_t, TYPE_BIT(time_t));
+
 
 #include "tzfile.h"
 
@@ -266,6 +280,8 @@ static struct state	gmtmem;
 #define lclptr		(&lclmem)
 #define gmtptr		(&gmtmem)
 
+/* These are abbreviated names, so 255 should be ample.
+   But this was not checked in strcpy below. */
 #ifndef TZ_STRLEN_MAX
 #define TZ_STRLEN_MAX 255
 #endif /* !defined TZ_STRLEN_MAX */
@@ -739,10 +755,10 @@ getsecs(const char *strp, int_fast32_t *const secsp)
     int	num;
 
     /*
-    ** `HOURSPERDAY * DAYSPERWEEK - 1' allows quasi-Posix rules like
+    ** 'HOURSPERDAY * DAYSPERWEEK - 1' allows quasi-Posix rules like
     ** "M10.4.6/26", which does not conform to Posix,
     ** but which specifies the equivalent of
-    ** ``02:00 on the first Sunday on or after 23 Oct''.
+    ** "02:00 on the first Sunday on or after 23 Oct".
     */
     strp = getnum(strp, &num, 0, HOURSPERDAY * DAYSPERWEEK - 1);
     if (strp == NULL)
@@ -756,7 +772,7 @@ getsecs(const char *strp, int_fast32_t *const secsp)
 	*secsp += num * SECSPERMIN;
 	if (*strp == ':') {
 	    ++strp;
-	    /* `SECSPERMIN' allows for leap seconds. */
+	    /* 'SECSPERMIN' allows for leap seconds.  */
 	    strp = getnum(strp, &num, 0, SECSPERMIN);
 	    if (strp == NULL)
 		return NULL;
@@ -1208,8 +1224,11 @@ tzset(void)
     if (lcl_is_set > 0 && strcmp(lcl_TZname, name) == 0)
 	return;
     lcl_is_set = strlen(name) < sizeof lcl_TZname;
-    if (lcl_is_set)
-	(void) strcpy(lcl_TZname, name);
+    /* R change: was strcpy before. */
+    if (lcl_is_set) {
+	(void) strncpy(lcl_TZname, name, TZ_STRLEN_MAX);
+	lcl_TZname[TZ_STRLEN_MAX] = '\0';
+    }
 
     if (*name == '\0') {
 	/*

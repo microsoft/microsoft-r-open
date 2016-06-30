@@ -1,5 +1,5 @@
 #  File src/library/base/R/rank.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
 #  Copyright (C) 1995-2015 The R Core Team
 #
@@ -14,10 +14,10 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 rank <- function(x, na.last = TRUE,
-		 ties.method = c("average", "first", "random", "max", "min"))
+		 ties.method = c("average", "first", "last", "random", "max", "min"))
 {
     nas <- is.na(x)
     nm <- names(x)
@@ -30,6 +30,8 @@ rank <- function(x, na.last = TRUE,
 		"average" = , "min" = , "max" =
 		.Internal(rank(x, length(x), ties.method)),
 		"first" = sort.list(sort.list(x)),
+		"last"  = ## == rev(sort.list(sort.list(rev(x)))) :
+		    sort.list(rev.default(sort.list(x, decreasing=TRUE))),
 		"random" = sort.list(order(x, stats::runif(sum(!nas)))))
     ## the internal code has ranks in [1, length(y)]
     if(!is.na(na.last) && any(nas)) {

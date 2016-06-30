@@ -3,7 +3,7 @@
 /*
  *  R : A Computer Langage for Statistical Data Analysis
  *  Copyright (C) 1995, 1996, 1997  Robert Gentleman and Ross Ihaka
- *  Copyright (C) 1997--2013  The R Core Team
+ *  Copyright (C) 1997--2015  The R Core Team
  *  Copyright (C) 2010 Duncan Murdoch
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
 #ifdef HAVE_CONFIG_H
@@ -669,7 +669,7 @@ static void yyerror(const char *s)
     	snprintf(ParseErrorMsg, PARSE_ERROR_SIZE,"%s", s);
     }
     filename = findVar(install("filename"), parseState.SrcFile);
-    if (isString(filename) && length(filename))
+    if (isString(filename) && LENGTH(filename))
     	strncpy(ParseErrorFilename, CHAR(STRING_ELT(filename, 0)), PARSE_ERROR_SIZE - 1);
     else
         ParseErrorFilename[0] = '\0';

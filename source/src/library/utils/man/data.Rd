@@ -1,5 +1,5 @@
 % File src/library/utils/man/data.Rd
-% Part of the R package, http://www.R-project.org
+% Part of the R package, https://www.R-project.org
 % Copyright 1995-2014 R Core Team
 % Distributed under GPL 2 or later
 
@@ -46,11 +46,12 @@ data(\dots, list = character(), package = NULL, lib.loc = NULL,
     \code{\link{load}()}ed.
 
     \item files ending \file{.tab}, \file{.txt} or \file{.TXT} are read
-    using \code{\link{read.table}(\dots, header = TRUE)}, and hence
+    using \code{\link{read.table}(\dots, header = TRUE, as.is=FALSE)},
+    and hence
     result in a data frame.
 
     \item files ending \file{.csv} or \file{.CSV} are read using
-    \code{\link{read.table}(\dots, header = TRUE, sep = ";")},
+    \code{\link{read.table}(\dots, header = TRUE, sep = ";", as.is=FALSE)},
     and also result in a data frame.
   }
   If more than one matching file name is found, the first on this list

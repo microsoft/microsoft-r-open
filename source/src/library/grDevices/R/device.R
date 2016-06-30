@@ -1,7 +1,7 @@
 #  File src/library/grDevices/R/device.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2014 The R Core Team
+#  Copyright (C) 1995-2016 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 
 .known_interactive.devices <-
@@ -161,9 +161,9 @@ dev.print <- function(device = postscript, ...)
             ## fits portrait but not landscape
             hz <- FALSE
         } else {
-            h0 <- ifelse(hz, wp, hp)
+            h0 <- if(hz) wp else hp
             if(h > h0) { w <- w * h0/h; h <- h0 }
-            w0 <- ifelse(hz, hp, wp)
+            w0 <- if(hz) hp else wp
             if(w > w0) { h <- h * w0/w; w <- w0 }
         }
         if(is.null(oc$pointsize)) {
@@ -281,25 +281,11 @@ dev.new <- function(..., noRStudioGD = FALSE)
     dev <- getOption("device")
     if(!is.character(dev) && !is.function(dev))
         stop("invalid setting for 'getOption(\"device\")'")
-    if(is.character(dev) && noRStudioGD && dev == "RStudioGD") {
-        ## copied from zzz.R
-        if(!nzchar(defdev <- Sys.getenv("R_DEFAULT_DEVICE"))) defdev <- pdf
-        dev <- if(interactive()) {
-            if(nzchar(intdev <- Sys.getenv("R_INTERACTIVE_DEVICE"))) intdev
-            else {
-                dsp <- Sys.getenv("DISPLAY")
-                if(.Platform$OS.type == "windows") windows
-                else if (.Platform$GUI == "AQUA" ||
-                         ((!nzchar(dsp) || grepl("^/tmp/launch-", dsp))
-                          && .Call(C_makeQuartzDefault))) quartz
-                else if (nzchar(dsp) && .Platform$GUI %in% c("X11", "Tk")) X11
-                else defdev
-            }
-        } else defdev
-    }
+    if(noRStudioGD && is.character(dev) && dev == "RStudioGD")
+        dev <- .select_device()
     if(is.character(dev)) {
         ## this is documented to be searched for from workspace,
-        ## then in graphics namespace.
+        ## then in the grDevices namespace.
         ## We could restrict the search to functions, but the C
         ## code in devices.c does not.
         dev <- if(exists(dev, .GlobalEnv)) get(dev, .GlobalEnv)
@@ -385,4 +371,25 @@ dev.capabilities <- function(what = NULL)
                   if (zz[8L]) "MouseUp",
                   if (zz[9L]) "Keybd" )[-1L]
     if (!is.null(what)) z[charmatch(what, names(z), 0L)] else z
+}
+
+## for use in dev.new and .onLoad
+.select_device <- function() {
+    ## Use device functions rather than names to make it harder to get masked.
+    if(!nzchar(defdev <- Sys.getenv("R_DEFAULT_DEVICE"))) defdev <- pdf
+    if(interactive()) {
+        if(nzchar(intdev <- Sys.getenv("R_INTERACTIVE_DEVICE"))) intdev
+        else {
+            if(.Platform$OS.type == "windows") windows
+            else {
+                ## This detects if quartz() was built and if we are
+                ## running at the OS X console (both of which have to
+                ## be true under R.app).
+                if(.Platform$GUI == "AQUA" ||.Call(C_makeQuartzDefault)) quartz
+                else if(nzchar(Sys.getenv("DISPLAY"))
+                        && .Platform$GUI %in% c("X11", "Tk")) X11
+                else defdev
+            }
+        }
+    } else defdev
 }

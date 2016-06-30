@@ -1,5 +1,5 @@
 #  File src/library/stats/R/vcov.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
 #  Copyright (C) 1994-2002 W. N. Venables and B. D. Ripley
 #  Copyright (C) 2002-11 The R Core Team
@@ -15,7 +15,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 vcov <- function(object, ...) UseMethod("vcov")
 
@@ -42,4 +42,17 @@ vcov.summary.glm <- function(object, ...) object$cov.scaled
 vcov.summary.lm  <- function(object, ...) object$sigma^2 * object$cov.unscaled
 
 ## gls and lme methods moved to nlme in 2.6.0
+
+
+### "The" sigma in lm/nls - "like" models:
+
+sigma <- function(object, ...) UseMethod("sigma")
+
+## works whenever deviance(), nobs() and coef() do fine:
+sigma.default <- function (object, use.fallback=TRUE, ...)
+    sqrt(deviance(object, ...) /
+             (nobs(object, use.fallback=use.fallback) - length(coef(object))))
+
+sigma.mlm <- function (object, ...)
+    sqrt(colSums(object$residuals^2) / object$df.residual)
 

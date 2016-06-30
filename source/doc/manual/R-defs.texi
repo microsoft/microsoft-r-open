@@ -35,7 +35,7 @@ $\t\$%
 @end macro
 
 @macro CRANpkg {p}
-@url{http://CRAN.R-project.org/package=\p\, @strong{\p\}}
+@url{https://CRAN.R-project.org/package=\p\, @strong{\p\}}
 @end macro
 
 @macro cputype {c}
@@ -44,7 +44,7 @@ $\t\$%
 
 @c -- edit these here alone -- in order keep consistency
 @macro Rcopyright{year}
-Copyright @copyright{} \year\--2015 R Core Team
+Copyright @copyright{} \year\--2016 R Core Team
 @end macro
 
 @macro permission{}

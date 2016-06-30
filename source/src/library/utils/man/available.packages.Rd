@@ -1,5 +1,5 @@
 % File src/library/utils/man/available.packages.Rd
-% Part of the R package, http://www.R-project.org
+% Part of the R package, https://www.R-project.org
 % Copyright 1995-2015 R Core Team
 % Distributed under GPL 2 or later
 
@@ -13,11 +13,9 @@
   from a local mirror).
 }
 \usage{
-available.packages(contriburl =
-                   contrib.url(getOption("repos"), type),
-                   method, fields = NULL,
-                   type = getOption("pkgType"),
-                   filters = NULL)
+available.packages(contriburl = contrib.url(repos, type), method,
+                   fields = NULL, type = getOption("pkgType"),
+                   filters = NULL, repos = getOption("repos"))
 }
 \arguments{
   \item{contriburl}{
@@ -42,6 +40,9 @@ available.packages(contriburl =
   }
   \item{filters}{
     a character vector or list or \code{NULL} (default). See \sQuote{Details}.
+  }
+  \item{repos}{
+    character vector, the base URL(s) of the repositories to use.
   }
 }
 \details{
@@ -81,7 +82,7 @@ available.packages(contriburl =
     \item{\code{"license/FOSS"}}{Include only packages for which
       installation can proceed solely based on packages which can be
       verified as Free or Open Source Software (FOSS, e.g.,
-      \url{http://en.wikipedia.org/wiki/FOSS}) employing the available
+      \url{https://en.wikipedia.org/wiki/FOSS}) employing the available
       license specifications.  Thus both the package and any packages
       that it depends on to load need to be \emph{known to be} FOSS.
 

@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
 #ifdef HAVE_CONFIG_H
@@ -138,8 +138,7 @@ const static char * const falsenames[] = {
 
 SEXP asChar(SEXP x)
 {
-    if (XLENGTH(x) >= 1) {
-	if (isVectorAtomic(x)) {
+	if (isVectorAtomic(x) && XLENGTH(x) >= 1) {
 	    int w, d, e, wi, di, ei;
 	    char buf[MAXELTSIZE];  /* Probably 100 would suffice */
 
@@ -148,9 +147,9 @@ SEXP asChar(SEXP x)
 		if (LOGICAL(x)[0] == NA_LOGICAL)
 		    return NA_STRING;
 		if (LOGICAL(x)[0])
-		    sprintf(buf, "T");
+		    sprintf(buf, "TRUE");
 		else
-		    sprintf(buf, "F");
+		    sprintf(buf, "FALSE");
 		return mkChar(buf);
 	    case INTSXP:
 		if (INTEGER(x)[0] == NA_INTEGER)
@@ -174,7 +173,6 @@ SEXP asChar(SEXP x)
 	    return x;
 	} else if(TYPEOF(x) == SYMSXP)
 	    return PRINTNAME(x);
-    }
     return NA_STRING;
 }
 
@@ -258,40 +256,40 @@ static int findTypeInTypeTable(SEXPTYPE t)
 }
 
 // called from main.c
-attribute_hidden 
+attribute_hidden
 void InitTypeTables(void) {
 
     /* Type2Table */
     for (int type = 0; type < MAX_NUM_SEXPTYPE; type++) {
-        int j = findTypeInTypeTable(type);
+	int j = findTypeInTypeTable(type);
 
-        if (j != -1) {
-            const char *cstr = TypeTable[j].str;
-            SEXP rchar = PROTECT(mkChar(cstr));
-            SEXP rstr = ScalarString(rchar);
-            MARK_NOT_MUTABLE(rstr);
-            R_PreserveObject(rstr);
-            UNPROTECT(1); /* rchar */
-            SEXP rsym = install(cstr);
+	if (j != -1) {
+	    const char *cstr = TypeTable[j].str;
+	    SEXP rchar = PROTECT(mkChar(cstr));
+	    SEXP rstr = ScalarString(rchar);
+	    MARK_NOT_MUTABLE(rstr);
+	    R_PreserveObject(rstr);
+	    UNPROTECT(1); /* rchar */
+	    SEXP rsym = install(cstr);
 
-            Type2Table[type].cstrName = cstr;
-            Type2Table[type].rcharName = rchar;
-            Type2Table[type].rstrName = rstr;
-            Type2Table[type].rsymName = rsym;
-        } else {
-            Type2Table[type].cstrName = NULL;
-            Type2Table[type].rcharName = NULL;
-            Type2Table[type].rstrName = NULL;
-            Type2Table[type].rsymName = NULL;
-        }
+	    Type2Table[type].cstrName = cstr;
+	    Type2Table[type].rcharName = rchar;
+	    Type2Table[type].rstrName = rstr;
+	    Type2Table[type].rsymName = rsym;
+	} else {
+	    Type2Table[type].cstrName = NULL;
+	    Type2Table[type].rcharName = NULL;
+	    Type2Table[type].rstrName = NULL;
+	    Type2Table[type].rsymName = NULL;
+	}
     }
 }
 
 SEXP type2str_nowarn(SEXPTYPE t) /* returns a CHARSXP */
 {
     if (t < MAX_NUM_SEXPTYPE) { /* FIXME: branch not really needed */
-        SEXP res = Type2Table[t].rcharName;
-        if (res != NULL) return res;
+	SEXP res = Type2Table[t].rcharName;
+	if (res != NULL) return res;
     }
     return R_NilValue;
 }
@@ -300,7 +298,7 @@ SEXP type2str(SEXPTYPE t) /* returns a CHARSXP */
 {
     SEXP s = type2str_nowarn(t);
     if (s != R_NilValue) {
-        return s;
+	return s;
     }
     warning(_("type %d is unimplemented in '%s'"), t, "type2str");
     char buf[50];
@@ -311,10 +309,10 @@ SEXP type2str(SEXPTYPE t) /* returns a CHARSXP */
 SEXP type2rstr(SEXPTYPE t) /* returns a STRSXP */
 {
     if (t < MAX_NUM_SEXPTYPE) { /* FIXME: branch not really needed */
-        SEXP res = Type2Table[t].rstrName;
-        if (res != NULL) return res;
+	SEXP res = Type2Table[t].rstrName;
+	if (res != NULL) return res;
     }
-    error(_("type %d is unimplemented in '%s'"), t, 
+    error(_("type %d is unimplemented in '%s'"), t,
 	  "type2ImmutableScalarString");
     return R_NilValue; /* for -Wall */
 }
@@ -322,8 +320,8 @@ SEXP type2rstr(SEXPTYPE t) /* returns a STRSXP */
 const char *type2char(SEXPTYPE t) /* returns a char* */
 {
     if (t < MAX_NUM_SEXPTYPE) { /* FIXME: branch not really needed */
-        const char * res = Type2Table[t].cstrName;
-        if (res != NULL) return res;
+	const char * res = Type2Table[t].cstrName;
+	if (res != NULL) return res;
     }
     warning(_("type %d is unimplemented in '%s'"), t, "type2char");
     static char buf[50];
@@ -335,10 +333,10 @@ const char *type2char(SEXPTYPE t) /* returns a char* */
 SEXP NORET type2symbol(SEXPTYPE t)
 {
     if (t >= 0 && t < MAX_NUM_SEXPTYPE) { /* FIXME: branch not really needed */
-        SEXP res = Type2Table[t].rsymName;
-        if (res != NULL) {
-            return res;
-        }
+	SEXP res = Type2Table[t].rsymName;
+	if (res != NULL) {
+	    return res;
+	}
     }
     error(_("type %d is unimplemented in '%s'"), t, "type2symbol");
 }
@@ -653,8 +651,12 @@ SEXP attribute_hidden do_merge(SEXP call, SEXP op, SEXP args, SEXP rho)
     isort_with_index(INTEGER(yi), iy, ny);
 
     /* 1. determine result sizes */
-    for (i = 0; i < nx; i++) if (INTEGER(xi)[i] > 0) break; nx_lone = i;
-    for (i = 0; i < ny; i++) if (INTEGER(yi)[i] > 0) break; ny_lone = i;
+    for (i = 0; i < nx; i++) 
+	if (INTEGER(xi)[i] > 0) break; 
+    nx_lone = i;
+    for (i = 0; i < ny; i++) 
+	if (INTEGER(yi)[i] > 0) break;
+    ny_lone = i;
     double dnans = 0;
     for (i = nx_lone, j = ny_lone; i < nx; i = nnx, j = nny) {
 	int tmp = INTEGER(xi)[i];
@@ -1369,6 +1371,39 @@ Rboolean utf8Valid(const char *str)
     return valid_utf8(str, strlen(str)) == 0;
 }
 
+SEXP attribute_hidden do_validUTF8(SEXP call, SEXP op, SEXP args, SEXP rho)
+{
+    checkArity(op, args);
+    SEXP x = CAR(args);
+    if (!isString(x))
+	error(_("invalid '%s' argument"), "x");
+    R_xlen_t n = XLENGTH(x);
+    SEXP ans = allocVector(LGLSXP, n); // no allocation below
+    int *lans = LOGICAL(ans);
+    for (R_xlen_t i = 0; i < n; i++)
+	lans[i] = utf8Valid(CHAR(STRING_ELT(x, i)));
+    return ans;
+}
+
+SEXP attribute_hidden do_validEnc(SEXP call, SEXP op, SEXP args, SEXP rho)
+{
+    checkArity(op, args);
+    SEXP x = CAR(args);
+    if (!isString(x))
+	error(_("invalid '%s' argument"), "x");
+    R_xlen_t n = XLENGTH(x);
+    SEXP ans = allocVector(LGLSXP, n); // no allocation below
+    int *lans = LOGICAL(ans);
+    for (R_xlen_t i = 0; i < n; i++) {
+	SEXP p = STRING_ELT(x, i);
+	if (IS_BYTES(p) || IS_LATIN1(p)) lans[i] = 1;
+	else if (IS_UTF8(p) || utf8locale) lans[i] = utf8Valid(CHAR(p));
+	else if(mbcslocale) lans[i] = mbcsValid(CHAR(p));
+	else lans[i] = 1;
+    }
+    return ans;
+}
+
 
 /* MBCS-aware versions of common comparisons.  Only used for ASCII c */
 char *Rf_strchr(const char *s, int c)
@@ -1638,7 +1673,7 @@ double R_strtod5(const char *str, char **endptr, char dec,
 	    case '+': p++;
 	    default: ;
 	    }
-	    /* The test for n is in response to PR#16358; it's not right if the exponent is 
+	    /* The test for n is in response to PR#16358; it's not right if the exponent is
 	       very large, but the overflow or underflow below will handle it. */
 #define MAX_EXPONENT_PREFIX 9999
 	    for (n = 0; *p >= '0' && *p <= '9'; p++) n = (n < MAX_EXPONENT_PREFIX) ? n * 10 + (*p - '0') : n;
@@ -1747,7 +1782,7 @@ SEXP attribute_hidden do_enc2(SEXP call, SEXP op, SEXP args, SEXP env)
 	if (PRIMVAL(op) || known_to_be_utf8) { /* enc2utf8 */
 	    if (IS_UTF8(el) || IS_ASCII(el) || IS_BYTES(el)) continue;
 	    if (!duped) { ans = PROTECT(duplicate(ans)); duped = TRUE; }
-	    SET_STRING_ELT(ans, i, 
+	    SET_STRING_ELT(ans, i,
 			   mkCharCE(translateCharUTF8(el), CE_UTF8));
 	} else if (ENC_KNOWN(el)) { /* enc2native */
 	    if (IS_ASCII(el) || IS_BYTES(el)) continue;
@@ -1948,7 +1983,7 @@ SEXP attribute_hidden do_ICUset(SEXP call, SEXP op, SEXP args, SEXP rho)
 		collationLocaleSet = 2;
 	    } else {
 		if(strcmp(s, "none")) {
-		    if(streql(s, "default")) 
+		    if(streql(s, "default"))
 			uloc_setDefault(getLocale(), &status);
 		    else uloc_setDefault(s, &status);
 		    if(U_FAILURE(status))
@@ -1992,15 +2027,15 @@ SEXP attribute_hidden do_ICUget(SEXP call, SEXP op, SEXP args, SEXP rho)
     checkArity(op, args);
 
     if (collationLocaleSet == 2) {
-        ans = "ASCII";
+	ans = "ASCII";
     } else if(collator) {
 	UErrorCode  status = U_ZERO_ERROR;
 	int type = asInteger(CAR(args));
 	if (type < 1 || type > 2)
 	    error(_("invalid '%s' value"), "type");
-	
-	res = ucol_getLocaleByType(collator, 
-				   type == 1 ? ULOC_ACTUAL_LOCALE : ULOC_VALID_LOCALE, 
+
+	res = ucol_getLocaleByType(collator,
+				   type == 1 ? ULOC_ACTUAL_LOCALE : ULOC_VALID_LOCALE,
 				   &status);
 	if(!U_FAILURE(status) && res) ans = res;
     } else ans = "ICU not in use";
@@ -2013,13 +2048,13 @@ attribute_hidden
 int Scollate(SEXP a, SEXP b)
 {
     if (!collationLocaleSet) {
-    	int errsv = errno;      /* OSX may set errno in the operations below. */
+	int errsv = errno;      /* OSX may set errno in the operations below. */
 	collationLocaleSet = 1;
 #ifndef Win32
 	if (strcmp("C", getLocale()) ) {
 #else
 	const char *p = getenv("R_ICU_LOCALE");
-        if(p && p[0]) {
+	if(p && p[0]) {
 #endif
 	    UErrorCode status = U_ZERO_ERROR;
 	    uloc_setDefault(getLocale(), &status);
@@ -2182,21 +2217,25 @@ SEXP attribute_hidden do_tabulate(SEXP call, SEXP op, SEXP args, SEXP rho)
 	error(_("invalid '%s' argument"), "nbin");
     SEXP ans = allocVector(INTSXP, nb);
     int *x = INTEGER(in), *y = INTEGER(ans);
-    memset(y, 0, nb * sizeof(int));
+    if (nb) memset(y, 0, nb * sizeof(int));
     for(R_xlen_t i = 0 ; i < n ; i++)
 	if (x[i] != NA_INTEGER && x[i] > 0 && x[i] <= nb) y[x[i] - 1]++;
     return ans;
 }
 
-/* x can be a long vector but xt cannot since the result is integer */
+/* .Internal(findInterval(vec, x, rightmost.closed, all.inside,  left.open))
+ *                         xt  x    right             inside       leftOp
+ * x can be a long vector but xt cannot since the result is integer
+*/
 SEXP attribute_hidden do_findinterval(SEXP call, SEXP op, SEXP args, SEXP rho)
 {
     checkArity(op, args);
-    SEXP xt, x, right, inside;
+    SEXP xt, x, right, inside, leftOp;
     xt = CAR(args); args = CDR(args);
     x = CAR(args); args = CDR(args);
     right = CAR(args); args = CDR(args);
-    inside = CAR(args);
+    inside = CAR(args);args = CDR(args);
+    leftOp = CAR(args);
     if(TYPEOF(xt) != REALSXP || TYPEOF(x) != REALSXP) error("invalid input");
 #ifdef LONG_VECTOR_SUPPORT
     if (IS_LONG_VEC(xt))
@@ -2205,7 +2244,7 @@ SEXP attribute_hidden do_findinterval(SEXP call, SEXP op, SEXP args, SEXP rho)
     int n = LENGTH(xt);
     if (n == NA_INTEGER) error(_("invalid '%s' argument"), "vec");
     R_xlen_t nx = XLENGTH(x);
-    int sr = asLogical(right), si = asLogical(inside);
+    int sr = asLogical(right), si = asLogical(inside), lO = asLogical(leftOp);
     if (sr == NA_INTEGER)
 	error(_("invalid '%s' argument"), "rightmost.closed");
     if (si == NA_INTEGER)
@@ -2214,10 +2253,11 @@ SEXP attribute_hidden do_findinterval(SEXP call, SEXP op, SEXP args, SEXP rho)
     double *rxt = REAL(xt), *rx = REAL(x);
     int ii = 1;
     for(int i = 0; i < nx; i++) {
-	if (ISNAN(REAL(x)[i])) ii = NA_INTEGER;
+	if (ISNAN(rx[i]))
+	    ii = NA_INTEGER;
 	else {
-	    int mfl = si;
-	    ii = findInterval(rxt, n, rx[i], sr, si, ii, &mfl);
+	    int mfl;
+	    ii = findInterval2(rxt, n, rx[i], sr, si, lO, ii, &mfl); // -> ../appl/interv.c
 	}
 	INTEGER(ans)[i] = ii;
     }
@@ -2270,7 +2310,7 @@ SEXP attribute_hidden do_pretty(SEXP call, SEXP op, SEXP args, SEXP rho)
 
 /*
     r <- .Internal(formatC(x, as.character(mode), width, digits,
-                   as.character(format), as.character(flag), i.strlen))
+		   as.character(format), as.character(flag), i.strlen))
 */
 
 static void

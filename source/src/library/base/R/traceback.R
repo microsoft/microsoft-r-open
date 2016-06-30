@@ -1,7 +1,7 @@
 #  File src/library/base/R/traceback.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2015 The R Core Team
+#  Copyright (C) 1995-2016 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -14,37 +14,44 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
-traceback <-
-function(x = NULL, max.lines = getOption("deparse.max.lines"))
-{
+.traceback <- function(x = NULL) {
     if(is.null(x) && !is.null(x <- get0(".Traceback", envir = baseenv())))
 	{}
     else if (is.numeric(x))
     	x <- .Internal(traceback(x))
-    n <- length(x)
+    x
+}
+
+traceback <- function(x = NULL, max.lines = getOption("deparse.max.lines"))
+{
+    n <- length(x <- .traceback(x))
     if(n == 0L)
         cat(gettext("No traceback available"), "\n")
     else {
         for(i in 1L:n) {
+            xi <- x[[i]]
             label <- paste0(n-i+1L, ": ")
-            m <- length(x[[i]])
-            if (!is.null(srcref <- attr(x[[i]], "srcref"))) {
-            	srcfile <- attr(srcref, "srcfile")
-            	x[[i]][m] <- paste0(x[[i]][m], " at ",
-				    basename(srcfile$filename), "#", srcref[1L])
+            m <- length(xi)
+            ## Find source location (NULL if not available)
+            srcloc <- if (!is.null(srcref <- attr(xi, "srcref"))) {
+                srcfile <- attr(srcref, "srcfile")
+                paste0(" at ", basename(srcfile$filename), "#", srcref[1L])
+            }
+            ## Truncate deparsed code (destroys attributes of xi)
+            if(is.numeric(max.lines) && max.lines > 0L && max.lines < m) {
+                xi <- c(xi[seq_len(max.lines)], " ...")
+                m <- length(xi)
+            }
+            if (!is.null(srcloc)) {
+                xi[m] <- paste0(xi[m], srcloc)
             }
             if(m > 1)
                 label <- c(label, rep(substr("          ", 1L,
                                              nchar(label, type="w")),
                                       m - 1L))
-            if(is.numeric(max.lines) && max.lines > 0L && max.lines < m) {
-                cat(paste0(label[1L:max.lines], x[[i]][1L:max.lines]),
-                    sep = "\n")
-                cat(label[max.lines+1L], " ...\n")
-            } else
-            	cat(paste0(label, x[[i]]), sep="\n")
+            cat(paste0(label, xi), sep="\n")
         }
     }
     invisible(x)

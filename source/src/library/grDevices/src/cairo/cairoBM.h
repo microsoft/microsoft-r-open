@@ -1,6 +1,6 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
- *  Copyright (C) 1997--2011  R Core Team
+ *  Copyright (C) 1997--2015  R Core Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
 #ifndef R_DEV_CAIRO_H
@@ -86,6 +86,7 @@ typedef struct {
     int quality;			/* JPEG quality/TIFF compression */
 
     int res_dpi;			/* used for png/jpeg */
+    double fallback_dpi;		/* used for ps/pdf */
     char title[101];
     Rboolean onefile;
 

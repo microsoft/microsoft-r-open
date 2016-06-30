@@ -1,6 +1,6 @@
 % File src/library/grDevices/man/postscript.Rd
-% Part of the R package, http://www.R-project.org
-% Copyright 1995-2013 R Core Team
+% Part of the R package, https://www.R-project.org
+% Copyright 1995-2016 R Core Team
 % Distributed under GPL 2 or later
 
 \name{postscript}
@@ -15,7 +15,7 @@
 %% The definitive doc is the source :-)
 %%      ../../../main/devices.c  &   ../../../unix/devPS.c
 \usage{
-postscript(file = ifelse(onefile, "Rplots.ps", "Rplot\%03d.ps"),
+postscript(file = if(onefile) "Rplots.ps" else "Rplot\%03d.ps",
            onefile, family, title, fonts, encoding, bg, fg,
            width, height, horizontal, pointsize,
            paper, pagecentre, print.it, command,
@@ -40,7 +40,7 @@ postscript(file = ifelse(onefile, "Rplots.ps", "Rplot\%03d.ps"),
   \item{onefile}{logical: if true (the default) allow multiple figures
     in one file.  If false, generate a file name containing the page
     number for each page and use an EPSF header and no
-    \code{DocumentMedia} comment.  Defaults to the \code{TRUE}.}
+    \code{DocumentMedia} comment.  Defaults to \code{TRUE}.}
   \item{family}{the initial font family to be used, normally as a
     character string.  See the section \sQuote{Families}.  Defaults to
     \code{"Helvetica"}.}
@@ -225,7 +225,7 @@ postscript(file = ifelse(onefile, "Rplots.ps", "Rplot\%03d.ps"),
   the encoding used on machines running \R may well be different, and by
   using the \code{encoding} argument the glyphs can be matched to
   encoding in use.  This suffices for European and Cyrillic languages,
-  but not for CJK languages.  For the latter, composite CID fonts are
+  but not for East Asian languages.  For the latter, composite CID fonts are
   used.  These fonts are useful for other languages: for example they
   may contain Greek glyphs. (The rest of this section applies only when CID
   fonts are not used.)
@@ -307,7 +307,7 @@ postscript(file = ifelse(onefile, "Rplots.ps", "Rplot\%03d.ps"),
   only greyscales (and converts other colours to a luminance), and
   \code{"cmyk"}.  The simplest possible conversion from sRGB to CMYK is
   used
-  (\url{http://en.wikipedia.org/wiki/CMYK_color_model#Mapping_RGB_to_CMYK}),
+  (\url{https://en.wikipedia.org/wiki/CMYK_color_model#Mapping_RGB_to_CMYK}),
   and raster images are output in RGB.
 
   Color models provided for backwards compatibility are \code{"rgb"})
@@ -391,7 +391,7 @@ postscript(file = ifelse(onefile, "Rplots.ps", "Rplot\%03d.ps"),
 
   Paul Murrell and Brian Ripley (2006) Non-standard fonts in PostScript
   and PDF graphics. \emph{R News}, 6(2):41--47.
-  \url{http://cran.r-project.org/doc/Rnews/Rnews_2006-2.pdf}.
+  \url{https://www.r-project.org/doc/Rnews/Rnews_2006-2.pdf}.
 }
 
 \author{

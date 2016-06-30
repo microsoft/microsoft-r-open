@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
 	 /* See ../unix/system.txt for a description of functions */
@@ -107,6 +107,7 @@ const char *R_ExpandFileName(const char *s)
 
 SEXP do_machine(SEXP call, SEXP op, SEXP args, SEXP env)
 {
+    checkArity(op, args);
     return mkString("Win32");
 }
 

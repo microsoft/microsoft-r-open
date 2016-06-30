@@ -1,5 +1,5 @@
 #  File src/library/base/R/table.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
 #  Copyright (C) 1995-2015 The R Core Team
 #
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 table <- function (..., exclude = if (useNA=="no") c(NA, NaN),
                    useNA = c("no", "ifany", "always"),
@@ -245,3 +245,13 @@ margin.table <- function(x, margin = NULL)
     class(z) <- oldClass(x) # avoid adding "matrix"
     z
 }
+
+`[.table` <-
+function(x, i, j, ..., drop = TRUE)
+{
+    ret <- NextMethod()
+    ldr <- length(dim(ret))
+    if((ldr > 1L) || (ldr == length(dim(x))))
+        class(ret) <- "table"
+    ret
+}    

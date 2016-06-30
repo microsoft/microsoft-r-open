@@ -1,5 +1,5 @@
 % File src/library/base/man/difftime.Rd
-% Part of the R package, http://www.R-project.org
+% Part of the R package, https://www.R-project.org
 % Copyright 1995-2014 R Core Team
 % Distributed under GPL 2 or later
 
@@ -19,6 +19,7 @@
 \alias{Summary.difftime}
 \alias{[.difftime}
 \alias{mean.difftime}
+\alias{c.difftime}
 \alias{units}
 \alias{units<-}
 \alias{time interval} % used by mean.Rd

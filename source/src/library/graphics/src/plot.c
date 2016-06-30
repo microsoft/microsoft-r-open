@@ -16,7 +16,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
 #ifdef HAVE_CONFIG_H
@@ -2148,8 +2148,8 @@ SEXP C_text(SEXP args)
 
     /* Done here so 'vfont' trumps inline 'family' */
     if (!isNull(vfont) && !isExpression(txt)) {
-	strncpy(gpptr(dd)->family, "Her ", 201);
-	gpptr(dd)->family[3] = (char) INTEGER(vfont)[0];
+	strncpy(gpptr(dd)->family, "Hershey ", 201);
+	gpptr(dd)->family[7] = (char) INTEGER(vfont)[0];
 	vectorFonts = TRUE;
     }
 
@@ -2837,12 +2837,12 @@ SEXP C_abline(SEXP args)
 		/* now get rid of -ve values */
 		lstart = 0;lstop = NS;
 		if (xlog) {
-		    for(; xx[lstart] <= 0 && lstart < NS+1; lstart++);
-		    for(; xx[lstop] <= 0 && lstop > 0; lstop--);
+		    for(; lstart < NS+1 && xx[lstart] <= 0 ; lstart++);
+		    for(; lstop > 0 && xx[lstop] <= 0 ; lstop--);
 		}
 		if (ylog) {
-		    for(; yy[lstart] <= 0 && lstart < NS+1; lstart++);
-		    for(; yy[lstop] <= 0 && lstop > 0; lstop--);
+		    for(; lstart < NS+1 && yy[lstart] <= 0 ; lstart++);
+		    for(; lstop > 0 && yy[lstop] <= 0 ; lstop--);
 		}
 
 		GPolyline(lstop-lstart+1, xx+lstart, yy+lstart, USER, dd);
@@ -3306,8 +3306,8 @@ SEXP C_identify(SEXP call, SEXP op, SEXP args, SEXP rho)
 									\
     /* 'vfont' trumps inline 'family' */				\
     if (!isNull(vfont) && !isExpression(str)) {				\
-	strncpy(gpptr(dd)->family, "Her ", 201);			\
-	gpptr(dd)->family[3] = (char)INTEGER(vfont)[0];			\
+	strncpy(gpptr(dd)->family, "Hershey ", 201);			\
+	gpptr(dd)->family[7] = (char)INTEGER(vfont)[0];			\
 	gpptr(dd)->font = INTEGER(vfont)[1];				\
     } else gpptr(dd)->font = INTEGER(font)[0];				\
 									\

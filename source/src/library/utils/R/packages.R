@@ -1,7 +1,7 @@
 #  File src/library/utils/R/packages.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2015 The R Core Team
+#  Copyright (C) 1995-2016 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -14,11 +14,12 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 available.packages <-
-function(contriburl = contrib.url(getOption("repos"), type), method,
-         fields = NULL, type = getOption("pkgType"), filters = NULL)
+function(contriburl = contrib.url(repos, type), method,
+         fields = NULL, type = getOption("pkgType"),
+         filters = NULL, repos = getOption("repos"))
 {
     requiredFields <-
         c(tools:::.get_standard_repository_db_fields(), "File")
@@ -55,42 +56,47 @@ function(contriburl = contrib.url(getOption("repos"), type), method,
             } else {
                 tmpf <- tempfile()
                 on.exit(unlink(tmpf))
-                op <- options("warn")
-                options(warn = -1)
 
-                ## Two kinds of errors can happen:  PACKAGES.gz may not exist,
-                ## or a junk error page that is not a valid dcf file may be
-                ## returned.  Handle both...
+                ## Two kinds of errors can happen: PACKAGES.gz may not
+                ## exist, or a junk error page that is not a valid dcf
+                ## file may be returned.  Handle both, and continue to
+                ## subsequent repositories...
 
-                ## This is a binary file
-                z <- tryCatch(download.file(url = paste(repos, "PACKAGES.gz", sep = "/"),
-                                            destfile = tmpf, method = method,
-                                            cacheOK = FALSE, quiet = TRUE, mode = "wb"),
-                              error = identity)
-		if(!inherits(z, "error"))
-		    z <- res0 <- tryCatch(read.dcf(file = tmpf), error = identity)
-                if(inherits(z, "error")) {
-                    ## read.dcf is going to interpret CRLF as LF, so use
-                    ## binary mode to avoid CRCRLF.
-                    z <- tryCatch(download.file(url = paste(repos, "PACKAGES", sep = "/"),
-                                                destfile = tmpf, method = method,
-                                                cacheOK = FALSE, quiet = TRUE,
-                                                mode = "wb"),
-                                  error = identity)
-		    options(op)
-		    if(inherits(z, "error")) {
-			warning(gettextf("unable to access index for repository %s", repos),
-				call. = FALSE, immediate. = TRUE, domain = NA)
-			next
-		    }
-		    res0 <- read.dcf(file = tmpf)
-		} else
-		    options(op)
+                op <- options(warn = -1L)
+                ## FIXME: this should check the return value == 0L
+                z <- tryCatch({
+                    ## This is a binary file
+                    download.file(url = paste(repos, "PACKAGES.gz", sep = "/"),
+                                  destfile = tmpf, method = method,
+                                  cacheOK = FALSE, quiet = TRUE, mode = "wb")
+                }, error = identity)
+                if (inherits(z, "error"))
+                    z <- tryCatch({
+                        ## read.dcf is going to interpret CRLF as LF, so use
+                        ## binary mode to avoid CRLF.
+                        download.file(url = paste(repos, "PACKAGES", sep = "/"),
+                                      destfile = tmpf, method = method,
+                                      cacheOK = FALSE, quiet = TRUE, mode = "wb")
+                    }, error=identity)
+                options(op)
+
+                if (!inherits(z, "error"))
+                    z <- res0 <- tryCatch(read.dcf(file = tmpf), error=identity)
+                    
+                unlink(tmpf)
+                on.exit()                    
+
+                if (inherits(z, "error")) {
+                    warning(gettextf("unable to access index for repository %s",
+                                     repos),
+                            ":\n  ", conditionMessage(z),
+                            call.=FALSE, immediate. = TRUE, domain = NA)
+                    next
+                }
+
                 ## Do we want to cache an empty result?
                 if(length(res0)) rownames(res0) <- res0[, "Package"]
                 saveRDS(res0, dest, compress = TRUE)
-                unlink(tmpf)
-                on.exit()
             } # end of download vs cached
         } # end of localcran vs online
         if (length(res0)) {
@@ -242,9 +248,9 @@ function(db, predicate, recursive = TRUE)
     ## Now find the recursive reverse dependencies of these and the
     ## non-standard packages missing from the db.
     rdepends <-
-        tools:::package_dependencies(db1$Package[ind], db = db1,
-                                     reverse = TRUE,
-                                     recursive = recursive)
+        tools::package_dependencies(db1$Package[ind], db = db1,
+                                    reverse = TRUE,
+                                    recursive = recursive)
     rdepends <- unique(unlist(rdepends))
     ind[match(rdepends, db1$Package, nomatch = 0L)] <- TRUE
 
@@ -336,7 +342,7 @@ update.packages <- function(lib.loc = NULL, repos = getOption("repos"),
         available <- available.packages(contriburl = contriburl,
                                         method = method)
         if (missing(repos)) repos <- getOption("repos") # May have changed
-    } 
+    }
     if(!is.matrix(oldPkgs) && is.character(oldPkgs)) {
     	subset <- oldPkgs
     	oldPkgs <- NULL
@@ -673,9 +679,9 @@ download.packages <- function(pkgs, destdir, available = NULL,
     nonlocalcran <- length(grep("^file:", contriburl)) < length(contriburl)
     if(nonlocalcran && !dir.exists(destdir))
         stop("'destdir' is not a directory")
-    
+
     type <- resolvePkgType(type)
-    
+
     if(is.null(available))
         available <- available.packages(contriburl=contriburl, method=method)
 
@@ -788,12 +794,20 @@ contrib.url <- function(repos, type = getOption("pkgType"))
     if(!local.only) {
         ## Try to handle explicitly failure to connect to CRAN.
         f <- tempfile()
-        m <- try(download.file(url, destfile = f, quiet = TRUE))
-        if(!inherits(m, "try-error"))
-            m <- try(read.csv(f, as.is = TRUE, encoding = "UTF-8"))
-        unlink(f)
+        on.exit(unlink(f))
+        m <- tryCatch({
+            m <- download.file(url, destfile = f, quiet = TRUE)
+            if(m != 0L)
+                stop(gettextf("'download.file()' error code '%d'", m))
+            read.csv(f, as.is = TRUE, encoding = "UTF-8")
+        }, error=function(err) {
+            warning(gettextf("failed to download mirrors file (%s); using local file '%s'",
+                             conditionMessage(err), local.file),
+                    call.=FALSE, immediate.=TRUE)
+            NULL
+        })
     }
-    if(is.null(m) || inherits(m, "try-error"))
+    if(is.null(m))
         m <- read.csv(local.file, as.is = TRUE, encoding = "UTF-8")
     if(!all) m <- m[as.logical(m$OK), ]
     m
@@ -803,17 +817,17 @@ getCRANmirrors <- function(all = FALSE, local.only = FALSE)
 {
     .getMirrors("https://cran.r-project.org/CRAN_mirrors.csv",
                 file.path(R.home("doc"), "CRAN_mirrors.csv"),
-                all=all, local.only=local.only)
+                all = all, local.only = local.only)
 }
 
 .chooseMirror <- function(m, label, graphics, ind, useHTTPS)
 {
     if(is.null(ind) && !interactive())
         stop("cannot choose a ", label, " mirror non-interactively")
-    if (length(ind)) 
-        res <- as.integer(ind)[1L] 
+    if (length(ind))
+        res <- as.integer(ind)[1L]
     else {
-    	isHTTPS <- grepl("^https", m[, "URL"])
+    	isHTTPS <- startsWith(m[, "URL"], "https")
     	mHTTPS <- m[isHTTPS,]
     	mHTTP <- m[!isHTTPS,]
     	if (useHTTPS) {
@@ -837,34 +851,37 @@ getCRANmirrors <- function(all = FALSE, local.only = FALSE)
     	}
     }
     if (res > 0L) {
-        URL <- setNames(m[res, "URL"], m[res, "Name"])
+        URL <- m[res, "URL"]
+        names(URL) <- m[res, "Name"]
         sub("/$", "", URL[1L])
     } else character()
 }
 
-chooseCRANmirror <- function(graphics = getOption("menu.graphics"), ind = NULL, 
-                             useHTTPS = getOption("useHTTPS", TRUE))
+chooseCRANmirror <- function(graphics = getOption("menu.graphics"), ind = NULL,
+                             useHTTPS = getOption("useHTTPS", TRUE),
+                             local.only = FALSE)
 {
-    m <- getCRANmirrors(all = FALSE, local.only = FALSE)
+    m <- getCRANmirrors(all = FALSE, local.only = local.only)
     url <- .chooseMirror(m, "CRAN", graphics, ind, useHTTPS)
     if (length(url)) {
         repos <- getOption("repos")
         repos["CRAN"] <- url
-        options(repos=repos)
+        options(repos = repos)
     }
     invisible()
 }
 
 chooseBioCmirror <- function(graphics = getOption("menu.graphics"), ind = NULL,
-                             useHTTPS = getOption("useHTTPS", TRUE))
+                             useHTTPS = getOption("useHTTPS", TRUE),
+                             local.only = FALSE)
 {
     m <- .getMirrors("https://bioconductor.org/BioC_mirrors.csv",
                      file.path(R.home("doc"), "BioC_mirrors.csv"),
-                     all=FALSE, local.only=FALSE)
+                     all = FALSE, local.only = local.only)
     url <- .chooseMirror(m, "BioC", graphics, ind, useHTTPS)
     if (length(url))
         options(BioC_mirror = url)
-    invisible()   
+    invisible()
 }
 
 setRepositories <-

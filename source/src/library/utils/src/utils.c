@@ -1,6 +1,6 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
- *  Copyright (C) 2012   The R Core Team.
+ *  Copyright (C) 2012-2015   The R Core Team.
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -14,13 +14,14 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
+#include <string.h>
 #include <R.h>
 #include <Rinternals.h>
 
@@ -67,7 +68,8 @@ SEXP crc64(SEXP in)
     return mkString(ans);
 }
 
-#if defined(HAVE_BSD_NETWORKING) && defined(HAVE_ARPA_INET_H)
+// As from 3.3.0 this means on Unix.
+#if defined(HAVE_ARPA_INET_H)
 #include <netdb.h>
 #include <sys/socket.h>
 #include <netinet/in.h>

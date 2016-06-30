@@ -1,7 +1,7 @@
 #  Automatically generated from ../noweb/compiler.nw.
 #
 #  File src/library/compiler/R/cmp.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #  Copyright (C) 2001-2014 Luke Tierney
 #
 #  This program is free software; you can redistribute it and/or modify
@@ -15,7 +15,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 ##
 ## Compiler options
@@ -89,8 +89,11 @@ missingArgs <- function(args) {
 frameTypes <- function(env) {
     top <- topenv(env)
     empty <- emptyenv()
+    base <- baseenv()
     nl <- 0
     while (! identical(env, top)) {
+        if (isNamespace(env))
+            stop("namespace found within local environments")
         env <- parent.env(env)
         nl <- nl + 1
         if (identical(env, empty))
@@ -99,6 +102,11 @@ frameTypes <- function(env) {
     nn <- 0
     if (isNamespace(env)) {
         while (! identical(env, .GlobalEnv)) {
+            if (!isNamespace(env)) {
+                name <- attr(env, "name")
+                if (!is.character(name) || !startsWith(name, "imports:"))
+                    stop("non-namespace found within namespace environments")
+            }
             env <- parent.env(env)
             nn <- nn + 1
             if (identical(env, empty))
@@ -107,6 +115,8 @@ frameTypes <- function(env) {
     }
     ng <- 0
     while (! identical(env, empty)) {
+        if (isNamespace(env))
+            stop("namespace found within global environments")
         env <- parent.env(env)
         ng <- ng + 1
     }
@@ -1134,9 +1144,11 @@ haveInlineHandler <- function(name, package = "base") {
 ## Inlining is controlled by the optimize compiler option, with possible
 ## values 0, 1, 2, 3.
 
+noInlineSymbols <- c("standardGeneric")
+
 getInlineInfo <- function(name, cntxt) {
     optimize <- cntxt$optimize
-    if (optimize > 0) {
+    if (optimize > 0 && ! (name %in% noInlineSymbols)) {
         info <- findCenvVar(name, cntxt$env)
         if (is.null(info))
             NULL
@@ -1943,7 +1955,7 @@ cmpMath1 <- function(e, cb, cntxt) {
         name <- as.character(e[[1]])
         idx <- match(name, math1funs) - 1
         if (is.na(idx))
-            stop(gettextf("%s is not a registered math1 function", sQuote(name)))
+            stop(sQuote(name), "is not a registered math1 function")
         ncntxt <- make.nonTailCallContext(cntxt)
         cmp(e[[2]], cb, ncntxt);
         ci <- cb$putconst(e)
@@ -2369,6 +2381,9 @@ setInlineHandler("switch", function(e, cb, cntxt) {
         expr <- e[[2]]
         cases <-e[-c(1, 2)]
 
+        if (is.null(cases))
+            notifyNoSwitchcases(cntxt)
+
         miss <- missingArgs(cases)
         nm <- names(cases)
 
@@ -2379,8 +2394,8 @@ setInlineHandler("switch", function(e, cb, cntxt) {
 
         ## collect information on named alternatives and check for
         ## multiple default cases.
-        haveNames <- !is.null(nm)
-        if (haveNames) {
+        if (! is.null(nm)) {
+            haveNames <- TRUE
             ndflt <- sum(nm == "")
             if (ndflt > 1) {
                 notifyMultipleSwitchDefaults(ndflt, cntxt)
@@ -2389,9 +2404,13 @@ setInlineHandler("switch", function(e, cb, cntxt) {
                 cmpSpecial(e, cb, cntxt)
                 return(TRUE)
             }
-            haveCharDflt <- (ndflt > 0)
+            if (ndflt > 0)
+                haveCharDflt <- TRUE
+            else
+                haveCharDflt <- FALSE
         }
         else {
+            haveNames <- FALSE
             haveCharDflt <- FALSE
         }
 
@@ -2552,7 +2571,7 @@ setSetterInlineHandler("@<-", function(afun, place, acall, cb, cntxt) {
         TRUE
     }
     else FALSE
-}, "methods")
+})
 
 setInlineHandler("with", function(e, cb, cntxt) {
     cntxt$suppressUndefined <- TRUE
@@ -2652,6 +2671,10 @@ notifyMultipleSwitchDefaults <- function(ndflt, cntxt)
         cntxt$warn(gettext("more than one default provided in switch() call"),
                    cntxt)
 
+notifyNoSwitchcases <- function(cntxt)
+    if (! suppressAll(cntxt))
+        cntxt$warn(gettext("'switch' with no alternatives"), cntxt)
+
 
 ##
 ## Compiler interface
@@ -2678,13 +2701,16 @@ cmpfun <- function(f, options = NULL) {
             val <- asS4(val)
         val
     }
-    else if (typeof(f) == "builtin" || type == "special")
+    else if (type == "builtin" || type == "special")
         f
     else stop("cannot compile a non-function")
 }
 
 tryCmpfun <- function(f)
     tryCatch(cmpfun(f), error = function(e) f)
+
+tryCompile <- function(e, ...)
+    tryCatch(compile(e, ...), error = function(err) e)
 
 cmpframe <- function(inpos, file) {
     expr.needed <- 1000
@@ -2799,6 +2825,7 @@ setCompilerOptions <- function(...) {
             stop(gettextf("'%s' is not a valid compiler option", n),
                  domain = NA)
     old <- list()
+    newOptions <- as.list(compilerOptions) # copy options
     for (n in nm) {
         op <- options[[n]]
         switch(n,
@@ -2807,14 +2834,14 @@ setCompilerOptions <- function(...) {
                    if (length(op) == 1 && 0 <= op && op <= 3) {
                        old <- c(old, list(optimize =
                                           compilerOptions$optimize))
-                       compilerOptions$optimize <- op
+                       newOptions$optimize <- op
                    }
                },
                suppressAll = {
                    if (identical(op, TRUE) || identical(op, FALSE)) {
                        old <- c(old, list(suppressAll =
                                           compilerOptions$suppressAll))
-                       compilerOptions$suppressAll <- op
+                       newOptions$suppressAll <- op
                    }
                },
                suppressUndefined = {
@@ -2822,10 +2849,14 @@ setCompilerOptions <- function(...) {
                        is.character(op)) {
                        old <- c(old, list(suppressUndefined =
                                           compilerOptions$suppressUndefined))
-                       compilerOptions$suppressUndefined <- op
+                       newOptions$suppressUndefined <- op
                    }
                })
     }
+    jitEnabled <- enableJIT(-1)
+    if (checkCompilerOptions(jitEnabled, newOptions))
+        for(n in names(newOptions)) # commit the new options
+            assign(n, newOptions[[n]], compilerOptions)
     invisible(old)
 }
 
@@ -2840,6 +2871,18 @@ setCompilerOptions <- function(...) {
             if (0 <= lev && lev <= 3)
                 setCompilerOptions(optimize = lev)
         }, error = function(e) e, warning = function(w) w)
+}
+
+checkCompilerOptions <- function(jitEnabled, options = NULL) {
+    optimize <- getCompilerOption("optimize", options)
+    if (jitEnabled <= 2 || optimize >= 2)
+        TRUE
+    else {
+        stop(gettextf(
+            "invalid compiler options: optimize(==%d)<2 and jitEnabled(==%d)>2",
+            optimize, jitEnabled))
+        FALSE
+    }
 }
 
 
@@ -2894,7 +2937,7 @@ bcprof <- function(expr) {
     expr
     .Internal(bcprofstop())
     val <- structure(.Internal(bcprofcounts()),
-                     names = compiler:::Opcodes.names)
+                     names = Opcodes.names)
     hits <- sort(val[val > 0], decreasing = TRUE)
     pct <- round(100 * hits / sum(hits), 1)
     data.frame(hits = hits, pct = pct)

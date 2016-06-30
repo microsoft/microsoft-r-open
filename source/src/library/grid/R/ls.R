@@ -1,5 +1,5 @@
 #  File src/library/grid/R/ls.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
 #  Copyright (C) 1995-2013 The R Core Team
 #
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 
 # Code for listing objects in various grid "namespaces"
@@ -68,12 +68,16 @@ grid.ls <- function(x=NULL, grobs=TRUE, viewports=FALSE, fullNames=FALSE,
 
 gridListDL <- function(x, grobs=TRUE, viewports=FALSE,
                        fullNames=FALSE, recursive=TRUE) {
-    display.list <- grid.Call(L_getDisplayList)
-    dl.index <- grid.Call(L_getDLindex)
-    result <- lapply(display.list[1L:dl.index], gridList,
-                     grobs=grobs, viewports=viewports,
-                     fullNames=fullNames, recursive=recursive)
-    names(result) <- NULL
+    if (is.null(dev.list())) {
+        result <- list(gridList(NULL))
+    } else {
+        display.list <- grid.Call(L_getDisplayList)
+        dl.index <- grid.Call(L_getDLindex)
+        result <- lapply(display.list[1L:dl.index], gridList,
+                         grobs=grobs, viewports=viewports,
+                         fullNames=fullNames, recursive=recursive)
+        names(result) <- NULL
+    }
     class(result) <- c("gridListListing", "gridListing")
     result
 }
@@ -709,14 +713,7 @@ pathListing <- function(x, gvpSep=" | ", gAlign=TRUE) {
     }
 
     padPrefix <- function(path, maxLen) {
-        numSpaces <- maxLen - nchar(path)
-        if (length(path) == 1L) {
-            paste0(path, paste(rep.int(" ", numSpaces), collapse=""))
-        } else {
-            padding <- rep(" ", length(path))
-            padding <- mapply(rep.int, padding, numSpaces)
-            paste0(path, sapply(padding, paste, collapse=""))
-        }
+        paste0(path, strrep(" ", maxLen - nchar(path)))
     }
 
     if (!inherits(x, "flatGridListing"))
@@ -790,7 +787,7 @@ grid.grep <- function(path, x = NULL, grobs = TRUE, viewports = FALSE,
         dl <- grid.ls(x, grobs=grobs, viewports=viewports, print = FALSE)
     }
     if (!length(dl$name))
-        stop("Nothing on the display list")
+        return(no.match)
     # Only keep vpListing and grobListing
     names <- names(dl)
     dl <- lapply(dl,

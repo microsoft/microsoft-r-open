@@ -1,5 +1,5 @@
 #  File src/library/stats/R/ftable.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
 #  Copyright (C) 1995-2015 The R Core Team
 #
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 ftable <- function(x, ...) UseMethod("ftable")
 
@@ -288,7 +288,7 @@ read.ftable <- function(file, sep = "", quote = "\"", row.var.names,
         on.exit({close(file);unlink(tmpf)}, add=TRUE)
     }
 
-    z <- utils::count.fields(file, sep, quote, skip)
+    z <- count.fields(file, sep, quote, skip)
     n.row.vars <- z[max(which(z == max(z)))] - z[length(z)] + 1
 
     seek(file, where = 0)

@@ -1,7 +1,7 @@
 #  File src/library/parallel/R/detectCores.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2014 The R Core Team
+#  Copyright (C) 1995-2016 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 ## In part based on code in package multicore 0.1-6 by Simon Urbanek
 
@@ -26,13 +26,16 @@ detectCores <-
             ifelse(logical, res[2L], res[1L]);
         }
     } else {
-        function(all.tests = FALSE, logical = FALSE) {
+        function(all.tests = FALSE, logical = TRUE) {
             ## Commoner OSes first
             systems <-
-                list(linux = "grep processor /proc/cpuinfo 2>/dev/null | wc -l",
-darwin = "/usr/sbin/sysctl -n hw.ncpu 2>/dev/null",
+                list(linux =
+                     if(logical) "grep processor /proc/cpuinfo 2>/dev/null | wc -l" else "cat /proc/cpuinfo | grep 'cpu cores'| uniq | cut -f2 -d:",
+                     ## hw.physicalcpu is not documented for 10.9, but works
+                     darwin = if(logical) "/usr/sbin/sysctl -n hw.logicalcpu 2>/dev/null" else "/usr/sbin/sysctl -n hw.physicalcpu 2>/dev/null",
                      solaris = if(logical) "/usr/sbin/psrinfo -v | grep 'Status of.*processor' | wc -l" else "/bin/kstat -p -m cpu_info | grep :core_id | cut -f2 | uniq | wc -l",
                      freebsd = "/sbin/sysctl -n hw.ncpu 2>/dev/null",
+                     openbsd = "/sbin/sysctl -n hw.ncpu 2>/dev/null",
                      irix  = c("hinv | grep Processors | sed 's: .*::'", "hinv | grep '^Processor '| wc -l"))
             for (i in seq(systems))
                 if(all.tests ||

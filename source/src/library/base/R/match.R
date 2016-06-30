@@ -1,7 +1,7 @@
 #  File src/library/base/R/match.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2015 The R Core Team
+#  Copyright (C) 1995-2016 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 match <- function(x, table, nomatch = NA_integer_, incomparables = NULL)
     .Internal(match(x, table, nomatch, incomparables))
@@ -40,7 +40,7 @@ match.arg <- function (arg, choices, several.ok = FALSE)
 {
     if (missing(choices)) {
 	formal.args <- formals(sys.function(sys.parent()))
-	choices <- eval(formal.args[[deparse(substitute(arg))]])
+	choices <- eval(formal.args[[as.character(substitute(arg))]])
     }
     if (is.null(arg)) return(choices[1L])
     else if(!is.character(arg))

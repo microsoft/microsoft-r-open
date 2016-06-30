@@ -20,7 +20,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  *
  *
  *  DESCRIPTION
@@ -53,16 +53,16 @@ double dbeta(double x, double a, double b, int give_log)
     // limit cases for (a,b), leading to point masses
     if(a == 0 || b == 0 || !R_FINITE(a) || !R_FINITE(b)) {
 	if(a == 0 && b == 0) { // point mass 1/2 at each of {0,1} :
-	    if (x == 0 || x == 1) return(ML_POSINF); /* else */ return(R_D__0);
+	    if (x == 0 || x == 1) return(ML_POSINF); else return(R_D__0);
 	}
 	if (a == 0 || a/b == 0) { // point mass 1 at 0
-	    if (x == 0) return(ML_POSINF); /* else */ return(R_D__0);
+	    if (x == 0) return(ML_POSINF); else return(R_D__0);
 	}
 	if (b == 0 || b/a == 0) { // point mass 1 at 1
-	    if (x == 1) return(ML_POSINF); /* else */ return(R_D__0);
+	    if (x == 1) return(ML_POSINF); else return(R_D__0);
 	}
 	// else, remaining case:  a = b = Inf : point mass 1 at 1/2
-	if (x == 0.5) return(ML_POSINF); /* else */ return(R_D__0);
+	if (x == 0.5) return(ML_POSINF); else return(R_D__0);
     }
 
     if (x == 0) {

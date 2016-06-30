@@ -1,7 +1,7 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
  *  Copyright (C) 1995, 1996   Robert Gentleman and Ross Ihaka
- *		  1997-2014   The R Core Team
+ *		  1997-2016   The R Core Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
 
 #ifdef HAVE_CONFIG_H
@@ -83,13 +83,13 @@ static double approx1(double v, double *x, double *y, int n,
     if(Meth->kind == 1) /* linear */
 	return y[i] + (y[j] - y[i]) * ((v - x[i])/(x[j] - x[i]));
     else /* 2 : constant */
-	return (Meth->f1 != 0.0 ? y[i] * Meth->f1 : 0.0) 
+	return (Meth->f1 != 0.0 ? y[i] * Meth->f1 : 0.0)
 	     + (Meth->f2 != 0.0 ? y[j] * Meth->f2 : 0.0);
 }/* approx1() */
 
 
 /* Testing done only once - in a separate function */
-static void 
+static void
 R_approxtest(double *x, double *y, int nxy, int method, double f)
 {
     int i;
@@ -107,13 +107,13 @@ R_approxtest(double *x, double *y, int nxy, int method, double f)
     }
     /* check interpolation method */
     for(i = 0; i < nxy; i++)
-	if(ISNA(x[i]) || ISNA(y[i]))
+	if(ISNAN(x[i]) || ISNAN(y[i]))
 	    error(_("approx(): attempted to interpolate NA values"));
 }
 
 /* R Frontend for Linear and Constant Interpolation, no testing */
 
-static void 
+static void
 R_approxfun(double *x, double *y, int nxy, double *xout, double *yout,
 	    int nout, int method, double yleft, double yright, double f)
 {
@@ -126,8 +126,7 @@ R_approxfun(double *x, double *y, int nxy, double *xout, double *yout,
     M.ylow = yleft;
     M.yhigh = yright;
     for(i = 0; i < nout; i++)
-	if(!ISNA(xout[i])) yout[i] = approx1(xout[i], x, y, nxy, &M);
-	else yout[i] = xout[i];
+	yout[i] = ISNAN(xout[i]) ? xout[i] : approx1(xout[i], x, y, nxy, &M);
 }
 
 #include <Rinternals.h>
@@ -140,14 +139,14 @@ SEXP ApproxTest(SEXP x, SEXP y, SEXP method, SEXP sf)
     return R_NilValue;
 }
 
-SEXP Approx(SEXP x, SEXP y, SEXP v, SEXP method, 
+SEXP Approx(SEXP x, SEXP y, SEXP v, SEXP method,
 	    SEXP yleft, SEXP yright, SEXP sf)
 {
     SEXP xout = PROTECT(coerceVector(v, REALSXP));
     int nx = LENGTH(x), nout = LENGTH(xout), m = asInteger(method);
     double yl = asReal(yleft), yr = asReal(yright), f = asReal(sf);
     SEXP yout = PROTECT(allocVector(REALSXP, nout));
-    R_approxfun(REAL(x), REAL(y), nx, REAL(xout), REAL(yout), nout, 
+    R_approxfun(REAL(x), REAL(y), nx, REAL(xout), REAL(yout), nout,
 		m, yl, yr, f);
     UNPROTECT(2);
     return yout;

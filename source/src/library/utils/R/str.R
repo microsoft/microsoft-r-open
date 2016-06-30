@@ -1,7 +1,7 @@
 #  File src/library/utils/R/str.R
-#  Part of the R package, http://www.R-project.org
+#  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2015 The R Core Team
+#  Copyright (C) 1995-2016 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 #  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
+#  https://www.R-project.org/Licenses/
 
 ####------ str : show STRucture of an R object
 str <- function(object, ...) UseMethod("str")
@@ -54,13 +54,13 @@ str.Date <- str.POSIXt <- function(object, ...) {
     ## use 'give.length' when specified, else default = give.head
     if(length(larg <- list(...))) {
 	nl <- names(larg)
-	iGiveHead <- which(nl == "give.head")
+	which.head <- which(nl == "give.head")
 	if (any(Bgl <- nl == "give.length"))
 	    give.length <- larg[[which(Bgl)]]
-	else if(length(iGiveHead))
-	    give.length <- larg[[iGiveHead]]
-	if(length(iGiveHead)) # eliminate it from arg.list
-	    larg <- larg[ - iGiveHead ]
+	else if(length(which.head))
+	    give.length <- larg[[which.head]]
+	if(length(which.head)) # eliminate it from arg.list
+	    larg <- larg[ - which.head ]
 	if(is.numeric(larg[["nest.lev"]]) &&
 	   is.numeric(larg[["vec.len"]])) # typical call from data.frame
 	    ## reduce length for typical call:
@@ -203,13 +203,19 @@ str.default <-
     has.class <- S4 || !is.null(cl) # S3 or S4
     mod <- ""; char.like <- FALSE
     if(give.attr) a <- attributes(object)#-- save for later...
-    deParse <- function(.) deparse(., width.cutoff = min(500,max(20, width-10)))
+    deParse <- function(.) deparse(., width.cutoff = min(500, max(20, width-10)))
     n.of. <- function(n, singl, plural) paste(n, ngettext(n, singl, plural))
     n.of <- function(n, noun) n.of.(n, noun, paste0(noun,"s"))
+    if(is.ts <- stats::is.ts(object))
+        str1.ts <- function(o, lestr) {
+            tsp.a <- stats::tsp(o)
+            paste0(" Time-Series ", lestr, " from ", format(tsp.a[1L]),
+                   " to ", format(tsp.a[2L]), ":")
+        }
     if (is.null(object))
 	cat(" NULL\n")
     else if(S4) {
-	if(is(object,"envRefClass")) {
+	if(methods::is(object,"envRefClass")) {
 	    cld <- tryCatch(object$getClass(), error=function(e)e)
 	    if(inherits(cld, "error")) {
 		cat("Prototypical reference class", " '", paste(cl, collapse = "', '"),
@@ -311,10 +317,10 @@ str.default <-
     } else { #- not function, not list
 	if(is.vector(object)
 	   || (is.array(object) && is.atomic(object))
-           ## FIXME: is.vector is not documented to allow those modes.
-           ## Should this not be is.language?
-	   || is.vector(object, mode= "language")
-	   || is.vector(object, mode= "symbol")## R bug(<=0.50-a4) should be part
+	   ##f fails for formula:
+	   ##f typeof(object) in {"symbol", "language"} =: is.symbolic(.):
+	   ##f || (is.language(object) && !is.expression(object))
+	   || (is.language(object) && !is.expression(object) && !any(cl == "formula"))
 	   ) { ##-- Splus: FALSE for 'named vectors'
 	    if(is.atomic(object)) {
 		##-- atomic:   numeric	complex	 character  logical
@@ -331,7 +337,7 @@ str.default <-
 		    pDi <- function(...) paste(c("[", ..., "]"), collapse = "")
 		    le.str <- (if(rnk == 1) pDi(di[1L], "(1d)") else
 			       pDi(paste0(di[-rnk], ", "), di[rnk]))
-		    std.attr <- "dim" #- "names"
+                    std.attr <- c("dim", if(is.ts) c("tsp", "class"))
 		} else if(!is.null(names(object))) {
 		    mod <- paste("Named", mod)
 		    std.attr <- std.attr[std.attr != "names"]
@@ -343,7 +349,8 @@ str.default <-
 		    std.attr <- c(std.attr, "class")
 		}
 		str1 <-
-		    if(le == 1 && !is.array(object)) paste(NULL, mod)
+		    if(is.ts) str1.ts(object, le.str)
+		    else if(le == 1 && !is.array(object)) paste(NULL, mod)
 		    else paste0(" ", mod, if(le>0)" ", le.str)
 	    } else { ##-- not atomic, but vector: #
 		mod <- typeof(object)#-- typeof(.) is more precise than mode!
@@ -377,10 +384,8 @@ str.default <-
 #	    v.len <- switch(t.cl,rts=.8, cts=.6, its=.9) * v.len
 #	    class(object) <- if(any(!b.ts)) cl[!b.ts]
 #	    std.attr <- c(std.attr, "tspar")
-	} else if(stats::is.ts(object)) {
-	    tsp.a <- stats::tsp(object)
-	    str1 <- paste0(" Time-Series ", le.str, " from ", format(tsp.a[1L]),
-			   " to ", format(tsp.a[2L]), ":")
+	} else if(is.ts) {
+	    str1 <- str1.ts(object, le.str)
 	    std.attr <- c("tsp","class") #- "names"
 	} else if (is.factor(object)) {
 	    nl <- length(lev.att <- levels(object))
@@ -548,7 +553,7 @@ str.default <-
 					#O: encodeString(object, quote= '"', na.encode= FALSE)
 	    formObj <- function(x) paste(as.character(x), collapse=" ")
 	}
-	else {
+	else { # not char.like
 	    if(!exists("format.fun", inherits=TRUE)) #-- define one --
 		format.fun <-
 		    if(mod == "num" || mod == "cplx") format else as.character

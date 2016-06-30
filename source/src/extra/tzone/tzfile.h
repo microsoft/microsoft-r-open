@@ -24,7 +24,7 @@
 #endif /* !defined TZDIR */
 
 #ifndef TZDEFAULT
-#define TZDEFAULT	"localtime"
+#define TZDEFAULT	"UTC" // needs to be a valid timezone, PR#16503
 #endif /* !defined TZDEFAULT */
 
 /* We don't ship posixrules, which is usually a link to a USA timezeone.
@@ -115,8 +115,9 @@ struct tzhead {
 #endif /* !defined NOSOLAR */
 #endif /* !defined TZ_MAX_TYPES */
 
+// increased from 50, http://mm.icann.org/pipermail/tz/2015-August/022623.html
 #ifndef TZ_MAX_CHARS
-#define TZ_MAX_CHARS	50	/* Maximum number of abbreviation characters */
+#define TZ_MAX_CHARS	100	/* Maximum number of abbreviation characters */
 				/* (limited by what unsigned chars can hold) */
 #endif /* !defined TZ_MAX_CHARS */
 
