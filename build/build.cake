@@ -23,9 +23,8 @@ using Cake.Core.IO;
          StartProcess(vendor + "/rtools-3.2/bin/make.exe", new ProcessSettings { Arguments = "-j cairodevices", WorkingDirectory = "source/src/gnuwin32" } );
          StartProcess(vendor + "/rtools-3.2/bin/make.exe", new ProcessSettings { Arguments = "-j recommended", WorkingDirectory = "source/src/gnuwin32" } );
          StartProcess(vendor + "/rtools-3.2/bin/make.exe", new ProcessSettings { Arguments = "-j vignettes", WorkingDirectory = "source/src/gnuwin32" } );
-         
-         System.IO.File.WriteAllText("source/doc/manual/placeholder.pdf", "");
-         
+         StartProcess(vendor + "/rtools-3.2/bin/make.exe", new ProcessSettings { Arguments = "manuals", WorkingDirectory = "source/src/gnuwin32" } );
+                  
          StartProcess(vendor + "/rtools-3.2/bin/make.exe", new ProcessSettings { Arguments = "imagedir", WorkingDirectory = "source/src/gnuwin32/installer" } );
          
          CreateDirectory("target/R");
