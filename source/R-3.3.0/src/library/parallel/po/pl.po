@@ -1,0 +1,113 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: R 3.4.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-04-01 10:28-0700\n"
+"PO-Revision-Date: \n"
+"Last-Translator: Łukasz Daniel <lukasz.daniel@gmail.com>\n"
+"Language-Team: Łukasz Daniel <lukasz.daniel@gmail.com>\n"
+"Language: pl_PL\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"na-Revision-Date: 2012-05-29 07:55+0100\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
+"|| n%100>=20) ? 1 : 2);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Generator: Poedit 1.8.7\n"
+
+#: fork.c:251 fork.c:254
+msgid "unable to create a pipe"
+msgstr "nie można utworzyć potoku"
+
+#: fork.c:272
+#, c-format
+msgid "unable to fork, possible reason: %s"
+msgstr "nie można rozdzielić, prawdopodobny powód: %s"
+
+#: fork.c:318
+msgid "memory allocation error"
+msgstr "błąd przydziału pamięci"
+
+#: fork.c:371
+msgid "only children can send data to the master process"
+msgstr "tylko potomne procesy mogą przesłać dane do procesu głównego"
+
+#: fork.c:373
+msgid "there is no pipe to the master process"
+msgstr "nie ma potoku do procesu głównego"
+
+#: fork.c:375
+msgid "content to send must be RAW, use serialize() if needed"
+msgstr ""
+"zawartość do wysłania musi być PUSTA, użyj 'serialize()' jeśli konieczne"
+
+#: fork.c:384 fork.c:391 fork.c:715
+msgid "write error, closing pipe to the master"
+msgstr "błąd zapisu, zamykanie potoku do procesu głównego"
+
+#: fork.c:404
+msgid "only the master process can send data to a child process"
+msgstr "tylko główny proces może przesłać dane do potomnego procesu"
+
+#: fork.c:411
+#, c-format
+msgid "child %d does not exist"
+msgstr "potomny proces %d nie istnieje"
+
+#: fork.c:417
+msgid "write error"
+msgstr "błąd zapisu"
+
+#: fork.c:485 fork.c:609
+#, c-format
+msgid "error '%s' in select"
+msgstr "błąd '%s' przy wyborze"
+
+#: fork.c:697
+msgid "'mckill' failed"
+msgstr "'mckill' nie powiodło się"
+
+#: fork.c:707
+msgid "'mcexit' can only be used in a child process"
+msgstr "'mcexit' może być użyty jedynie w potomnym procesie"
+
+#: fork.c:728
+msgid "'mcexit' failed"
+msgstr "'mcexit' nie powiodło się"
+
+#: fork.c:757 fork.c:766
+msgid "invalid CPU affinity specification"
+msgstr "niepoprawne określenie koligacji CPU"
+
+#: fork.c:777
+msgid "requested CPU set is too large for this system"
+msgstr "zażądane ustawienie CPU jest zbyt duże dla tego systemu"
+
+#: fork.c:800
+msgid "retrieving CPU affinity set failed"
+msgstr "pozyskiwanie ustawienia koligacji CPU nie powiodło się"
+
+#~ msgid "removing child %d\n"
+#~ msgstr "usuwanie dziecka %d\n"
+
+#~ msgid "WARNING: child %d was to be removed but it doesn't exist\n"
+#~ msgstr "OSTRZEŻENIE: dziecko %d miało być usunięte, ale nie istnieje\n"
+
+#~ msgid "child process %d got SIGUSR1; child_exit_status=%d\n"
+#~ msgstr "proces potomny %d otrzymał SIGUSR1; child_exit_status=%d\n"
+
+#~ msgid "child %d terminated with %d\n"
+#~ msgstr "dziecko %d przerwane z %d\n"
+
+#~ msgid "child %d terminated by signal %d\n"
+#~ msgstr "dziecko %d przerwane przez sygnał %d\n"
+
+#~ msgid "parent[%d] created pipes: comm (%d->%d), sir (%d->%d)\n"
+#~ msgstr "parent[%d] utworzył kanały: comm (%d->%d), sir (%d->%d)\n"
+
+#~ msgid "child process %d started\n"
+#~ msgstr "proces potomny %d rozpoczął się\n"
+
+#~ msgid "parent registers new child %d\n"
+#~ msgstr "rodzic rejestruje nowe dziecko %d\n"
