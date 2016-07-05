@@ -33,6 +33,8 @@ using Cake.Core.IO;
          StartProcess(vendor + "/rtools-3.3/bin/make.exe", new ProcessSettings { Arguments = "-j recommended", WorkingDirectory = "source/src/gnuwin32" } );
          StartProcess(vendor + "/rtools-3.3/bin/make.exe", new ProcessSettings { Arguments = "-j vignettes", WorkingDirectory = "source/src/gnuwin32" } );
          StartProcess(vendor + "/rtools-3.3/bin/make.exe", new ProcessSettings { Arguments = "manuals", WorkingDirectory = "source/src/gnuwin32" } );
+
+         StartProcess("powershell.exe", new ProcessSettings { Arguments = "own-files.ps1 source/" } );
                   
          StartProcess(vendor + "/rtools-3.3/bin/make.exe", new ProcessSettings { Arguments = "imagedir", WorkingDirectory = "source/src/gnuwin32/installer" } );
          
