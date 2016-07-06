@@ -85,6 +85,13 @@ ExternalProject_Add(
 )
 
 ExternalProject_Add(
+  curl
+  SOURCE_DIR ${CMAKE_SOURCE_DIR}/curl-7.49.1
+  CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/curl.sh ${CMAKE_SOURCE_DIR} curl-7.49.1
+  BUILD_IN_SOURCE 1
+)
+
+ExternalProject_Add(
   bzip2
   SOURCE_DIR ${CMAKE_SOURCE_DIR}/bzip2-1.0.6
   CONFIGURE_COMMAND ""
