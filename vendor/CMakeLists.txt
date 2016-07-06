@@ -61,3 +61,12 @@ ExternalProject_Add(
   CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/ncurses.sh ${CMAKE_SOURCE_DIR} ncurses-5.9
   BUILD_IN_SOURCE 1
 )
+
+ExternalProject_Add(
+  bzip2
+  SOURCE_DIR ${CMAKE_SOURCE_DIR}/bzip2-1.0.6
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND make
+  INSTALL_COMMAND make install PREFIX=${CMAKE_SOURCE_DIR}/build
+  BUILD_IN_SOURCE 1
+)
