@@ -63,6 +63,13 @@ ExternalProject_Add(
 )
 
 ExternalProject_Add(
+  xz
+  SOURCE_DIR ${CMAKE_SOURCE_DIR}/xz-5.2.2
+  CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/xz.sh ${CMAKE_SOURCE_DIR} xz-5.2.2
+  BUILD_IN_SOURCE 1
+)
+
+ExternalProject_Add(
   bzip2
   SOURCE_DIR ${CMAKE_SOURCE_DIR}/bzip2-1.0.6
   CONFIGURE_COMMAND ""
