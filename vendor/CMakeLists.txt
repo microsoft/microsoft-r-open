@@ -78,6 +78,7 @@ ExternalProject_Add(
 
 ExternalProject_Add(
   openssl
+  DEPENDS zlib
   SOURCE_DIR ${CMAKE_SOURCE_DIR}/openssl-1.0.2h
   CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/openssl.sh ${CMAKE_SOURCE_DIR} openssl-1.0.2h
   BUILD_COMMAND make depend && make
@@ -86,6 +87,7 @@ ExternalProject_Add(
 
 ExternalProject_Add(
   curl
+  DEPENDS openssl
   SOURCE_DIR ${CMAKE_SOURCE_DIR}/curl-7.49.1
   CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/curl.sh ${CMAKE_SOURCE_DIR} curl-7.49.1
   BUILD_IN_SOURCE 1
@@ -93,6 +95,7 @@ ExternalProject_Add(
 
 ExternalProject_Add(
   bzip2
+  DEPENDS zlib
   SOURCE_DIR ${CMAKE_SOURCE_DIR}/bzip2-1.0.6
   CONFIGURE_COMMAND ""
   BUILD_COMMAND make
