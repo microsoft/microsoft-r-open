@@ -2,16 +2,18 @@
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-#if [ ! -d ${SCRIPT_DIR}/cmake_build ] ; then
-#  mkdir ${SCRIPT_DIR}/cmake_build
-#fi
+cp ${SCRIPT_DIR}/files/microsoft-r-cacert.pem /etc
 
-#pushd ${SCRIPT_DIR}/cmake_build
+if [ ! -d ${SCRIPT_DIR}/cmake_build ] ; then
+  mkdir ${SCRIPT_DIR}/cmake_build
+fi
 
-#cmake ../vendor
-#make -j32
+pushd ${SCRIPT_DIR}/cmake_build
 
-#popd
+cmake ../vendor
+make -j32
+
+popd
 
 export LDFLAGS=-L${SCRIPT_DIR}/vendor/build/lib
 export LIBS='-licui18n -licuuc -licudata -lstdc++'
