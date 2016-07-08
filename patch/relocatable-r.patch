@@ -1,0 +1,90 @@
+diff -rupN R-bak/src/scripts/Makefile.in R-src/src/scripts/Makefile.in
+--- R-bak/src/scripts/Makefile.in	2015-06-23 19:28:42.105645870 +0000
++++ R-src/src/scripts/Makefile.in	2015-06-23 19:31:21.137190484 +0000
+@@ -78,8 +78,7 @@ R.fe: R.sh $(top_srcdir)/VERSION $(top_b
+ 	  v="$${v} ($${dat})"; \
+ 	  y=`$(ECHO) $${dat} | cut -d- -f1`; \
+ 	  d=`$(ECHO) "$(abs_top_builddir)" | sed 's,/,\\\/,g'`; \
+-	  sed "1,/R_HOME_DIR/s/\\(R_HOME_DIR=\\).*/\\1\"$${d}\"/; \
+-	       s@REPLACE_BY_VERSION@$${v}@; \
++	  sed "s@REPLACE_BY_VERSION@$${v}@; \
+ 	       s@REPLACE_BY_YEAR@$${y}@" < R.sh > $@)
+ 	@chmod +x $@
+ ## </NOTE>
+@@ -89,12 +88,7 @@ $(top_builddir)/libtool:
+ 
+ install: installdirs install-cmds
+ 	@rm -f $(DESTDIR)$(bindir)/R
+-	@(d=`$(ECHO) '$(rhome)' | sed 's,/,\\\/,g';`; \
+-	  d2=`$(ECHO) '$(rsharedir)' | sed 's,/,\\\/,g';`; \
+-	  d3=`$(ECHO) '$(rincludedir)' | sed 's,/,\\\/,g';`; \
+-	  d4=`$(ECHO) '$(rdocdir)' | sed 's,/,\\\/,g';`; \
+-	  sed -e "1,/R_HOME_DIR=/s/\\(R_HOME_DIR=\\).*/\\1$${d}/;" -e "s/\\(R_SHARE_DIR=\\).*/\\1$${d2}/;" -e  "s/\\(R_INCLUDE_DIR=\\).*/\\1$${d3}/;" -e "s/\\(R_DOC_DIR=\\).*/\\1$${d4}/;"\
+-	  < R.fe > "$(DESTDIR)$(Rexecbindir)/R")
++	@cat < R.fe > "$(DESTDIR)$(Rexecbindir)/R"
+ 	@$(INSTALL_SCRIPT)  "$(DESTDIR)$(Rexecbindir)/R" "$(DESTDIR)$(bindir)/R"
+ 	@chmod 755 "$(DESTDIR)$(bindir)/R" "$(DESTDIR)$(Rexecbindir)/R"
+ ## why of all the scripts does this alone chmod just one copy?
+diff -rupN R-bak/src/scripts/R.sh.in R-src/src/scripts/R.sh.in
+--- R-bak/src/scripts/R.sh.in	2015-06-23 19:28:42.105645870 +0000
++++ R-src/src/scripts/R.sh.in	2015-06-23 19:33:24.642355935 +0000
+@@ -1,30 +1,7 @@
+ #!@R_SHELL@
+ # Shell wrapper for R executable.
+ 
+-R_HOME_DIR=
+-if test "${R_HOME_DIR}" = "@prefix@/@LIBnn@/R"; then
+-   case "@R_OS@" in
+-   linux*)
+-     run_arch=`uname -m`
+-     case "$run_arch" in
+-        x86_64|mips64|ppc64|powerpc64|sparc64|s390x)
+-          libnn=lib64
+-          libnn_fallback=lib
+-        ;;
+-        *)
+-          libnn=lib
+-          libnn_fallback=lib64
+-        ;;
+-     esac
+-     if [ -x "@prefix@/${libnn}/R/bin/exec/R" ]; then
+-        R_HOME_DIR="@prefix@/${libnn}/R"
+-     elif [ -x "@prefix@/${libnn_fallback}/R/bin/exec/R" ]; then
+-        R_HOME_DIR="@prefix@/${libnn_fallback}/R"
+-     ## else -- leave alone (might be a sub-arch)
+-     fi
+-     ;;
+-  esac
+-fi
++R_HOME_DIR=$(dirname $(dirname $(readlink /proc/$$/fd/255)))
+ 
+ if test -n "${R_HOME}" && \
+    test "${R_HOME}" != "${R_HOME_DIR}"; then
+diff -rupN R-bak/src/unix/Rscript.c R-src/src/unix/Rscript.c
+--- R-bak/src/unix/Rscript.c	2015-06-23 19:28:42.145646264 +0000
++++ R-src/src/unix/Rscript.c	2015-06-23 19:31:21.139190502 +0000
+@@ -75,7 +75,7 @@ R --slave --no-restore --vanilla --file=
+ #define R_ARCH ""
+ #endif
+ 
+-static char rhome[] = R_HOME;
++static char rhome[PATH_MAX] = {0};
+ static char rarch[] = R_ARCH;
+ #else
+ # ifndef BINDIR
+@@ -143,7 +143,14 @@ int main(int argc, char *argv[])
+ 	snprintf(cmd, PATH_MAX+1, "%s\\Rterm.exe",  rhome);
+     }
+ #else
+-    if(!(p && *p)) p = rhome;
++    if(!(p && *p)) {
++        readlink("/proc/self/exe", rhome, sizeof(rhome));
++        p = strrchr(rhome,'/');
++        *p = '\0';
++        p = strrchr(rhome,'/');
++        *p = '\0';
++        p = rhome;
++    }
+     /* avoid snprintf here */
+     if(strlen(p) + 6 > PATH_MAX) {
+ 	fprintf(stderr, "impossibly long path for RHOME\n");
