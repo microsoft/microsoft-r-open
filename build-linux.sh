@@ -4,21 +4,21 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 cp ${SCRIPT_DIR}/files/microsoft-r-cacert.pem /etc
 
-if [ ! -d ${SCRIPT_DIR}/cmake_build ] ; then
-  mkdir ${SCRIPT_DIR}/cmake_build
-fi
+#if [ ! -d ${SCRIPT_DIR}/cmake_build ] ; then
+#  mkdir ${SCRIPT_DIR}/cmake_build
+#fi
 
-pushd ${SCRIPT_DIR}/cmake_build
+#pushd ${SCRIPT_DIR}/cmake_build
 
-cmake ../vendor
-make -j32
+#cmake ../vendor
+#make -j32
 
-if [ $? -ne 0 ]; then
-  echo "Failed to make dependencies!"
-  exit 1
-fi
+#if [ $? -ne 0 ]; then
+#  echo "Failed to make dependencies!"
+#  exit 1
+#fi
 
-popd
+#popd
 
 cp -r ${SCRIPT_DIR}/source ${SCRIPT_DIR}/patched_source
 

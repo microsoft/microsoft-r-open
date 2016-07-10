@@ -8,6 +8,7 @@ using Cake.Core.IO;
      
      if(IsRunningOnUnix())
      {
+         RunDefault();
      }
      else
      {
