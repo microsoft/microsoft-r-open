@@ -13,11 +13,23 @@ pushd ${SCRIPT_DIR}/cmake_build
 cmake ../vendor
 make -j32
 
+if [ $? -ne 0 ]; then
+  echo "Failed to make dependencies!"
+  exit 1
+fi
+
 popd
 
 cp -r ${SCRIPT_DIR}/source ${SCRIPT_DIR}/patched_source
 
 pushd ${SCRIPT_DIR}/patched_source
+
+patch -p1 < ../patch/relocatable-r.patch
+
+if [ $? -ne 0 ]; then
+  echo "Patching code to be relocatable failed!"
+  exit 1
+fi
 
 popd
 
@@ -41,7 +53,7 @@ fi
 
 pushd ${SCRIPT_DIR}/R_build
 
-${SCRIPT_DIR}/source/configure --verbose --with-x=yes --prefix=${SCRIPT_DIR}/target/Linux --enable-R-shlib --enable-BLAS-shlib --enable-memory-profiling --with-libpng --with-ICU --with-jpeglib --disable-rpath --with-tcltk --with-tcl-config=${SCRIPT_DIR}/vendor/build/lib/tclConfig.sh --with-tk-config=${SCRIPT_DIR}/vendor/build/lib/tkConfig.sh
+${SCRIPT_DIR}/patched_source/configure --verbose --with-x=yes --prefix=${SCRIPT_DIR}/target/Linux --enable-R-shlib --enable-BLAS-shlib --enable-memory-profiling --with-libpng --with-ICU --with-jpeglib --disable-rpath --with-tcltk --with-tcl-config=${SCRIPT_DIR}/vendor/build/lib/tclConfig.sh --with-tk-config=${SCRIPT_DIR}/vendor/build/lib/tkConfig.sh
 make -j32
 make install
 cp /usr/lib64/libgfortran.so.1.0.0 ${SCRIPT_DIR}/target/Linux/lib64/R/lib/libgfortran.so.1
