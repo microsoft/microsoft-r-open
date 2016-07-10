@@ -81,7 +81,7 @@ ExternalProject_Add(
   DEPENDS zlib
   SOURCE_DIR ${CMAKE_SOURCE_DIR}/openssl-1.0.2h
   CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/openssl.sh ${CMAKE_SOURCE_DIR} openssl-1.0.2h
-  BUILD_COMMAND make depends && make
+  BUILD_COMMAND make depend && make
   BUILD_IN_SOURCE 1
 )
 
