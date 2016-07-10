@@ -267,11 +267,11 @@
 ## MAKEINFO=
 
 ## Full path to version of curl-config to be used
-## CURL_CONFIG=
+## CURL_CONFIG=../vendor/build/bin/curl-config
 ## Use these to override curl-config if needed.
 ## Used as from R 3.2.0.
 ## CURL_CPPFLAGS=
-## CURL_LIBS=
+#CURL_LIBS="-lcurl -ldl -lssl -lcrypto -lssl -lcrypto -lz -lrt"
 ## To force a static link use the line below: this is only needed
 ## if both shared and static libcurl libraries were built.
 ## CURL_LIBS=`curl-config --static-libs`

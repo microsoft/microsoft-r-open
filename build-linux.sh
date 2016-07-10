@@ -15,6 +15,12 @@ make -j32
 
 popd
 
+cp -r ${SCRIPT_DIR}/source ${SCRIPT_DIR}/patched_source
+
+pushd ${SCRIPT_DIR}/patched_source
+
+popd
+
 export LDFLAGS=-L${SCRIPT_DIR}/vendor/build/lib
 export LIBS='-licui18n -licuuc -licudata -lstdc++'
 export CFLAGS="-I${SCRIPT_DIR}/vendor/build/include -DU_STATIC_IMPLEMENTATION"
