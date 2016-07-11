@@ -43,6 +43,7 @@ export C_INCLUDE_PATH="${SCRIPT_DIR}/vendor/build/include"
 export CPLUS_INCLUDE_PATH="${SCRIPT_DIR}/vendor/build/include"
 export CURL_LIBS="-lcurl -ldl -lssl -lcrypto -lssl -lcrypto -lz -lrt"
 export TCLTK_CPPFLAGS="-pthread"
+export TCLTK_LIBS="-pthread -lz -lX11 -lXft -ltcl8.6 -ltk8.6 -lz"
 
 if [ ! -d ${SCRIPT_DIR}/R_build ] ; then
   mkdir ${SCRIPT_DIR}/R_build
@@ -58,3 +59,8 @@ make -j32
 make install
 cp /usr/lib64/libgfortran.so.1.0.0 ${SCRIPT_DIR}/target/Linux/lib64/R/lib/libgfortran.so.1
 popd
+
+cp -r ${SCRIPT_DIR}/vendor/build/lib/tcl8.6 ${SCRIPT_DIR}/target/Linux/lib64/R/share/
+cp -r ${SCRIPT_DIR}/vendor/build/lib/tk8.6 ${SCRIPT_DIR}/target/Linux/lib64/R/share/
+sed -i 's/export R_SHARE_DIR/export R_SHARE_DIR\nexport TCL_LIBRARY=${R_SHARE_DIR}\/tcl8.6\//' ${SCRIPT_DIR}/target/Linux/lib64/R/bin/R
+
