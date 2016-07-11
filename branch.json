@@ -1,7 +1,7 @@
 {
     "version": 1.0,
     "build": {
-        "productVersion": "3.3.0",
+        "productVersion": "3.3.1",
         "itemsToBuild": [
             {
                 "item": "vendor/CMakeLists.txt"
