@@ -10,6 +10,7 @@ using Cake.Core.IO;
      {
          StartProcess("touch", new ProcessSettings { Arguments = "configure.ac aclocal.m4 configure Makefile.am Makefile.in", WorkingDirectory = "vendor/pcre-8.37/" } );
          RunDefault();
+         StartProcess("bash", new ProcessSettings { Arguments = "build-linux.sh" } ); 
      }
      else
      {
