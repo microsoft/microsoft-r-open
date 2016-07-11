@@ -50,7 +50,7 @@
                     "linux": [{
                         "cmd": "bash -c \"source /etc/profile && ./build.sh\"",
                         "containerList": [
-                            "mrsdocker.cloudapp.net:5000/mrov2:0.6"
+                            "mrsdocker.cloudapp.net:5000/mrov2:0.7"
                         ],
                         "recycle": true 
                     }]
