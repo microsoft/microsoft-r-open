@@ -48,13 +48,13 @@ export TCLTK_LIBS="-pthread -lz -lX11 -lXft -ltcl8.6 -ltk8.6 -lz"
 if [ ! -d ${SCRIPT_DIR}/R_build ] ; then
   mkdir ${SCRIPT_DIR}/R_build
 fi
-if [ ! -d ${SCRIPT_DIR}/target/Linux ] ; then
-  mkdir -p ${SCRIPT_DIR}/target/Linux
+if [ ! -d ${SCRIPT_DIR}/target/R/Linux ] ; then
+  mkdir -p ${SCRIPT_DIR}/target/R/Linux
 fi
 
 pushd ${SCRIPT_DIR}/R_build
 
-${SCRIPT_DIR}/patched_source/configure --verbose --with-x=yes --prefix=${SCRIPT_DIR}/target/Linux --enable-R-shlib --enable-BLAS-shlib --enable-memory-profiling --with-libpng --with-ICU --with-jpeglib --disable-rpath --with-tcltk --with-tcl-config=${SCRIPT_DIR}/vendor/build/lib/tclConfig.sh --with-tk-config=${SCRIPT_DIR}/vendor/build/lib/tkConfig.sh
+${SCRIPT_DIR}/patched_source/configure --verbose --with-x=yes --prefix=${SCRIPT_DIR}/target/R/Linux --enable-R-shlib --enable-BLAS-shlib --enable-memory-profiling --with-libpng --with-ICU --with-jpeglib --disable-rpath --with-tcltk --with-tcl-config=${SCRIPT_DIR}/vendor/build/lib/tclConfig.sh --with-tk-config=${SCRIPT_DIR}/vendor/build/lib/tkConfig.sh
 make -j32
 make install
 cp /usr/lib64/libgfortran.so.1.0.0 ${SCRIPT_DIR}/target/Linux/lib64/R/lib/libgfortran.so.1
