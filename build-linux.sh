@@ -62,5 +62,6 @@ popd
 
 cp -r ${SCRIPT_DIR}/vendor/build/lib/tcl8.6 ${SCRIPT_DIR}/target/Linux/lib64/R/share/
 cp -r ${SCRIPT_DIR}/vendor/build/lib/tk8.6 ${SCRIPT_DIR}/target/Linux/lib64/R/share/
+cp -r ${SCRIPT_DIR}/vendor/tcl8.6.5/library/msgcat ${SCRIPT_DIR}/target/Linux/lib64/R/share/tcl8.6
 sed -i 's/export R_SHARE_DIR/export R_SHARE_DIR\nexport TCL_LIBRARY=${R_SHARE_DIR}\/tcl8.6\//' ${SCRIPT_DIR}/target/Linux/lib64/R/bin/R
 
