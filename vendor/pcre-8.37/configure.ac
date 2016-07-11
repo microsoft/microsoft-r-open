@@ -23,7 +23,6 @@ m4_define(libpcre32_version, [0:5:0])
 m4_define(libpcreposix_version, [0:3:0])
 m4_define(libpcrecpp_version, [0:1:0])
 
-AM_MAINTAINER_MODE([disable])
 AC_PREREQ(2.57)
 AC_INIT(PCRE, pcre_major.pcre_minor[]pcre_prerelease, , pcre)
 AC_CONFIG_SRCDIR([pcre.h.in])
