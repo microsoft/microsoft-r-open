@@ -12,8 +12,25 @@
         "imports" : [
         ],
         "exports": [
+            {
+                "item": "R",
+                "target": "target/R",
+                "to": "MROComponents"
+            }
         ],
         "sources": [
+            {
+                "item": "https://msdata.pkgs.visualstudio.com/DefaultCollection/_apis/packaging/MRS_Components_MRO/nuget/index.json",
+                "type": "nuget",
+                "for": [
+                    "MROComponents"
+                ],
+                "properties": {
+                    "username": "PackagePublishToken",
+                    "password": "jnv3kihurkmxad33itbzgkeq6bocqtodhmpuq4pcpnnuki3vmwoq",
+                    "apiKey": "PrivatePreview"
+                }
+            }
         ]
     },
     "ci": {
@@ -55,6 +72,7 @@
                         "containerList": [
                             "mrsdocker.cloudapp.net:5000/mrov2:0.7"
                         ],
+                        "stashList": { "linux.results": "target/**/*" },
                         "recycle": true 
                     }]
                 }
@@ -63,7 +81,7 @@
                 "nodes": {
                     "windows": [{
                         "cmd": "powerShell.exe -ExecutionPolicy Bypass -file build.ps1 -Target Export",
-                        "restoreList": [ "windows.results" ],
+                        "restoreList": [ "windows.results", "linux.results" ],
                         "recycle": true
                         
                     }]
