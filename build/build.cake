@@ -8,7 +8,7 @@ using Cake.Core.IO;
      
      if(IsRunningOnUnix())
      {
-         StartProcess("touch", new ProcessSettings { Arguments "configure.ac aclocal.m4 configure Makefile.am Makefile.in", WorkingDirectory = "vendor/pcre-8.37/" } );
+         StartProcess("touch", new ProcessSettings { Arguments = "configure.ac aclocal.m4 configure Makefile.am Makefile.in", WorkingDirectory = "vendor/pcre-8.37/" } );
          RunDefault();
      }
      else
