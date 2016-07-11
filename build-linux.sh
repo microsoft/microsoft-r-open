@@ -57,11 +57,11 @@ pushd ${SCRIPT_DIR}/R_build
 ${SCRIPT_DIR}/patched_source/configure --verbose --with-x=yes --prefix=${SCRIPT_DIR}/target/R/Linux --enable-R-shlib --enable-BLAS-shlib --enable-memory-profiling --with-libpng --with-ICU --with-jpeglib --disable-rpath --with-tcltk --with-tcl-config=${SCRIPT_DIR}/vendor/build/lib/tclConfig.sh --with-tk-config=${SCRIPT_DIR}/vendor/build/lib/tkConfig.sh
 make -j32
 make install
-cp /usr/lib64/libgfortran.so.1.0.0 ${SCRIPT_DIR}/target/Linux/lib64/R/lib/libgfortran.so.1
+cp /usr/lib64/libgfortran.so.1.0.0 ${SCRIPT_DIR}/target/R/Linux/lib64/R/lib/libgfortran.so.1
 popd
 
-cp -r ${SCRIPT_DIR}/vendor/build/lib/tcl8.6 ${SCRIPT_DIR}/target/Linux/lib64/R/share/
-cp -r ${SCRIPT_DIR}/vendor/build/lib/tk8.6 ${SCRIPT_DIR}/target/Linux/lib64/R/share/
-cp -r ${SCRIPT_DIR}/vendor/tcl8.6.5/library/msgcat ${SCRIPT_DIR}/target/Linux/lib64/R/share/tcl8.6
-sed -i 's/export R_SHARE_DIR/export R_SHARE_DIR\nexport TCL_LIBRARY=${R_SHARE_DIR}\/tcl8.6\//' ${SCRIPT_DIR}/target/Linux/lib64/R/bin/R
+cp -r ${SCRIPT_DIR}/vendor/build/lib/tcl8.6 ${SCRIPT_DIR}/target/R/Linux/lib64/R/share/
+cp -r ${SCRIPT_DIR}/vendor/build/lib/tk8.6 ${SCRIPT_DIR}/target/R/Linux/lib64/R/share/
+cp -r ${SCRIPT_DIR}/vendor/tcl8.6.5/library/msgcat ${SCRIPT_DIR}/target/R/Linux/lib64/R/share/tcl8.6
+sed -i 's/export R_SHARE_DIR/export R_SHARE_DIR\nexport TCL_LIBRARY=${R_SHARE_DIR}\/tcl8.6\//' ${SCRIPT_DIR}/target/R/Linux/lib64/R/bin/R
 
