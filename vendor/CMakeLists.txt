@@ -27,6 +27,14 @@ ExternalProject_Add(
 )
 
 ExternalProject_Add(
+  libtiff
+  DEPENDS zlib libpng libjpg
+  SOURCE_DIR ${CMAKE_SOURCE_DIR}/tiff-4.0.6
+  CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/png.sh ${CMAKE_SOURCE_DIR} tiff-4.0.6
+  BUILD_IN_SOURCE 1
+)
+
+ExternalProject_Add(
   libicu
   SOURCE_DIR ${CMAKE_SOURCE_DIR}/icu-57.1/source
   CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/icu.sh ${CMAKE_SOURCE_DIR} icu-57.1/source
