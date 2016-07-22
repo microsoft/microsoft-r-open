@@ -46,6 +46,7 @@ using Cake.Core.IO;
          
          var rDir = GetDirectories("source/src/gnuwin32/installer/R-*");
          CopyDirectory(rDir.Single(), "target/R/Windows");
+         CopyDirectory("vendor/rtools-3.3/R64/Tcl", "target/R/Windows/Tcl");
      }
  });
  
