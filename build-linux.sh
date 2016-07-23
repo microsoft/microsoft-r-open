@@ -64,4 +64,4 @@ cp -r ${SCRIPT_DIR}/vendor/build/lib/tcl8.6 ${SCRIPT_DIR}/target/R/Linux/lib64/R
 cp -r ${SCRIPT_DIR}/vendor/build/lib/tk8.6 ${SCRIPT_DIR}/target/R/Linux/lib64/R/share/
 cp -r ${SCRIPT_DIR}/vendor/tcl8.6.5/library/msgcat ${SCRIPT_DIR}/target/R/Linux/lib64/R/share/tcl8.6
 sed -i 's/export R_SHARE_DIR/export R_SHARE_DIR\nexport TCL_LIBRARY=${R_SHARE_DIR}\/tcl8.6\//' ${SCRIPT_DIR}/target/R/Linux/lib64/R/bin/R
-
+cp ${SCRIPT_DIR}/files/microsoft-r-cacert.pem ${SCRIPT_DIR}/target/R/Linux/lib64/R/bin
