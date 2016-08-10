@@ -1,0 +1,629 @@
+<?xml version='1.0' encoding='UTF-8'?> 
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!ENTITY version SYSTEM "version.xml">
+]>
+<refentry id="cairo-cairo-font-options-t">
+<refmeta>
+<refentrytitle role="top_of_page" id="cairo-cairo-font-options-t.top_of_page">cairo_font_options_t</refentrytitle>
+<manvolnum>3</manvolnum>
+<refmiscinfo>
+  CAIRO Library
+</refmiscinfo>
+</refmeta>
+<refnamediv>
+<refname>cairo_font_options_t</refname>
+<refpurpose>How a font should be rendered</refpurpose>
+</refnamediv>
+
+<refsect1 id="cairo-cairo-font-options-t.functions" role="functions_proto">
+<title role="functions_proto.title">Functions</title>
+<informaltable pgwide="1" frame="none">
+<tgroup cols="2">
+<colspec colname="functions_return" colwidth="150px"/>
+<colspec colname="functions_name"/>
+<tbody>
+<row><entry role="function_type"><link linkend="cairo-font-options-t"><returnvalue>cairo_font_options_t</returnvalue></link>&#160;*
+</entry><entry role="function_name"><link linkend="cairo-font-options-create">cairo_font_options_create</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-font-options-t"><returnvalue>cairo_font_options_t</returnvalue></link>&#160;*
+</entry><entry role="function_name"><link linkend="cairo-font-options-copy">cairo_font_options_copy</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-font-options-destroy">cairo_font_options_destroy</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-status-t"><returnvalue>cairo_status_t</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-font-options-status">cairo_font_options_status</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-font-options-merge">cairo_font_options_merge</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type">unsigned <link linkend="long"><returnvalue>long</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-font-options-hash">cairo_font_options_hash</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-bool-t"><returnvalue>cairo_bool_t</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-font-options-equal">cairo_font_options_equal</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-font-options-set-antialias">cairo_font_options_set_antialias</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-antialias-t"><returnvalue>cairo_antialias_t</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-font-options-get-antialias">cairo_font_options_get_antialias</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-font-options-set-subpixel-order">cairo_font_options_set_subpixel_order</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-subpixel-order-t"><returnvalue>cairo_subpixel_order_t</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-font-options-get-subpixel-order">cairo_font_options_get_subpixel_order</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-font-options-set-hint-style">cairo_font_options_set_hint_style</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-hint-style-t"><returnvalue>cairo_hint_style_t</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-font-options-get-hint-style">cairo_font_options_get_hint_style</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-font-options-set-hint-metrics">cairo_font_options_set_hint_metrics</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-hint-metrics-t"><returnvalue>cairo_hint_metrics_t</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-font-options-get-hint-metrics">cairo_font_options_get_hint_metrics</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+
+</tbody>
+</tgroup>
+</informaltable>
+</refsect1>
+<refsect1 id="cairo-cairo-font-options-t.other" role="other_proto">
+<title role="other_proto.title">Types and Values</title>
+<informaltable role="enum_members_table" pgwide="1" frame="none">
+<tgroup cols="2">
+<colspec colname="name" colwidth="150px"/>
+<colspec colname="description"/>
+<tbody>
+<row><entry role="typedef_keyword">typedef</entry><entry role="function_name"><link linkend="cairo-font-options-t">cairo_font_options_t</link></entry></row>
+<row><entry role="datatype_keyword">enum</entry><entry role="function_name"><link linkend="cairo-subpixel-order-t">cairo_subpixel_order_t</link></entry></row>
+<row><entry role="datatype_keyword">enum</entry><entry role="function_name"><link linkend="cairo-hint-style-t">cairo_hint_style_t</link></entry></row>
+<row><entry role="datatype_keyword">enum</entry><entry role="function_name"><link linkend="cairo-hint-metrics-t">cairo_hint_metrics_t</link></entry></row>
+
+</tbody>
+</tgroup>
+</informaltable>
+</refsect1>
+<refsect1 id="cairo-cairo-font-options-t.object-hierarchy" role="object_hierarchy">
+<title role="object_hierarchy.title">Object Hierarchy</title>
+<screen>
+</screen>
+</refsect1>
+
+
+<refsect1 id="cairo-cairo-font-options-t.description" role="desc">
+<title role="desc.title">Description</title>
+<para>The font options specify how fonts should be rendered.  Most of the 
+time the font options implied by a surface are just right and do not 
+need any changes, but for pixel-based targets tweaking font options 
+may result in superior output on a particular display.</para>
+
+</refsect1>
+<refsect1 id="cairo-cairo-font-options-t.functions_details" role="details">
+<title role="details.title">Functions</title>
+<refsect2 id="cairo-font-options-create" role="function" condition="since:1.0">
+<title>cairo_font_options_create&#160;()</title>
+<indexterm zone="cairo-font-options-create" role="1.0"><primary sortas="font_options_create">cairo_font_options_create</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-font-options-t"><returnvalue>cairo_font_options_t</returnvalue></link>&#160;*
+cairo_font_options_create (<parameter><type>void</type></parameter>);</programlisting>
+<para>Allocates a new font options object with all options initialized
+ to default values.</para>
+<refsect3 role="returns">
+<title>Returns</title>
+<para> a newly allocated <link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link>. Free with
+<link linkend="cairo-font-options-destroy"><function>cairo_font_options_destroy()</function></link>. This function always returns a
+valid pointer; if memory cannot be allocated, then a special
+error object is returned where all operations on the object do nothing.
+You can check for this with <link linkend="cairo-font-options-status"><function>cairo_font_options_status()</function></link>.</para>
+<para></para>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-font-options-copy" role="function" condition="since:1.0">
+<title>cairo_font_options_copy&#160;()</title>
+<indexterm zone="cairo-font-options-copy" role="1.0"><primary sortas="font_options_copy">cairo_font_options_copy</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-font-options-t"><returnvalue>cairo_font_options_t</returnvalue></link>&#160;*
+cairo_font_options_copy (<parameter>const <link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link> *original</parameter>);</programlisting>
+<para>Allocates a new font options object copying the option values from
+ <parameter>original</parameter>
+.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>original</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> a newly allocated <link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link>. Free with
+<link linkend="cairo-font-options-destroy"><function>cairo_font_options_destroy()</function></link>. This function always returns a
+valid pointer; if memory cannot be allocated, then a special
+error object is returned where all operations on the object do nothing.
+You can check for this with <link linkend="cairo-font-options-status"><function>cairo_font_options_status()</function></link>.</para>
+<para></para>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-font-options-destroy" role="function" condition="since:1.0">
+<title>cairo_font_options_destroy&#160;()</title>
+<indexterm zone="cairo-font-options-destroy" role="1.0"><primary sortas="font_options_destroy">cairo_font_options_destroy</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_font_options_destroy (<parameter><link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link> *options</parameter>);</programlisting>
+<para>Destroys a <link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link> object created with
+<link linkend="cairo-font-options-create"><function>cairo_font_options_create()</function></link> or <link linkend="cairo-font-options-copy"><function>cairo_font_options_copy()</function></link>.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>options</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-font-options-status" role="function" condition="since:1.0">
+<title>cairo_font_options_status&#160;()</title>
+<indexterm zone="cairo-font-options-status" role="1.0"><primary sortas="font_options_status">cairo_font_options_status</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-status-t"><returnvalue>cairo_status_t</returnvalue></link>
+cairo_font_options_status (<parameter><link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link> *options</parameter>);</programlisting>
+<para>Checks whether an error has previously occurred for this
+font options object</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>options</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> <link linkend="CAIRO-STATUS-SUCCESS:CAPS"><literal>CAIRO_STATUS_SUCCESS</literal></link> or <link linkend="CAIRO-STATUS-NO-MEMORY:CAPS"><literal>CAIRO_STATUS_NO_MEMORY</literal></link></para>
+<para></para>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-font-options-merge" role="function" condition="since:1.0">
+<title>cairo_font_options_merge&#160;()</title>
+<indexterm zone="cairo-font-options-merge" role="1.0"><primary sortas="font_options_merge">cairo_font_options_merge</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_font_options_merge (<parameter><link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link> *options</parameter>,
+                          <parameter>const <link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link> *other</parameter>);</programlisting>
+<para>Merges non-default options from <parameter>other</parameter>
+ into <parameter>options</parameter>
+, replacing
+existing values. This operation can be thought of as somewhat
+similar to compositing <parameter>other</parameter>
+ onto <parameter>options</parameter>
+ with the operation
+of <link linkend="CAIRO-OPERATOR-OVER:CAPS"><literal>CAIRO_OPERATOR_OVER</literal></link>.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>options</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>other</para></entry>
+<entry role="parameter_description"><para>another <link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-font-options-hash" role="function" condition="since:1.0">
+<title>cairo_font_options_hash&#160;()</title>
+<indexterm zone="cairo-font-options-hash" role="1.0"><primary sortas="font_options_hash">cairo_font_options_hash</primary></indexterm>
+<programlisting language="C">unsigned <link linkend="long"><returnvalue>long</returnvalue></link>
+cairo_font_options_hash (<parameter>const <link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link> *options</parameter>);</programlisting>
+<para>Compute a hash for the font options object; this value will
+be useful when storing an object containing a <link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link>
+in a hash table.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>options</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> the hash value for the font options object.
+The return value can be cast to a 32-bit type if a
+32-bit hash value is needed.</para>
+<para></para>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-font-options-equal" role="function" condition="since:1.0">
+<title>cairo_font_options_equal&#160;()</title>
+<indexterm zone="cairo-font-options-equal" role="1.0"><primary sortas="font_options_equal">cairo_font_options_equal</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-bool-t"><returnvalue>cairo_bool_t</returnvalue></link>
+cairo_font_options_equal (<parameter>const <link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link> *options</parameter>,
+                          <parameter>const <link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link> *other</parameter>);</programlisting>
+<para>Compares two font options objects for equality.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>options</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>other</para></entry>
+<entry role="parameter_description"><para>another <link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> <link linkend="TRUE:CAPS"><literal>TRUE</literal></link> if all fields of the two font options objects match.
+Note that this function will return <link linkend="FALSE:CAPS"><literal>FALSE</literal></link> if either object is in
+error.</para>
+<para></para>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-font-options-set-antialias" role="function" condition="since:1.0">
+<title>cairo_font_options_set_antialias&#160;()</title>
+<indexterm zone="cairo-font-options-set-antialias" role="1.0"><primary sortas="font_options_set_antialias">cairo_font_options_set_antialias</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_font_options_set_antialias (<parameter><link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link> *options</parameter>,
+                                  <parameter><link linkend="cairo-antialias-t"><type>cairo_antialias_t</type></link> antialias</parameter>);</programlisting>
+<para>Sets the antialiasing mode for the font options object. This
+specifies the type of antialiasing to do when rendering text.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>options</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>antialias</para></entry>
+<entry role="parameter_description"><para>the new antialiasing mode</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-font-options-get-antialias" role="function" condition="since:1.0">
+<title>cairo_font_options_get_antialias&#160;()</title>
+<indexterm zone="cairo-font-options-get-antialias" role="1.0"><primary sortas="font_options_get_antialias">cairo_font_options_get_antialias</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-antialias-t"><returnvalue>cairo_antialias_t</returnvalue></link>
+cairo_font_options_get_antialias (<parameter>const <link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link> *options</parameter>);</programlisting>
+<para>Gets the antialiasing mode for the font options object.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>options</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> the antialiasing mode</para>
+<para></para>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-font-options-set-subpixel-order" role="function" condition="since:1.0">
+<title>cairo_font_options_set_subpixel_order&#160;()</title>
+<indexterm zone="cairo-font-options-set-subpixel-order" role="1.0"><primary sortas="font_options_set_subpixel_order">cairo_font_options_set_subpixel_order</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_font_options_set_subpixel_order (<parameter><link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link> *options</parameter>,
+                                       <parameter><link linkend="cairo-subpixel-order-t"><type>cairo_subpixel_order_t</type></link> subpixel_order</parameter>);</programlisting>
+<para>Sets the subpixel order for the font options object. The subpixel
+order specifies the order of color elements within each pixel on
+the display device when rendering with an antialiasing mode of
+<link linkend="CAIRO-ANTIALIAS-SUBPIXEL:CAPS"><literal>CAIRO_ANTIALIAS_SUBPIXEL</literal></link>. See the documentation for
+<link linkend="cairo-subpixel-order-t"><type>cairo_subpixel_order_t</type></link> for full details.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>options</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>subpixel_order</para></entry>
+<entry role="parameter_description"><para>the new subpixel order</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-font-options-get-subpixel-order" role="function" condition="since:1.0">
+<title>cairo_font_options_get_subpixel_order&#160;()</title>
+<indexterm zone="cairo-font-options-get-subpixel-order" role="1.0"><primary sortas="font_options_get_subpixel_order">cairo_font_options_get_subpixel_order</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-subpixel-order-t"><returnvalue>cairo_subpixel_order_t</returnvalue></link>
+cairo_font_options_get_subpixel_order (<parameter>const <link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link> *options</parameter>);</programlisting>
+<para>Gets the subpixel order for the font options object.
+See the documentation for <link linkend="cairo-subpixel-order-t"><type>cairo_subpixel_order_t</type></link> for full details.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>options</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> the subpixel order for the font options object</para>
+<para></para>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-font-options-set-hint-style" role="function" condition="since:1.0">
+<title>cairo_font_options_set_hint_style&#160;()</title>
+<indexterm zone="cairo-font-options-set-hint-style" role="1.0"><primary sortas="font_options_set_hint_style">cairo_font_options_set_hint_style</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_font_options_set_hint_style (<parameter><link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link> *options</parameter>,
+                                   <parameter><link linkend="cairo-hint-style-t"><type>cairo_hint_style_t</type></link> hint_style</parameter>);</programlisting>
+<para>Sets the hint style for font outlines for the font options object.
+This controls whether to fit font outlines to the pixel grid,
+and if so, whether to optimize for fidelity or contrast.
+See the documentation for <link linkend="cairo-hint-style-t"><type>cairo_hint_style_t</type></link> for full details.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>options</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>hint_style</para></entry>
+<entry role="parameter_description"><para>the new hint style</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-font-options-get-hint-style" role="function" condition="since:1.0">
+<title>cairo_font_options_get_hint_style&#160;()</title>
+<indexterm zone="cairo-font-options-get-hint-style" role="1.0"><primary sortas="font_options_get_hint_style">cairo_font_options_get_hint_style</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-hint-style-t"><returnvalue>cairo_hint_style_t</returnvalue></link>
+cairo_font_options_get_hint_style (<parameter>const <link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link> *options</parameter>);</programlisting>
+<para>Gets the hint style for font outlines for the font options object.
+See the documentation for <link linkend="cairo-hint-style-t"><type>cairo_hint_style_t</type></link> for full details.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>options</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> the hint style for the font options object</para>
+<para></para>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-font-options-set-hint-metrics" role="function" condition="since:1.0">
+<title>cairo_font_options_set_hint_metrics&#160;()</title>
+<indexterm zone="cairo-font-options-set-hint-metrics" role="1.0"><primary sortas="font_options_set_hint_metrics">cairo_font_options_set_hint_metrics</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_font_options_set_hint_metrics (<parameter><link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link> *options</parameter>,
+                                     <parameter><link linkend="cairo-hint-metrics-t"><type>cairo_hint_metrics_t</type></link> hint_metrics</parameter>);</programlisting>
+<para>Sets the metrics hinting mode for the font options object. This
+controls whether metrics are quantized to integer values in
+device units.
+See the documentation for <link linkend="cairo-hint-metrics-t"><type>cairo_hint_metrics_t</type></link> for full details.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>options</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>hint_metrics</para></entry>
+<entry role="parameter_description"><para>the new metrics hinting mode</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-font-options-get-hint-metrics" role="function" condition="since:1.0">
+<title>cairo_font_options_get_hint_metrics&#160;()</title>
+<indexterm zone="cairo-font-options-get-hint-metrics" role="1.0"><primary sortas="font_options_get_hint_metrics">cairo_font_options_get_hint_metrics</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-hint-metrics-t"><returnvalue>cairo_hint_metrics_t</returnvalue></link>
+cairo_font_options_get_hint_metrics (<parameter>const <link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link> *options</parameter>);</programlisting>
+<para>Gets the metrics hinting mode for the font options object.
+See the documentation for <link linkend="cairo-hint-metrics-t"><type>cairo_hint_metrics_t</type></link> for full details.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>options</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> the metrics hinting mode for the font options object</para>
+<para></para>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+
+</refsect1>
+<refsect1 id="cairo-cairo-font-options-t.other_details" role="details">
+<title role="details.title">Types and Values</title>
+<refsect2 id="cairo-font-options-t" role="typedef" condition="since:1.0">
+<title>cairo_font_options_t</title>
+<indexterm zone="cairo-font-options-t" role="1.0"><primary sortas="font_options_t">cairo_font_options_t</primary></indexterm>
+<programlisting language="C">typedef struct _cairo_font_options cairo_font_options_t;
+</programlisting>
+<para>An opaque structure holding all options that are used when
+rendering fonts.</para>
+<para>Individual features of a <link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link> can be set or
+accessed using functions named
+<function>cairo_font_options_set_<emphasis>feature_name</emphasis>()</function> and
+<function>cairo_font_options_get_<emphasis>feature_name</emphasis>()</function>, like
+<link linkend="cairo-font-options-set-antialias"><function>cairo_font_options_set_antialias()</function></link> and
+<link linkend="cairo-font-options-get-antialias"><function>cairo_font_options_get_antialias()</function></link>.</para>
+<para>New features may be added to a <link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link> in the
+future.  For this reason, <link linkend="cairo-font-options-copy"><function>cairo_font_options_copy()</function></link>,
+<link linkend="cairo-font-options-equal"><function>cairo_font_options_equal()</function></link>, <link linkend="cairo-font-options-merge"><function>cairo_font_options_merge()</function></link>, and
+<link linkend="cairo-font-options-hash"><function>cairo_font_options_hash()</function></link> should be used to copy, check
+for equality, merge, or compute a hash value of
+<link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link> objects.</para>
+<para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-subpixel-order-t" role="enum" condition="since:1.0">
+<title>enum cairo_subpixel_order_t</title>
+<indexterm zone="cairo-subpixel-order-t" role="1.0"><primary sortas="subpixel_order_t">cairo_subpixel_order_t</primary></indexterm>
+<para>The subpixel order specifies the order of color elements within
+each pixel on the display device when rendering with an
+antialiasing mode of <link linkend="CAIRO-ANTIALIAS-SUBPIXEL:CAPS"><literal>CAIRO_ANTIALIAS_SUBPIXEL</literal></link>.</para>
+<refsect3 role="enum_members">
+<title>Members</title>
+<informaltable role="enum_members_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="enum_members_name" colwidth="300px"/>
+<colspec colname="enum_members_description"/>
+<colspec colname="enum_members_annotations" colwidth="200px"/>
+<tbody>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-SUBPIXEL-ORDER-DEFAULT:CAPS">CAIRO_SUBPIXEL_ORDER_DEFAULT</para></entry>
+<entry role="enum_member_description"><para>Use the default subpixel order for
+  for the target device, since 1.0</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-SUBPIXEL-ORDER-RGB:CAPS">CAIRO_SUBPIXEL_ORDER_RGB</para></entry>
+<entry role="enum_member_description"><para>Subpixel elements are arranged horizontally
+  with red at the left, since 1.0</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-SUBPIXEL-ORDER-BGR:CAPS">CAIRO_SUBPIXEL_ORDER_BGR</para></entry>
+<entry role="enum_member_description"><para>Subpixel elements are arranged horizontally
+  with blue at the left, since 1.0</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-SUBPIXEL-ORDER-VRGB:CAPS">CAIRO_SUBPIXEL_ORDER_VRGB</para></entry>
+<entry role="enum_member_description"><para>Subpixel elements are arranged vertically
+  with red at the top, since 1.0</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-SUBPIXEL-ORDER-VBGR:CAPS">CAIRO_SUBPIXEL_ORDER_VBGR</para></entry>
+<entry role="enum_member_description"><para>Subpixel elements are arranged vertically
+  with blue at the top, since 1.0</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-hint-style-t" role="enum" condition="since:1.0">
+<title>enum cairo_hint_style_t</title>
+<indexterm zone="cairo-hint-style-t" role="1.0"><primary sortas="hint_style_t">cairo_hint_style_t</primary></indexterm>
+<para>Specifies the type of hinting to do on font outlines. Hinting
+is the process of fitting outlines to the pixel grid in order
+to improve the appearance of the result. Since hinting outlines
+involves distorting them, it also reduces the faithfulness
+to the original outline shapes. Not all of the outline hinting
+styles are supported by all font backends.</para>
+<para>New entries may be added in future versions.</para>
+<refsect3 role="enum_members">
+<title>Members</title>
+<informaltable role="enum_members_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="enum_members_name" colwidth="300px"/>
+<colspec colname="enum_members_description"/>
+<colspec colname="enum_members_annotations" colwidth="200px"/>
+<tbody>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-HINT-STYLE-DEFAULT:CAPS">CAIRO_HINT_STYLE_DEFAULT</para></entry>
+<entry role="enum_member_description"><para>Use the default hint style for
+  font backend and target device, since 1.0</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-HINT-STYLE-NONE:CAPS">CAIRO_HINT_STYLE_NONE</para></entry>
+<entry role="enum_member_description"><para>Do not hint outlines, since 1.0</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-HINT-STYLE-SLIGHT:CAPS">CAIRO_HINT_STYLE_SLIGHT</para></entry>
+<entry role="enum_member_description"><para>Hint outlines slightly to improve
+  contrast while retaining good fidelity to the original
+  shapes, since 1.0</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-HINT-STYLE-MEDIUM:CAPS">CAIRO_HINT_STYLE_MEDIUM</para></entry>
+<entry role="enum_member_description"><para>Hint outlines with medium strength
+  giving a compromise between fidelity to the original shapes
+  and contrast, since 1.0</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-HINT-STYLE-FULL:CAPS">CAIRO_HINT_STYLE_FULL</para></entry>
+<entry role="enum_member_description"><para>Hint outlines to maximize contrast, since 1.0</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-hint-metrics-t" role="enum" condition="since:1.0">
+<title>enum cairo_hint_metrics_t</title>
+<indexterm zone="cairo-hint-metrics-t" role="1.0"><primary sortas="hint_metrics_t">cairo_hint_metrics_t</primary></indexterm>
+<para>Specifies whether to hint font metrics; hinting font metrics
+means quantizing them so that they are integer values in
+device space. Doing this improves the consistency of
+letter and line spacing, however it also means that text
+will be laid out differently at different zoom factors.</para>
+<refsect3 role="enum_members">
+<title>Members</title>
+<informaltable role="enum_members_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="enum_members_name" colwidth="300px"/>
+<colspec colname="enum_members_description"/>
+<colspec colname="enum_members_annotations" colwidth="200px"/>
+<tbody>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-HINT-METRICS-DEFAULT:CAPS">CAIRO_HINT_METRICS_DEFAULT</para></entry>
+<entry role="enum_member_description"><para>Hint metrics in the default
+ manner for the font backend and target device, since 1.0</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-HINT-METRICS-OFF:CAPS">CAIRO_HINT_METRICS_OFF</para></entry>
+<entry role="enum_member_description"><para>Do not hint font metrics, since 1.0</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-HINT-METRICS-ON:CAPS">CAIRO_HINT_METRICS_ON</para></entry>
+<entry role="enum_member_description"><para>Hint font metrics, since 1.0</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+
+</refsect1>
+<refsect1 id="cairo-cairo-font-options-t.see-also">
+<title>See Also</title>
+<para><link linkend="cairo-scaled-font-t"><type>cairo_scaled_font_t</type></link></para>
+
+</refsect1>
+
+</refentry>

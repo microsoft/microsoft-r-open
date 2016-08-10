@@ -40,6 +40,9 @@
             ],
             "linux": [
                 "centos7 && large"
+            ],
+            "mac": [
+                "OSX"
             ]
         },
         "gates": {
@@ -74,6 +77,16 @@
                         ],
                         "stashList": { "linux.results": "target/**/*" },
                         "recycle": true 
+                    }],
+                    "mac": [{
+                        "cmd": "./build.sh",
+                        "archiveList": [
+                            "target/**/*"
+                        ],
+                        "containerList": [
+                        ],
+                        "stashList": { "osx.results": "target/**/*" },
+                        "recycle": false 
                     }]
                 }
             },
@@ -81,7 +94,7 @@
                 "nodes": {
                     "windows": [{
                         "cmd": "powerShell.exe -ExecutionPolicy Bypass -file build.ps1 -Target Export",
-                        "restoreList": [ "windows.results", "linux.results" ],
+                        "restoreList": [ "windows.results", "linux.results", "osx.results" ],
                         "recycle": true
                         
                     }]

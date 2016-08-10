@@ -1,0 +1,289 @@
+<?xml version='1.0' encoding='UTF-8'?> 
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!ENTITY version SYSTEM "version.xml">
+]>
+<refentry id="cairo-Version-Information">
+<refmeta>
+<refentrytitle role="top_of_page" id="cairo-Version-Information.top_of_page">Version Information</refentrytitle>
+<manvolnum>3</manvolnum>
+<refmiscinfo>
+  CAIRO Library
+</refmiscinfo>
+</refmeta>
+<refnamediv>
+<refname>Version Information</refname>
+<refpurpose>Compile-time and run-time version checks.</refpurpose>
+</refnamediv>
+
+<refsect1 id="cairo-Version-Information.functions" role="functions_proto">
+<title role="functions_proto.title">Functions</title>
+<informaltable pgwide="1" frame="none">
+<tgroup cols="2">
+<colspec colname="functions_return" colwidth="150px"/>
+<colspec colname="functions_name"/>
+<tbody>
+<row><entry role="define_keyword">#define</entry><entry role="function_name"><link linkend="CAIRO-VERSION-ENCODE:CAPS">CAIRO_VERSION_ENCODE</link><phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="define_keyword">#define</entry><entry role="function_name"><link linkend="CAIRO-VERSION-STRINGIZE:CAPS">CAIRO_VERSION_STRINGIZE</link><phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="int"><returnvalue>int</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-version">cairo_version</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type">const <link linkend="char"><returnvalue>char</returnvalue></link>&#160;*
+</entry><entry role="function_name"><link linkend="cairo-version-string">cairo_version_string</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+
+</tbody>
+</tgroup>
+</informaltable>
+</refsect1>
+<refsect1 id="cairo-Version-Information.other" role="other_proto">
+<title role="other_proto.title">Types and Values</title>
+<informaltable role="enum_members_table" pgwide="1" frame="none">
+<tgroup cols="2">
+<colspec colname="name" colwidth="150px"/>
+<colspec colname="description"/>
+<tbody>
+<row><entry role="define_keyword">#define</entry><entry role="function_name"><link linkend="CAIRO-VERSION:CAPS">CAIRO_VERSION</link></entry></row>
+<row><entry role="define_keyword">#define</entry><entry role="function_name"><link linkend="CAIRO-VERSION-MAJOR:CAPS">CAIRO_VERSION_MAJOR</link></entry></row>
+<row><entry role="define_keyword">#define</entry><entry role="function_name"><link linkend="CAIRO-VERSION-MINOR:CAPS">CAIRO_VERSION_MINOR</link></entry></row>
+<row><entry role="define_keyword">#define</entry><entry role="function_name"><link linkend="CAIRO-VERSION-MICRO:CAPS">CAIRO_VERSION_MICRO</link></entry></row>
+<row><entry role="define_keyword">#define</entry><entry role="function_name"><link linkend="CAIRO-VERSION-STRING:CAPS">CAIRO_VERSION_STRING</link></entry></row>
+
+</tbody>
+</tgroup>
+</informaltable>
+</refsect1>
+<refsect1 id="cairo-Version-Information.object-hierarchy" role="object_hierarchy">
+<title role="object_hierarchy.title">Object Hierarchy</title>
+<screen>
+</screen>
+</refsect1>
+
+
+<refsect1 id="cairo-Version-Information.description" role="desc">
+<title role="desc.title">Description</title>
+<para>Cairo has a three-part version number scheme. In this scheme, we use
+even vs. odd numbers to distinguish fixed points in the software
+vs. in-progress development, (such as from git instead of a tar file,
+or as a "snapshot" tar file as opposed to a "release" tar file).</para>
+<informalexample><screen>
+ _____ Major. Always 1, until we invent a new scheme.
+/  ___ Minor. Even/Odd = Release/Snapshot (tar files) or Branch/Head (git)
+| /  _ Micro. Even/Odd = Tar-file/git
+| | /
+1.0.0
+</screen></informalexample>
+<para>Here are a few examples of versions that one might see.</para>
+<informalexample><screen>
+Releases
+--------
+1.0.0 - A major release
+1.0.2 - A subsequent maintenance release
+1.2.0 - Another major release
+&nbsp;
+Snapshots
+---------
+1.1.2 - A snapshot (working toward the 1.2.0 release)
+&nbsp;
+In-progress development (eg. from git)
+--------------------------------------
+1.0.1 - Development on a maintenance branch (toward 1.0.2 release)
+1.1.1 - Development on head (toward 1.1.2 snapshot and 1.2.0 release)
+</screen></informalexample>
+<refsect2>
+<title>Compatibility</title>
+
+The API/ABI compatibility guarantees for various versions are as
+follows. First, let's assume some cairo-using application code that is
+successfully using the API/ABI "from" one version of cairo. Then let's
+ask the question whether this same code can be moved "to" the API/ABI
+of another version of cairo.
+
+Moving from a release to any later version (release, snapshot,
+development) is always guaranteed to provide compatibility.
+
+Moving from a snapshot to any later version is not guaranteed to
+provide compatibility, since snapshots may introduce new API that ends
+up being removed before the next release.
+
+Moving from an in-development version (odd micro component) to any
+later version is not guaranteed to provide compatibility. In fact,
+there's not even a guarantee that the code will even continue to work
+with the same in-development version number. This is because these
+numbers don't correspond to any fixed state of the software, but
+rather the many states between snapshots and releases.
+
+</refsect2>
+<refsect2>
+<title>Examining the version</title>
+
+Cairo provides the ability to examine the version at either
+compile-time or run-time and in both a human-readable form as well as
+an encoded form suitable for direct comparison. Cairo also provides the
+macro <link linkend="CAIRO-VERSION-ENCODE:CAPS"><function>CAIRO_VERSION_ENCODE()</function></link> to perform the encoding.
+
+<informalexample><screen>
+Compile-time
+------------
+CAIRO_VERSION_STRING    Human-readable
+CAIRO_VERSION           Encoded, suitable for comparison
+&nbsp;
+Run-time
+--------
+<link linkend="cairo-version-string"><function>cairo_version_string()</function></link>  Human-readable
+<link linkend="cairo-version"><function>cairo_version()</function></link>         Encoded, suitable for comparison
+</screen></informalexample>
+
+For example, checking that the cairo version is greater than or equal
+to 1.0.0 could be achieved at compile-time or run-time as follows:
+
+<informalexample><programlisting>
+##if CAIRO_VERSION &gt;= CAIRO_VERSION_ENCODE(1, 0, 0)
+printf ("Compiling with suitable cairo version: %s\n", %CAIRO_VERSION_STRING);
+##endif
+
+if (cairo_version() &gt;= CAIRO_VERSION_ENCODE(1, 0, 0))
+    printf ("Running with suitable cairo version: %s\n", cairo_version_string ());
+</programlisting></informalexample>
+
+</refsect2>
+
+</refsect1>
+<refsect1 id="cairo-Version-Information.functions_details" role="details">
+<title role="details.title">Functions</title>
+<refsect2 id="CAIRO-VERSION-ENCODE:CAPS" role="macro" condition="since:1.0">
+<title>CAIRO_VERSION_ENCODE()</title>
+<indexterm zone="CAIRO-VERSION-ENCODE:CAPS" role="1.0"><primary sortas="VERSION_ENCODE">CAIRO_VERSION_ENCODE</primary></indexterm>
+<programlisting language="C">#define             CAIRO_VERSION_ENCODE(major, minor, micro)</programlisting>
+<para>This macro encodes the given cairo version into an integer.  The numbers
+returned by <link linkend="CAIRO-VERSION:CAPS"><literal>CAIRO_VERSION</literal></link> and <link linkend="cairo-version"><function>cairo_version()</function></link> are encoded using this macro.
+Two encoded version numbers can be compared as integers.  The encoding ensures
+that later versions compare greater than earlier versions.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>major</para></entry>
+<entry role="parameter_description"><para>the major component of the version number</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>minor</para></entry>
+<entry role="parameter_description"><para>the minor component of the version number</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>micro</para></entry>
+<entry role="parameter_description"><para>the micro component of the version number</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> the encoded version.</para>
+<para></para>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="CAIRO-VERSION-STRINGIZE:CAPS" role="macro" condition="since:1.8">
+<title>CAIRO_VERSION_STRINGIZE()</title>
+<indexterm zone="CAIRO-VERSION-STRINGIZE:CAPS" role="1.8"><primary sortas="VERSION_STRINGIZE">CAIRO_VERSION_STRINGIZE</primary></indexterm>
+<programlisting language="C">#define             CAIRO_VERSION_STRINGIZE(major, minor, micro)</programlisting>
+<para>This macro encodes the given cairo version into an string.  The numbers
+returned by <link linkend="CAIRO-VERSION-STRING:CAPS"><literal>CAIRO_VERSION_STRING</literal></link> and <link linkend="cairo-version-string"><function>cairo_version_string()</function></link> are encoded using this macro.
+The parameters to this macro must expand to numerical literals.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>major</para></entry>
+<entry role="parameter_description"><para>the major component of the version number</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>minor</para></entry>
+<entry role="parameter_description"><para>the minor component of the version number</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>micro</para></entry>
+<entry role="parameter_description"><para>the micro component of the version number</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> a string literal containing the version.</para>
+<para></para>
+</refsect3><para role="since">Since 1.8</para></refsect2>
+<refsect2 id="cairo-version" role="function" condition="since:1.0">
+<title>cairo_version&#160;()</title>
+<indexterm zone="cairo-version" role="1.0"><primary sortas="version">cairo_version</primary></indexterm>
+<programlisting language="C"><link linkend="int"><returnvalue>int</returnvalue></link>
+cairo_version (<parameter><type>void</type></parameter>);</programlisting>
+<para>Returns the version of the cairo library encoded in a single
+integer as per <link linkend="CAIRO-VERSION-ENCODE:CAPS"><literal>CAIRO_VERSION_ENCODE</literal></link>. The encoding ensures that
+later versions compare greater than earlier versions.</para>
+<para>A run-time comparison to check that cairo's version is greater than
+or equal to version X.Y.Z could be performed as follows:</para>
+<informalexample><programlisting>
+if (cairo_version() &gt;= CAIRO_VERSION_ENCODE(X,Y,Z)) {...}
+</programlisting></informalexample>
+<para>See also <link linkend="cairo-version-string"><function>cairo_version_string()</function></link> as well as the compile-time
+equivalents <link linkend="CAIRO-VERSION:CAPS"><literal>CAIRO_VERSION</literal></link> and <link linkend="CAIRO-VERSION-STRING:CAPS"><literal>CAIRO_VERSION_STRING</literal></link>.</para>
+<refsect3 role="returns">
+<title>Returns</title>
+<para> the encoded version.</para>
+<para></para>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-version-string" role="function" condition="since:1.0">
+<title>cairo_version_string&#160;()</title>
+<indexterm zone="cairo-version-string" role="1.0"><primary sortas="version_string">cairo_version_string</primary></indexterm>
+<programlisting language="C">const <link linkend="char"><returnvalue>char</returnvalue></link>&#160;*
+cairo_version_string (<parameter><type>void</type></parameter>);</programlisting>
+<para>Returns the version of the cairo library as a human-readable string
+of the form "X.Y.Z".</para>
+<para>See also <link linkend="cairo-version"><function>cairo_version()</function></link> as well as the compile-time equivalents
+<link linkend="CAIRO-VERSION-STRING:CAPS"><literal>CAIRO_VERSION_STRING</literal></link> and <link linkend="CAIRO-VERSION:CAPS"><literal>CAIRO_VERSION</literal></link>.</para>
+<refsect3 role="returns">
+<title>Returns</title>
+<para> a string containing the version.</para>
+<para></para>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+
+</refsect1>
+<refsect1 id="cairo-Version-Information.other_details" role="details">
+<title role="details.title">Types and Values</title>
+<refsect2 id="CAIRO-VERSION:CAPS" role="macro" condition="since:1.0">
+<title>CAIRO_VERSION</title>
+<indexterm zone="CAIRO-VERSION:CAPS" role="1.0"><primary sortas="VERSION">CAIRO_VERSION</primary></indexterm>
+<programlisting language="C">#define             CAIRO_VERSION</programlisting>
+<para>The version of cairo available at compile-time, encoded using
+<link linkend="CAIRO-VERSION-ENCODE:CAPS"><function>CAIRO_VERSION_ENCODE()</function></link>.</para>
+<para role="since">Since 1.0</para></refsect2>
+<refsect2 id="CAIRO-VERSION-MAJOR:CAPS" role="macro" condition="since:1.0">
+<title>CAIRO_VERSION_MAJOR</title>
+<indexterm zone="CAIRO-VERSION-MAJOR:CAPS" role="1.0"><primary sortas="VERSION_MAJOR">CAIRO_VERSION_MAJOR</primary></indexterm>
+<programlisting language="C">#define CAIRO_VERSION_MAJOR USE_cairo_version_OR_cairo_version_string_INSTEAD
+</programlisting>
+<para>The major component of the version of cairo available at compile-time.</para>
+<para role="since">Since 1.0</para></refsect2>
+<refsect2 id="CAIRO-VERSION-MINOR:CAPS" role="macro" condition="since:1.0">
+<title>CAIRO_VERSION_MINOR</title>
+<indexterm zone="CAIRO-VERSION-MINOR:CAPS" role="1.0"><primary sortas="VERSION_MINOR">CAIRO_VERSION_MINOR</primary></indexterm>
+<programlisting language="C">#define CAIRO_VERSION_MINOR USE_cairo_version_OR_cairo_version_string_INSTEAD
+</programlisting>
+<para>The minor component of the version of cairo available at compile-time.</para>
+<para role="since">Since 1.0</para></refsect2>
+<refsect2 id="CAIRO-VERSION-MICRO:CAPS" role="macro" condition="since:1.0">
+<title>CAIRO_VERSION_MICRO</title>
+<indexterm zone="CAIRO-VERSION-MICRO:CAPS" role="1.0"><primary sortas="VERSION_MICRO">CAIRO_VERSION_MICRO</primary></indexterm>
+<programlisting language="C">#define CAIRO_VERSION_MICRO USE_cairo_version_OR_cairo_version_string_INSTEAD
+</programlisting>
+<para>The micro component of the version of cairo available at compile-time.</para>
+<para role="since">Since 1.0</para></refsect2>
+<refsect2 id="CAIRO-VERSION-STRING:CAPS" role="macro" condition="since:1.8">
+<title>CAIRO_VERSION_STRING</title>
+<indexterm zone="CAIRO-VERSION-STRING:CAPS" role="1.8"><primary sortas="VERSION_STRING">CAIRO_VERSION_STRING</primary></indexterm>
+<programlisting language="C">#define             CAIRO_VERSION_STRING</programlisting>
+<para>A human-readable string literal containing the version of cairo available
+at compile-time, in the form of "X.Y.Z".</para>
+<para role="since">Since 1.8</para></refsect2>
+
+</refsect1>
+
+</refentry>

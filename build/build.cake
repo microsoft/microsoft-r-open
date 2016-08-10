@@ -1,7 +1,14 @@
-#addin "Cake.FileHelpers" 
+#addin "Cake.FileHelpers"
 
 using Cake.Core.IO;
- 
+
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Runtime.InteropServices;
+using System.Diagnostics;
+using System.IO;
+
  RBuildEnvironment.Override("Build", () => {
      CreateDirectory("target");
      CleanDirectory("target");
@@ -10,7 +17,17 @@ using Cake.Core.IO;
      {
          StartProcess("touch", new ProcessSettings { Arguments = "configure.ac aclocal.m4 configure Makefile.am Makefile.in", WorkingDirectory = "vendor/pcre-8.37/" } );
          RunDefault();
-         StartProcess("bash", new ProcessSettings { Arguments = "build-linux.sh" } ); 
+
+         if (IsRunningOnMac())
+         {
+           Information("macOS");
+           StartProcess("bash", new ProcessSettings { Arguments = "build-mac.sh" } );
+         }
+         else
+         {
+           Information("Linux");
+           StartProcess("bash", new ProcessSettings { Arguments = "build-linux.sh" } );
+         }
      }
      else
      {
@@ -24,8 +41,8 @@ using Cake.Core.IO;
          
          Environment.SetEnvironmentVariable("tmpdir", "c:\\temp", EnvironmentVariableTarget.Process);
          var targetMkRules = RBuildEnvironment.CodeRoot + "/source/src/gnuwin32/MkRules.local";
-         
-         Information("Windows!");
+
+         Information("Windows");
          string mkRulesContent = TransformTextFile("templates/MkRules.local").WithToken("VENDOR_DIR", ((DirectoryPath)vendor).FullPath).ToString();
          System.IO.File.WriteAllText(targetMkRules, mkRulesContent);
          
@@ -49,5 +66,46 @@ using Cake.Core.IO;
          CopyDirectory("vendor/rtools-3.3/R64/Tcl", "target/R/Windows/Tcl");
      }
  });
- 
+
+ static bool IsRunningOnMac()
+ {
+   string UnixName = ReadProcessOutput("uname", null);
+   if (UnixName.Contains("Darwin"))
+   {
+     return true;
+   }
+   else
+   {
+     return false;
+   }
+ }
+
+private static string ReadProcessOutput(string name, string args)
+{
+    try
+    {
+        Process p = new Process();
+        p.StartInfo.UseShellExecute = false;
+        p.StartInfo.RedirectStandardOutput = true;
+        if (args != null && args != "") p.StartInfo.Arguments = " " + args;
+        p.StartInfo.FileName = name;
+        p.Start();
+
+        // Do not wait for the child process to exit before
+        // reading to the end of its redirected stream.
+        // p.WaitForExit();
+        // Read the output stream first and then wait.
+
+        string output = p.StandardOutput.ReadToEnd();
+        p.WaitForExit();
+        if (output == null) output = "";
+        output = output.Trim();
+        return output;
+    }
+    catch
+    {
+        return "";
+    }
+}
+
 //bool StartProcessThrowIfFailed(string command, string arguments, string W

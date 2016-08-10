@@ -1,0 +1,396 @@
+<?xml version='1.0' encoding='UTF-8'?> 
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!ENTITY version SYSTEM "version.xml">
+]>
+<refentry id="cairo-Transformations">
+<refmeta>
+<refentrytitle role="top_of_page" id="cairo-Transformations.top_of_page">Transformations</refentrytitle>
+<manvolnum>3</manvolnum>
+<refmiscinfo>
+  CAIRO Library
+</refmiscinfo>
+</refmeta>
+<refnamediv>
+<refname>Transformations</refname>
+<refpurpose>Manipulating the current transformation matrix</refpurpose>
+</refnamediv>
+
+<refsect1 id="cairo-Transformations.functions" role="functions_proto">
+<title role="functions_proto.title">Functions</title>
+<informaltable pgwide="1" frame="none">
+<tgroup cols="2">
+<colspec colname="functions_return" colwidth="150px"/>
+<colspec colname="functions_name"/>
+<tbody>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-translate">cairo_translate</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-scale">cairo_scale</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-rotate">cairo_rotate</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-transform">cairo_transform</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-set-matrix">cairo_set_matrix</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-get-matrix">cairo_get_matrix</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-identity-matrix">cairo_identity_matrix</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-user-to-device">cairo_user_to_device</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-user-to-device-distance">cairo_user_to_device_distance</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-device-to-user">cairo_device_to_user</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-device-to-user-distance">cairo_device_to_user_distance</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+
+</tbody>
+</tgroup>
+</informaltable>
+</refsect1>
+<refsect1 id="cairo-Transformations.object-hierarchy" role="object_hierarchy">
+<title role="object_hierarchy.title">Object Hierarchy</title>
+<screen>
+</screen>
+</refsect1>
+
+
+<refsect1 id="cairo-Transformations.description" role="desc">
+<title role="desc.title">Description</title>
+<para>The current transformation matrix, <firstterm>ctm</firstterm>, is a
+two-dimensional affine transformation that maps all coordinates and other
+drawing instruments from the <firstterm>user space</firstterm> into the
+surface's canonical coordinate system, also known as the <firstterm>device
+space</firstterm>.</para>
+
+</refsect1>
+<refsect1 id="cairo-Transformations.functions_details" role="details">
+<title role="details.title">Functions</title>
+<refsect2 id="cairo-translate" role="function" condition="since:1.0">
+<title>cairo_translate&#160;()</title>
+<indexterm zone="cairo-translate" role="1.0"><primary sortas="translate">cairo_translate</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_translate (<parameter><link linkend="cairo-t"><type>cairo_t</type></link> *cr</parameter>,
+                 <parameter><link linkend="double"><type>double</type></link> tx</parameter>,
+                 <parameter><link linkend="double"><type>double</type></link> ty</parameter>);</programlisting>
+<para>Modifies the current transformation matrix (CTM) by translating the
+user-space origin by (<parameter>tx</parameter>
+, <parameter>ty</parameter>
+). This offset is interpreted as a
+user-space coordinate according to the CTM in place before the new
+call to <link linkend="cairo-translate"><function>cairo_translate()</function></link>. In other words, the translation of the
+user-space origin takes place after any existing transformation.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>cr</para></entry>
+<entry role="parameter_description"><para>a cairo context</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>tx</para></entry>
+<entry role="parameter_description"><para>amount to translate in the X direction</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>ty</para></entry>
+<entry role="parameter_description"><para>amount to translate in the Y direction</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-scale" role="function" condition="since:1.0">
+<title>cairo_scale&#160;()</title>
+<indexterm zone="cairo-scale" role="1.0"><primary sortas="scale">cairo_scale</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_scale (<parameter><link linkend="cairo-t"><type>cairo_t</type></link> *cr</parameter>,
+             <parameter><link linkend="double"><type>double</type></link> sx</parameter>,
+             <parameter><link linkend="double"><type>double</type></link> sy</parameter>);</programlisting>
+<para>Modifies the current transformation matrix (CTM) by scaling the X
+and Y user-space axes by <parameter>sx</parameter>
+ and <parameter>sy</parameter>
+ respectively. The scaling of
+the axes takes place after any existing transformation of user
+space.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>cr</para></entry>
+<entry role="parameter_description"><para>a cairo context</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>sx</para></entry>
+<entry role="parameter_description"><para>scale factor for the X dimension</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>sy</para></entry>
+<entry role="parameter_description"><para>scale factor for the Y dimension</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-rotate" role="function" condition="since:1.0">
+<title>cairo_rotate&#160;()</title>
+<indexterm zone="cairo-rotate" role="1.0"><primary sortas="rotate">cairo_rotate</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_rotate (<parameter><link linkend="cairo-t"><type>cairo_t</type></link> *cr</parameter>,
+              <parameter><link linkend="double"><type>double</type></link> angle</parameter>);</programlisting>
+<para>Modifies the current transformation matrix (CTM) by rotating the
+user-space axes by <parameter>angle</parameter>
+ radians. The rotation of the axes takes
+places after any existing transformation of user space. The
+rotation direction for positive angles is from the positive X axis
+toward the positive Y axis.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>cr</para></entry>
+<entry role="parameter_description"><para>a cairo context</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>angle</para></entry>
+<entry role="parameter_description"><para>angle (in radians) by which the user-space axes will be
+rotated</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-transform" role="function" condition="since:1.0">
+<title>cairo_transform&#160;()</title>
+<indexterm zone="cairo-transform" role="1.0"><primary sortas="transform">cairo_transform</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_transform (<parameter><link linkend="cairo-t"><type>cairo_t</type></link> *cr</parameter>,
+                 <parameter>const <link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link> *matrix</parameter>);</programlisting>
+<para>Modifies the current transformation matrix (CTM) by applying
+<parameter>matrix</parameter>
+ as an additional transformation. The new transformation of
+user space takes place after any existing transformation.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>cr</para></entry>
+<entry role="parameter_description"><para>a cairo context</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>matrix</para></entry>
+<entry role="parameter_description"><para>a transformation to be applied to the user-space axes</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-set-matrix" role="function" condition="since:1.0">
+<title>cairo_set_matrix&#160;()</title>
+<indexterm zone="cairo-set-matrix" role="1.0"><primary sortas="set_matrix">cairo_set_matrix</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_set_matrix (<parameter><link linkend="cairo-t"><type>cairo_t</type></link> *cr</parameter>,
+                  <parameter>const <link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link> *matrix</parameter>);</programlisting>
+<para>Modifies the current transformation matrix (CTM) by setting it
+equal to <parameter>matrix</parameter>
+.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>cr</para></entry>
+<entry role="parameter_description"><para>a cairo context</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>matrix</para></entry>
+<entry role="parameter_description"><para>a transformation matrix from user space to device space</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-get-matrix" role="function" condition="since:1.0">
+<title>cairo_get_matrix&#160;()</title>
+<indexterm zone="cairo-get-matrix" role="1.0"><primary sortas="get_matrix">cairo_get_matrix</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_get_matrix (<parameter><link linkend="cairo-t"><type>cairo_t</type></link> *cr</parameter>,
+                  <parameter><link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link> *matrix</parameter>);</programlisting>
+<para>Stores the current transformation matrix (CTM) into <parameter>matrix</parameter>
+.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>cr</para></entry>
+<entry role="parameter_description"><para>a cairo context</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>matrix</para></entry>
+<entry role="parameter_description"><para>return value for the matrix</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-identity-matrix" role="function" condition="since:1.0">
+<title>cairo_identity_matrix&#160;()</title>
+<indexterm zone="cairo-identity-matrix" role="1.0"><primary sortas="identity_matrix">cairo_identity_matrix</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_identity_matrix (<parameter><link linkend="cairo-t"><type>cairo_t</type></link> *cr</parameter>);</programlisting>
+<para>Resets the current transformation matrix (CTM) by setting it equal
+to the identity matrix. That is, the user-space and device-space
+axes will be aligned and one user-space unit will transform to one
+device-space unit.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>cr</para></entry>
+<entry role="parameter_description"><para>a cairo context</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-user-to-device" role="function" condition="since:1.0">
+<title>cairo_user_to_device&#160;()</title>
+<indexterm zone="cairo-user-to-device" role="1.0"><primary sortas="user_to_device">cairo_user_to_device</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_user_to_device (<parameter><link linkend="cairo-t"><type>cairo_t</type></link> *cr</parameter>,
+                      <parameter><link linkend="double"><type>double</type></link> *x</parameter>,
+                      <parameter><link linkend="double"><type>double</type></link> *y</parameter>);</programlisting>
+<para>Transform a coordinate from user space to device space by
+multiplying the given point by the current transformation matrix
+(CTM).</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>cr</para></entry>
+<entry role="parameter_description"><para>a cairo context</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>x</para></entry>
+<entry role="parameter_description"><para>X value of coordinate (in/out parameter)</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>y</para></entry>
+<entry role="parameter_description"><para>Y value of coordinate (in/out parameter)</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-user-to-device-distance" role="function" condition="since:1.0">
+<title>cairo_user_to_device_distance&#160;()</title>
+<indexterm zone="cairo-user-to-device-distance" role="1.0"><primary sortas="user_to_device_distance">cairo_user_to_device_distance</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_user_to_device_distance (<parameter><link linkend="cairo-t"><type>cairo_t</type></link> *cr</parameter>,
+                               <parameter><link linkend="double"><type>double</type></link> *dx</parameter>,
+                               <parameter><link linkend="double"><type>double</type></link> *dy</parameter>);</programlisting>
+<para>Transform a distance vector from user space to device space. This
+function is similar to <link linkend="cairo-user-to-device"><function>cairo_user_to_device()</function></link> except that the
+translation components of the CTM will be ignored when transforming
+(<parameter>dx</parameter>
+,<parameter>dy</parameter>
+).</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>cr</para></entry>
+<entry role="parameter_description"><para>a cairo context</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>dx</para></entry>
+<entry role="parameter_description"><para>X component of a distance vector (in/out parameter)</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>dy</para></entry>
+<entry role="parameter_description"><para>Y component of a distance vector (in/out parameter)</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-device-to-user" role="function" condition="since:1.0">
+<title>cairo_device_to_user&#160;()</title>
+<indexterm zone="cairo-device-to-user" role="1.0"><primary sortas="device_to_user">cairo_device_to_user</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_device_to_user (<parameter><link linkend="cairo-t"><type>cairo_t</type></link> *cr</parameter>,
+                      <parameter><link linkend="double"><type>double</type></link> *x</parameter>,
+                      <parameter><link linkend="double"><type>double</type></link> *y</parameter>);</programlisting>
+<para>Transform a coordinate from device space to user space by
+multiplying the given point by the inverse of the current
+transformation matrix (CTM).</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>cr</para></entry>
+<entry role="parameter_description"><para>a cairo</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>x</para></entry>
+<entry role="parameter_description"><para>X value of coordinate (in/out parameter)</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>y</para></entry>
+<entry role="parameter_description"><para>Y value of coordinate (in/out parameter)</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-device-to-user-distance" role="function" condition="since:1.0">
+<title>cairo_device_to_user_distance&#160;()</title>
+<indexterm zone="cairo-device-to-user-distance" role="1.0"><primary sortas="device_to_user_distance">cairo_device_to_user_distance</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_device_to_user_distance (<parameter><link linkend="cairo-t"><type>cairo_t</type></link> *cr</parameter>,
+                               <parameter><link linkend="double"><type>double</type></link> *dx</parameter>,
+                               <parameter><link linkend="double"><type>double</type></link> *dy</parameter>);</programlisting>
+<para>Transform a distance vector from device space to user space. This
+function is similar to <link linkend="cairo-device-to-user"><function>cairo_device_to_user()</function></link> except that the
+translation components of the inverse CTM will be ignored when
+transforming (<parameter>dx</parameter>
+,<parameter>dy</parameter>
+).</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>cr</para></entry>
+<entry role="parameter_description"><para>a cairo context</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>dx</para></entry>
+<entry role="parameter_description"><para>X component of a distance vector (in/out parameter)</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>dy</para></entry>
+<entry role="parameter_description"><para>Y component of a distance vector (in/out parameter)</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+
+</refsect1>
+<refsect1 id="cairo-Transformations.other_details" role="details">
+<title role="details.title">Types and Values</title>
+
+</refsect1>
+<refsect1 id="cairo-Transformations.see-also">
+<title>See Also</title>
+<para><link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link></para>
+
+</refsect1>
+
+</refentry>

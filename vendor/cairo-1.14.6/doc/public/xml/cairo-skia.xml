@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='UTF-8'?> 
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!ENTITY version SYSTEM "version.xml">
+]>
+<refentry id="cairo-cairo-skia">
+<refmeta>
+<refentrytitle role="top_of_page" id="cairo-cairo-skia.top_of_page">cairo-skia</refentrytitle>
+<manvolnum>3</manvolnum>
+<refmiscinfo>
+  CAIRO Library
+</refmiscinfo>
+</refmeta>
+<refnamediv>
+<refname>cairo-skia</refname>
+<refpurpose></refpurpose>
+</refnamediv>
+
+<refsect1 id="cairo-cairo-skia.functions" role="functions_proto">
+<title role="functions_proto.title">Functions</title>
+<informaltable pgwide="1" frame="none">
+<tgroup cols="2">
+<colspec colname="functions_return" colwidth="150px"/>
+<colspec colname="functions_name"/>
+<tbody>
+<row><entry role="function_type"><link linkend="bool"><returnvalue>bool</returnvalue></link>
+</entry><entry role="function_name"><link linkend="format-to-sk-config">format_to_sk_config</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+
+</tbody>
+</tgroup>
+</informaltable>
+</refsect1>
+<refsect1 id="cairo-cairo-skia.other" role="other_proto">
+<title role="other_proto.title">Types and Values</title>
+<informaltable role="enum_members_table" pgwide="1" frame="none">
+<tgroup cols="2">
+<colspec colname="name" colwidth="150px"/>
+<colspec colname="description"/>
+<tbody>
+<row><entry role="typedef_keyword">typedef</entry><entry role="function_name"><link linkend="cairo-skia-context-t">cairo_skia_context_t</link></entry></row>
+<row><entry role="typedef_keyword">typedef</entry><entry role="function_name"><link linkend="cairo-skia-surface-t">cairo_skia_surface_t</link></entry></row>
+
+</tbody>
+</tgroup>
+</informaltable>
+</refsect1>
+<refsect1 id="cairo-cairo-skia.object-hierarchy" role="object_hierarchy">
+<title role="object_hierarchy.title">Object Hierarchy</title>
+<screen>
+</screen>
+</refsect1>
+
+
+<refsect1 id="cairo-cairo-skia.description" role="desc">
+<title role="desc.title">Description</title>
+<para>
+</para>
+
+</refsect1>
+<refsect1 id="cairo-cairo-skia.functions_details" role="details">
+<title role="details.title">Functions</title>
+<refsect2 id="format-to-sk-config" role="function">
+<title>format_to_sk_config&#160;()</title>
+<indexterm zone="format-to-sk-config"><primary>format_to_sk_config</primary></indexterm>
+<programlisting language="C"><link linkend="bool"><returnvalue>bool</returnvalue></link>
+format_to_sk_config (<parameter><link linkend="cairo-format-t"><type>cairo_format_t</type></link> format</parameter>);</programlisting>
+<para>
+</para>
+<refsect3 role="returns">
+<title>Returns</title>
+
+<para></para>
+</refsect3></refsect2>
+
+</refsect1>
+<refsect1 id="cairo-cairo-skia.other_details" role="details">
+<title role="details.title">Types and Values</title>
+<refsect2 id="cairo-skia-context-t" role="typedef" condition="since:1.10">
+<title>cairo_skia_context_t</title>
+<indexterm zone="cairo-skia-context-t" role="1.10"><primary sortas="skia_context_t">cairo_skia_context_t</primary></indexterm>
+<programlisting language="C">typedef struct _cairo_skia_context cairo_skia_context_t;
+</programlisting>
+<para>A <link linkend="cairo-skia-context-t"><type>cairo_skia_context_t</type></link> includes handles to Skia's canvas,
+paint, and path objects along with the Cairo source surfaces
+and matrix, and the original and target <link linkend="cairo-skia-surface-t"><type>cairo_skia_surface_t</type></link>
+objects.</para>
+<para role="since">Since 1.10</para></refsect2>
+<refsect2 id="cairo-skia-surface-t" role="typedef" condition="since:1.10">
+<title>cairo_skia_surface_t</title>
+<indexterm zone="cairo-skia-surface-t" role="1.10"><primary sortas="skia_surface_t">cairo_skia_surface_t</primary></indexterm>
+<programlisting language="C">typedef struct _cairo_skia_surface cairo_skia_surface_t;
+</programlisting>
+<para>A <link linkend="cairo-skia-surface-t"><type>cairo_skia_surface_t</type></link> is a container for the underlying
+<link linkend="SkBitmap"><type>SkBitmap</type></link> and the corresponding Cairo image surface.</para>
+<para role="since">Since 1.10</para></refsect2>
+
+</refsect1>
+
+</refentry>
