@@ -33,7 +33,7 @@ pushd ${SCRIPT_DIR}/R_build
 ${SCRIPT_DIR}/source/configure 'CC=clang' 'CXX=clang++' 'OBJC=clang' F77='gfortran -arch x86_64' FC='gfortran -arch x86_64' --with-jpeglib --with-libtiff --with-libpng --with-blas="-framework Accelerate" '--with-lapack' '--enable-memory-profiling' --enable-R-framework=/Library/Frameworks FW_VERSION=3.3-MRO
 make -j32
 make install
-cp -r /Library/Frameworks/R.framework/* ${SCRIPT_DIR}/target/R/Mac
+tar -zcvf ${SCRIPT_DIR}/target/R/Mac/mro.tar.gz -C /Library/Frameworks/R.framework/Versions/Current .
 
 #cp /usr/lib64/libgfortran.so.1.0.0 ${SCRIPT_DIR}/target/R/Mac/lib64/R/lib/libgfortran.so.1
 #popd
