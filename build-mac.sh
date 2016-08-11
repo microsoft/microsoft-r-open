@@ -12,6 +12,8 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 #  exit 1
 #fi
 
+MRO_VERSION="3.3-MRO"
+
 export LDFLAGS=-L${SCRIPT_DIR}/vendor/build/lib
 export CFLAGS="-I${SCRIPT_DIR}/vendor/build/include -DU_STATIC_IMPLEMENTATION -Wall -mtune=core2 -g -O2 -I/opt/X11/include"
 export CXXFLAGS="-I${SCRIPT_DIR}/vendor/build/include -DU_STATIC_IMPLEMENTATIN -Wall -mtune=core2 -g -O2 -I/opt/X11/include"
@@ -30,10 +32,11 @@ pushd ${SCRIPT_DIR}/R_build
 
 #--with-libpng --with-ICU --with-jpeglib --disable-rpath --with-tcltk --with-tcl-config=${SCRIPT_DIR}/vendor/build/lib/tclConfig.sh --with-tk-config=${SCRIPT_DIR}/vendor/build/lib/tkConfig.sh
 #${SCRIPT_DIR}/patched_source/configure --verbose --with-x=yes --prefix=${SCRIPT_DIR}/target/R/Mac 'CC=clang' 'CXX=clang++' 'OBJC=clang' F77='gfortran -arch x86_64' FC='gfortran -arch x86_64' --with-blas="-framework Accelerate" '--with-lapack' '--enable-memory-profiling' --enable-R-framework=/Library/Frameworks FW_VERSION=3.3-MRO
-${SCRIPT_DIR}/source/configure 'CC=clang' 'CXX=clang++' 'OBJC=clang' F77='gfortran -arch x86_64' FC='gfortran -arch x86_64' --with-jpeglib --with-libtiff --with-libpng --with-blas="-framework Accelerate" '--with-lapack' '--enable-memory-profiling' --enable-R-framework=/Library/Frameworks FW_VERSION=3.3-MRO
+${SCRIPT_DIR}/source/configure 'CC=clang' 'CXX=clang++' 'OBJC=clang' F77='gfortran -arch x86_64' FC='gfortran -arch x86_64' --with-jpeglib --with-libtiff --with-libpng --with-blas="-framework Accelerate" '--with-lapack' '--enable-memory-profiling' --enable-R-framework=/Library/Frameworks FW_VERSION=${MRO_VERSION}
 make -j32
 make install
-tar -zcvf ${SCRIPT_DIR}/target/R/Mac/mro.tar.gz -C /Library/Frameworks/R.framework/Versions/Current .
+cd ${SCRIPT_DIR}/target/R/Mac
+tar -zcvf ${MRO_VERSION}.tar.gz  -C /Library/Frameworks/R.framework/Versions/${MRO_VERSION}/ .
 
 #cp /usr/lib64/libgfortran.so.1.0.0 ${SCRIPT_DIR}/target/R/Mac/lib64/R/lib/libgfortran.so.1
 #popd
