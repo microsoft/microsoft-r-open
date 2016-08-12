@@ -86,7 +86,7 @@
                         "containerList": [
                         ],
                         "stashList": { "osx.results": "target/**/*" },
-                        "recycle": false 
+                        "recycle": false,
                         "preventRecycle": true
                     }]
                 }
