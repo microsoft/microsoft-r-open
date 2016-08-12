@@ -87,6 +87,7 @@
                         ],
                         "stashList": { "osx.results": "target/**/*" },
                         "recycle": false 
+                        "preventRecycle": true
                     }]
                 }
             },
