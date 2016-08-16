@@ -1,6 +1,6 @@
 # Created by https://www.gitignore.io/api/cmake,linux,windows
 
-### CMake ### 
+### CMake ###
 CMakeCache.txt
 CMakeFiles
 CMakeScripts
