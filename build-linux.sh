@@ -35,8 +35,8 @@ popd
 
 export LDFLAGS=-L${SCRIPT_DIR}/vendor/build/lib
 export LIBS='-licui18n -licuuc -licudata -lstdc++'
-export CFLAGS="-I${SCRIPT_DIR}/vendor/build/include -DU_STATIC_IMPLEMENTATION"
-export CXXFLAGS="-I${SCRIPT_DIR}/vendor/build/include -DU_STATIC_IMPLEMENTATIN"
+export CFLAGS="-I${SCRIPT_DIR}/vendor/build/include -DU_STATIC_IMPLEMENTATION -O2 -g"
+export CXXFLAGS="-I${SCRIPT_DIR}/vendor/build/include -DU_STATIC_IMPLEMENTATIN -O2 -g"
 export CPPFLAGS="-I${SCRIPT_DIR}/vendor/build/include -DU_STATIC_IMPLEMENTATION"
 export PKG_CONFIG_PATH=${SCRIPT_DIR}/vendor/build/lib/pkgconfig
 export C_INCLUDE_PATH="${SCRIPT_DIR}/vendor/build/include"
