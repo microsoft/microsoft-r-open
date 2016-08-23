@@ -26,7 +26,7 @@ export PKG_CONFIG_PATH=${SCRIPT_DIR}/vendor/build/lib/pkgconfig
 if [ ! -d ${SCRIPT_DIR}/R_build ] ; then
   mkdir ${SCRIPT_DIR}/R_build
 fi
-if [ ! -d ${SCRIPT_DIR}/target/R/mac ] ; then
+if [ ! -d ${SCRIPT_DIR}/target/R/Mac ] ; then
   mkdir -p ${SCRIPT_DIR}/target/R/Mac
 fi
 
