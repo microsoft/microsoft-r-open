@@ -47,6 +47,7 @@ using System.IO;
          System.IO.File.WriteAllText(targetMkRules, mkRulesContent);
          
          CopyDirectory("vendor/rtools-3.3/R64/Tcl", "source/Tcl");
+         CopyFile("patch/R.ico", "source/src/gnuwin32/front-ends/R.ico");
          
          StartProcess(vendor + "/rtools-3.3/bin/make.exe", new ProcessSettings { Arguments = "all", WorkingDirectory = "source/src/gnuwin32" } );
          StartProcess(vendor + "/rtools-3.3/bin/make.exe", new ProcessSettings { Arguments = "-j cairodevices", WorkingDirectory = "source/src/gnuwin32" } );

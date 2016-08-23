@@ -79,3 +79,4 @@ $RECYCLE.BIN/
 vendor/build
 tools/
 packages/
+source/src/gnuwin32/front-ends/R.ico
