@@ -17,8 +17,8 @@ MRO_VERSION="$R_VERSION-MRO"
 echo "Building MRO Version: $MRO_VERSION"
 
 export LDFLAGS=-L${SCRIPT_DIR}/vendor/build/lib
-export CFLAGS="-I${SCRIPT_DIR}/vendor/build/include -DU_STATIC_IMPLEMENTATION -Wall -mtune=core2 -g -O2 -I/opt/X11/include -framework CoreFoundation -framework CoreGraphics"
-export CXXFLAGS="-I${SCRIPT_DIR}/vendor/build/include -DU_STATIC_IMPLEMENTATIN -Wall -mtune=core2 -g -O2 -I/opt/X11/include -framework CoreFoundation -framework CoreGraphics"
+export CFLAGS="-I${SCRIPT_DIR}/vendor/build/include -DU_STATIC_IMPLEMENTATION -Wall -mtune=core2 -g -O2 -I/opt/X11/include -framework CoreFoundation -framework CoreGraphics -framework CoreText"
+export CXXFLAGS="-I${SCRIPT_DIR}/vendor/build/include -DU_STATIC_IMPLEMENTATIN -Wall -mtune=core2 -g -O2 -I/opt/X11/include -framework CoreFoundation -framework CoreGraphics -framework CoreText"
 export CPPFLAGS="-I${SCRIPT_DIR}/vendor/build/include -DU_STATIC_IMPLEMENTATION -Wall -mtune=core2 -g -O2 -I/opt/X11/include"
 export OBJCFLAGS="-I${SCRIPT_DIR}/vendor/build/include -DU_STATIC_IMPLEMENTATION -Wall -mtune=core2 -g -O2 -I/opt/X11/include"
 export PKG_CONFIG_PATH=${SCRIPT_DIR}/vendor/build/lib/pkgconfig
