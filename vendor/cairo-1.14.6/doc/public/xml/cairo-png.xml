@@ -1,0 +1,316 @@
+<?xml version='1.0' encoding='UTF-8'?> 
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!ENTITY version SYSTEM "version.xml">
+]>
+<refentry id="cairo-PNG-Support">
+<refmeta>
+<refentrytitle role="top_of_page" id="cairo-PNG-Support.top_of_page">PNG Support</refentrytitle>
+<manvolnum>3</manvolnum>
+<refmiscinfo>
+  CAIRO Library
+</refmiscinfo>
+</refmeta>
+<refnamediv>
+<refname>PNG Support</refname>
+<refpurpose>Reading and writing PNG images</refpurpose>
+</refnamediv>
+
+<refsect1 id="cairo-PNG-Support.functions" role="functions_proto">
+<title role="functions_proto.title">Functions</title>
+<informaltable pgwide="1" frame="none">
+<tgroup cols="2">
+<colspec colname="functions_return" colwidth="150px"/>
+<colspec colname="functions_name"/>
+<tbody>
+<row><entry role="function_type"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+</entry><entry role="function_name"><link linkend="cairo-image-surface-create-from-png">cairo_image_surface_create_from_png</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-status-t"><returnvalue>cairo_status_t</returnvalue></link>
+</entry><entry role="function_name"><phrase role="c_punctuation">(</phrase><link linkend="cairo-read-func-t">*cairo_read_func_t</link><phrase role="c_punctuation">)</phrase>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+</entry><entry role="function_name"><link linkend="cairo-image-surface-create-from-png-stream">cairo_image_surface_create_from_png_stream</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-status-t"><returnvalue>cairo_status_t</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-surface-write-to-png">cairo_surface_write_to_png</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-status-t"><returnvalue>cairo_status_t</returnvalue></link>
+</entry><entry role="function_name"><phrase role="c_punctuation">(</phrase><link linkend="cairo-write-func-t">*cairo_write_func_t</link><phrase role="c_punctuation">)</phrase>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-status-t"><returnvalue>cairo_status_t</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-surface-write-to-png-stream">cairo_surface_write_to_png_stream</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+
+</tbody>
+</tgroup>
+</informaltable>
+</refsect1>
+<refsect1 id="cairo-PNG-Support.other" role="other_proto">
+<title role="other_proto.title">Types and Values</title>
+<informaltable role="enum_members_table" pgwide="1" frame="none">
+<tgroup cols="2">
+<colspec colname="name" colwidth="150px"/>
+<colspec colname="description"/>
+<tbody>
+<row><entry role="define_keyword">#define</entry><entry role="function_name"><link linkend="CAIRO-HAS-PNG-FUNCTIONS:CAPS">CAIRO_HAS_PNG_FUNCTIONS</link></entry></row>
+
+</tbody>
+</tgroup>
+</informaltable>
+</refsect1>
+<refsect1 id="cairo-PNG-Support.object-hierarchy" role="object_hierarchy">
+<title role="object_hierarchy.title">Object Hierarchy</title>
+<screen>
+</screen>
+</refsect1>
+
+
+<refsect1 id="cairo-PNG-Support.description" role="desc">
+<title role="desc.title">Description</title>
+<para>The PNG functions allow reading PNG images into image surfaces, and writing
+any surface to a PNG file.</para>
+<para>It is a toy API. It only offers very simple support for reading and
+writing PNG files, which is sufficient for testing and
+demonstration purposes. Applications which need more control over
+the generated PNG file should access the pixel data directly, using
+<link linkend="cairo-image-surface-get-data"><function>cairo_image_surface_get_data()</function></link> or a backend-specific access
+function, and process it with another library, e.g. gdk-pixbuf or
+libpng.</para>
+
+</refsect1>
+<refsect1 id="cairo-PNG-Support.functions_details" role="details">
+<title role="details.title">Functions</title>
+<refsect2 id="cairo-image-surface-create-from-png" role="function" condition="since:1.0">
+<title>cairo_image_surface_create_from_png&#160;()</title>
+<indexterm zone="cairo-image-surface-create-from-png" role="1.0"><primary sortas="image_surface_create_from_png">cairo_image_surface_create_from_png</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+cairo_image_surface_create_from_png (<parameter>const <link linkend="char"><type>char</type></link> *filename</parameter>);</programlisting>
+<para>Creates a new image surface and initializes the contents to the
+given PNG file.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>filename</para></entry>
+<entry role="parameter_description"><para>name of PNG file to load</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> a new <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> initialized with the contents
+of the PNG file, or a "nil" surface if any error occurred. A nil
+surface can be checked for with cairo_surface_status(surface) which
+may return one of the following values:</para>
+<para><link linkend="CAIRO-STATUS-NO-MEMORY:CAPS"><literal>CAIRO_STATUS_NO_MEMORY</literal></link>
+<link linkend="CAIRO-STATUS-FILE-NOT-FOUND:CAPS"><literal>CAIRO_STATUS_FILE_NOT_FOUND</literal></link>
+<link linkend="CAIRO-STATUS-READ-ERROR:CAPS"><literal>CAIRO_STATUS_READ_ERROR</literal></link></para>
+<para>Alternatively, you can allow errors to propagate through the drawing
+operations and check the status on the context upon completion
+using <link linkend="cairo-status"><function>cairo_status()</function></link>.</para>
+<para></para>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-read-func-t" role="function" condition="since:1.0">
+<title>cairo_read_func_t&#160;()</title>
+<indexterm zone="cairo-read-func-t" role="1.0"><primary sortas="read_func_t">cairo_read_func_t</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-status-t"><returnvalue>cairo_status_t</returnvalue></link>
+<phrase role="c_punctuation">(</phrase>*cairo_read_func_t<phrase role="c_punctuation">)</phrase> (<parameter><link linkend="void"><type>void</type></link> *closure</parameter>,
+                      <parameter>unsigned <link linkend="char"><type>char</type></link> *data</parameter>,
+                      <parameter>unsigned <link linkend="int"><type>int</type></link> length</parameter>);</programlisting>
+<para><link linkend="cairo-read-func-t"><type>cairo_read_func_t</type></link> is the type of function which is called when a
+backend needs to read data from an input stream.  It is passed the
+closure which was specified by the user at the time the read
+function was registered, the buffer to read the data into and the
+length of the data in bytes.  The read function should return
+<link linkend="CAIRO-STATUS-SUCCESS:CAPS"><literal>CAIRO_STATUS_SUCCESS</literal></link> if all the data was successfully read,
+<link linkend="CAIRO-STATUS-READ-ERROR:CAPS"><literal>CAIRO_STATUS_READ_ERROR</literal></link> otherwise.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>closure</para></entry>
+<entry role="parameter_description"><para>the input closure</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>data</para></entry>
+<entry role="parameter_description"><para>the buffer into which to read the data</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>length</para></entry>
+<entry role="parameter_description"><para>the amount of data to read</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> the status code of the read operation</para>
+<para></para>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-image-surface-create-from-png-stream" role="function" condition="since:1.0">
+<title>cairo_image_surface_create_from_png_stream&#160;()</title>
+<indexterm zone="cairo-image-surface-create-from-png-stream" role="1.0"><primary sortas="image_surface_create_from_png_stream">cairo_image_surface_create_from_png_stream</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+cairo_image_surface_create_from_png_stream
+                               (<parameter><link linkend="cairo-read-func-t"><type>cairo_read_func_t</type></link> read_func</parameter>,
+                                <parameter><link linkend="void"><type>void</type></link> *closure</parameter>);</programlisting>
+<para>Creates a new image surface from PNG data read incrementally
+via the <parameter>read_func</parameter>
+ function.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>read_func</para></entry>
+<entry role="parameter_description"><para>function called to read the data of the file</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>closure</para></entry>
+<entry role="parameter_description"><para>data to pass to <parameter>read_func</parameter>
+.</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> a new <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> initialized with the contents
+of the PNG file or a "nil" surface if the data read is not a valid PNG image
+or memory could not be allocated for the operation.  A nil
+surface can be checked for with cairo_surface_status(surface) which
+may return one of the following values:</para>
+<para><link linkend="CAIRO-STATUS-NO-MEMORY:CAPS"><literal>CAIRO_STATUS_NO_MEMORY</literal></link>
+<link linkend="CAIRO-STATUS-READ-ERROR:CAPS"><literal>CAIRO_STATUS_READ_ERROR</literal></link></para>
+<para>Alternatively, you can allow errors to propagate through the drawing
+operations and check the status on the context upon completion
+using <link linkend="cairo-status"><function>cairo_status()</function></link>.</para>
+<para></para>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-surface-write-to-png" role="function" condition="since:1.0">
+<title>cairo_surface_write_to_png&#160;()</title>
+<indexterm zone="cairo-surface-write-to-png" role="1.0"><primary sortas="surface_write_to_png">cairo_surface_write_to_png</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-status-t"><returnvalue>cairo_status_t</returnvalue></link>
+cairo_surface_write_to_png (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>,
+                            <parameter>const <link linkend="char"><type>char</type></link> *filename</parameter>);</programlisting>
+<para>Writes the contents of <parameter>surface</parameter>
+ to a new file <parameter>filename</parameter>
+ as a PNG
+image.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> with pixel contents</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>filename</para></entry>
+<entry role="parameter_description"><para>the name of a file to write to</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> <link linkend="CAIRO-STATUS-SUCCESS:CAPS"><literal>CAIRO_STATUS_SUCCESS</literal></link> if the PNG file was written
+successfully. Otherwise, <link linkend="CAIRO-STATUS-NO-MEMORY:CAPS"><literal>CAIRO_STATUS_NO_MEMORY</literal></link> if memory could not
+be allocated for the operation or
+<link linkend="CAIRO-STATUS-SURFACE-TYPE-MISMATCH:CAPS"><literal>CAIRO_STATUS_SURFACE_TYPE_MISMATCH</literal></link> if the surface does not have
+pixel contents, or <link linkend="CAIRO-STATUS-WRITE-ERROR:CAPS"><literal>CAIRO_STATUS_WRITE_ERROR</literal></link> if an I/O error occurs
+while attempting to write the file.</para>
+<para></para>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-write-func-t" role="function" condition="since:1.0">
+<title>cairo_write_func_t&#160;()</title>
+<indexterm zone="cairo-write-func-t" role="1.0"><primary sortas="write_func_t">cairo_write_func_t</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-status-t"><returnvalue>cairo_status_t</returnvalue></link>
+<phrase role="c_punctuation">(</phrase>*cairo_write_func_t<phrase role="c_punctuation">)</phrase> (<parameter><link linkend="void"><type>void</type></link> *closure</parameter>,
+                       <parameter>const unsigned <link linkend="char"><type>char</type></link> *data</parameter>,
+                       <parameter>unsigned <link linkend="int"><type>int</type></link> length</parameter>);</programlisting>
+<para><link linkend="cairo-write-func-t"><type>cairo_write_func_t</type></link> is the type of function which is called when a
+backend needs to write data to an output stream.  It is passed the
+closure which was specified by the user at the time the write
+function was registered, the data to write and the length of the
+data in bytes.  The write function should return
+<link linkend="CAIRO-STATUS-SUCCESS:CAPS"><literal>CAIRO_STATUS_SUCCESS</literal></link> if all the data was successfully written,
+<link linkend="CAIRO-STATUS-WRITE-ERROR:CAPS"><literal>CAIRO_STATUS_WRITE_ERROR</literal></link> otherwise.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>closure</para></entry>
+<entry role="parameter_description"><para>the output closure</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>data</para></entry>
+<entry role="parameter_description"><para>the buffer containing the data to write</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>length</para></entry>
+<entry role="parameter_description"><para>the amount of data to write</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> the status code of the write operation</para>
+<para></para>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-surface-write-to-png-stream" role="function" condition="since:1.0">
+<title>cairo_surface_write_to_png_stream&#160;()</title>
+<indexterm zone="cairo-surface-write-to-png-stream" role="1.0"><primary sortas="surface_write_to_png_stream">cairo_surface_write_to_png_stream</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-status-t"><returnvalue>cairo_status_t</returnvalue></link>
+cairo_surface_write_to_png_stream (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>,
+                                   <parameter><link linkend="cairo-write-func-t"><type>cairo_write_func_t</type></link> write_func</parameter>,
+                                   <parameter><link linkend="void"><type>void</type></link> *closure</parameter>);</programlisting>
+<para>Writes the image surface to the write function.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> with pixel contents</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>write_func</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-write-func-t"><type>cairo_write_func_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>closure</para></entry>
+<entry role="parameter_description"><para>closure data for the write function</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> <link linkend="CAIRO-STATUS-SUCCESS:CAPS"><literal>CAIRO_STATUS_SUCCESS</literal></link> if the PNG file was written
+successfully.  Otherwise, <link linkend="CAIRO-STATUS-NO-MEMORY:CAPS"><literal>CAIRO_STATUS_NO_MEMORY</literal></link> is returned if
+memory could not be allocated for the operation,
+<link linkend="CAIRO-STATUS-SURFACE-TYPE-MISMATCH:CAPS"><literal>CAIRO_STATUS_SURFACE_TYPE_MISMATCH</literal></link> if the surface does not have
+pixel contents.</para>
+<para></para>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+
+</refsect1>
+<refsect1 id="cairo-PNG-Support.other_details" role="details">
+<title role="details.title">Types and Values</title>
+<refsect2 id="CAIRO-HAS-PNG-FUNCTIONS:CAPS" role="macro" condition="since:1.0">
+<title>CAIRO_HAS_PNG_FUNCTIONS</title>
+<indexterm zone="CAIRO-HAS-PNG-FUNCTIONS:CAPS" role="1.0"><primary sortas="HAS_PNG_FUNCTIONS">CAIRO_HAS_PNG_FUNCTIONS</primary></indexterm>
+<programlisting language="C">#define CAIRO_HAS_PNG_FUNCTIONS 1
+</programlisting>
+<para>Defined if the PNG functions are available.
+This macro can be used to conditionally compile code using the cairo
+PNG functions.</para>
+<para role="since">Since 1.0</para></refsect2>
+
+</refsect1>
+<refsect1 id="cairo-PNG-Support.see-also">
+<title>See Also</title>
+<para><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para>
+
+</refsect1>
+
+</refentry>

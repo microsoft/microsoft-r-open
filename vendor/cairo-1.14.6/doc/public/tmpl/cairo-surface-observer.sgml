@@ -1,0 +1,154 @@
+<!-- ##### SECTION Title ##### -->
+cairo-surface-observer
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### MACRO CAIRO_HAS_OBSERVER_SURFACE ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### FUNCTION cairo_surface_create_observer ##### -->
+<para>
+
+</para>
+
+@target: 
+@mode: 
+@Returns: 
+
+
+<!-- ##### FUNCTION cairo_surface_observer_add_fill_callback ##### -->
+<para>
+
+</para>
+
+@abstract_surface: 
+@func: 
+@data: 
+@Returns: 
+
+
+<!-- ##### FUNCTION cairo_surface_observer_add_finish_callback ##### -->
+<para>
+
+</para>
+
+@abstract_surface: 
+@func: 
+@data: 
+@Returns: 
+
+
+<!-- ##### FUNCTION cairo_surface_observer_add_flush_callback ##### -->
+<para>
+
+</para>
+
+@abstract_surface: 
+@func: 
+@data: 
+@Returns: 
+
+
+<!-- ##### FUNCTION cairo_surface_observer_add_glyphs_callback ##### -->
+<para>
+
+</para>
+
+@abstract_surface: 
+@func: 
+@data: 
+@Returns: 
+
+
+<!-- ##### FUNCTION cairo_surface_observer_add_mask_callback ##### -->
+<para>
+
+</para>
+
+@abstract_surface: 
+@func: 
+@data: 
+@Returns: 
+
+
+<!-- ##### FUNCTION cairo_surface_observer_add_paint_callback ##### -->
+<para>
+
+</para>
+
+@abstract_surface: 
+@func: 
+@data: 
+@Returns: 
+
+
+<!-- ##### FUNCTION cairo_surface_observer_add_stroke_callback ##### -->
+<para>
+
+</para>
+
+@abstract_surface: 
+@func: 
+@data: 
+@Returns: 
+
+
+<!-- ##### USER_FUNCTION cairo_surface_observer_callback_t ##### -->
+<para>
+
+</para>
+
+@observer: 
+@target: 
+@data: 
+
+
+<!-- ##### FUNCTION cairo_surface_observer_elapsed ##### -->
+<para>
+
+</para>
+
+@surface: 
+@Returns: 
+
+
+<!-- ##### ENUM cairo_surface_observer_mode_t ##### -->
+<para>
+
+</para>
+
+@CAIRO_SURFACE_OBSERVER_NORMAL: 
+@CAIRO_SURFACE_OBSERVER_RECORD_OPERATIONS: 
+
+<!-- ##### FUNCTION cairo_surface_observer_print ##### -->
+<para>
+
+</para>
+
+@surface: 
+@write_func: 
+@closure: 
+@Returns: 
+
+

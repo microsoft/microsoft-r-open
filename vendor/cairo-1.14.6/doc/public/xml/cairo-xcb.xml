@@ -1,0 +1,488 @@
+<?xml version='1.0' encoding='UTF-8'?> 
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!ENTITY version SYSTEM "version.xml">
+]>
+<refentry id="cairo-XCB-Surfaces">
+<refmeta>
+<refentrytitle role="top_of_page" id="cairo-XCB-Surfaces.top_of_page">XCB Surfaces</refentrytitle>
+<manvolnum>3</manvolnum>
+<refmiscinfo>
+  CAIRO Library
+</refmiscinfo>
+</refmeta>
+<refnamediv>
+<refname>XCB Surfaces</refname>
+<refpurpose>X Window System rendering using the XCB library</refpurpose>
+</refnamediv>
+
+<refsect1 id="cairo-XCB-Surfaces.functions" role="functions_proto">
+<title role="functions_proto.title">Functions</title>
+<informaltable pgwide="1" frame="none">
+<tgroup cols="2">
+<colspec colname="functions_return" colwidth="150px"/>
+<colspec colname="functions_name"/>
+<tbody>
+<row><entry role="function_type"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+</entry><entry role="function_name"><link linkend="cairo-xcb-surface-create">cairo_xcb_surface_create</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+</entry><entry role="function_name"><link linkend="cairo-xcb-surface-create-for-bitmap">cairo_xcb_surface_create_for_bitmap</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+</entry><entry role="function_name"><link linkend="cairo-xcb-surface-create-with-xrender-format">cairo_xcb_surface_create_with_xrender_format</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-xcb-surface-set-size">cairo_xcb_surface_set_size</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-xcb-surface-set-drawable">cairo_xcb_surface_set_drawable</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="xcb-connection-t"><returnvalue>xcb_connection_t</returnvalue></link>&#160;*
+</entry><entry role="function_name"><link linkend="cairo-xcb-device-get-connection">cairo_xcb_device_get_connection</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-xcb-device-debug-cap-xrender-version">cairo_xcb_device_debug_cap_xrender_version</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-xcb-device-debug-cap-xshm-version">cairo_xcb_device_debug_cap_xshm_version</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="int"><returnvalue>int</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-xcb-device-debug-get-precision">cairo_xcb_device_debug_get_precision</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-xcb-device-debug-set-precision">cairo_xcb_device_debug_set_precision</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+
+</tbody>
+</tgroup>
+</informaltable>
+</refsect1>
+<refsect1 id="cairo-XCB-Surfaces.other" role="other_proto">
+<title role="other_proto.title">Types and Values</title>
+<informaltable role="enum_members_table" pgwide="1" frame="none">
+<tgroup cols="2">
+<colspec colname="name" colwidth="150px"/>
+<colspec colname="description"/>
+<tbody>
+<row><entry role="define_keyword">#define</entry><entry role="function_name"><link linkend="CAIRO-HAS-XCB-SURFACE:CAPS">CAIRO_HAS_XCB_SURFACE</link></entry></row>
+<row><entry role="define_keyword">#define</entry><entry role="function_name"><link linkend="CAIRO-HAS-XCB-SHM-FUNCTIONS:CAPS">CAIRO_HAS_XCB_SHM_FUNCTIONS</link></entry></row>
+
+</tbody>
+</tgroup>
+</informaltable>
+</refsect1>
+<refsect1 id="cairo-XCB-Surfaces.object-hierarchy" role="object_hierarchy">
+<title role="object_hierarchy.title">Object Hierarchy</title>
+<screen>
+</screen>
+</refsect1>
+
+
+<refsect1 id="cairo-XCB-Surfaces.description" role="desc">
+<title role="desc.title">Description</title>
+<para>The XCB surface is used to render cairo graphics to X Window System
+windows and pixmaps using the XCB library.</para>
+<para>Note that the XCB surface automatically takes advantage of the X render
+extension if it is available.</para>
+
+</refsect1>
+<refsect1 id="cairo-XCB-Surfaces.functions_details" role="details">
+<title role="details.title">Functions</title>
+<refsect2 id="cairo-xcb-surface-create" role="function" condition="since:1.12">
+<title>cairo_xcb_surface_create&#160;()</title>
+<indexterm zone="cairo-xcb-surface-create" role="1.12"><primary sortas="xcb_surface_create">cairo_xcb_surface_create</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+cairo_xcb_surface_create (<parameter><link linkend="xcb-connection-t"><type>xcb_connection_t</type></link> *connection</parameter>,
+                          <parameter><link linkend="xcb-drawable-t"><type>xcb_drawable_t</type></link> drawable</parameter>,
+                          <parameter><link linkend="xcb-visualtype-t"><type>xcb_visualtype_t</type></link> *visual</parameter>,
+                          <parameter><link linkend="int"><type>int</type></link> width</parameter>,
+                          <parameter><link linkend="int"><type>int</type></link> height</parameter>);</programlisting>
+<para>Creates an XCB surface that draws to the given drawable.
+The way that colors are represented in the drawable is specified
+by the provided visual.</para>
+<para>Note: If <parameter>drawable</parameter>
+ is a Window, then the function
+<link linkend="cairo-xcb-surface-set-size"><function>cairo_xcb_surface_set_size()</function></link> must be called whenever the size of the
+window changes.</para>
+<para>When <parameter>drawable</parameter>
+ is a Window containing child windows then drawing to
+the created surface will be clipped by those child windows.  When
+the created surface is used as a source, the contents of the
+children will be included.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>connection</para></entry>
+<entry role="parameter_description"><para>an XCB connection</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>drawable</para></entry>
+<entry role="parameter_description"><para>an XCB drawable</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>visual</para></entry>
+<entry role="parameter_description"><para>the visual to use for drawing to <parameter>drawable</parameter>
+. The depth
+of the visual must match the depth of the drawable.
+Currently, only TrueColor visuals are fully supported.</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>width</para></entry>
+<entry role="parameter_description"><para>the current width of <parameter>drawable</parameter>
+</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>height</para></entry>
+<entry role="parameter_description"><para>the current height of <parameter>drawable</parameter>
+</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> a pointer to the newly created surface. The caller
+owns the surface and should call <link linkend="cairo-surface-destroy"><function>cairo_surface_destroy()</function></link> when done
+with it.</para>
+<para>This function always returns a valid pointer, but it will return a
+pointer to a "nil" surface if an error such as out of memory
+occurs. You can use <link linkend="cairo-surface-status"><function>cairo_surface_status()</function></link> to check for this.</para>
+<para></para>
+</refsect3><para role="since">Since 1.12</para></refsect2>
+<refsect2 id="cairo-xcb-surface-create-for-bitmap" role="function" condition="since:1.12">
+<title>cairo_xcb_surface_create_for_bitmap&#160;()</title>
+<indexterm zone="cairo-xcb-surface-create-for-bitmap" role="1.12"><primary sortas="xcb_surface_create_for_bitmap">cairo_xcb_surface_create_for_bitmap</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+cairo_xcb_surface_create_for_bitmap (<parameter><link linkend="xcb-connection-t"><type>xcb_connection_t</type></link> *connection</parameter>,
+                                     <parameter><link linkend="xcb-screen-t"><type>xcb_screen_t</type></link> *screen</parameter>,
+                                     <parameter><link linkend="xcb-pixmap-t"><type>xcb_pixmap_t</type></link> bitmap</parameter>,
+                                     <parameter><link linkend="int"><type>int</type></link> width</parameter>,
+                                     <parameter><link linkend="int"><type>int</type></link> height</parameter>);</programlisting>
+<para>Creates an XCB surface that draws to the given bitmap.
+This will be drawn to as a <link linkend="CAIRO-FORMAT-A1:CAPS"><literal>CAIRO_FORMAT_A1</literal></link> object.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>connection</para></entry>
+<entry role="parameter_description"><para>an XCB connection</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>screen</para></entry>
+<entry role="parameter_description"><para>the XCB screen associated with <parameter>bitmap</parameter>
+</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>bitmap</para></entry>
+<entry role="parameter_description"><para>an XCB drawable (a Pixmap with depth 1)</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>width</para></entry>
+<entry role="parameter_description"><para>the current width of <parameter>bitmap</parameter>
+</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>height</para></entry>
+<entry role="parameter_description"><para>the current height of <parameter>bitmap</parameter>
+</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> a pointer to the newly created surface. The caller
+owns the surface and should call <link linkend="cairo-surface-destroy"><function>cairo_surface_destroy()</function></link> when done
+with it.</para>
+<para>This function always returns a valid pointer, but it will return a
+pointer to a "nil" surface if an error such as out of memory
+occurs. You can use <link linkend="cairo-surface-status"><function>cairo_surface_status()</function></link> to check for this.</para>
+<para></para>
+</refsect3><para role="since">Since 1.12</para></refsect2>
+<refsect2 id="cairo-xcb-surface-create-with-xrender-format" role="function" condition="since:1.12">
+<title>cairo_xcb_surface_create_with_xrender_format&#160;()</title>
+<indexterm zone="cairo-xcb-surface-create-with-xrender-format" role="1.12"><primary sortas="xcb_surface_create_with_xrender_format">cairo_xcb_surface_create_with_xrender_format</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+cairo_xcb_surface_create_with_xrender_format
+                               (<parameter><link linkend="xcb-connection-t"><type>xcb_connection_t</type></link> *connection</parameter>,
+                                <parameter><link linkend="xcb-screen-t"><type>xcb_screen_t</type></link> *screen</parameter>,
+                                <parameter><link linkend="xcb-drawable-t"><type>xcb_drawable_t</type></link> drawable</parameter>,
+                                <parameter><link linkend="xcb-render-pictforminfo-t"><type>xcb_render_pictforminfo_t</type></link> *format</parameter>,
+                                <parameter><link linkend="int"><type>int</type></link> width</parameter>,
+                                <parameter><link linkend="int"><type>int</type></link> height</parameter>);</programlisting>
+<para>Creates an XCB surface that draws to the given drawable.
+The way that colors are represented in the drawable is specified
+by the provided picture format.</para>
+<para>Note: If <parameter>drawable</parameter>
+ is a Window, then the function
+<link linkend="cairo-xcb-surface-set-size"><function>cairo_xcb_surface_set_size()</function></link> must be called whenever the size of the
+window changes.</para>
+<para>When <parameter>drawable</parameter>
+ is a Window containing child windows then drawing to
+the created surface will be clipped by those child windows.  When
+the created surface is used as a source, the contents of the
+children will be included.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>connection</para></entry>
+<entry role="parameter_description"><para>an XCB connection</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>screen</para></entry>
+<entry role="parameter_description"><para>the XCB screen associated with <parameter>drawable</parameter>
+</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>drawable</para></entry>
+<entry role="parameter_description"><para>an XCB drawable</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>format</para></entry>
+<entry role="parameter_description"><para>the picture format to use for drawing to <parameter>drawable</parameter>
+. The
+depth of <parameter>format</parameter>
+mush match the depth of the drawable.</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>width</para></entry>
+<entry role="parameter_description"><para>the current width of <parameter>drawable</parameter>
+</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>height</para></entry>
+<entry role="parameter_description"><para>the current height of <parameter>drawable</parameter>
+</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> a pointer to the newly created surface. The caller
+owns the surface and should call <link linkend="cairo-surface-destroy"><function>cairo_surface_destroy()</function></link> when done
+with it.</para>
+<para>This function always returns a valid pointer, but it will return a
+pointer to a "nil" surface if an error such as out of memory
+occurs. You can use <link linkend="cairo-surface-status"><function>cairo_surface_status()</function></link> to check for this.</para>
+<para></para>
+</refsect3><para role="since">Since 1.12</para></refsect2>
+<refsect2 id="cairo-xcb-surface-set-size" role="function" condition="since:1.12">
+<title>cairo_xcb_surface_set_size&#160;()</title>
+<indexterm zone="cairo-xcb-surface-set-size" role="1.12"><primary sortas="xcb_surface_set_size">cairo_xcb_surface_set_size</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_xcb_surface_set_size (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>,
+                            <parameter><link linkend="int"><type>int</type></link> width</parameter>,
+                            <parameter><link linkend="int"><type>int</type></link> height</parameter>);</programlisting>
+<para>Informs cairo of the new size of the XCB drawable underlying the
+surface. For a surface created for a window (rather than a pixmap),
+this function must be called each time the size of the window
+changes. (For a subwindow, you are normally resizing the window
+yourself, but for a toplevel window, it is necessary to listen for
+ConfigureNotify events.)</para>
+<para>A pixmap can never change size, so it is never necessary to call
+this function on a surface created for a pixmap.</para>
+<para>If <link linkend="cairo-surface-flush"><function>cairo_surface_flush()</function></link> wasn't called, some pending operations
+might be discarded.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> for the XCB backend</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>width</para></entry>
+<entry role="parameter_description"><para>the new width of the surface</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>height</para></entry>
+<entry role="parameter_description"><para>the new height of the surface</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.12</para></refsect2>
+<refsect2 id="cairo-xcb-surface-set-drawable" role="function" condition="since:1.12">
+<title>cairo_xcb_surface_set_drawable&#160;()</title>
+<indexterm zone="cairo-xcb-surface-set-drawable" role="1.12"><primary sortas="xcb_surface_set_drawable">cairo_xcb_surface_set_drawable</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_xcb_surface_set_drawable (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>,
+                                <parameter><link linkend="xcb-drawable-t"><type>xcb_drawable_t</type></link> drawable</parameter>,
+                                <parameter><link linkend="int"><type>int</type></link> width</parameter>,
+                                <parameter><link linkend="int"><type>int</type></link> height</parameter>);</programlisting>
+<para>Informs cairo of the new drawable and size of the XCB drawable underlying the
+surface.</para>
+<para>If <link linkend="cairo-surface-flush"><function>cairo_surface_flush()</function></link> wasn't called, some pending operations
+might be discarded.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> for the XCB backend</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>drawable</para></entry>
+<entry role="parameter_description"><para>the new drawable of the surface</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>width</para></entry>
+<entry role="parameter_description"><para>the new width of the surface</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>height</para></entry>
+<entry role="parameter_description"><para>the new height of the surface</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.12</para></refsect2>
+<refsect2 id="cairo-xcb-device-get-connection" role="function" condition="since:1.12">
+<title>cairo_xcb_device_get_connection&#160;()</title>
+<indexterm zone="cairo-xcb-device-get-connection" role="1.12"><primary sortas="xcb_device_get_connection">cairo_xcb_device_get_connection</primary></indexterm>
+<programlisting language="C"><link linkend="xcb-connection-t"><returnvalue>xcb_connection_t</returnvalue></link>&#160;*
+cairo_xcb_device_get_connection (<parameter><link linkend="cairo-device-t"><type>cairo_device_t</type></link> *device</parameter>);</programlisting>
+<para>Get the connection for the XCB device.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>device</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-device-t"><type>cairo_device_t</type></link> for the XCB backend</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> the <link linkend="xcb-connection-t"><type>xcb_connection_t</type></link> for the connection</para>
+<para></para>
+</refsect3><para role="since">Since 1.12</para></refsect2>
+<refsect2 id="cairo-xcb-device-debug-cap-xrender-version" role="function" condition="since:1.12">
+<title>cairo_xcb_device_debug_cap_xrender_version&#160;()</title>
+<indexterm zone="cairo-xcb-device-debug-cap-xrender-version" role="1.12"><primary sortas="xcb_device_debug_cap_xrender_version">cairo_xcb_device_debug_cap_xrender_version</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_xcb_device_debug_cap_xrender_version
+                               (<parameter><link linkend="cairo-device-t"><type>cairo_device_t</type></link> *device</parameter>,
+                                <parameter><link linkend="int"><type>int</type></link> major_version</parameter>,
+                                <parameter><link linkend="int"><type>int</type></link> minor_version</parameter>);</programlisting>
+<para>Restricts all future XCB surfaces for this devices to the specified version
+of the RENDER extension. This function exists solely for debugging purpose.
+It let's you find out how cairo would behave with an older version of
+the RENDER extension.</para>
+<para>Use the special values -1 and -1 for disabling the RENDER extension.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>device</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-device-t"><type>cairo_device_t</type></link> for the XCB backend</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>major_version</para></entry>
+<entry role="parameter_description"><para>major version to restrict to</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>minor_version</para></entry>
+<entry role="parameter_description"><para>minor version to restrict to</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.12</para></refsect2>
+<refsect2 id="cairo-xcb-device-debug-cap-xshm-version" role="function" condition="since:1.12">
+<title>cairo_xcb_device_debug_cap_xshm_version&#160;()</title>
+<indexterm zone="cairo-xcb-device-debug-cap-xshm-version" role="1.12"><primary sortas="xcb_device_debug_cap_xshm_version">cairo_xcb_device_debug_cap_xshm_version</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_xcb_device_debug_cap_xshm_version
+                               (<parameter><link linkend="cairo-device-t"><type>cairo_device_t</type></link> *device</parameter>,
+                                <parameter><link linkend="int"><type>int</type></link> major_version</parameter>,
+                                <parameter><link linkend="int"><type>int</type></link> minor_version</parameter>);</programlisting>
+<para>Restricts all future XCB surfaces for this devices to the specified version
+of the SHM extension. This function exists solely for debugging purpose.
+It let's you find out how cairo would behave with an older version of
+the SHM extension.</para>
+<para>Use the special values -1 and -1 for disabling the SHM extension.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>device</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-device-t"><type>cairo_device_t</type></link> for the XCB backend</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>major_version</para></entry>
+<entry role="parameter_description"><para>major version to restrict to</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>minor_version</para></entry>
+<entry role="parameter_description"><para>minor version to restrict to</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.12</para></refsect2>
+<refsect2 id="cairo-xcb-device-debug-get-precision" role="function" condition="since:1.12">
+<title>cairo_xcb_device_debug_get_precision&#160;()</title>
+<indexterm zone="cairo-xcb-device-debug-get-precision" role="1.12"><primary sortas="xcb_device_debug_get_precision">cairo_xcb_device_debug_get_precision</primary></indexterm>
+<programlisting language="C"><link linkend="int"><returnvalue>int</returnvalue></link>
+cairo_xcb_device_debug_get_precision (<parameter><link linkend="cairo-device-t"><type>cairo_device_t</type></link> *device</parameter>);</programlisting>
+<para>Get the Xrender precision mode.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>device</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-device-t"><type>cairo_device_t</type></link> for the XCB backend</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> the render precision mode</para>
+<para></para>
+</refsect3><para role="since">Since 1.12</para></refsect2>
+<refsect2 id="cairo-xcb-device-debug-set-precision" role="function" condition="since:1.12">
+<title>cairo_xcb_device_debug_set_precision&#160;()</title>
+<indexterm zone="cairo-xcb-device-debug-set-precision" role="1.12"><primary sortas="xcb_device_debug_set_precision">cairo_xcb_device_debug_set_precision</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_xcb_device_debug_set_precision (<parameter><link linkend="cairo-device-t"><type>cairo_device_t</type></link> *device</parameter>,
+                                      <parameter><link linkend="int"><type>int</type></link> precision</parameter>);</programlisting>
+<para>Render supports two modes of precision when rendering trapezoids. Set
+the precision to the desired mode.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>device</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-device-t"><type>cairo_device_t</type></link> for the XCB backend</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>precision</para></entry>
+<entry role="parameter_description"><para>the precision to use</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.12</para></refsect2>
+
+</refsect1>
+<refsect1 id="cairo-XCB-Surfaces.other_details" role="details">
+<title role="details.title">Types and Values</title>
+<refsect2 id="CAIRO-HAS-XCB-SURFACE:CAPS" role="macro" condition="since:1.12">
+<title>CAIRO_HAS_XCB_SURFACE</title>
+<indexterm zone="CAIRO-HAS-XCB-SURFACE:CAPS" role="1.12"><primary sortas="HAS_XCB_SURFACE">CAIRO_HAS_XCB_SURFACE</primary></indexterm>
+<programlisting language="C">#define CAIRO_HAS_XCB_SURFACE 1
+</programlisting>
+<para>Defined if the xcb surface backend is available.
+This macro can be used to conditionally compile backend-specific code.</para>
+<para role="since">Since 1.12</para></refsect2>
+<refsect2 id="CAIRO-HAS-XCB-SHM-FUNCTIONS:CAPS" role="macro">
+<title>CAIRO_HAS_XCB_SHM_FUNCTIONS</title>
+<indexterm zone="CAIRO-HAS-XCB-SHM-FUNCTIONS:CAPS"><primary sortas="HAS_XCB_SHM_FUNCTIONS">CAIRO_HAS_XCB_SHM_FUNCTIONS</primary></indexterm>
+<programlisting language="C">#define CAIRO_HAS_XCB_SHM_FUNCTIONS 1
+</programlisting>
+<para>
+</para>
+</refsect2>
+
+</refsect1>
+<refsect1 id="cairo-XCB-Surfaces.see-also">
+<title>See Also</title>
+<para><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para>
+
+</refsect1>
+
+</refentry>
