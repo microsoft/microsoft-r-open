@@ -68,45 +68,4 @@ using System.IO;
      }
  });
 
- static bool IsRunningOnMac()
- {
-   string UnixName = ReadProcessOutput("uname", null);
-   if (UnixName.Contains("Darwin"))
-   {
-     return true;
-   }
-   else
-   {
-     return false;
-   }
- }
-
-private static string ReadProcessOutput(string name, string args)
-{
-    try
-    {
-        Process p = new Process();
-        p.StartInfo.UseShellExecute = false;
-        p.StartInfo.RedirectStandardOutput = true;
-        if (args != null && args != "") p.StartInfo.Arguments = " " + args;
-        p.StartInfo.FileName = name;
-        p.Start();
-
-        // Do not wait for the child process to exit before
-        // reading to the end of its redirected stream.
-        // p.WaitForExit();
-        // Read the output stream first and then wait.
-
-        string output = p.StandardOutput.ReadToEnd();
-        p.WaitForExit();
-        if (output == null) output = "";
-        output = output.Trim();
-        return output;
-    }
-    catch
-    {
-        return "";
-    }
-}
-
 //bool StartProcessThrowIfFailed(string command, string arguments, string W
