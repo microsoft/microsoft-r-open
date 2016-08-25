@@ -11,6 +11,36 @@ ExternalProject_Add(
   BUILD_IN_SOURCE 1
 )
 
+ExternalProject_Add(
+  libpng
+  DEPENDS zlib
+  SOURCE_DIR ${CMAKE_SOURCE_DIR}/libpng-1.6.23
+  CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/png.sh ${CMAKE_SOURCE_DIR} libpng-1.6.23
+  BUILD_IN_SOURCE 1
+)
+
+ExternalProject_Add(
+  libjpg
+  SOURCE_DIR ${CMAKE_SOURCE_DIR}/jpeg-9b
+  CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/jpeg.sh ${CMAKE_SOURCE_DIR} jpeg-9b
+  BUILD_IN_SOURCE 1
+)
+
+ExternalProject_Add(
+  libtiff
+  DEPENDS zlib libpng libjpg
+  SOURCE_DIR ${CMAKE_SOURCE_DIR}/tiff-4.0.6
+  CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/png.sh ${CMAKE_SOURCE_DIR} tiff-4.0.6
+  BUILD_IN_SOURCE 1
+)
+
+ExternalProject_Add(
+  xz
+  SOURCE_DIR ${CMAKE_SOURCE_DIR}/xz-5.2.2
+  CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/xz.sh ${CMAKE_SOURCE_DIR} xz-5.2.2
+  BUILD_IN_SOURCE 1
+)
+
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
@@ -60,30 +90,6 @@ else()
 
 endif()
 
-
-ExternalProject_Add(
-  libpng
-  DEPENDS zlib
-  SOURCE_DIR ${CMAKE_SOURCE_DIR}/libpng-1.6.23
-  CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/png.sh ${CMAKE_SOURCE_DIR} libpng-1.6.23
-  BUILD_IN_SOURCE 1
-)
-
-ExternalProject_Add(
-  libjpg
-  SOURCE_DIR ${CMAKE_SOURCE_DIR}/jpeg-9b
-  CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/jpeg.sh ${CMAKE_SOURCE_DIR} jpeg-9b
-  BUILD_IN_SOURCE 1
-)
-
-ExternalProject_Add(
-  libtiff
-  DEPENDS zlib libpng libjpg
-  SOURCE_DIR ${CMAKE_SOURCE_DIR}/tiff-4.0.6
-  CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/png.sh ${CMAKE_SOURCE_DIR} tiff-4.0.6
-  BUILD_IN_SOURCE 1
-)
-
 ExternalProject_Add(
   libicu
   SOURCE_DIR ${CMAKE_SOURCE_DIR}/icu-57.1/source
@@ -110,13 +116,6 @@ ExternalProject_Add(
   readline
   SOURCE_DIR ${CMAKE_SOURCE_DIR}/readline-6.3
   CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/readline.sh ${CMAKE_SOURCE_DIR} readline-6.3
-  BUILD_IN_SOURCE 1
-)
-
-ExternalProject_Add(
-  xz
-  SOURCE_DIR ${CMAKE_SOURCE_DIR}/xz-5.2.2
-  CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/xz.sh ${CMAKE_SOURCE_DIR} xz-5.2.2
   BUILD_IN_SOURCE 1
 )
 
