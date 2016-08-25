@@ -54,8 +54,25 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
    )
 
    ExternalProject_Add(
+       freetype
+       DEPENDS libpng
+       SOURCE_DIR ${CMAKE_SOURCE_DIR}/freetype-2.5.5
+       CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/freetype.sh ${CMAKE_SOURCE_DIR} freetype-2.5.5
+       BUILD_IN_SOURCE 1
+   )
+   
+
+   ExternalProject_Add(
+     fontconfig
+     DEPENDS libpng freetype
+     SOURCE_DIR ${CMAKE_SOURCE_DIR}/fontconfig-2.12.1
+     CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/fontconfig.sh ${CMAKE_SOURCE_DIR} fontconfig-2.12.1
+     BUILD_IN_SOURCE 1
+   )
+
+   ExternalProject_Add(
      cairo
-     DEPENDS pixman
+     DEPENDS pixman fontconfig
      SOURCE_DIR ${CMAKE_SOURCE_DIR}/cairo-1.14.6
      CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/cairo.sh ${CMAKE_SOURCE_DIR} cairo-1.14.6
      BUILD_IN_SOURCE 1
