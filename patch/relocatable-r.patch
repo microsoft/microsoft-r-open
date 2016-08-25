@@ -1,7 +1,7 @@
-diff -rupN R-bak/src/scripts/Makefile.in R-src/src/scripts/Makefile.in
---- R-bak/src/scripts/Makefile.in	2015-06-23 19:28:42.105645870 +0000
-+++ R-src/src/scripts/Makefile.in	2015-06-23 19:31:21.137190484 +0000
-@@ -78,8 +78,7 @@ R.fe: R.sh $(top_srcdir)/VERSION $(top_b
+diff -ur source/src/scripts/Makefile.in patched-source/src/scripts/Makefile.in
+--- source/src/scripts/Makefile.in	2016-08-22 09:57:47.896614429 -0700
++++ patched-source/src/scripts/Makefile.in	2016-08-22 10:00:38.618228737 -0700
+@@ -78,8 +78,7 @@
  	  v="$${v} ($${dat})"; \
  	  y=`$(ECHO) $${dat} | cut -d- -f1`; \
  	  d=`$(ECHO) "$(abs_top_builddir)" | sed 's,/,\\\/,g'`; \
@@ -11,7 +11,7 @@ diff -rupN R-bak/src/scripts/Makefile.in R-src/src/scripts/Makefile.in
  	       s@REPLACE_BY_YEAR@$${y}@" < R.sh > $@)
  	@chmod +x $@
  ## </NOTE>
-@@ -89,12 +88,7 @@ $(top_builddir)/libtool:
+@@ -89,12 +88,7 @@
  
  install: installdirs install-cmds
  	@rm -f $(DESTDIR)$(bindir)/R
@@ -25,10 +25,10 @@ diff -rupN R-bak/src/scripts/Makefile.in R-src/src/scripts/Makefile.in
  	@$(INSTALL_SCRIPT)  "$(DESTDIR)$(Rexecbindir)/R" "$(DESTDIR)$(bindir)/R"
  	@chmod 755 "$(DESTDIR)$(bindir)/R" "$(DESTDIR)$(Rexecbindir)/R"
  ## why of all the scripts does this alone chmod just one copy?
-diff -rupN R-bak/src/scripts/R.sh.in R-src/src/scripts/R.sh.in
---- R-bak/src/scripts/R.sh.in	2015-06-23 19:28:42.105645870 +0000
-+++ R-src/src/scripts/R.sh.in	2015-06-23 19:33:24.642355935 +0000
-@@ -1,30 +1,7 @@
+diff -ur source/src/scripts/R.sh.in patched-source/src/scripts/R.sh.in
+--- source/src/scripts/R.sh.in	2016-08-22 09:57:47.896614429 -0700
++++ patched-source/src/scripts/R.sh.in	2016-08-22 10:03:12.008084670 -0700
+@@ -1,30 +1,15 @@
  #!@R_SHELL@
  # Shell wrapper for R executable.
  
@@ -56,14 +56,22 @@ diff -rupN R-bak/src/scripts/R.sh.in R-src/src/scripts/R.sh.in
 -     ;;
 -  esac
 -fi
-+R_HOME_DIR=$(dirname $(dirname $(readlink /proc/$$/fd/255)))
++SOURCE="${BASH_SOURCE[0]}"
++while [ -h "$SOURCE" ]; do
++  DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
++  SOURCE="$(readlink "$SOURCE")"
++  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
++done
++DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
++R_HOME_DIR=$(dirname ${DIR})
++
  
  if test -n "${R_HOME}" && \
     test "${R_HOME}" != "${R_HOME_DIR}"; then
-diff -rupN R-bak/src/unix/Rscript.c R-src/src/unix/Rscript.c
---- R-bak/src/unix/Rscript.c	2015-06-23 19:28:42.145646264 +0000
-+++ R-src/src/unix/Rscript.c	2015-06-23 19:31:21.139190502 +0000
-@@ -75,7 +75,7 @@ R --slave --no-restore --vanilla --file=
+diff -ur source/src/unix/Rscript.c patched-source/src/unix/Rscript.c
+--- source/src/unix/Rscript.c	2016-08-22 09:57:47.904614318 -0700
++++ patched-source/src/unix/Rscript.c	2016-08-22 10:00:38.618228737 -0700
+@@ -75,7 +75,7 @@
  #define R_ARCH ""
  #endif
  
@@ -72,7 +80,7 @@ diff -rupN R-bak/src/unix/Rscript.c R-src/src/unix/Rscript.c
  static char rarch[] = R_ARCH;
  #else
  # ifndef BINDIR
-@@ -143,7 +143,14 @@ int main(int argc, char *argv[])
+@@ -143,7 +143,14 @@
  	snprintf(cmd, PATH_MAX+1, "%s\\Rterm.exe",  rhome);
      }
  #else
