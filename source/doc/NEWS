@@ -1,22 +1,32 @@
 R News
 
-CHANGES IN R 3.3.1 patched:
+CHANGES IN R 3.3.2:
 
   NEW FEATURES:
 
     * extSoftVersion() now reports the version (if any) of the readline
       library in use.
 
-    * Convenience function hasName() has been added; it is intended to
-      replace the common idiom !is.null(x$name) without the usually
-      unintended partial name matching.
-
     * The version of LAPACK included in the sources has been updated to
       3.6.1, a bug-fix release including a speedup for the
       non-symmetric case of eigen().
 
-    * Use options(deparse.max.lines) to limit the number of lines
+    * Use options(deparse.max.lines=) to limit the number of lines
       recorded in .Traceback and other deparsing activities.
+
+    * format(<AsIs>) looks more regular, also for non-character atomic
+      matrices.
+
+    * abbreviate() gains an option named = TRUE.
+
+    * The online documentation for package methods is extensively
+      rewritten.  The goals are to simplify documentation for basic
+      use, to note old features not recommended and to correct
+      out-of-date information.
+
+    * Calls to setMethod() no longer print a message when creating a
+      generic function in those cases where that is natural: S3
+      generics and primitives.
 
   INSTALLATION and INCLUDED SOFTWARE:
 
@@ -37,6 +47,15 @@ CHANGES IN R 3.3.1 patched:
       reports non-portable GNU extensions such as out-of-order
       declarations.
 
+    * R CMD config works better with paths containing spaces, even
+      those of home directories (as reported by Ken Beath).
+
+  DEPRECATED AND DEFUNCT:
+
+    * Use of the C/C++ macro NO_C_HEADERS is deprecated (no C headers
+      are included by R headers from C++ as from R 3.3.0, so it should
+      no longer be needed).
+
   BUG FIXES:
 
     * The check for non-portable flags in R CMD check could be stymied
@@ -48,11 +67,11 @@ CHANGES IN R 3.3.1 patched:
 
     * pretty(d, ..) behaves better for date-time d (PR#16923).
 
-    * When a class name matches multiple classes in the cache, perform
-      a dynamic search in order to obey namespace imports.  This should
-      eliminate annoying messages about multiple hits in the class
-      cache.  Also, pass along the package from the ClassExtends object
-      when looking up superclasses in the cache.
+    * When an S4 class name matches multiple classes in the S4 cache,
+      perform a dynamic search in order to obey namespace imports.
+      This should eliminate annoying messages about multiple hits in
+      the class cache.  Also, pass along the package from the
+      ClassExtends object when looking up superclasses in the cache.
 
     * sample(NA_real_) now works.
 
@@ -81,7 +100,60 @@ CHANGES IN R 3.3.1 patched:
 
     * axis(side, x = D) and hence Axis() and plot() now work correctly
       for "Date" and time objects D, even when "time goes backward",
-      e.g., with decreasing xlim.  (Reported by William May).
+      e.g., with decreasing xlim.  (Reported by William May.)
+
+    * str(I(matrix(..))) now looks as always intended.
+
+    * plot.ts(), the plot() method for time series, now respects cex,
+      lwd and lty.  (Reported by Greg Werbin.)
+
+    * parallel::mccollect() now returns a named list (as documented)
+      when called with wait = FALSE.  (Reported by Michel Lang.)
+
+    * If a package added a class to a class union in another package,
+      loading the first package gave erroneous warnings about
+      "undefined subclass".
+
+    * c()'s argument use.names is documented now, as belonging to the
+      (C internal) default method.  In "parallel", argument recursive
+      is also moved from the generic to the default method, such that
+      the formal argument list of base generic c() is just (...).
+
+    * rbeta(4, NA) and similarly rgamma() and rnbinom() now return
+      NaN's with a warning, as other r<dist>(), and as documented.
+      (PR#17155)
+
+    * Using options(checkPackageLicense = TRUE) no longer requires
+      acceptance of the licence for non-default standard packages such
+      as compiler.  (Reported by Mikko Korpela.)
+
+    * split(<very_long>, *) now works even when the split off parts are
+      long. (PR#17139)
+
+    * min() and max() now also work correctly when the argument list
+      starts with character(0).  (PR#17160)
+
+    * Subsetting very large matrices (prod(dim(.)) >= 2^31) now works
+      thanks to Michael Schubmehl's PR#17158.
+
+    * bartlett.test() used residual sums of squares instead of
+      variances, when the argument was a list of lm objects.  (Reported
+      by Jens Ledet Jensen).
+
+    * plot(<lm>, which = *) now correctly labels the contour lines for
+      the standardized residuals for which = 6.  It also takes the
+      correct p in case of singularities (also for which = 5).
+      (PR#17161)
+
+    * xtabs(~ exclude) no longer fails from wrong scope, thanks to
+      Suharto Anggono's PR#17147.
+
+    * Reference class calls to methods() did not re-analyse previously
+      defined methods, meaning that calls to methods defined later
+      would fail. (Reported by Charles Tilford).
+
+    * findInterval(x, vec, left.open = TRUE) misbehaved in some cases.
+      (Reported by Dmitriy Chernykh.)
 
 CHANGES IN R 3.3.1:
 
@@ -651,7 +723,7 @@ CHANGES IN R 3.3.0:
     * diag(NULL, 1) crashed because of missed type checking.
       (PR#16853)
 
-CHANGES IN R 3.2.4 patched:
+CHANGES IN R 3.2.5:
 
   BUG FIXES:
 
@@ -936,7 +1008,7 @@ CHANGES IN R 3.2.3:
       handle UTF-8 strings properly.  (PR#16264)
 
     * read.dcf() sometimes misread lines longer than 8191 characters.
-      (Reported by Herv? Pag?s with a patch.)
+      (Reported by Herv'e Pag`es with a patch.)
 
     * within(df, ..) no longer drops columns whose name start with a
       ".".
@@ -953,7 +1025,7 @@ CHANGES IN R 3.2.3:
       with non-small sizes.
 
     * If the expression in the traceback was too long, traceback() did
-      not report the source line number.  (Patch by Kirill M?ller.)
+      not report the source line number.  (Patch by Kirill M"uller.)
 
     * The browser did not truncate the display of the function when
       exiting with options("deparse.max.lines") set.  (PR#16581)
@@ -2041,7 +2113,7 @@ CHANGES IN R 3.1.2:
     * R CMD check now by default checks code usage directly on the
       package namespace without loading and attaching the package and
       its suggests and enhances.  For good practice with packages in
-      the Suggests field, see ?1.1.3.1 of 'Writing R Extensions'.  For
+      the Suggests field, see SS1.1.3.1 of 'Writing R Extensions'.  For
       use of lazy-data objects in the package's own code, see ?data.
 
   BUG FIXES:
@@ -3646,8 +3718,8 @@ CHANGES IN R 3.0.2:
       --encoding=foo were not handled properly.  (PR#15405)
 
     * If x is a symbol, is.vector(x, "name") now returns TRUE, since
-      "name" and "symbol" should be synonyms.  (Reported by Herv?
-      Pag?s.)
+      "name" and "symbol" should be synonyms.  (Reported by Herv'e
+      Pag`es.)
 
     * R CMD rtags works on platforms (such as OS X) with a
       XSI-conformant shell command echo. (PR#15231)
@@ -3813,7 +3885,7 @@ CHANGES IN R 3.0.1:
 
     * as.dendrogram()'s hclust method uses less memory and hence gets
       considerably faster for large (n ~ 1000) clusterings, thanks to
-      Daniel M?llner. (PR#15174)
+      Daniel M"ullner. (PR#15174)
 
     * The return value when all workers failed from
       parallel::mclapply(mc.preschedule = TRUE) was a list of strings
@@ -4120,7 +4192,7 @@ CHANGES IN R 3.0.0:
 
     * mapply(FUN, a1, ..) now also works when a1 (or a further such
       argument) needs a length() method (which the documented arguments
-      never do).  (Requested by Herv? Pag?s; with a patch.)
+      never do).  (Requested by Herv'e Pag`es; with a patch.)
 
     * .onDetach() is supported as an alternative to .Last.lib.  Unlike
       .Last.lib, this does not need to be exported from the package's
@@ -4670,7 +4742,7 @@ CHANGES IN R 3.0.0:
       so can be omitted if desired.
 
     * The markup for many messages has been changed to make them easier
-      to translate, incorporating suggestions from ?ukasz Daniel.
+      to translate, incorporating suggestions from Lukasz Daniel.
 
   INSTALLATION:
 

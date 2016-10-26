@@ -5,22 +5,33 @@
 \title{R News}
 \encoding{UTF-8}
 
-\section{\Rlogo CHANGES IN R 3.3.1 patched}{
+\section{\Rlogo CHANGES IN R 3.3.2}{
   \subsection{NEW FEATURES}{
     \itemize{
       \item \code{extSoftVersion()} now reports the version (if any) of
       the \code{readline} library in use.
 
-      \item Convenience function \code{hasName()} has been added; it
-      is intended to replace the common idiom \code{!is.null(x$name)}
-      without the usually unintended partial name matching.
-
       \item The version of LAPACK included in the sources has been
       updated to 3.6.1, a bug-fix release including a speedup for the
       non-symmetric case of \code{eigen()}.
 
-      \item Use \code{options(deparse.max.lines)} to limit the number of
-      lines recorded in .Traceback and other deparsing activities.
+      \item Use \code{options(deparse.max.lines=)} to limit the number
+      of lines recorded in \code{.Traceback} and other deparsing
+      activities.
+
+      \item \code{format(<AsIs>)} looks more regular, also for
+      non-character atomic matrices.
+
+      \item \code{abbreviate()} gains an option \code{named = TRUE}.
+
+      \item The online documentation for package \pkg{methods} is
+      extensively rewritten.  The goals are to simplify
+      documentation for basic use, to note old features not
+      recommended and to correct out-of-date information.
+
+      \item Calls to \code{setMethod()} no longer print a message when
+      creating a generic function in those cases where that is
+      natural: S3 generics and primitives.
     }
   }
 
@@ -46,6 +57,17 @@
       warnings from recent versions of \command{gfortran} with
       \option{-Wall -pedantic}: this now reports non-portable GNU
       extensions such as out-of-order declarations.
+
+      \item \command{R CMD config} works better with paths containing
+      spaces, even those of home directories (as reported by Ken Beath).
+    }
+  }
+
+  \subsection{DEPRECATED AND DEFUNCT}{
+    \itemize{
+      \item Use of the C/C++ macro \samp{NO_C_HEADERS} is deprecated
+      (no C headers are included by \R headers from C++ as from \R
+      3.3.0, so it should no longer be needed).
     }
   }
 
@@ -62,10 +84,10 @@
       \item \code{pretty(d, ..)} behaves better for date-time \code{d}
       (\PR{16923}).
 
-      \item When a class name matches multiple classes in the cache,
-      perform a dynamic search in order to obey namespace imports.  This
-      should eliminate annoying messages about multiple hits in the
-      class cache.  Also, pass along the package from the
+      \item When an S4 class name matches multiple classes in the S4
+      cache, perform a dynamic search in order to obey namespace
+      imports.  This should eliminate annoying messages about multiple
+      hits in the class cache.  Also, pass along the package from the
       \code{ClassExtends} object when looking up superclasses in the
       cache.
 
@@ -98,7 +120,63 @@
       \item \code{axis(side, x = D)} and hence \code{Axis()} and
       \code{plot()} now work correctly for \code{"Date"} and time
       objects \code{D}, even when \dQuote{time goes backward}, e.g.,
-      with decreasing \code{xlim}.  (Reported by William May).
+      with decreasing \code{xlim}.  (Reported by William May.)
+
+      \item \code{str(I(matrix(..)))} now looks as always intended.
+
+      \item \code{plot.ts()}, the \code{plot()} method for time series,
+      now respects \code{cex}, \code{lwd} and \code{lty}.  (Reported by
+      Greg Werbin.)
+
+      \item \code{parallel::mccollect()} now returns a named list (as
+      documented) when called with \code{wait = FALSE}.  (Reported by
+      Michel Lang.)
+
+      \item If a package added a class to a class union in another
+      package, loading the first package gave erroneous warnings
+      about \dQuote{undefined subclass}.
+
+      \item \code{c()}'s argument \code{use.names} is documented now, as
+      belonging to the (C internal) default method.   In
+      \dQuote{parallel}, argument \code{recursive} is also moved from
+      the generic to the default method, such that the formal argument list
+      of \pkg{base} generic \code{c()} is just \code{(...)}.
+
+      \item \code{rbeta(4, NA)} and similarly \code{rgamma()} and
+      \code{rnbinom()} now return \code{NaN}'s with a warning, as other
+      r<dist>(), and as documented.  (\PR{17155})
+
+      \item Using \code{options(checkPackageLicense = TRUE)} no longer
+      requires acceptance of the licence for non-default standard
+      packages such as \pkg{compiler}.  (Reported by Mikko Korpela.)
+
+      \item \code{split(<very_long>, *)} now works even when the split
+      off parts are long. (\PR{17139})
+
+      \item \code{min()} and \code{max()} now also work correctly when
+      the argument list starts with \code{character(0)}.  (\PR{17160})
+
+      \item Subsetting very large matrices (\code{prod(dim(.)) >= 2^31})
+      now works thanks to Michael Schubmehl's \PR{17158}.
+
+      \item \code{bartlett.test()} used residual sums of squares
+      instead of variances, when the argument was a list of \code{lm} objects.
+      (Reported by Jens Ledet Jensen).
+
+      \item \code{plot(<lm>, which = *)} now correctly labels the
+      contour lines for the standardized residuals for \code{which = 6}.
+      It also takes the correct \eqn{p} in case of singularities (also
+      for \code{which = 5}).  (\PR{17161})
+
+      \item \code{xtabs(~ exclude)} no longer fails from wrong scope,
+      thanks to Suharto Anggono's \PR{17147}.
+
+      \item Reference class calls to \code{methods()} did not
+      re-analyse previously defined methods, meaning that calls to
+      methods defined later would fail. (Reported by Charles Tilford).
+
+      \item \code{findInterval(x, vec, left.open = TRUE)} misbehaved in some
+      cases. (Reported by Dmitriy Chernykh.)
     }
   }
 }
@@ -737,7 +815,7 @@
   }
 }
 
-\section{\Rlogo CHANGES IN R 3.2.4 patched}{
+\section{\Rlogo CHANGES IN R 3.2.5}{
   \subsection{BUG FIXES}{
     \itemize{
       \item \code{format.POSIXlt()} behaved incorrectly in \R 3.2.4.
