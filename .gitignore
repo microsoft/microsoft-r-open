@@ -1,5 +1,5 @@
 # Created by https://www.gitignore.io/api/cmake,linux,windows
-
+ 
 ### CMake ###
 CMakeCache.txt
 CMakeFiles
@@ -77,3 +77,6 @@ $RECYCLE.BIN/
 
 vendor/build
 build/
+tools/
+packages/
+source/src/gnuwin32/front-ends/R.ico

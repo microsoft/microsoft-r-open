@@ -41,6 +41,14 @@ ExternalProject_Add(
   BUILD_IN_SOURCE 1
 )
 
+ExternalProject_Add(
+   openssl
+   DEPENDS zlib
+   SOURCE_DIR ${CMAKE_SOURCE_DIR}/openssl-1.0.2h
+   CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/openssl.sh ${CMAKE_SOURCE_DIR} openssl-1.0.2h
+   BUILD_COMMAND make depend && make
+   BUILD_IN_SOURCE 1
+)
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
@@ -85,15 +93,6 @@ else()
        ncurses
        SOURCE_DIR ${CMAKE_SOURCE_DIR}/ncurses-5.9
        CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/ncurses.sh ${CMAKE_SOURCE_DIR} ncurses-5.9
-       BUILD_IN_SOURCE 1
-     )
-
-     ExternalProject_Add(
-       openssl
-       DEPENDS zlib
-       SOURCE_DIR ${CMAKE_SOURCE_DIR}/openssl-1.0.2h
-       CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/openssl.sh ${CMAKE_SOURCE_DIR} openssl-1.0.2h
-       BUILD_COMMAND make depend && make
        BUILD_IN_SOURCE 1
      )
 
