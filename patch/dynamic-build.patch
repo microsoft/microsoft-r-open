@@ -1,0 +1,17 @@
+diff -ur unpatched_source/src/gnuwin32/front-ends/Makefile source/src/gnuwin32/front-ends/Makefile
+--- unpatched_source/src/gnuwin32/front-ends/Makefile	2017-01-04 14:31:43.611914600 -0800
++++ source/src/gnuwin32/front-ends/Makefile	2017-01-04 14:45:59.424401300 -0800
+@@ -82,8 +82,12 @@
+ Rscript-LIBS = -L../../../$(IMPDIR) -lR -lRgraphapp
+ Rterm-LIBS = -L../../../$(IMPDIR) -lR -lRgraphapp
+ 
++ifneq "$(WIN)" ""
++DYNAMIC_BASE = -Wl,--dynamicbase,--export-all-symbols
++endif
++
+ Rgui-LINKFLAGS = -mwindows $(LARGE_ADDR) $(LARGE_STACK)
+-Rterm-LINKFLAGS = $(LARGE_ADDR) $(LARGE_STACK)
++Rterm-LINKFLAGS = $(LARGE_ADDR) $(LARGE_STACK) $(DYNAMIC_BASE)
+ Rscript-LINKFLAGS = $(LARGE_ADDR) $(LARGE_STACK)
+ 
+ Rgui.exe: graphappmain.o rgui.o rgico.o
