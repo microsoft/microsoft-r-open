@@ -138,6 +138,7 @@ ExternalProject_Add(
 
 ExternalProject_Add(
   pcre
+  DEPENDS libpng
   SOURCE_DIR ${CMAKE_SOURCE_DIR}/pcre-8.37
   CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/pcre.sh ${CMAKE_SOURCE_DIR} pcre-8.37
   BUILD_IN_SOURCE 1
