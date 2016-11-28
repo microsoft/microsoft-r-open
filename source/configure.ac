@@ -222,7 +222,7 @@ fi],
 ## Allow the user to specify building an R framework (Darwin).
 AC_ARG_ENABLE([R-framework],
 [AS_HELP_STRING([--enable-R-framework@<:@=DIR@:>@],[OS X only: build R framework (if possible), and specify
-                 its installation prefix @<:@yes, /Library/Frameworks@:>@])],
+                 its installation prefix @<:@no, /Library/Frameworks@:>@])],
 [want_R_framework="${enableval}"],
 [want_R_framework=no])
 ## Can only build frameworks on Darwin.
@@ -1004,6 +1004,7 @@ case "${host_os}" in
     fi
     ;;
   darwin*)
+    ## which these days mean macOS
     AC_DEFINE(HAVE_NO_SYMBOL_UNDERSCORE)
     ;;
   hpux*)
@@ -1020,6 +1021,7 @@ case "${host_os}" in
     AC_CHECK_LIB(dld, shl_load, [R_XTRA_LIBS="-ldld ${R_XTRA_LIBS}"])
     ;;
   irix*)
+    ## final release in 2006
     R_C_OPTIEEE
     ## <NOTE>
     ## We really should test explictly whether the Fortran and C++
@@ -1128,6 +1130,7 @@ case "${host_os}" in
     fi
     ;;
   osf*)
+    ## does that really still exist?
     AC_DEFINE(HAVE_NO_SYMBOL_UNDERSCORE)
     ;;  
 esac

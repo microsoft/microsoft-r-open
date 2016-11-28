@@ -1122,7 +1122,8 @@ SEXP applyClosure(SEXP call, SEXP op, SEXP arglist, SEXP rho, SEXP suppliedvars)
 	from the function body.  */
 
     if ((SETJMP(cntxt.cjmpbuf))) {
-	if (R_ReturnedValue == R_RestartToken) {
+	if (! cntxt.jumptarget && /* ignores intermediate jumps for on.exits */
+	    R_ReturnedValue == R_RestartToken) {
 	    cntxt.callflag = CTXT_RETURN;  /* turn restart off */
 	    R_ReturnedValue = R_NilValue;  /* remove restart token */
 	    PROTECT(tmp = eval(body, newrho));
@@ -3919,7 +3920,8 @@ static R_INLINE double (*getMath1Fun(int i, SEXP call))(double) {
 	if (typex == REALSXP && typey == REALSXP) {			\
 	    double rn1 = vx.dval;					\
 	    double rn2 = vy.dval;					\
-	    if (INT_MIN <= rn1 && INT_MAX >= rn1 &&			\
+	    if (R_FINITE(rn1) && R_FINITE(rn2) &&			\
+		INT_MIN <= rn1 && INT_MAX >= rn1 &&			\
 		INT_MIN <= rn2 && INT_MAX >- rn2 &&			\
 		rn1 == (int) rn1 && rn2 == (int) rn2) {			\
 		SKIP_OP(); /* skip 'call' index */			\
@@ -5158,6 +5160,14 @@ static R_INLINE Rboolean GETSTACK_LOGICAL_NO_NA_PTR(R_bcstack_t *s, int callidx,
     }
 }
 
+static SEXP markSpecialArgs(SEXP args)
+{
+    SEXP arg;
+    for(arg = args; arg != R_NilValue; arg = CDR(arg))
+	MARK_NOT_MUTABLE(CAR(arg));
+    return args;
+}
+
 static SEXP bcEval(SEXP body, SEXP rho, Rboolean useCache)
 {
   SEXP value = R_NilValue, constants;
@@ -5613,7 +5623,7 @@ static SEXP bcEval(SEXP body, SEXP rho, Rboolean useCache)
 	case SPECIALSXP:
 	  flag = PRIMPRINT(fun);
 	  R_Visible = flag != 1;
-	  value = PRIMFUN(fun) (call, fun, CDR(call), rho);
+	  value = PRIMFUN(fun) (call, fun, markSpecialArgs(CDR(call)), rho);
 	  if (flag < 2) R_Visible = flag != 1;
 	  break;
 	case CLOSXP:
@@ -5665,7 +5675,7 @@ static SEXP bcEval(SEXP body, SEXP rho, Rboolean useCache)
 	}
 	flag = PRIMPRINT(fun);
 	R_Visible = flag != 1;
-	value = PRIMFUN(fun) (call, fun, CDR(call), rho);
+	value = PRIMFUN(fun) (call, fun, markSpecialArgs(CDR(call)), rho);
 	if (flag < 2) R_Visible = flag != 1;
 	vmaxset(vmax);
 	BCNPUSH(value);

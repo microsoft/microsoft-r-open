@@ -3747,7 +3747,8 @@ function(dir, makevars = c("Makevars.in", "Makevars"))
     mfile <- paths[1L]
     make <- Sys.getenv("MAKE")
     if(make == "") make <- "make"
-    command <- sprintf("%s -f %s -f %s -f %s",
+    ## needs a target to avoid targets in src/Makevars
+    command <- sprintf("%s -f %s -f %s -f %s makevars_test",
                        make,
                        shQuote(file.path(R.home("share"), "make",
                                          "check_vars_ini.mk")),
@@ -3788,11 +3789,15 @@ function(dir, makevars = c("Makevars.in", "Makevars"))
     bad_flags_regexp <-
         sprintf("^-(%s)$",
                 paste(c("O.*",
-                        "W",
+                        "W", # same as -Wextra in GCC.
+                        "w", # GCC, Solaris inhibit all warnings
                         "W[^l].*", # -Wl, might just be portable
                         "ansi", "pedantic", "traditional",
-                        "f.*", "m.*", "std.*",
+                        "f.*", "m.*", "std.*", # includes -fopenmp
+                        "isystem", # gcc and clones
                         "x",
+                        "cpp", # gfortran
+                        "g",  # not portable, waste of space
                         "q"),
                       collapse = "|"))
     for(i in seq_along(lines)) {

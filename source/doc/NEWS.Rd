@@ -5,6 +5,104 @@
 \title{R News}
 \encoding{UTF-8}
 
+\section{\Rlogo CHANGES IN R 3.3.1 patched}{
+  \subsection{NEW FEATURES}{
+    \itemize{
+      \item \code{extSoftVersion()} now reports the version (if any) of
+      the \code{readline} library in use.
+
+      \item Convenience function \code{hasName()} has been added; it
+      is intended to replace the common idiom \code{!is.null(x$name)}
+      without the usually unintended partial name matching.
+
+      \item The version of LAPACK included in the sources has been
+      updated to 3.6.1, a bug-fix release including a speedup for the
+      non-symmetric case of \code{eigen()}.
+
+      \item Use \code{options(deparse.max.lines)} to limit the number of
+      lines recorded in .Traceback and other deparsing activities.
+    }
+  }
+
+  \subsection{INSTALLATION and INCLUDED SOFTWARE}{
+    \itemize{
+      \item Versions of the \code{readline} library >= 6.3 had been
+      changed so that terminal window resizes were not signalled to
+      \code{readline}: code has been added using a explicit signal
+      handler to work around that (when \R is compiled against readline
+      >= 6.3).  (\PR{16604})
+
+      \item \command{configure} works better with Oracle Developer
+      Studio 12.5.
+    }
+  }
+
+  \subsection{UTILITIES}{
+    \itemize{
+      \item \command{R CMD check} reports more dubious flags in files
+      \file{src/Makevars[.in]}, including \option{-w} and \option{-g}.
+
+      \item \command{R CMD check} has been set up to filter important
+      warnings from recent versions of \command{gfortran} with
+      \option{-Wall -pedantic}: this now reports non-portable GNU
+      extensions such as out-of-order declarations.
+    }
+  }
+
+  \subsection{BUG FIXES}{
+    \itemize{
+      \item The check for non-portable flags in \command{R CMD check}
+      could be stymied by \file{src/Makevars} files which contained
+      targets.
+
+      \item (Windows only) When using certain desktop themes in Windows
+      7 or higher, \kbd{Alt-Tab} could cause \command{Rterm} to stop
+      accepting input.  (\PR{14406}; patch submitted by Jan Gleixner.)
+
+      \item \code{pretty(d, ..)} behaves better for date-time \code{d}
+      (\PR{16923}).
+
+      \item When a class name matches multiple classes in the cache,
+      perform a dynamic search in order to obey namespace imports.  This
+      should eliminate annoying messages about multiple hits in the
+      class cache.  Also, pass along the package from the
+      \code{ClassExtends} object when looking up superclasses in the
+      cache.
+
+      \item \code{sample(NA_real_)} now works.
+
+      \item Packages using non-ASCII encodings in their code did not
+      install data properly on systems using different encodings.
+
+      \item \code{merge(df1, df2)} now also works for data frames with
+      column names \code{"na.last"}, \code{"decreasing"}, or
+      \code{"method"}.  (\PR{17119})
+
+      \item \code{contour()} caused a segfault if the \code{labels}
+      argument had length zero.  (Reported by Bill Dunlap.)
+
+      \item \code{unique(warnings())} works more correctly, thanks to a
+      new \code{duplicated.warnings()} method.
+
+      \item \code{findInterval(x, vec = numeric(), all.inside = TRUE)}
+      now returns \code{0}s as documented.  (Reported by Bill Dunlap.)
+
+      \item (Windows only) \command{R CMD SHLIB} failed when a symbol
+      in the resulting library had the same name as a keyword in
+      the \file{.def} file.  (\PR{17130})
+
+      \item \code{pmax()} and \code{pmin()} now work with (more ?)
+      classed objects, such as \code{"Matrix"} from the \CRANpkg{Matrix}
+      package, as documented for a long time.
+
+      \item \code{axis(side, x = D)} and hence \code{Axis()} and
+      \code{plot()} now work correctly for \code{"Date"} and time
+      objects \code{D}, even when \dQuote{time goes backward}, e.g.,
+      with decreasing \code{xlim}.  (Reported by William May).
+    }
+  }
+}
+
 \section{\Rlogo CHANGES IN R 3.3.1}{
   \subsection{BUG FIXES}{
     \itemize{
@@ -21,14 +119,14 @@
       \item \code{unloadNamespace(ns)} also works again when \code{ns} is a
       \sQuote{namespace}, as from \code{getNamespace()}.
 
-      \item \code{rgamma(1,Inf)} or \code{rgamma(1, 0,0)} no longer give
+      \item \code{rgamma(1, Inf)} or \code{rgamma(1, 0, 0)} no longer give
       \code{NaN} but the correct limit.
 
       \item \code{length(baseenv())} is correct now.
 
       \item \code{pretty(d, ..)} for date-time \code{d} rarely failed
       when \code{"halfmonth"} time steps were tried (\PR{16923}) and
-      on \sQuote{inaccurate} platforms such as 32-bit windows or
+      on \sQuote{inaccurate} platforms such as 32-bit Windows or
       a configuration with \command{--disable-long-double}; see comment
       #15 of \PR{16761}.
 
@@ -43,8 +141,9 @@
 
       \item Use of \code{Ctrl-C} to terminate a reverse incremental
       search started by \code{Ctrl-R} in the \code{readline}-based Unix
-      terminal interface is now supported for \code{readline} >= 6.3
-      (\code{Ctrl-G} always worked).  (\PR{16603})
+      terminal interface is now supported when \R{} was compiled against
+      \code{readline} >= 6.0 (\code{Ctrl-G} always worked).
+      (\PR{16603})
 
       \item \code{diff(<difftime>)} now keeps the \code{"units"}
       attribute, as subtraction already did, \PR{16940}.

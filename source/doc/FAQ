@@ -246,11 +246,12 @@ operating systems.  Support for Mac OS Classic ended with R 1.7.1.
 
    The current version of R will configure and build under a number of
 common Unix-like (e.g., <https://en.wikipedia.org/wiki/Unix-like>)
-platforms including CPU-linux-gnu for the i386, amd64, alpha, arm/armel,
-hppa, ia64, m68k, mips/mipsel, powerpc, s390 and sparc CPUs (e.g.,
+platforms including CPU-linux-gnu for the i386, amd64/x86_64, alpha,
+arm, arm64, hppa, mips/mipsel, powerpc, s390x and sparc CPUs (e.g.,
 <https://buildd.debian.org/build.php?&pkg=r-base>), i386-hurd-gnu,
-CPU-kfreebsd-gnu for i386 and amd64, powerpc-apple-darwin,
-mips-sgi-irix, i386-freebsd, rs6000-ibm-aix, and sparc-sun-solaris.
+CPU-kfreebsd-gnu for i386 and amd64, i386-pc-solaris, rs6000-ibm-aix,
+sparc-sun-solaris, x86_64-apple-darwin, x86_64-unknown-freebsd and
+x86_64-unknown-openbsd.
 
    If you know about other platforms, please drop us a note.
 

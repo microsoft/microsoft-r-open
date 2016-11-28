@@ -495,7 +495,7 @@ monospaced font by Inconsolata or Bera Sans mono respectively.  (You
 will need a recent version of the appropriate @LaTeX{} package
 @pkg{inconsolata}@footnote{Instructions on how to install the latest
 version are at
-@uref{https://www.ctan.org/tex-archive/fonts/inconsolata/}.} or
+@uref{https://www.ctan.org/@/tex-archive/@/fonts/@/inconsolata/}.} or
 @pkg{bera} installed.)
 
 Note that in most @LaTeX{} installations this will not actually use the
@@ -937,9 +937,10 @@ environment variable @env{TZ}.
 
 @menu
 * OpenMP Support::              
+* C++ Support::                 
 @end menu
 
-@node OpenMP Support,  , Other Options, Other Options
+@node OpenMP Support, C++ Support, Other Options, Other Options
 @subsection OpenMP Support
 
 By default @command{configure} searches for suitable
@@ -973,6 +974,65 @@ OpenMP).  The @command{configure} detection test is to compile and link
 a standalone OpenMP program, which is not the same as compiling a shared
 object and loading it into the C program of @R{}'s executable.  Note
 that overridden values are not tested.
+
+@node C++ Support,  , OpenMP Support, Other Options
+@subsection C++ Support
+
+C++ is not used by @R{} itself, but support is provided for installing
+packages with C++ code via @command{make} macros defined in file
+@file{etc/Makeconf} (and with explanations in file @file{config.site}):
+@example
+CXX
+CXXFLAGS
+CXXPICFLAGS
+
+CXX1X
+CXX1XSTD
+CXX1XFLAGS
+CXX1XPICFLAGS
+@end example
+@noindent
+The macros @code{CXX} etc are those used by default for C++ code: their
+values are not checked.  @command{configure} will attempt to set the
+rest suitably, choosing for @code{CXX1XSTD} a suitable flag such as
+@option{-std=c++11} for C++11 support.  The inferred values can be
+overridden in file @file{config.site} or on the @command{configure}
+command line: user-supplied values will be tested compiling by C++11
+code using some features added in that standard. (Later versions of @R{}
+are likely to check compliance more thoroughly.)
+
+It may be@footnote{This is true for earlier versions of @command{g++}
+such as 4.2.1, and also for some commonly-used versions of the Solaris
+compiler @code{CC}.} that there is no suitable flag for C++11 support,
+in which case a different compiler could be selected for @code{CXX1X}
+and its corresponding flags.  Some compilers@footnote{Currently only GCC
+6 and later, but this has been mooted for others.} by default assume a
+later standard than C++98 whereas the latter is assumed by some
+packages.  So users of GCC 6 might like to specify
+@example
+CXX='g++ -std=gnu++98'
+CXX1X=g++
+CXX1XSTD='-std=c++11'
+@end example
+
+The @option{-std} flag is supported by the GCC, @command{clang}, Intel
+and Solaris compilers (the latter from version 12.4).  Currently
+accepted values are (plus some synonyms)
+@example
+g++:     c++98 gnu++98 c++11 gnu+11 c++14 gnu++14 c++1z gnu++1z
+Intel:   gnu+98 c++11 c++14 (from 16.0)
+Solaris: c++03 c++11 c++14 (from 12.5)
+@end example
+@noindent
+(Those for @command{clang++} are not documented, but seem to be based on
+@code{g++}.)  Versions 4.3.x to 4.8.x of @command{g++} accepted flag
+@option{-std=c++0x} with partial support@footnote{For when features were
+supported, see
+@uref{https://gcc.gnu.org/@/projects/@/cxx-status.html#cxx11}.} for C++11:
+this is currently still accepted as a deprecated synonym for
+@option{-std=c++11}.
+
+For the use of C++11 in @R{} packages see the `Writing R Extensions' manual.
 
 @node Testing a Unix-alike Installation,  , Other Options, Installing R under Unix-alikes
 @section Testing an Installation
@@ -1242,12 +1302,10 @@ build you will also need
 @itemize
 
 @item
-The Tcl/Tk support files are contained in @file{Rtools*.exe} and
-available as @file{.zip} files from
-@uref{https://www.stats.ox.ac.uk/pub/Rtools}.  Please make sure you
-install the right version: there is a 32-bit version and a 64-bit
-version.  They should be installed to @file{@var{R_HOME}}, creating
-directory @file{Tcl} there.
+The Tcl/Tk support files are contained in @file{Rtools*.exe}.  Please
+make sure you install the right version: there is a 32-bit version and a
+64-bit version.  They should be installed to @file{@var{R_HOME}},
+creating directory @file{Tcl} there.
 
 @end itemize
 
@@ -1316,7 +1374,7 @@ first used.  It is not built by default, and needs to be built (after
 
 To enable the building of these devices you need to install the static
 cairographics libraries built by Simon Urbanek at
-@uref{https://www.rforge.net/Cairo/files/cairo-current-win.tar.gz}.  Set
+@uref{https://www.rforge.net/@/Cairo/@/files/@/cairo-current-win.tar.gz}.  Set
 the macro @samp{CAIRO_HOME} in @file{MkRules.local}.  (Note that this
 tarball unpacks with a top-level directory @file{src/}:
 @samp{CAIRO_HOME} needs to include that directory in its path.)
@@ -1350,12 +1408,12 @@ collation, or set the environment variable @env{R_ICU_LOCALE}.
 @node Support for libcurl, Checking the build, Using ICU for collation, Building from source
 @subsection Support for libcurl
 
-@code{libcurl} version 7.28.0 or later can be used to support
+@code{libcurl} version 7.28.0 or later is used to support
 @code{curlGetHeaders} and the @code{"libcurl"} methods of
 @code{download.file} and @code{url}.
 
 A suitable distribution can be found @emph{via}
-@uref{https://www.stats.ox.ac.uk/pub/Rtools/libs.html} and its unpacked
+@uref{https://www.stats.ox.ac.uk/@/pub/@/Rtools/@/libs.html} and its unpacked
 location should be specified in file @file{MkRules.local}.
 
 For secure use of e.g.@: @samp{https://} URLs Windows users may need to
@@ -1645,10 +1703,14 @@ Windows' CRLF line endings.
 @sc{R.app}
 @end macro
 
+(`OS X' will be renamed to `macOS' as from version 10.12 `macOS Sierra'
+in late 2016.)
+
 The front page of a @acronym{CRAN} site has a link `Download R for OS
 X'. Click on that, then download the file @file{R-@value{VERSIONno}.pkg}
 and install it. This runs on OS X 10.9 and later (Mavericks, Yosemite,
-El Capitan, @dots{}).
+El Capitan, Sierra, @dots{}). (It may be possible to install from the
+sources for earlier OS versions: see @ref{OS X}.)
 
 Installers for R-patched and R-devel are usually available from
 @uref{https://r.research.att.com}.
@@ -1728,7 +1790,7 @@ preferences are stored, so if it fails when launched for the very first
 time, try it again (the first attempt will store some preferences).
 
 Users of @Rapp{} need to be aware of the `App Nap' feature
-(@uref{https://developer.apple.com/library/mac/releasenotes/MacOSX/WhatsNewInOSX/Articles/MacOSX10_9.html})
+(@uref{https://developer.apple.com/@/library/@/mac/@/releasenotes/@/MacOSX/@/WhatsNewInOSX/@/Articles/MacOSX10_9.html})
 which can cause @R{} tasks to appear to run very slowly when not
 producing output in the console.  Here are ways to avoid it:
 
@@ -1744,7 +1806,7 @@ defaults write org.R-project.R NSAppSleepDisabled -bool YES
 @end example
 
 @noindent
-(see @uref{https://developer.apple.com/library/mac/releasenotes/MacOSX/WhatsNewInOSX/Articles/MacOSX10_9.html}).
+(see @uref{https://developer.apple.com/@/library/@/mac/@/releasenotes/@/MacOSX/@/WhatsNewInOSX/@/Articles/MacOSX10_9.html}).
 @end itemize
 
 Using the @code{X11} device or the X11-based versions of @code{View()}
@@ -2208,7 +2270,7 @@ system.  In particular packages using Gtk+ (@CRANpkg{RGtk2},
 @CRANpkg{cairoDevice} and those that depend on them) need the GTK
 framework installed from @uref{https://r.research.att.com/libs/}: the
 appropriate version at the time of writing was
-@uref{https://r.research.att.com/libs/GTK_2.24.17-X11.pkg}
+@uref{https://r.research.att.com/@/libs/@/GTK_2.24.17-X11.pkg}
 
 The default compilers specified in
 @file{/Library/Frameworks/R.framework/Resources/etc/Makeconf} depend on
@@ -2686,7 +2748,7 @@ compatibility.
 Windows also uses locales, but specified in a rather less concise way.
 Most users will encounter locales only via drop-down menus, but more
 information and lists can be found at
-@uref{https://msdn.microsoft.com/en-us/library/hzz3tw78(v=vs.80)}
+@uref{https://msdn.microsoft.com/@/en-us/@/library/@/hzz3tw78(v=vs.80)}
 (or if Microsoft moves it yet again, search for @samp{Windows language
 country strings}).
 
@@ -3125,17 +3187,19 @@ FORTRAN}).  Your C compiler should be
 @acronym{IEEE}@tie{}754}, POSIX 1003.1 and C99-compliant.@footnote{Note
 that C11 compilers need not be C99-compliant: @R{} requires support for
 @code{double complex} and variable-length arrays which are optional in
-C11 but is mandatory in C99.}  @R{} tries to choose suitable flags for
-the C compilers it knows about, but you may have to set @code{CC} or
-@code{CFLAGS} suitably.  For many versions of @command{gcc} with
-@code{glibc} this means including
+C11 but is mandatory in C99.}  @R{} tries to choose suitable
+flags@footnote{Examples are @option{-std=gnu99}, @option{-std=c99} and
+@option{-c99}.} for the C compilers it knows about, but you may have to
+set @code{CC} or @code{CFLAGS} suitably.  For versions of @command{gcc}
+prior to 5.1 with @code{glibc} this means including
 @option{-std=gnu99}@footnote{@option{-std=c99} excludes POSIX
 functionality, but @file{config.h} will turn on all @acronym{GNU}
-extensions to include the POSIX functionality.  The default mode for GCC
-5.1 and later is @option{-std=gnu11}.}.  (Note that options essential to
-run the compiler even for linking, such as those to set the
-architecture, should be specified as part of @code{CC} rather than in
-@code{CFLAGS}.)
+extensions to include the POSIX functionality for @R{} itself: this does
+not apply to badly-written packages.  The default mode for GCC 5.1 and
+later is @option{-std=gnu11}, which currently includes the optional
+features @R{} needs.}.  (Note that options essential to run the compiler
+even for linking, such as those to set the architecture, should be
+specified as part of @code{CC} rather than in @code{CFLAGS}.)
 
 Unless you do not want to view graphs on-screen (or use OS X) you need
 @samp{X11} installed, including its headers and client libraries. For
@@ -3174,10 +3238,8 @@ functions@footnote{including the @code{opendir}, @code{readdir},
 @code{setenv}.} are essential, and others@footnote{such as
 @code{realpath}, @code{symlink}.} will be used if available.
 
-@c PCRE[1] 8.32 is from Nov 2012
 @c zlib 1.2.5 is from July 2010, bzip2 1.0.6 from Sept 2010
 @c xz 5.0.3 is from May 2011
-@c libcurl 7.28.0 was released in Oct 2012
 Installations of @code{zlib} (version 1.2.5 or later), @code{libbz2}
 (version 1.0.6 or later: called @pkg{bzip2-libs}/@pkg{bzip2-devel} or
 @pkg{libbz2-1.0}/@pkg{libbz2-dev} by some Linux distributions),
@@ -3186,6 +3248,8 @@ possible names in Linux distributions include
 @code{xz-devel}/@code{xz-libs} and @code{liblzma-dev}.} version 5.0.3 or
 later are required.
 
+@c PCRE[1] 8.32 is from Nov 2012, but Ubuntu 14.04LTS does not have it 
+@c and that is supported until Apr 2019.
 PCRE@footnote{sometimes known as PCRE1, and not PCRE2 which started at
 version 10.0.} (version 8.32 or later, although versions 8.10--8.31 will
 be accepted with a deprecation warning) is required (or just its library
@@ -3202,17 +3266,19 @@ Unicode properties can be checked at run-time by calling
 @noindent  
 The @option{--enable-jit} flag is supported for most common CPUs.
 
-Library @code{libcurl} (version 7.28.0 or later) is required.
-Information on @code{libcurl} is found from the @command{curl-config}
-script: if that is missing or needs to be overridden@footnote{for
-example to specify static linking with a build which has both shared and
-static libraries.} there are macros to do so described in file
-@file{config.site}.
+@c libcurl 7.28.0 was released in Oct 2012
+Library @code{libcurl} (version 7.28.0 or later@footnote{but not a major
+version greater than 7 should there ever be one: the major version has
+been 7 since 2000.}) is required.  Information on @code{libcurl} is
+found from the @command{curl-config} script: if that is missing or needs
+to be overridden@footnote{for example to specify static linking with a
+build which has both shared and static libraries.} there are macros to
+do so described in file @file{config.site}.
 
 A @command{tar} program is needed to unpack the sources and packages
 (including the recommended packages).  A version@footnote{Such as
 @acronym{GNU} @command{tar} 1.15 or later, @command{bsdtar} (from
-@uref{https://github.com/libarchive/libarchive/}, as used by FreeBSD and OS
+@uref{https://github.com/@/libarchive/@/libarchive/}, as used by FreeBSD and OS
 X 10.6 and later) or @command{tar} from the Heirloom Toolchest
 (@uref{http://heirloom.sourceforge.net/@/tools.html}).} that can
 automagically detect compressed archives is preferred for use with
@@ -3273,6 +3339,15 @@ Debian/Ubuntu like @pkg{texlive-fonts-extra}.
 The essential programs should be in your @env{PATH} at the time
 @command{configure} is run: this will capture the full paths.
 
+Those distributing binary versions of @R{} may need to be aware of the
+licences of the external libraries it is linked to (including `useful'
+libraries from the next section).  The @code{liblzma} library is in the
+public domain and X11, @code{libbzip2}, @code{libcurl} and @code{zlib}
+have MIT-style licences. PCRE has a BSD-style licence which requires
+distribution of the licence (included in @R{}'s @file{COPYRIGHTS} file)
+in binary distributions.  GNU @code{readline} is licensed under GPL
+(which version(s) depending on the @code{readline} version).
+
 @node Useful libraries and programs, Linear algebra, Essential programs and libraries, Essential and useful other programs under a Unix-alike
 @section Useful libraries and programs
 
@@ -3303,7 +3378,7 @@ installed: Linux users will want the @code{urw-fonts} package.  On
 platforms which have it available, the @code{msttcorefonts}
 package@footnote{also known as @code{ttf-mscorefonts-installer} in the
 Debian/Ubuntu world: see also
-@uref{https://en.wikipedia.org/wiki/Core_fonts_for_the_Web}.} provides
+@uref{https://en.wikipedia.org/@/wiki/@/Core_fonts_for_the_Web}.} provides
 TrueType versions of Monotype fonts such as Arial and Times New Roman.
 Another useful set of fonts is the `liberation' TrueType fonts available
 at
@@ -3313,7 +3388,7 @@ plus a fair range of signs.  These share metrics with Arial, Times New
 Roman and Courier New, and contain fonts rather similar to the first two
 (@uref{https://en.wikipedia.org/@/wiki/@/Liberation_fonts}).  Then there
 is the `Free UCS Outline Fonts' project
-(@uref{https://www.gnu.org/software/freefont/}) which are
+(@uref{https://www.gnu.org/@/software/@/freefont/}) which are
 OpenType/TrueType fonts based on the URW fonts but with extended Unicode
 coverage.  See the @R{} help on @code{X11} on selecting such fonts.
 
@@ -3339,14 +3414,6 @@ Option @option{--with-system-tre} is also available: it needs a recent
 version of TRE. (The current sources are in the @command{git} repository
 at @url{https://github.com/laurikari/tre/}, but at the time of writing
 the resulting build will not pass its checks.).
-
-@c 5.0.3 was released on 2011-05-21
-Library @code{liblzma} from @code{xz-utils} version 5.0.3 or later
-(including 5.2.x) will be used if installed: the version in the @R{}
-sources can be selected instead by configuring with
-@option{--without-system-xz}.  Systems differ in what they call the
-package including this: e.g.@: on Fedora the library is in
-@samp{xz-libs} and the headers in @samp{xz-devel}.
 
 An implementation of @acronym{XDR} is required, and the @R{} sources
 contain one which is likely to suffice (although a system version may
@@ -3482,10 +3549,10 @@ configure variables @code{CXX}, @code{CXXFLAGS} and similar.
 most cases this will be a C++98 compiler, and as from @R{} 3.1.0 it is
 possible to specify an alternative compiler for use with C++11 by the
 configure variables @code{CXX1X}, @code{CXX1XSTD}, @code{CXX1XFLAGS} and
-similar.  Again, @command{configure} will normally find a suitable value
-for @code{CXX1XSTD} if the compiler given by @code{CXX} is capable of
-compiling C++11 code, but it is possible that a completely different
-compiler will be needed.
+similar (@pxref{C++ Support}).  Again, @command{configure} will normally
+find a suitable value for @code{CXX1XSTD} if the compiler given by
+@code{CXX} is capable of compiling C++11 code, but it is possible that a
+completely different compiler will be needed.
 
 Other packages need full Fortran 90 (or later) support.  For source
 files with extension @file{.f90} or @file{.f95}, the compiler defined by
@@ -3547,7 +3614,7 @@ well as @code{LSAME}), and appears to be usable.  However, an external
 position-independent code), and that is not checked.
 
 Some enhanced @acronym{BLAS}es are compiler-system-specific
-(@code{sunperf} on Solaris@footnote{Using the Oracle Solaris Studio
+(@code{sunperf} on Solaris@footnote{Using the Oracle Developer Studio
 @command{cc} and @command{f95} compilers}, @code{libessl} on IBM,
 @code{Accelerate} on OS X).  The correct incantation for these is often
 found @emph{via} @option{--with-blas} with no value on the appropriate
@@ -3699,7 +3766,7 @@ encouraged to read the MKL User's Guide, which is installed with the
 library, before attempting to link to MKL.  This includes a `link line
 advisor' which will suggest appropriate incantations: its use is
 recommended.  Or see
-@uref{https://software.intel.com/en-us/articles/intel-mkl-link-line-advisor}.
+@uref{https://software.intel.com/@/en-us/@/articles/@/intel-mkl-link-line-advisor}.
 
 There are also versions of MKL for OS X and Windows, but at the time
 these were tried they did not work with the standard compilers used for
@@ -3876,7 +3943,7 @@ have that support.
 
 If you have a pure FORTRAN 77 compiler which cannot compile LAPACK it
 may be possible to use CLAPACK from
-@uref{http://www.netlib.org/clapack/} by something like
+@uref{http://www.netlib.org/@/clapack/} by something like
 @example
 -with-lapack="-lclapack -lf2c"
 @end example
@@ -4236,7 +4303,7 @@ you will need to set
 @env{FPICFLAGS} appropriately.  Also, the included LAPACK sources
 contain constructs that @command{f2c} is unlikely to be able to process,
 so you would need to use an external LAPACK library (such as CLAPACK
-from @uref{http://www.netlib.org/clapack/}).
+from @uref{http://www.netlib.org/@/clapack/}).
 
 @node Compile and load flags, Maintainer mode, Using FORTRAN, Configuration on a Unix-alike
 @section Compile and load flags
@@ -4374,7 +4441,7 @@ recent reports.
 
 C macros to select particular platforms can be tricky to track down
 (there is a fair amount of misinformation on the Web).  The Wiki
-(currently) at @uref{http://sourceforge.net/p/predef/wiki/Home/} can be
+(currently) at @uref{http://sourceforge.net/@/p/@/predef/@/wiki/@/Home/} can be
 helpful.  The @R{} sources currently use
 @example
 AIX: _AIX
@@ -4597,7 +4664,6 @@ the additional flags being needed to resolve problems linking against
 @menu
 * Clang::                       
 * Intel compilers::             
-* Oracle Solaris Studio compilers::  
 @end menu
 
 @node Clang, Intel compilers, Linux, Linux
@@ -4620,10 +4686,10 @@ project (@url{http://libcxx.llvm.org/}) has also been tested: for some
 
 Most builds of @command{clang} have no OpenMP support.  Builds of
 version 3.7.0 or later may.@footnote{This also needs the OpenMP runtime,
-which is usually distributed separately, e.g.@: at
+which has sometimes been distributed separately, e.g.@: for 3.7.0 at
 @uref{http://llvm.org/releases}.}
 
-@node Intel compilers, Oracle Solaris Studio compilers, Clang, Linux
+@node Intel compilers,  , Clang, Linux
 @subsection Intel compilers
 
 Intel compilers have been used under @cputype{ix86} and @cputype{x86_64}
@@ -4675,51 +4741,17 @@ FC=$F77
 FCFLAGS=$F77FLAGS
 @end example
 
-
-@node Oracle Solaris Studio compilers,  , Intel compilers, Linux
-@subsection Oracle Solaris Studio compilers
-
-Brian Ripley tested the Sun Studio 12 compilers, since renamed to Oracle
-Solaris Studio.  On @cputype{x86_64} Linux with
-
-@example
-CC=suncc
-CFLAGS="-xO5 -xc99 -xlibmil -nofstore"
-CPICFLAGS=-Kpic
-F77=sunf95
-FFLAGS="-O5 -libmil -nofstore"
-FPICFLAGS=-Kpic
-CXX="sunCC -library=stlport4"
-CXXFLAGS="-xO5 -xlibmil -nofstore -features=tmplrefstatic"
-CXXPICFLAGS=-Kpic
-FC=sunf95
-FCFLAGS=$FFLAGS
-FCPICFLAGS=-Kpic
-LDFLAGS=-L/opt/sunstudio12.1/rtlibs/amd64
-SHLIB_LDFLAGS=-shared
-SHLIB_CXXLDFLAGS=-G
-SHLIB_FCLDFLAGS=-G
-SAFE_FFLAGS="-O5 -libmil"
-@end example
-
-@noindent
-@option{-m64} could be added, but was the default.  Do not use
-@option{-fast}: see the warnings under Solaris. (The C++ options are
-also explained under Solaris.)
-
-Others have found on at least some versions of @cputype{ix86} Linux that
-the configure flag @option{--disable-largefile} was needed (since
-@file{glob.h} on that platform presumed @command{gcc} was being used).
-
-
 @node OS X, Solaris, Linux, Platform notes
 @section OS X
 @cindex OS X
 
+(`OS X' will be renamed to `macOS' from version 10.12 `macOS Sierra' in
+late 2016.)
+
 The instructions here are for @cputype{x86_64} builds on 10.9
 (Mavericks) or later.  In principle@footnote{It will be necessary to
 install later versions of software such as @code{libcurl}.} @R{} can be
-built for 10.6 to 10.8 but these has not been tested recently.
+built for 10.6 to 10.8 but these have not been tested recently.
 
 To build @R{} you need Apple's `Command Line Tools': these can be
 (re-)installed by @command{xcode-select --install}.  (If you have a
@@ -4731,10 +4763,11 @@ reinstalled when OS X is upgraded, as upgrading partially removes them.)
 You need @code{readline}@footnote{Apple provides a partial emulation of
 GNU readline 4.2 based on the NetBSD @code{editline} library.  That is
 not recommended but for the time being @R{}'s installation scripts will
-make use of it.} and a Fortran compiler.  Those and other binary
-components are available from @uref{https://r.research.att.com/libs}:
-you are likely to need @code{pcre} and @code{xz} (recent OS X provides
-libraries but not headers for these).
+make use of it if GNU readline is not found.} and a Fortran compiler.
+Those and other binary components are available from
+@uref{https://r.research.att.com/libs}: you are likely to need
+@code{pcre} and @code{xz} (recent OS X provides libraries but not
+headers for these).
 
 An X sub-system is required unless configuring using
 @option{--without-x}: see @uref{https://xquartz.macosforge.org/}.
@@ -4772,13 +4805,13 @@ FCFLAGS=$F77FLAGS
 @noindent
 with @command{clang} and @command{clang++} from the `Command Line
 Tools' and the Fortran compiler from
-@uref{https://r.research.att.com/libs/gfortran-4.8.2-darwin13.tar.bz2}.@footnote{This
+@uref{https://r.research.att.com/@/libs/@/gfortran-4.8.2-darwin13.tar.bz2}.@footnote{This
 is a tarball which needs to be unpacked in the Terminal by e.g.@:
 @command{sudo tar -zxf gfortran-4.8.2-darwin13.tar.bz2 -C /}. It does
 not run on Core 2 Duo Macs.}
 
 Other builds of @command{gfortran} are available: see
-@uref{https://gcc.gnu.org/wiki/GFortranBinaries} and
+@uref{https://gcc.gnu.org/@/wiki/@/GFortranBinaries} and
 @uref{http://coudert.name/software.html}.  To use one of these with a
 binary distribution of @R{} you will probably need to specify the name
 or path in a personal or site @file{Makevars} file (@pxref{Customizing
@@ -4788,7 +4821,8 @@ More recent and complete distributions of @command{clang} are usually
 available from @uref{http://llvm.org/releases/}.  In particular, these
 include support for the `Address Sanitizer' (not included by Apple until
 Xcode 7) and for OpenMP@footnote{This also needs the OpenMP runtime,
-which is distributed separately at that site.} in version 3.7.0 and later.
+which was distributed separately at that site for 3.7.0.} in version
+3.7.0 and later.
 
 Pre-compiled versions of many of the @ref{Useful libraries and programs}
 are available from @uref{https://r.research.att.com/libs/}.  You will
@@ -4842,9 +4876,11 @@ times before 1902 or after 2037 (despite using a 64-bit @code{time_t}).
 
 The @TeX{} implementation used by the developers is MacTeX
 (@uref{https://www.tug.org/mactex/}): the full installation is about
-4GB, but a smaller version is available at
+5GB, but a smaller version is available at
 @uref{https://www.tug.org/mactex/morepackages.html}: you will need to
-add some packages, e.g.@: for the 2015 version we needed to add
+add some packages, e.g.@: for the 2016 version we needed to
+add@footnote{E.g.@: @emph{via}
+@command{tlmgr install cm-super helvetic inconsolata texinfo} .}
 @pkg{cm-super}, @pkg{helvetic}, @pkg{inconsolata} and @pkg{texinfo}
 which brought this to about 410MB.  @samp{TeX Live Utility} (available
 @emph{via} the MacTeX front page) provides a graphical means to manage
@@ -4872,14 +4908,15 @@ some upgrades but not others).
 @node El Capitan, Tcl/Tk headers and libraries, OS X, OS X
 @subsection El Capitan
 
-There are problems resulting from the new-to-El-Capitan restriction that
+There have been problems resulting from the new-to-El-Capitan restriction that
 only Apple is allowed to install software under @file{/usr}: this
-affects @emph{inter alia} @code{MacTeX} and @code{XQuartz}.  For
-@code{MacTeX} it is necessary to include @file{/Library/TeX/texbin} in
-your path rather than @file{/usr/texbin}.  Upgrading will move
-disallowed files to under @file{/Library/SystemMigration/usr}: this
-includes @file{/usr/X11R6}, @file{/usr/texbin}, @file{/usr/bin/R},
-@file{/usr/bin/Rscript} but not the link @file{/usr/X11}.
+affects @emph{inter alia} @code{MacTeX} and @code{XQuartz} which changed
+their installation locations.  For @code{MacTeX} it is necessary to
+include @file{/Library/TeX/texbin} in your path rather than
+@file{/usr/texbin}.  Upgrading will move disallowed files to under
+@file{/Library/SystemMigration/usr}: this includes @file{/usr/X11R6},
+@file{/usr/texbin}, @file{/usr/bin/R}, @file{/usr/bin/Rscript} but not
+the link @file{/usr/X11}.
 
 @command{configure} can be told to look for @code{X11} in
 @code{XQuartz}'s main location of @file{/opt/X11}, e.g.@: by
@@ -4888,8 +4925,7 @@ includes @file{/usr/X11R6}, @file{/usr/texbin}, @file{/usr/bin/R},
 @end example
 
 @noindent
-although the linked versions under @file{/usr/X11} will be found (if the
-link is present).
+although linked versions under @file{/usr/X11} will be found.
 
 @node Tcl/Tk headers and libraries, Java (OS X), El Capitan, OS X
 @subsection Tcl/Tk headers and libraries
@@ -4917,7 +4953,7 @@ users.  Most versions of OS X come with Aqua Tcl/Tk libraries, but these
 are not at all recent versions of Tcl/Tk (8.5.9 in El Capitan, which is
 not even the latest patched version in that series).  It is better to
 install Tcl/Tk 8.6.x from the sources or a binary distribution from
-@uref{https://www.activestate.com/activetcl/downloads}.  Configure @R{}
+@uref{https://www.activestate.com/@/activetcl/2/downloads}.  Configure @R{}
 with
 @example
 --with-tcl-config=/Library/Frameworks/Tcl.framework/tclConfig.sh 
@@ -4939,7 +4975,7 @@ tclvalue(.Tcl("tk windowingsystem"))  # "x11" or "aqua"
 @subsection Java
 
 The situation with Java support on OS X is messy.@footnote{For more
-details see @uref{http://www.macstrategy.com/article.php?3}.}
+details see @uref{http://www.macstrategy.com/@/article.php?3}.}
 
 OS X no longer comes with an installed Java runtime (JRE), and an OS X
 upgrade removes one if already installed: it is intended to be installed
@@ -4947,11 +4983,11 @@ at first use.  Check if a JRE is installed by running @command{java
 -version} in a @command{Terminal} window: if Java is not installed this
 should prompt you to install it.  You can also install directly the
 latest Java from Oracle (currently from
-@uref{http://www.oracle.com/technetwork/java/javase/downloads/index.html}).
+@uref{http://www.oracle.com/@/technetwork/@/java/@/javase/@/downloads/@/index.html}).
 
 You may need to install what Apple calls `legacy Java'@footnote{e.g.@:
 @code{Java For OS X 2015-001} from
-@uref{https://support.apple.com/kb/DL1572}.} to suppress pop-up messages
+@uref{https://support.apple.com/@/kb/@/DL1572}.} to suppress pop-up messages
 even if you have a current version installed.
 
 To see what compatible versions of Java are currently installed, run
@@ -5039,7 +5075,7 @@ by e.g.@:
 xcodebuild -target R -configuration Release
 @end example
 See also the @file{INSTALL} file in the checkout or directly at
-@uref{https://svn.r-project.org/R-packages/trunk/Mac-GUI/INSTALL}.
+@uref{https://svn.r-project.org/@/R-packages/@/trunk/@/Mac-GUI/@/INSTALL}.
 
 @Rapp{} does not need to be installed in any specific way. Building
 @Rapp{} results in the @Rapp{} bundle which appears as one @R{} icon. This
@@ -5052,15 +5088,18 @@ in the @file{/Applications} folder.
 @cindex Solaris
 
 @R{} has been built successfully on Solaris 10 (both Sparc and
-@cputype{x86}) using the (zero cost) Oracle Solaris Studio compilers:
-there has been some success with
-@command{gcc}@tie{}4/@command{gfortran}.  (Recent Sun machines are AMD
-Opterons or Intel Xeons (@cputype{amd64}) rather than @cputype{x86}, but
-32-bit @cputype{x86} executables are the default.)
+@cputype{x86}) using the (zero cost) Oracle Developer
+Studio@footnote{Oracle Solaris Studio prior to 2016, and previously Sun
+Studio.} compilers: there has been some success with
+@command{gcc}/@command{gfortran}.  (Recent Sun machines are AMD Opterons
+or Intel Xeons (@cputype{amd64}) rather than @cputype{x86}, but 32-bit
+@cputype{x86} executables are the default.)  How these compilers
+identify@footnote{using the @option{-V} flag.} themselves is slightly
+confusing: Solaris Studio versions 12.3 and 12.4 report C++ 5.12 and
+5.13, and Developer Studio 12.5 reports C++ 5.14.  We will only consider
+version 12.3 (Nov 2011) and later.
 
 There have been few reports on Solaris 11, with no known extra issues.
-Solaris 9 and earlier are now so old that it is unlikely that @R{} is
-still used with them, and they will not be considered here.
 
 The Solaris versions of several of the tools needed to build @R{}
 (e.g.@: @command{make}, @command{ar} and @command{ld}) are in
@@ -5103,9 +5142,9 @@ option @option{--with-internal-tzcode} is recommended, and required if
 you find time-zone abbreviations being given odd values (as has been
 seen on 64-bit builds without it).
 
-When using the Oracle compilers@footnote{including @command{gcc} for
-Sparc from Oracle.} do @emph{not} specify @option{-fast}, as this
-disables @acronym{IEEE} arithmetic and @command{make check} will fail.
+When using the Oracle compilers do @emph{not} specify @option{-fast}, as
+this disables @acronym{IEEE} arithmetic and @command{make check} will
+fail.
 
 It has been reported that some Solaris installations need
 
@@ -5128,18 +5167,21 @@ F77=f95
 FFLAGS=-O
 CXX="CC -library=stlport4"
 CXXFLAGS=-O
-FC=f95
+FC=$F77
 FCFLAGS=$FFLAGS
-FCLIBS="-lfai -lfsu"
-R_LD_LIBRARY_PATH="/usr/local/lib:/opt/csw/gcc4/lib:/opt/csw/lib"
+FCLIBS="-lfai -lfui -lfsu"
+R_LD_LIBRARY_PATH="/usr/local/lib:/opt/csw/lib"
 @end example
 
 @noindent
+(For version 12.5 of the compiler use @code{FCLIBS=-lfsu}.)
+
 For a 64-bit target add @option{-m64} to the compiler macros
-and use something like @code{LDFLAGS=-L/usr/local/lib/sparcv9} or
-@code{LDFLAGS=-L/usr/local/lib/amd64} as appropriate.
+and use something like @code{LDFLAGS=-L/usr/local/lib/amd64} or
+@code{LDFLAGS=-L/usr/local/lib/sparcv9} as appropriate (and other 64-bit
+library directories if used, e.g.@: @code{-L/opt/csw/lib/arm64}).
 It will also be necessary to point @command{pkg-config} at the 64-bit
-directories, e.g.@: one of
+directories, e.g.@: something like one of
 
 @example
 PKG_CONFIG_PATH=/opt/csw/lib/amd64/pkgconfig:/usr/lib/amd64/pkgconfig
@@ -5156,25 +5198,24 @@ JAVA_LIBS="-L$@{JAVA_HOME@}/lib/amd64/server \
   -R$@{JAVA_HOME@}/lib/amd64/server -ljvm"
 @end example
 @noindent
-With Solaris Studio 12.[23] on Sparc, @code{FCLIBS} needs to be
+With version 12.3 on Sparc, @code{FCLIBS} needs to be
 
 @example
-FCLIBS="-lfai -lfai2 -lfsu"
+FCLIBS="-lfai -lfui -lfai2 -lfsu"
 @end example
 
 @noindent
 (and possibly other Fortran libraries, but this suffices for the
 packages currently on CRAN).
 
-Currently @cputype{amd64} and @cputype{sparcv9} builds work
-out-of-the-box with Sun Studio 12u1 but not Solaris Studio 12.2 and
-12.3: @file{libRblas.so} and @file{lapack.so} are generated with code
-that causes relocation errors (which is being linked in from the Fortran
-libraries).  This means that building 64-bit @R{} as a shared library
-may be impossible with Solaris Studio >= 12.2.  For a standard build the
+Builds of @cputype{amd64} and @cputype{sparcv9} stopped working at
+Solaris Studio 12.3: @file{libRblas.so} and @file{lapack.so} are
+generated with code that causes relocation errors (code which is being
+linked in from the Fortran libraries).  This means that building 64-bit
+@R{} as a shared library may be impossible.  For a standard build a
 trick seems to be to manually set @code{FLIBS} to avoid the troublesome
 libraries.  For example, on @cputype{amd64} set in @file{config.site}
-something like
+something like (for 12.3: we did not find a workaround for 12.5)
 
 @example
 FLIBS_IN_SO="-R/opt/solarisstudio12.3/lib/amd64
@@ -5182,7 +5223,7 @@ FLIBS_IN_SO="-R/opt/solarisstudio12.3/lib/amd64
   /opt/solarisstudio12.3/lib/amd64/libfsu.so"
 @end example
 @noindent
-For 64-bit Sparc, set in @file{config.site} something like
+For 64-bit Sparc, set in @file{config.site} something like (for 12.3)
 @example
 FLIBS="-R/opt/solarisstudio12.3/prod/lib/sparc/64
  -lifai -lsunimath -lfai -lfai2 -lfsumai -lfprodai -lfminlai -lfmaxlai
@@ -5190,7 +5231,7 @@ FLIBS="-R/opt/solarisstudio12.3/prod/lib/sparc/64
  /opt/solarisstudio12.3/prod/lib/sparc/64/libfsu.so.1"
 @end example
 
-By default the Solaris Studio compilers do not by default conform to the C99
+By default the Oracle compilers do not by default conform to the C99
 standard (appendix F 8.9) on the return values of functions such as
 @code{log}: use @option{-xlibmieee} to ensure this.
 
@@ -5198,7 +5239,7 @@ You can target specific Sparc architectures for (slightly) higher
 performance: @option{-xtarget=native} (in @code{CFLAGS} etc) tunes the
 compilation to the current machine.
 
-Using @code{-xlibmil} in @code{CFLAGS} and @code{-xlibmil} in
+Using @code{-xlibmil} in @code{CFLAGS} or @code{-xlibmil} in
 @code{FFLAGS} allows more system mathematical functions to be inlined.
 
 
@@ -5216,33 +5257,25 @@ but the use of @code{-nofstore} can be less numerically stable, and some
 packages (notably @CRANpkg{mgcv} on @cputype{x86}) failed to compile at
 higher optimization levels with version 12.3.
 
-The Solaris Studio compilers provide several implementations of the
+The Oracle compilers provide several implementations of the
 C++98 standard which select both the set of headers and a C++ runtime
 library.  These are selected by the @option{-library} flag, which as it
 is needed for both compiling and linking is best specified as part of
 the compiler.  The examples above use @samp{stlport4}, currently the
 most modern of the options: the default (but still needed to be
 specified as it is needed for linking) is @samp{Cstd}: see
-@uref{http://www.oracle.com/technetwork/server-storage/solaris/cmp-stlport-libcstd-142559.html}.
+@uref{http://www.oracle.com/@/technetwork/@/server-storage/@/solaris/@/cmp-stlport-libcstd-142559.html}.
 Note though that most external Solaris C++ libraries will have been
 built with @samp{Cstd} and so an @R{} package using such libraries also
 needs to be.  Occasionally the option @option{-library=stlport4,Crun}
 has been needed.
 
-Several @acronym{CRAN} packages using C++ need the more liberal
-interpretation given by adding
-
-@example
-CXXFLAGS="-features=tmplrefstatic"
-@end example
-
-
 @cindex BLAS library
 @cindex LAPACK library
 
 The performance library @code{sunperf} is available for use with the
-Solaris Studio compilers.  If selected as a @acronym{BLAS}, it must also
-be selected as LAPACK @emph{via} (for Solaris Studio 12.2 and later)
+Oracle compilers.  If selected as a @acronym{BLAS}, it must also be
+selected as LAPACK @emph{via}
 
 @example
 ./configure --with-blas='-library=sunperf' --with-lapack
@@ -5250,14 +5283,27 @@ be selected as LAPACK @emph{via} (for Solaris Studio 12.2 and later)
 
 @noindent
 This has often given test failures in the past, in several different
-places.  At the time of writing it fails in @file{tests/reg-BLAS.R}, and on
-some builds, including for @cputype{amd64}, it fails in
-@code{example(eigen)}.
+places.@footnote{When last checked it failed in @file{tests/reg-BLAS.R},
+and on some builds, including for @cputype{amd64}, it failed in
+@code{example(eigen)}.}
 
 Parsing very complex @R{} expressions needs a lot of stack space when
 the Oracle compilers are used: several packages require the stack
 increased to at least 20MB.
 
+Version 12.3 of the Oracle C++ compiler has no support for C++11.
+Versions 12.4 and 12.5 have sufficient support to pass the
+@command{configure} test for C++11 by specifying something like
+
+@example
+CXX="CC -library=stlport4"
+CXXFLAGS="-O -xlibmil -xtarget=native -nofstore"
+CXX1X=CC
+@end example
+
+@noindent
+as options @option{-library=stlport4} and @option{-std=c++11} cannot be
+used together.
 
 @menu
 * Using gcc::                   
@@ -5274,66 +5320,75 @@ one version of Solaris on a later version.
 
 The notes here are for @command{gcc} set up to use the Solaris linker:
 it can also be set up to use GNU @command{ld}, but that has not been
-tested.
+tested.  The tests were for compilers from the OpenCSW repository:
+Solaris systems often come with much older compilers installed under
+@file{/usr/sfw/bin} and in the past an explicit path such as
+@command{/opt/csw/gcc4/bin/gcc} was need to select the latest version of the
+compilers (which at the time of writing were linked from
+@file{/opt/csw/bin} to @file{/opt/csw/gcc4/bin}).  One of @option{-m32}
+or @option{-m64} will be the default and could be omitted, but it is not
+easy to find out which.
 
-Compilation for a 32-bit Sparc target with @command{gcc}@tie{}4.9.2
-needed
+Compilation for an @cputype{x86} target with @command{gcc}@tie{}4.9.2 or
+@command{gcc}@tie{}5.2.0 needed
 
 @example
-CPPFLAGS=-I/opt/csw/include
-LDFLAGS="-L/opt/csw/gcc4/lib -L/opt/csw/lib"
+CC="gcc -m32"
+CPPFLAGS="-I/opt/csw/include -I/usr/local/include"
+F77="gfortran -m32"
+CXX="g++ -m32"
+FC=$F77
+LDFLAGS="-L/opt/csw/lib -L/usr/local/lib"
+@end example
+
+For an @cputype{amd64} target we used 
+
+@example
+CC="gcc -m64"
+CPPFLAGS="-I/opt/csw/include -I/usr/local/include"
+F77="gfortran -m64"
+CXX="g++ -m64"
+FC=$F77
+LDFLAGS="-L/opt/csw/lib/amd64 -L/usr/local/lib/amd64"
+@end example
+
+Note that paths such as @file{/opt/csw/lib}, @file{/usr/local/lib/amd64}
+and @file{/opt/csw/lib/amd64} may need to be in the
+@enindex LD_LIBRARY_PATH
+@env{LD_LIBRARY_PATH} during configuration.
+
+
+Compilation for a 32-bit Sparc target with @command{gcc}@tie{}4.9.2 or
+@command{gcc}@tie{}5.2.0 needed
+
+@example
+CC="gcc -m32"
+CPPFLAGS="-I/opt/csw/include -I/usr/local/include"
+F77="gfortran -m32"
+CXX="g++ -m32"
+FC=$F77
+LDFLAGS="-L/opt/csw/lib -L/usr/local/lib"
 @end example
 
 @noindent
 and for a 64-bit Sparc target
 @example
 CC="gcc -m64"
+CPPFLAGS="-I/opt/csw/include -I/usr/local/include"
 F77="gfortran -m64"
 CXX="g++ -m64"
 FC=$F77
-CPPFLAGS=-I/opt/csw/include
-LDFLAGS="-L/opt/csw/gcc4/lib/sparcv9 -L/opt/csw/lib/sparcv9"
+LDFLAGS="-L/opt/csw/lib/sparcv9 -L/usr/local/lib/sparcv9"
 @end example
 
-@noindent
-Note that paths such as @file{/opt/csw/gcc4/lib/sparcv9} may need to
-be in the
+Note that paths such as @file{/opt/csw/lib}, @file{/usr/local/lib/sparcv9} or
+@file{/opt/csw/lib/sparcv9} may need to be in the
 @enindex LD_LIBRARY_PATH
 @env{LD_LIBRARY_PATH} during configuration.
 
 The compilation can be tuned to a particular cpu: the @acronym{CRAN}
 check system uses @code{-mtune=niagara2}.
 
-Compilation for an @cputype{x86} target with @command{gcc}@tie{}4.9.2
-needed
-
-@example
-CC="/opt/csw/gcc4/bin/gcc -m32"
-CPPFLAGS="-I/opt/csw/include -I/usr/local/include"
-F77="/opt/csw/gcc4/bin/gfortran -m32"
-CXX="/opt/csw/gcc4/bin/g++ -m32"
-FC="/opt/csw/gcc4/bin/gfortran -m32"
-LDFLAGS="-L/opt/csw/gcc4/lib -L/opt/csw/lib -L/usr/local/lib"
-@end example
-
-@noindent
-(@code{-L/opt/csw/lib} is needed since TeX Live was built using
-32-bit @code{gcc}, and we need @file{/opt/csw/lib} in
-@code{R_LD_LIBRARY_PATH}.)
-
-For an @cputype{amd64} target with @command{gcc}@tie{}4.9.2
-we used 
-
-@example
-CC="/opt/csw/gcc4/bin/gcc -m64"
-CPPFLAGS="-I/opt/csw/include -I/usr/local/include"
-F77="/opt/csw/gcc4/bin/gfortran -m64"
-FPICFLAGS=-fPIC
-CXX="/opt/csw/gcc4/bin/g++ -m64"
-FC=$F77
-FCPICFLAGS=$FPICFLAGS
-LDFLAGS="-L/opt/csw/gcc4/lib/amd64 -L/opt/csw/lib/amd64"
-@end example
 
 @node AIX, FreeBSD, Solaris, Platform notes
 @section AIX
@@ -5488,9 +5543,8 @@ environment can be found in the ``R on AIX'' project on R-Forge
 
 There have been few recent reports on FreeBSD.
 
-There is a `port' at @uref{https://www.freebsd.org/ports/math.html}, for
-@R{} 3.0.2 at the time of writing.  Davor Cubranic reported some success
-on x86_64 FreeBSD 10.2 for @R{} 3.2.2.
+There is a `port' at @uref{https://www.freebsd.org/@/ports/@/math.html}, for
+@R{} 3.3.1 at the time of writing.
 
 Use of ICU for collation and the @command{configure} option
 @option{--with-internal-tzcode} are desirable workarounds.
@@ -5502,7 +5556,9 @@ Use of ICU for collation and the @command{configure} option
 Ingo Feinerer installed @R{} version 3.2.2 on OpenBSD 5.8 arch
 @cputype{amd64} (their name for @cputype{x86_64}).  Details of the build
 (and patches applied) are at
-@uref{http://cvsweb.openbsd.org/cgi-bin/cvsweb/ports/math/R/}.
+@uref{http://cvsweb.openbsd.org/@/cgi-bin/@/cvsweb/@/ports/@/math/@/R/}. (Downgrading
+the @code{zlib} requirement to 1.2.3 is against the advice of the @R{}
+developers.)
 
 @node Cygwin, New platforms, OpenBSD, Platform notes
 @section Cygwin
@@ -5535,8 +5591,8 @@ directory.
 
 Beware of using high levels of optimization, at least initially.  On
 many compilers these reduce the degree of compliance to the
-@acronym{IEEE} model.  For example, using @option{-fast} on the Solaris
-Studio compilers has caused @R{}'s @code{NaN} to be set incorrectly, and
+@acronym{IEEE} model.  For example, using @option{-fast} on the Oracle
+compilers has caused @R{}'s @code{NaN} to be set incorrectly, and
 @command{gcc}'s @option{-ffast-math} and @command{clang}'s
 @option{-Ofast} have given incorrect results.
 

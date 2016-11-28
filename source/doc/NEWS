@@ -1,5 +1,88 @@
 R News
 
+CHANGES IN R 3.3.1 patched:
+
+  NEW FEATURES:
+
+    * extSoftVersion() now reports the version (if any) of the readline
+      library in use.
+
+    * Convenience function hasName() has been added; it is intended to
+      replace the common idiom !is.null(x$name) without the usually
+      unintended partial name matching.
+
+    * The version of LAPACK included in the sources has been updated to
+      3.6.1, a bug-fix release including a speedup for the
+      non-symmetric case of eigen().
+
+    * Use options(deparse.max.lines) to limit the number of lines
+      recorded in .Traceback and other deparsing activities.
+
+  INSTALLATION and INCLUDED SOFTWARE:
+
+    * Versions of the readline library >= 6.3 had been changed so that
+      terminal window resizes were not signalled to readline: code has
+      been added using a explicit signal handler to work around that
+      (when R is compiled against readline >= 6.3).  (PR#16604)
+
+    * configure works better with Oracle Developer Studio 12.5.
+
+  UTILITIES:
+
+    * R CMD check reports more dubious flags in files
+      src/Makevars[.in], including -w and -g.
+
+    * R CMD check has been set up to filter important warnings from
+      recent versions of gfortran with -Wall -pedantic: this now
+      reports non-portable GNU extensions such as out-of-order
+      declarations.
+
+  BUG FIXES:
+
+    * The check for non-portable flags in R CMD check could be stymied
+      by src/Makevars files which contained targets.
+
+    * (Windows only) When using certain desktop themes in Windows 7 or
+      higher, Alt-Tab could cause Rterm to stop accepting input.
+      (PR#14406; patch submitted by Jan Gleixner.)
+
+    * pretty(d, ..) behaves better for date-time d (PR#16923).
+
+    * When a class name matches multiple classes in the cache, perform
+      a dynamic search in order to obey namespace imports.  This should
+      eliminate annoying messages about multiple hits in the class
+      cache.  Also, pass along the package from the ClassExtends object
+      when looking up superclasses in the cache.
+
+    * sample(NA_real_) now works.
+
+    * Packages using non-ASCII encodings in their code did not install
+      data properly on systems using different encodings.
+
+    * merge(df1, df2) now also works for data frames with column names
+      "na.last", "decreasing", or "method".  (PR#17119)
+
+    * contour() caused a segfault if the labels argument had length
+      zero.  (Reported by Bill Dunlap.)
+
+    * unique(warnings()) works more correctly, thanks to a new
+      duplicated.warnings() method.
+
+    * findInterval(x, vec = numeric(), all.inside = TRUE) now returns
+      0s as documented.  (Reported by Bill Dunlap.)
+
+    * (Windows only) R CMD SHLIB failed when a symbol in the resulting
+      library had the same name as a keyword in the .def file.
+      (PR#17130)
+
+    * pmax() and pmin() now work with (more ?)  classed objects, such
+      as "Matrix" from the Matrix package, as documented for a long
+      time.
+
+    * axis(side, x = D) and hence Axis() and plot() now work correctly
+      for "Date" and time objects D, even when "time goes backward",
+      e.g., with decreasing xlim.  (Reported by William May).
+
 CHANGES IN R 3.3.1:
 
   BUG FIXES:
@@ -15,14 +98,14 @@ CHANGES IN R 3.3.1:
     * unloadNamespace(ns) also works again when ns is a 'namespace', as
       from getNamespace().
 
-    * rgamma(1,Inf) or rgamma(1, 0,0) no longer give NaN but the
+    * rgamma(1, Inf) or rgamma(1, 0, 0) no longer give NaN but the
       correct limit.
 
     * length(baseenv()) is correct now.
 
     * pretty(d, ..) for date-time d rarely failed when "halfmonth" time
       steps were tried (PR#16923) and on 'inaccurate' platforms such as
-      32-bit windows or a configuration with --disable-long-double; see
+      32-bit Windows or a configuration with --disable-long-double; see
       comment #15 of PR#16761.
 
     * In text.default(x, y, labels), the rarely(?) used default for
@@ -35,7 +118,8 @@ CHANGES IN R 3.3.1:
 
     * Use of Ctrl-C to terminate a reverse incremental search started
       by Ctrl-R in the readline-based Unix terminal interface is now
-      supported for readline >= 6.3 (Ctrl-G always worked).  (PR#16603)
+      supported when R was compiled against readline >= 6.0 (Ctrl-G
+      always worked).  (PR#16603)
 
     * diff(<difftime>) now keeps the "units" attribute, as subtraction
       already did, PR#16940.
@@ -852,7 +936,7 @@ CHANGES IN R 3.2.3:
       handle UTF-8 strings properly.  (PR#16264)
 
     * read.dcf() sometimes misread lines longer than 8191 characters.
-      (Reported by Herv'e Pag`es with a patch.)
+      (Reported by Herv? Pag?s with a patch.)
 
     * within(df, ..) no longer drops columns whose name start with a
       ".".
@@ -869,7 +953,7 @@ CHANGES IN R 3.2.3:
       with non-small sizes.
 
     * If the expression in the traceback was too long, traceback() did
-      not report the source line number.  (Patch by Kirill M"uller.)
+      not report the source line number.  (Patch by Kirill M?ller.)
 
     * The browser did not truncate the display of the function when
       exiting with options("deparse.max.lines") set.  (PR#16581)
@@ -1957,7 +2041,7 @@ CHANGES IN R 3.1.2:
     * R CMD check now by default checks code usage directly on the
       package namespace without loading and attaching the package and
       its suggests and enhances.  For good practice with packages in
-      the Suggests field, see SS1.1.3.1 of 'Writing R Extensions'.  For
+      the Suggests field, see ?1.1.3.1 of 'Writing R Extensions'.  For
       use of lazy-data objects in the package's own code, see ?data.
 
   BUG FIXES:
@@ -3562,8 +3646,8 @@ CHANGES IN R 3.0.2:
       --encoding=foo were not handled properly.  (PR#15405)
 
     * If x is a symbol, is.vector(x, "name") now returns TRUE, since
-      "name" and "symbol" should be synonyms.  (Reported by Herv'e
-      Pag`es.)
+      "name" and "symbol" should be synonyms.  (Reported by Herv?
+      Pag?s.)
 
     * R CMD rtags works on platforms (such as OS X) with a
       XSI-conformant shell command echo. (PR#15231)
@@ -3729,7 +3813,7 @@ CHANGES IN R 3.0.1:
 
     * as.dendrogram()'s hclust method uses less memory and hence gets
       considerably faster for large (n ~ 1000) clusterings, thanks to
-      Daniel M"ullner. (PR#15174)
+      Daniel M?llner. (PR#15174)
 
     * The return value when all workers failed from
       parallel::mclapply(mc.preschedule = TRUE) was a list of strings
@@ -4036,7 +4120,7 @@ CHANGES IN R 3.0.0:
 
     * mapply(FUN, a1, ..) now also works when a1 (or a further such
       argument) needs a length() method (which the documented arguments
-      never do).  (Requested by Herv'e Pag`es; with a patch.)
+      never do).  (Requested by Herv? Pag?s; with a patch.)
 
     * .onDetach() is supported as an alternative to .Last.lib.  Unlike
       .Last.lib, this does not need to be exported from the package's
@@ -4586,7 +4670,7 @@ CHANGES IN R 3.0.0:
       so can be omitted if desired.
 
     * The markup for many messages has been changed to make them easier
-      to translate, incorporating suggestions from Lukasz Daniel.
+      to translate, incorporating suggestions from ?ukasz Daniel.
 
   INSTALLATION:
 
