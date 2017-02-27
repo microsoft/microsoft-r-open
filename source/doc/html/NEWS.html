@@ -7,6 +7,179 @@
 
 <h2>R News</h2>
 
+<h3><img src="../help/figures/../../html/Rlogo.svg" class="toplogo" alt="[R logo]" /> CHANGES IN R 3.3.2 patched</h3>
+
+
+
+<h4>NEW FEATURES</h4>
+
+
+<ul>
+<li><p> Changes when redirection of a <span class="samp">http://</span> URL to a
+<span class="samp">https://</span> URL is encountered:
+</p>
+
+<ul>
+<li><p> The internal methods of <code>download.file()</code> and
+<code>url()</code> now report that they cannot follow this (rather
+than failing silently).
+</p>
+</li>
+<li><p> (Unix-alike) <code>download.file(method = "auto")</code> (the
+default) re-tries with <code>method = "libcurl"</code>.
+</p>
+</li>
+<li><p> (Unix-alike) <code>url(method = "default")</code> with an
+explicit <code>open</code> argument re-tries with
+<code>method = "libcurl"</code>.  This covers many of the usages,
+e.g. <code>readLines()</code> with a URL argument.
+</p>
+</li></ul>
+
+</li></ul>
+
+
+
+
+<h4>INSTALLATION on a UNIX-ALIKE</h4>
+
+
+<ul>
+<li><p> The <code>configure</code> check for the <code>zlib</code> version is
+now robust to versions longer than 5 characters, including
+<code>1.2.11</code>.
+</p>
+</li></ul>
+
+
+
+
+<h4>UTILITIES</h4>
+
+
+<ul>
+<li><p> Environmental variable <span class="env">_R_CHECK_TESTS_NLINES_</span> controls
+how <code>R CMD check</code> reports failing tests (see §8 of the
+&lsquo;R Internals&rsquo; manual).
+</p>
+</li></ul>
+
+
+
+
+<h4>DEPRECATED AND DEFUNCT</h4>
+
+
+<ul>
+<li><p> (C-level Native routine registration.)  The undocumented
+<code>styles</code> field of the components of <code>R_CMethodDef</code> and
+<code>R_FortranMethodDef</code> is deprecated.
+</p>
+</li></ul>
+
+
+
+
+<h4>BUG FIXES</h4>
+
+
+<ul>
+<li> <p><code>rep(x, times)</code> and <code>rep.int(x, times)</code> now both
+work also when <code>times</code> is larger than the maximal integer,
+including when it is of length greater than one. (<a href="https://bugs.R-project.org/bugzilla3/show_bug.cgi?id=16932">PR#16932</a>)
+</p>
+</li>
+<li> <p><code>vapply(x, *)</code> now works with long vectors <code>x</code>.
+(<a href="https://bugs.R-project.org/bugzilla3/show_bug.cgi?id=17174">PR#17174</a>)
+</p>
+</li>
+<li> <p><code>isS3method("is.na.data.frame")</code> and similar are
+correct now.  (<a href="https://bugs.R-project.org/bugzilla3/show_bug.cgi?id=17171">PR#17171</a>)
+</p>
+</li>
+<li> <p><code>grepRaw(&lt;long&gt;, &lt;short&gt;, fixed = TRUE)</code> now works,
+thanks to a patch by Mikko Korpela.  (<a href="https://bugs.R-project.org/bugzilla3/show_bug.cgi?id=17132">PR#17132</a>)
+</p>
+</li>
+<li><p> Package installation into a library where the package exists
+<em>via</em> symbolic link now should work wherever
+<code>Sys.readlink()</code> works, resolving <a href="https://bugs.R-project.org/bugzilla3/show_bug.cgi?id=16725">PR#16725</a>.
+</p>
+</li>
+<li> <p><code>"Cincinnati"</code> was missing an <code>"n"</code> in the
+<code>precip</code> dataset.
+</p>
+</li>
+<li><p> Fix buffer overflow vulnerability in <code>pdf()</code> when
+loading an encoding file.  Reported by Talos (TALOS-2016-0227).
+</p>
+</li>
+<li> <p><code>getDLLRegisteredRoutines()</code> now produces its warning
+correctly when multiple DLLs match, thanks to Matt Dowle's <a href="https://bugs.R-project.org/bugzilla3/show_bug.cgi?id=17184">PR#17184</a>.
+</p>
+</li>
+<li> <p><code>Sys.timezone()</code> now returns non-NA also on platforms
+such as <span class="samp">Ubuntu 14.04.5 LTS</span>, thanks to Mikko Korpela's
+<a href="https://bugs.R-project.org/bugzilla3/show_bug.cgi?id=17186">PR#17186</a>.
+</p>
+</li>
+<li> <p><code>format(x)</code> for an illegal <code>"POSIXlt"</code> object
+<code>x</code> no longer segfaults.
+</p>
+</li>
+<li> <p><code>methods(f)</code> now also works for <code>f</code> <code>"("</code>
+or <code>"{"</code>.
+</p>
+</li>
+<li><p> (Windows only)  <code>dir.create()</code> did not check the length
+of the path to create, and so could overflow a buffer and crash
+<span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span>.  (<a href="https://bugs.R-project.org/bugzilla3/show_bug.cgi?id=17206">PR#17206</a>)
+</p>
+</li>
+<li><p> On some systems, very small hexadecimal numbers in hex notation
+would underflow to zero.  (<a href="https://bugs.R-project.org/bugzilla3/show_bug.cgi?id=17199">PR#17199</a>)
+</p>
+</li>
+<li> <p><code>pmin()</code> and <code>pmax()</code> now work again for
+<code>ordered</code> factors and 0-length S3 classed objects, thanks to
+Suharto Anggono's <a href="https://bugs.R-project.org/bugzilla3/show_bug.cgi?id=17195">PR#17195</a> and <a href="https://bugs.R-project.org/bugzilla3/show_bug.cgi?id=17200">PR#17200</a>.
+</p>
+</li>
+<li> <p><code>bug.report()</code> did not do any validity checking on a
+package's <span class="samp">BugReports</span> field.  It now ignores an empty field,
+removes leading whitespace and only attempts to open
+<span class="samp">http://</span> and <span class="samp">https://</span> URLs, falling back to emailing
+the maintainer.
+</p>
+</li>
+<li><p> Bandwidth selectors <code>bw.ucv()</code> and
+<code>bw.SJ()</code> gave incorrect answers or incorrectly reported an
+error (because of integer overflow) for inputs longer than
+46341.  Similarly for <code>bw.bcv()</code> at length 5793.
+</p>
+<p>Another possible integer overflow is checked and may result in an
+error report (rather than an incorrect result) for much longer
+inputs (millions for a smooth distribution).
+</p>
+</li>
+<li> <p><code>findMethod()</code> failed if the active signature had
+expanded beyond what a particular package used. (Example with
+packages <a href="https://CRAN.R-project.org/package=XR"><span class="pkg">XR</span></a> and <a href="https://CRAN.R-project.org/package=XRJulia"><span class="pkg">XRJulia</span></a> on <acronym><span class="acronym">CRAN</span></acronym>.)
+</p>
+</li>
+<li> <p><code>qbeta()</code> underflowed too early in some very asymmetric
+cases.  (<a href="https://bugs.R-project.org/bugzilla3/show_bug.cgi?id=17178">PR#17178</a>)
+</p>
+</li>
+<li> <p><code>R CMD Rd2pdf</code> had problems with packages with
+non-ASCII titles in &lsquo;<span class="file">.Rd</span>&rsquo; files (usually the titles were
+omitted).
+</p>
+</li></ul>
+
+
+
+
 <h3><img src="../help/figures/../../html/Rlogo.svg" class="toplogo" alt="[R logo]" /> CHANGES IN R 3.3.2</h3>
 
 
@@ -579,7 +752,7 @@ not <span class="samp">"Her"</span> as before) are given special treatment by th
 graphics engine.
 </p>
 </li>
-<li><p> S4 values are automatically coerced to vector (via
+<li><p> S4 values are automatically coerced to vector (<em>via</em>
 <code>as.vector</code>) when subassigned into atomic vectors.
 </p>
 </li>

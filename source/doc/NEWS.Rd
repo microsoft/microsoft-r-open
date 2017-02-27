@@ -5,6 +5,130 @@
 \title{R News}
 \encoding{UTF-8}
 
+\section{\Rlogo CHANGES IN R 3.3.2 patched}{
+  \subsection{NEW FEATURES}{
+    \itemize{
+      \item Changes when redirection of a \samp{http://} URL to a
+      \samp{https://} URL is encountered:
+      
+      \itemize{
+	\item The internal methods of \code{download.file()} and
+	\code{url()} now report that they cannot follow this (rather
+	than failing silently).
+
+	\item (Unix-alike) \code{download.file(method = "auto")} (the
+	default) re-tries with \code{method = "libcurl"}.
+
+	\item (Unix-alike) \code{url(method = "default")} with an
+	explicit \code{open} argument re-tries with
+	\code{method = "libcurl"}.  This covers many of the usages,
+	e.g.\sspace{}\code{readLines()} with a URL argument.
+      }
+    }
+  }
+
+  \subsection{INSTALLATION on a UNIX-ALIKE}{
+    \itemize{
+      \item The \command{configure} check for the \code{zlib} version is
+      now robust to versions longer than 5 characters, including
+      \code{1.2.11}.
+    }
+  }
+
+  \subsection{UTILITIES}{
+    \itemize{
+      \item Environmental variable \env{_R_CHECK_TESTS_NLINES_} controls
+      how \command{R CMD check} reports failing tests (see §8 of the
+      \sQuote{R Internals} manual).
+    }
+  }
+
+  \subsection{DEPRECATED AND DEFUNCT}{
+    \itemize{
+      \item (C-level Native routine registration.)  The undocumented
+      \code{styles} field of the components of \code{R_CMethodDef} and
+      \code{R_FortranMethodDef} is deprecated.
+    }
+  }
+
+  \subsection{BUG FIXES}{
+    \itemize{
+      \item \code{rep(x, times)} and \code{rep.int(x, times)} now both
+      work also when \code{times} is larger than the maximal integer,
+      including when it is of length greater than one. (\PR{16932})
+
+      \item \code{vapply(x, *)} now works with long vectors \code{x}.
+      (\PR{17174})
+
+      \item \code{isS3method("is.na.data.frame")} and similar are
+      correct now.  (\PR{17171})
+
+      \item \code{grepRaw(<long>, <short>, fixed = TRUE)} now works,
+      thanks to a patch by Mikko Korpela.  (\PR{17132})
+
+      \item Package installation into a library where the package exists
+      \emph{via} symbolic link now should work wherever
+      \code{\link{Sys.readlink}()} works, resolving \PR{16725}.
+
+      \item \code{"Cincinnati"} was missing an \code{"n"} in the
+      \code{precip} dataset.
+
+      \item Fix buffer overflow vulnerability in \code{pdf()} when
+      loading an encoding file.  Reported by Talos (TALOS-2016-0227).
+
+      \item \code{getDLLRegisteredRoutines()} now produces its warning
+      correctly when multiple DLLs match, thanks to Matt Dowle's \PR{17184}.
+
+      \item \code{Sys.timezone()} now returns non-NA also on platforms
+      such as \samp{Ubuntu 14.04.5 LTS}, thanks to Mikko Korpela's
+      \PR{17186}.
+
+      \item \code{format(x)} for an illegal \code{"POSIXlt"} object
+      \code{x} no longer segfaults.
+
+      \item \code{methods(f)} now also works for \code{f} \code{"("}
+      or \code{"{"}.
+
+      \item (Windows only)  \code{dir.create()} did not check the length
+      of the path to create, and so could overflow a buffer and crash
+      \R.  (\PR{17206})
+
+      \item On some systems, very small hexadecimal numbers in hex notation
+      would underflow to zero.  (\PR{17199})
+
+      \item \code{pmin()} and \code{pmax()} now work again for
+      \code{ordered} factors and 0-length S3 classed objects, thanks to
+      Suharto Anggono's \PR{17195} and \PR{17200}.
+
+      \item \code{bug.report()} did not do any validity checking on a
+      package's \samp{BugReports} field.  It now ignores an empty field,
+      removes leading whitespace and only attempts to open
+      \samp{http://} and \samp{https://} URLs, falling back to emailing
+      the maintainer.
+
+      \item Bandwidth selectors \code{bw.ucv()} and
+      \code{bw.SJ()} gave incorrect answers or incorrectly reported an
+      error (because of integer overflow) for inputs longer than
+      46341.  Similarly for \code{bw.bcv()} at length 5793.
+
+      Another possible integer overflow is checked and may result in an
+      error report (rather than an incorrect result) for much longer
+      inputs (millions for a smooth distribution).
+
+      \item \code{findMethod()} failed if the active signature had
+      expanded beyond what a particular package used. (Example with
+      packages \CRANpkg{XR} and \CRANpkg{XRJulia} on \acronym{CRAN}.)
+
+      \item \code{qbeta()} underflowed too early in some very asymmetric
+      cases.  (\PR{17178})
+              
+      \item \command{R CMD Rd2pdf} had problems with packages with
+      non-ASCII titles in \file{.Rd} files (usually the titles were
+      omitted).
+    }
+  }
+}
+
 \section{\Rlogo CHANGES IN R 3.3.2}{
   \subsection{NEW FEATURES}{
     \itemize{
@@ -445,7 +569,7 @@
       not \samp{"Her"} as before) are given special treatment by the
       graphics engine.
 
-      \item S4 values are automatically coerced to vector (via
+      \item S4 values are automatically coerced to vector (\emph{via}
       \code{as.vector}) when subassigned into atomic vectors.
 
       \item \code{findInterval()} gets a \code{left.open} option.
