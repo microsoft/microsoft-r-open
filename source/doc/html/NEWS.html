@@ -7,7 +7,7 @@
 
 <h2>R News</h2>
 
-<h3><img src="../help/figures/../../html/Rlogo.svg" class="toplogo" alt="[R logo]" /> CHANGES IN R 3.3.2 patched</h3>
+<h3><img src="../help/figures/../../html/Rlogo.svg" class="toplogo" alt="[R logo]" /> CHANGES IN R 3.3.3</h3>
 
 
 
@@ -84,11 +84,6 @@ how <code>R CMD check</code> reports failing tests (see §8 of the
 
 
 <ul>
-<li> <p><code>rep(x, times)</code> and <code>rep.int(x, times)</code> now both
-work also when <code>times</code> is larger than the maximal integer,
-including when it is of length greater than one. (<a href="https://bugs.R-project.org/bugzilla3/show_bug.cgi?id=16932">PR#16932</a>)
-</p>
-</li>
 <li> <p><code>vapply(x, *)</code> now works with long vectors <code>x</code>.
 (<a href="https://bugs.R-project.org/bugzilla3/show_bug.cgi?id=17174">PR#17174</a>)
 </p>
@@ -1134,7 +1129,7 @@ error).
 </li>
 <li> <p><code>xpdrows.data.frame()</code> was not checking for unique
 row names; in particular, this affected assignment to non-existing
-rows via numerical indexing. (<a href="https://bugs.R-project.org/bugzilla3/show_bug.cgi?id=16570">PR#16570</a>)
+rows <em>via</em> numerical indexing. (<a href="https://bugs.R-project.org/bugzilla3/show_bug.cgi?id=16570">PR#16570</a>)
 </p>
 </li>
 <li> <p><code>tail.matrix()</code> did not work for zero rows matrices,
@@ -3368,9 +3363,9 @@ environments. (<a href="https://bugs.R-project.org/bugzilla3/show_bug.cgi?id=159
 </p>
 </li>
 <li> <p><code>merge(&lt;dendrogram&gt;, ..)</code> now works correctly for two
-&lsquo;independent&rsquo; dendrograms (<a href="https://bugs.R-project.org/bugzilla3/show_bug.cgi?id=15648">PR#15648</a>), and still compatibly via
-<code>adjust = "auto"</code> e.g. for two branches of an existing
-dendrogram.
+&lsquo;independent&rsquo; dendrograms (<a href="https://bugs.R-project.org/bugzilla3/show_bug.cgi?id=15648">PR#15648</a>), and still compatibly
+<em>via</em> <code>adjust = "auto"</code> e.g. for two branches of an
+existing dendrogram.
 </p>
 </li>
 <li><p> The <code>plot</code> method for <code>"hclust"</code> objects gets an
@@ -3438,7 +3433,8 @@ possible will be supported in future versions of <span style="font-family: Couri
 </li>
 <li><p> Work around a bug in OS X Yosemite where key environment
 variables may be duplicated causing issues in subprocesses. The
-duplicates are now removed on R startup (via Rprofile). (<a href="https://bugs.R-project.org/bugzilla3/show_bug.cgi?id=16042">PR#16042</a>)
+duplicates are now removed on <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> startup (<em>via</em>
+Rprofile). (<a href="https://bugs.R-project.org/bugzilla3/show_bug.cgi?id=16042">PR#16042</a>)
 </p>
 </li>
 <li><p> Adjust X11 auto-launch detection in DISPLAY on OS X to
@@ -3841,7 +3837,7 @@ otherwise only names, dims and dimnames are.
 </p>
 </li>
 <li> <p><code>colorRamp()</code> and <code>colorRampPalette()</code> now allow
-non-opaque colours and a ramp in opacity via the new argument
+non-opaque colours and a ramp in opacity <em>via</em> the new argument
 <code>alpha = TRUE</code>.  (Suggested by Alberto Krone-Martins, but
 optionally as there are existing uses which expect only RGB values.)
 
@@ -4977,8 +4973,8 @@ or factors with 100,000 levels, the latter as in <a href="https://bugs.R-project
 not integer codes (suggested by Bryan Hanson).
 </p>
 </li>
-<li> <p><code>tail(warnings())</code> now works, via the new <code>`[`</code>
-method.
+<li> <p><code>tail(warnings())</code> now works, <em>via</em> the new
+<code>`[`</code> method.
 </p>
 </li>
 <li><p> There is now support for the LaTeX style file &lsquo;<span class="file">zi4.sty</span>&rsquo;
@@ -5027,8 +5023,8 @@ error.  (Request of Reijo Sund.)
 </li>
 <li><p> Methods invoked by <code>NextMethod()</code> had a different
 dynamic parent to the generic. This was causing trouble where S3
-methods invoked via lazy evaluation could lose track of their
-generic.  (<a href="https://bugs.R-project.org/bugzilla3/show_bug.cgi?id=15267">PR#15267</a>)
+methods invoked <em>via</em> lazy evaluation could lose track of
+their generic.  (<a href="https://bugs.R-project.org/bugzilla3/show_bug.cgi?id=15267">PR#15267</a>)
 </p>
 </li>
 <li><p> Code for the negative binomial distribution now treats the case
@@ -5534,8 +5530,9 @@ token.
 zero-length strings from the command line arguments. (<a href="https://bugs.R-project.org/bugzilla3/show_bug.cgi?id=15406">PR#15406</a>)
 </p>
 </li>
-<li><p> Errors in the encoding specified on the command line via
-<code>--encoding=foo</code> were not handled properly.  (<a href="https://bugs.R-project.org/bugzilla3/show_bug.cgi?id=15405">PR#15405</a>)
+<li><p> Errors in the encoding specified on the command line
+<em>via</em> <code>--encoding=foo</code> were not handled properly.
+(<a href="https://bugs.R-project.org/bugzilla3/show_bug.cgi?id=15405">PR#15405</a>)
 </p>
 </li>
 <li><p> If <code>x</code> is a symbol, <code>is.vector(x, "name")</code> now
@@ -6294,8 +6291,8 @@ during a plot.
 <code>keep.source</code>, which defaults to <code>options("keep.source")</code>.
 </p>
 </li>
-<li><p> Profiling via <code>Rprof()</code> now optionally records information
-at the statement level, not just the function level.
+<li><p> Profiling <em>via</em> <code>Rprof()</code> now optionally records
+information at the statement level, not just the function level.
 </p>
 </li>
 <li><p> The <code>Rprof()</code> function now quotes function names in
@@ -6303,7 +6300,7 @@ in its output file on Windows, to be consistent with the quoting
 in Unix.
 </p>
 </li>
-<li><p> Profiling via <code>Rprof()</code> now optionally records
+<li><p> Profiling <em>via</em> <code>Rprof()</code> now optionally records
 information about time spent in GC.
 </p>
 </li>
@@ -6842,7 +6839,7 @@ directly (with the exception of fixing libraries that break
 affinity settings like OpenBLAS) &ndash; the function is rather
 intended to support affinity control in high-level parallel
 functions.  In the future, <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> may supplement lack of affinity
-control in the OS by its own bookkeeping via <code>mcaffinity()</code>
+control in the OS by its own bookkeeping <em>via</em> <code>mcaffinity()</code>
 related to processes and threads it spawns.
 </p>
 </li>
@@ -7091,7 +7088,7 @@ reentrant, leading to errors in rare circumstances such as a
 garbage collection triggering a recursive call.
 </p>
 </li>
-<li><p> Field assignments in reference class objects via
+<li><p> Field assignments in reference class objects <em>via</em>
 <code>$&lt;-</code> were not being checked
 because the magic incantation to turn methods on for that
 primitive operator had been inadvertently omitted. 
