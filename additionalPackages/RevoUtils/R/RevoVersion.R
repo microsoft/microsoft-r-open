@@ -10,7 +10,7 @@
         RevoEdition <- "Microsoft R Open"
     }
 	if (haveRevoScaleR){
-		RSR.version <- as.character(utils::packageVersion("RevoScaleR"))
+		RSR.version <- utils::packageDescription("RevoScaleR", field="RevoBuildId")
 		RSR.version.components <- strsplit(RSR.version, "\\.")[[1]]
 	}
     Revo.version <- version

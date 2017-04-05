@@ -13,28 +13,16 @@ license.stress.Revo <- function()
     ##
     ## Testing for existence of basic Revo Licenses
     ##
-    path <- Revo.home("licenses")
-	haveRevoScaleR <- !identical(system.file("DESCRIPTION", package="RevoScaleR") , "")
-    if (haveRevoScaleR) {
-	    if (!isMicrosoftRClient()){
-			RevoEdition <- "Microsoft R Server"
-		} else {
-			RevoEdition <- "Microsoft R Client"
-		}
-	}
-    if (identical(RevoEdition, "Microsoft R Server")){
-        checkTrue(file.exists(file.path(path, ifelse(isWindows, "MicrosoftRServerLicense.txt", "MicrosoftRServerLicense"))))
-    } else {
-		checkTrue(file.exists(file.path(path, ifelse(isWindows, "MicrosoftRClientLicense.txt", "MicrosoftRClientLicense"))))
-	}
+    path <- system.file("licenses", package="MicrosoftR")
+    checkTrue(file.exists(file.path(path,  "MicrosoftRServerLicense.txt")))
+	checkTrue(file.exists(file.path(path, "MicrosoftRServerLicense")))
+	checkTrue(file.exists(file.path(path, "MicrosoftRClientLicense.txt")))
+	checkTrue(file.exists(file.path(path, "MicrosoftRClientLicense")))
+	checkTrue(file.exists(file.path(path, "MicrosoftRServerWindows.txt")))
 }
 
 "test.AllLicense.stress" <- function()
 {
-    if (identical(Revo.home(), R.home()) )
-    {
-        DEACTIVATED("Test deactivated because Microsoft R Services components are not installed on this system.")
-    }
     res <- try(license.stress.Revo())
     checkTrue(!is(res, "try-error"), msg="License stress test failed") 
 }

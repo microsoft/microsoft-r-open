@@ -8,11 +8,11 @@
 	else 
     {
         snapshotDate <- utils::packageDescription("RevoUtils", fields="MRANDate")
-        return(paste0(httpPrefix, "mran.revolutionanalytics.com/snapshot/", snapshotDate))
+        return(paste0(httpPrefix, "mran.microsoft.com/snapshot/", snapshotDate))
     }
 }
 
-"httpsSupported" <- function (mran = "https://mran.revolutionanalytics.com/snapshot", method=getOption("download.file.method"))
+"httpsSupported" <- function (mran = "https://mran.microsoft.com/snapshot", method=getOption("download.file.method"))
 {
     tf <- tempfile()
     on.exit(unlink(tf))
