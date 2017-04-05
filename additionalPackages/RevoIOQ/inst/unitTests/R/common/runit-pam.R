@@ -3,8 +3,7 @@
 session <- RevoIOQ:::saveRUnitSession(packages=c("cluster"), datasets=c("ruspini","votes.repub"))
 
 "pam.stress" <- function()
-{
-    
+{   
     library(cluster)
     ## Compare on these:
     nms <- c("clustering", "objective", "isolation", "clusinfo", "silinfo")

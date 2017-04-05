@@ -6,10 +6,7 @@ test.foreach <- function(){
 	##
 	## testing function foreach
 	##
-    if (identical(system.file(package="RevoScaleR"), ""))
-    {
-        DEACTIVATED("Test deactivated because Revolution Enterprise components are not installed on this system.")
-    }
+    
 	library(foreach)
 	x <- matrix(rnorm(100*100), 100)
 	cmeans <- foreach(i=1:ncol(x), .combine=c) %do% mean(x[,i])
