@@ -7,7 +7,7 @@ readNews <- function(package)
             rNewsUrl <- paste("http://mran.revolutionanalytics.com/news/", rver, sep="")
             browseURL(rNewsUrl)
         } else {
-            if ((.Platform$OS.type=="windows" && !RevoMods:::isXP()) ||
+            if ((.Platform$OS.type=="windows" ) ||
             !(!is.na(grep("linux", R.version["os"])[1]) && 
                     !capabilities()["X11"])){	
                 RShowDoc("NEWS")
@@ -24,7 +24,7 @@ readNews <- function(package)
 	if (!file.exists(system.file("NEWS.Rd", package=package))) {
 		stop("No NEWS.Rd or NEWS file in specified package")
 	} else {
-	    if ((.Platform$OS.type=="windows" && !RevoMods:::isXP()) ||
+	    if ((.Platform$OS.type=="windows" ) ||
 		!(!is.na(grep("linux", R.version["os"])[1]) && 
                 !capabilities()["X11"])){	
 			HTMLout <- paste(tempfile(), ".html", sep="")

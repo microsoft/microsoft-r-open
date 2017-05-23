@@ -6,19 +6,21 @@
 if (compareVersion(paste(R.version$major, R.version$minor, sep=".") ,"2.9.0") < 0) {
     load(system.file(file.path("unitTestData", "regression.Rdata"), package="RevoIOQ"))
 } else if (compareVersion(paste(R.version$major, R.version$minor, sep="."), "2.10.1") < 0) {
-      load(system.file(file.path("unitTestData", "regression_2.9.0.Rdata"), package="RevoIOQ"))
+    load(system.file(file.path("unitTestData", "regression_2.9.0.Rdata"), package="RevoIOQ"))
 } else if (compareVersion(paste(R.version$major, R.version$minor, sep="."), "2.14.1") < 0) {
-      load(system.file(file.path("unitTestData", "regression_2.10.1.Rdata"), package="RevoIOQ"))
+    load(system.file(file.path("unitTestData", "regression_2.10.1.Rdata"), package="RevoIOQ"))
 } else if (compareVersion(paste(R.version$major, R.version$minor, sep="."), "2.15.2") < 0) {
-      load(system.file(file.path("unitTestData", "regression_2.14.1.Rdata"), package="RevoIOQ"))
+    load(system.file(file.path("unitTestData", "regression_2.14.1.Rdata"), package="RevoIOQ"))
 } else if (compareVersion(paste(R.version$major, R.version$minor, sep="."), "3.0.1") < 0) {
-      load(system.file(file.path("unitTestData", "regression_2.15.2.Rdata"), package="RevoIOQ"))
+    load(system.file(file.path("unitTestData", "regression_2.15.2.Rdata"), package="RevoIOQ"))
 } else if (compareVersion(paste(R.version$major, R.version$minor, sep="."), "3.0.3") < 0) {
-      load(system.file(file.path("unitTestData", "regression_3.0.1.Rdata"), package="RevoIOQ"))
+    load(system.file(file.path("unitTestData", "regression_3.0.1.Rdata"), package="RevoIOQ"))
 } else if (compareVersion(paste(R.version$major, R.version$minor, sep="."), "3.1.0") < 0) {
-      load(system.file(file.path("unitTestData", "regression_3.0.3.Rdata"), package="RevoIOQ"))
+    load(system.file(file.path("unitTestData", "regression_3.0.3.Rdata"), package="RevoIOQ"))
+} else if (compareVersion(paste(R.version$major, R.version$minor, sep="."), "3.4.0") < 0){
+	load(system.file(file.path("unitTestData", "regression_3.1.0.Rdata"), package="RevoIOQ"))
 } else {
-	  load(system.file(file.path("unitTestData", "regression_3.1.0.Rdata"), package="RevoIOQ"))
+	load(system.file(file.path("unitTestData", "regression_3.4.0.Rdata"), package="RevoIOQ"))
 }
 
 test.lm<- function(){
@@ -180,13 +182,11 @@ test.nls <- function(){
 
 	## Venables and Ripley (2002) Modern Applied Statistics wtih S, Fourth Edition
 	## Non-linear Regression using plinear algorithm (Section 8.3)
-
 	A <- model.matrix(~ Strip - 1, data = muscle)
 	rats.nls1.test <-  nls(log(Length) ~ cbind(A, rho^Conc), data=muscle, start = c(rho=0.1), algorithm = "plinear")
 	B <- coef(rats.nls1.test)
 	st <- list(alpha = B[2:22], beta=B[23], rho = B[1])
 	rats.nls2.test <- nls(log(Length) ~ alpha[Strip] + beta*rho^Conc, data=muscle, start=st)
-
 
 
 	checkEquals(wtloss.ss.test, wtloss.ss, tolerance=10e-06)
