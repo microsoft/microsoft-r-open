@@ -1,5 +1,38 @@
 R News
 
+CHANGES IN R 3.4.0 patched:
+
+  INSTALLATION on a UNIX-ALIKE:
+
+    * The deprecated support for PCRE versions older than 8.20 has been
+      removed.
+
+  BUG FIXES:
+
+    * getParseData() gave incorrect column information when code
+      contained multi-byte characters.  (PR#17254)
+
+    * Asking for help using expressions like ?stats::cor() did not
+      work.  (PR#17250)
+
+    * readRDS(url(....)) now works too.
+
+    * installed.packages() on Windows would fail when file.mtime() (?)
+      returned NA.
+
+    * R CMD Sweave again returns status = 0 on successful completion.
+
+    * Vignettes listed in .Rbuildignore were not being ignored
+      properly.  (PR#17246)
+
+    * file.mtime() no longer returns NA on Windows when the file or
+      directory is being used by another process.
+
+    * R CMD INSTALL Windows .zip file obeys --lock and --pkglock flags.
+
+    * (Windows only) The choose.files() function could return incorrect
+      results when called with multi = FALSE.  (PR#17270)
+
 CHANGES IN R 3.4.0:
 
   SIGNIFICANT USER-VISIBLE CHANGES:

@@ -5,6 +5,8 @@
 
 test.dgemm.crossprod <- function(){
 
+    DEACTIVATED("Bug 74384: SQLPAL: setMKLthreads(1) crashes sqlpal (RevoIOQ test test.dgemm.crossprod)")	
+    
     loaded.packages <- search()
     if ("package:RevoUtilsMath" %in% loaded.packages)
     {

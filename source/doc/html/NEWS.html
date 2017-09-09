@@ -7,6 +7,66 @@
 
 <h2>R News</h2>
 
+<h3><img src="../help/figures/../../html/Rlogo.svg" class="toplogo" alt="[R logo]" /> CHANGES IN R 3.4.0 patched</h3>
+
+
+
+<h4>INSTALLATION on a UNIX-ALIKE</h4>
+
+
+<ul>
+<li><p> The deprecated support for PCRE versions older than 8.20
+has been removed.
+</p>
+</li></ul>
+
+
+
+
+<h4>BUG FIXES</h4>
+
+
+<ul>
+<li> <p><code>getParseData()</code> gave incorrect column information when
+code contained multi-byte characters.  (<a href="https://bugs.R-project.org/bugzilla3/show_bug.cgi?id=17254">PR#17254</a>)
+</p>
+</li>
+<li><p> Asking for help using expressions like <code>?stats::cor()</code>
+did not work.  (<a href="https://bugs.R-project.org/bugzilla3/show_bug.cgi?id=17250">PR#17250</a>)
+</p>
+</li>
+<li> <p><code>readRDS(url(....))</code> now works too.
+</p>
+</li>
+<li> <p><code>installed.packages()</code> on Windows would fail when
+<code>file.mtime()</code> (?) returned NA.
+</p>
+</li>
+<li> <p><code>R CMD Sweave</code> again returns <span class="samp">status = 0</span> on
+successful completion.
+</p>
+</li>
+<li><p> Vignettes listed in &lsquo;<span class="file">.Rbuildignore</span>&rsquo; were not being
+ignored properly.  (<a href="https://bugs.R-project.org/bugzilla3/show_bug.cgi?id=17246">PR#17246</a>)
+</p>
+</li>
+<li> <p><code>file.mtime()</code> no longer returns NA on Windows when the
+file or directory is being used by another process.
+</p>
+</li>
+<li> <p><code>R CMD INSTALL</code> Windows .zip file obeys <code>--lock</code>
+and <code>--pkglock</code> flags.
+</p>
+</li>
+<li><p> (Windows only)  The <code>choose.files()</code> function could
+return incorrect results when called with <code>multi = FALSE</code>.  
+(<a href="https://bugs.R-project.org/bugzilla3/show_bug.cgi?id=17270">PR#17270</a>)
+</p>
+</li></ul>
+
+
+
+
 <h3><img src="../help/figures/../../html/Rlogo.svg" class="toplogo" alt="[R logo]" /> CHANGES IN R 3.4.0</h3>
 
 
