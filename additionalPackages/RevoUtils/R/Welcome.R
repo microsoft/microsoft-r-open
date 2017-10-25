@@ -9,7 +9,7 @@
 "revo" <- function()
 {
 	onWindows <- .Platform$OS.type == "windows"
-    RevoURL <- "https://www.microsoft.com/en-us/cloud-platform/r-server"
+    RevoURL <- "https://go.microsoft.com/fwlink/?linkid=858763"
     if ((onWindows && isXP()) || (!onWindows && capabilities("X11") == FALSE)) {
         cat("For the latest information on Microsoft R Services and related products,\nenter the following URL in your browser:\n",
             RevoURL, "\n")
@@ -22,9 +22,9 @@
 "readme" <- function()
 {
 	onWindows <- .Platform$OS.type == "windows" 
-	clientURL <- "https://aka.ms/microsoft-r-client-release-notes"
-	serverURL <- "https://aka.ms/microsoft-r-server-release-notes"
-    winComUrl <- linuxComUrl <- "http://mran.revolutionanalytics.com/news/"
+	clientURL <- "https://go.microsoft.com/fwlink/?linkid=858764"
+	serverURL <- "https://go.microsoft.com/fwlink/?linkid=858760"
+    winComUrl <- linuxComUrl <- "https://go.microsoft.com/fwlink/?linkid=858751"
     outUrl <- ""
 	haveRevoScaleR <- !identical(system.file("DESCRIPTION", package="RevoScaleR") , "")
     if (haveRevoScaleR) {
@@ -56,13 +56,13 @@
         }
     }
     else {
-        outUrl <- winComURL
+        outUrl <- winComUrl
 		if (!onWindows && capabilities("X11")==FALSE) {
             cat("For the latest information on Microsoft R Open, enter the following \nURL in your browser:\n",
-                winComURL, "\n")
+                winComUrl, "\n")
         }
         else {
-            browseURL(winComURL)
+            browseURL(winComUrl)
         }
     }
     invisible(outUrl)

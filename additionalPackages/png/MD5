@@ -1,0 +1,13 @@
+c9b6ac3cd888b98fa0d875308eb6f5ce *DESCRIPTION
+d674f0b464da3777a68d03b3030a5083 *NAMESPACE
+3eef6f3624b5f41bad7e27d6f5f50708 *NEWS
+517d1c2ed74f8175ac738fa752a61045 *R/read.R
+ffed5973ae4ecb0056f0619ca62a0a5b *R/write.R
+351b3c99336c44dc0ef13d6f6b503db4 *configure.win
+7381224c65138a2acdf3a8346f8275c4 *inst/img/Rlogo.png
+0ee7cd3abffb5dd15a5785a694246a8a *man/readPNG.Rd
+653b98a2f5c34e372796df456f220933 *man/writePNG.Rd
+7fc91ecfbf95133433e23f2e50b4a66d *src/Makevars
+6c1ccc946d45a3351a32f63d8498f712 *src/Makevars.win
+99e46bd4b410b68b8fb9c1f3d66c859a *src/read.c
+b03bb7476f2872fef94827c1af6c8c13 *src/write.c

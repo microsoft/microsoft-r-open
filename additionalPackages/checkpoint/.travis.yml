@@ -1,0 +1,28 @@
+language: r
+dist: trusty
+cache: packages
+sudo: false
+
+r_binary_packages: covr
+
+r:
+  - release
+  - devel
+
+env: 
+  - NOT_CRAN="true"
+  - NOT_CRAN="false"
+
+branches:
+  only:
+    - master
+    - release
+    - dev
+    
+notifications:
+  email:
+    on_success: change
+    on_failure: change
+    
+after_success:
+  - Rscript -e 'covr::codecov()'

@@ -1,0 +1,165 @@
+---
+title: "Managing checkpoint snapshot archives"
+author: "Andrie de Vries"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+    number_sections: true
+    keep_md: yes
+vignette: >
+  %\VignetteIndexEntry{Using checkpoint for reproducible research}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The `checkpoint()` function enables reproducible research by managing your R package versions. These pacakges are downloaded into a local `.checkpoint` folder.
+
+If you use `checkpoint()` for many projects, these local packages can consume some storage space, so the package also exposes functions to manage your snapshots.
+
+In summary:
+
+* Managing local archives:
+
+     * `checkpointArchives()`: list checkpoint archives on disk.
+     * `checkpointRemove()`: remove checkpoint archive from disk.
+     * `getAccessDate()`: returns the date the snapshot was last accessed.
+     
+* Other:
+     * `unCheckpoint()`: reset `.libPaths` to the user library to undo the effect of `checkpoint()` (experimental).
+
+
+## Setting up an example project:
+
+For illustration, set up a script referencing a single package:
+
+```r
+library(MASS)
+hist(islands)
+truehist(islands)
+```
+
+
+Next, create the checkpoint:
+
+
+```{r setup-1, include=FALSE}
+## Write dummy code file to project
+example_code <- '
+library(MASS)
+'
+dir.create(tempdir(), recursive = TRUE)
+cat(example_code, file = file.path(tempdir(), "managing_checkpoint_example_code.R"))
+```
+
+```{r checkpoint, results="hide", message=FALSE, warning=FALSE}
+dir.create(file.path(tempdir(), ".checkpoint"), recursive = TRUE, showWarnings = FALSE)
+## Create a checkpoint by specifying a snapshot date
+library(checkpoint)
+checkpoint("2015-04-26", project = tempdir(), checkpointLocation = tempdir())
+
+```
+
+## Working with checkpoint archive snapshots
+
+You can query the available snapshots on disk using the `checkpointArchives()` function. This returns a vector of snapshot folders. 
+
+
+```{r archives-1}
+# List checkpoint archives on disk.
+checkpointArchives(tempdir())
+```
+
+You can get the full paths by including the argument `full.names=TRUE`:
+
+```{r archives-2}
+checkpointArchives(tempdir(), full.names = TRUE)
+```
+
+
+## Working with access dates
+
+Every time you use `checkpoint()` the function places a small marker in the snapshot archive with the access date. In this way you can track when was the last time you actually used the snapshot archive.
+
+```{r access}
+# Returns the date the snapshot was last accessed.
+getAccessDate(tempdir())
+
+```
+
+
+## Removing a snapshot from local disk
+
+Since the date of last access is tracked, you can use this to manage your checkpoint archives.
+
+The function `checkpointRemove()` will delete archives from disk. You can use this function in multiple ways. For example, specify a specific archive to remove:
+
+```{r remove-1, eval=FALSE}
+# Remove singe checkpoint archive from disk.
+checkpointRemove("2015-04-26")
+```
+
+You can also remove a range of snapshot archives older (or more recent) than a snapshot date
+
+
+```{r remove-2, eval=FALSE}
+# Remove range of checkpoint archives from disk.
+checkpointRemove("2015-04-26", allSinceSnapshot = TRUE)
+checkpointRemove("2015-04-26", allUntilSnapshot =  = TRUE)
+
+```
+
+Finally, you can remove all snapshot archives that have not been accessed since a given date:
+
+```{r remove-3, eval=FALSE}
+# Remove snapshot archives that have not been used recently
+checkpointRemove("2015-04-26", notUsedSince = TRUE)
+
+```
+
+
+## Reading the checkpoint log file
+
+One of the side effects of `checkpoint()` is to create a log file that contains information about packages that get downloaded, as well as the download size.
+
+This file is stored in the checkpoint root folder, and is a csv file with column names, so you can read this with your favourite R function or other tools.
+
+```{r logfile-1}
+dir(file.path(tempdir(), ".checkpoint"))
+```
+
+Inspect the log file:
+
+```{r logfile-2}
+
+log_file <- file.path(tempdir(), ".checkpoint", "checkpoint_log.csv")
+log <- read.csv(log_file)
+head(log)
+```
+
+
+## Resetting the checkpoint
+
+In older versions of `checkpoint()` the only way to reset the effect of `checkpoint()` was to restart your R session.
+
+In v0.3.20 and above, you can use the function `unCheckpoint()`. This will reset you `.libPaths` to the user folder.
+
+```{r uncheckpoint-1}
+.libPaths()
+```
+
+Now use `unCheckpoint()` to reset your library paths
+
+```{r uncheckpoint-2}
+# Note this is still experimental
+unCheckpoint()
+.libPaths()
+```
+
+
+```{r cleanup, include=FALSE}
+## cleanup
+unlink("manifest.R")
+unlink(file.path(tempdir(), "managing_checkpoint_example_code.R"))
+unlink(file.path(tempdir(), ".checkpoint"), recursive = TRUE)
+```
