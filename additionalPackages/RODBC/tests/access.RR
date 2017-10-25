@@ -1,0 +1,51 @@
+##-*- R -*-
+library(RODBC)
+library(MASS)
+USArrests[1,2] <- NA
+hills <- hills[1:15,]
+row.names(hills)[12] <- "Dollar ('$')"
+
+channel <- odbcConnect("testacc")
+if(!inherits(channel, "RODBC")) q("no")
+odbcGetInfo(channel)
+sqlTables(channel)
+sqlDrop(channel, "USArrests", errors = FALSE)
+sqlSave(channel, USArrests)
+sqlTables(channel)
+sqlColumns(channel, "USArrests")
+sqlPrimaryKeys(channel, "USArrests") # reports none
+sqlFetch(channel, "USArrests")
+query <- paste("select rownames, murder from USArrests",
+               "where Rape > 30",  "order by Murder")
+sqlQuery(channel, query)
+sqlCopy(channel, query, "HighRape", rownames = FALSE)
+sqlFetch(channel, "HighRape", max = 5)
+sqlTables(channel)
+sqlDrop(channel, "HighRape")
+foo <-  USArrests[1:3, 2, drop = FALSE]
+foo[1,1] <- 236
+sqlUpdate(channel, foo, "USArrests")
+sqlFetch(channel, "USArrests", max = 5)
+sqlFetchMore(channel, max = 8)
+sqlDrop(channel, "USArrests")
+
+dates <- as.character(seq(as.Date("2004-01-01"), by="week", length=10))
+Dtest <- data.frame(dates)
+sqlDrop(channel, "Dtest", errors = FALSE)
+varspec <- "DATETIME"; names(varspec) <- names(Dtest)
+## fast = TRUE crashes
+sqlSave(channel, Dtest, varTypes = varspec, verbose=TRUE, fast=FALSE)
+sqlColumns(channel, "Dtest")
+sqlFetch(channel, "Dtest")
+sqlDrop(channel, "Dtest")
+
+sqlDrop(channel, "hills test", errors = FALSE)
+sqlSave(channel, hills, "hills test", verbose=TRUE)
+sqlUpdate(channel, hills[11:15,], "hills test", verbose=TRUE, fast=TRUE)
+sqlFetch(channel, "hills test")
+sqlDrop(channel, "hills test")
+sqlSave(channel, hills, "hills test", verbose=TRUE, fast=FALSE)
+sqlUpdate(channel, hills[11:15,], "hills test", verbose=TRUE, fast=FALSE)
+sqlDrop(channel, "hills test")
+
+close(channel)

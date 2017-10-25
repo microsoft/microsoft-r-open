@@ -4,7 +4,7 @@ readNews <- function(package)
         if (!isRRE())
         {
             rver <-  paste(c("#", "r", version$major, unlist(strsplit(version$minor, "\\."))), collapse="")
-            rNewsUrl <- paste("http://mran.revolutionanalytics.com/news/", rver, sep="")
+            rNewsUrl <- paste("https://mran.revolutionanalytics.com/news/", rver, sep="")
             browseURL(rNewsUrl)
         } else {
             if ((.Platform$OS.type=="windows" ) ||

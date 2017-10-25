@@ -1,0 +1,4 @@
+#!/bin/sh
+
+## a.out.dSYM may get created on OS X.
+rm -rf config.* src/Makevars src/config.h a.out.dSYM

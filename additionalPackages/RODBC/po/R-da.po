@@ -1,0 +1,137 @@
+# Danish translation r-rodbc.
+# Copyright (C) r-rodbc & nedenstående oversættere.
+# This file is distributed under the same license as the r-rodbc package.
+# Joe Hansen (joedalton2@yahoo.dk), 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: R 2.12.0\n"
+"Report-Msgid-Bugs-To: bugs@r-project.org\n"
+"POT-Creation-Date: 2011-05-30 09:16\n"
+"PO-Revision-Date: 2011-05-28 18:30+01:00\n"
+"Last-Translator: Joe Hansen <joedalton2@yahoo.dk>\n"
+"Language-Team: Danish <debian-l10n-danish@lists.debian.org>\n"
+"Language: da\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "first argument is not an open RODBC channel"
+msgstr "første argument er ikke en åben RODBC-kanal"
+
+msgid "Argument 'channel' must inherit from class RODBC"
+msgstr "Argument »kanal« skal arve fra klasse RODBC"
+
+msgid "ODBC connection failed"
+msgstr "ODBC-forbindelse mislykkedes"
+
+msgid "Invalid case parameter: nochange | toupper | tolower | common db names"
+msgstr "Ugyldig case-parameter: nochange | toupper | tolower | common db names"
+
+msgid "no parameters, so nothing to update"
+msgstr "ingen parametre, så intet at opdatere"
+
+msgid "missing columns in 'data'"
+msgstr "mangler kolonner i »data«"
+
+msgid "argument is not an open RODBC channel"
+msgstr "argument er ikke en åben RODBC-kanal"
+
+msgid "argument 'driver' must be a character string"
+msgstr "argument »driver« skal være en tegnstreng"
+
+msgid "argument 'value' must be a named list of length >= 4"
+msgstr "argument »value« skal være en navngivet længdeliste >= 4"
+
+msgid "missing argument 'sqtable'"
+msgstr "mangler argument »sqtable«"
+
+msgid "table"
+msgstr "tabel"
+
+msgid "not found"
+msgstr "ikke fundet"
+
+msgid "destination argument is not an open RODBC channel"
+msgstr "målargument er ikke en åben RODBC-kanal"
+
+msgid "missing parameter"
+msgstr "manglende parameter"
+
+msgid "destination should be a name"
+msgstr "mål skal være et navn"
+
+msgid "should be a name"
+msgstr "skal være et navn"
+
+msgid "should be a data frame"
+msgstr "skal være en dataramme"
+
+msgid "already exists"
+msgstr "findes allerede"
+
+msgid "unable to append to table"
+msgstr "kan ikke tilføje til tabel"
+
+msgid "argument 'varTypes' has no names and will be ignored"
+msgstr "argument »varTypes« har intet navn og vil blive ignoreret"
+
+msgid "column(s)"
+msgstr "kolonner"
+
+msgid ","
+msgstr ","
+
+msgid "'dat' are not in the names of 'varTypes'"
+msgstr "»dat« er ikke i navnene på »varTypes«"
+
+msgid "invalid channel"
+msgstr "ugyldig kanal"
+
+msgid ": table not found on channel"
+msgstr ": tabel blev ikke fundet på kanal"
+
+msgid "dot.dot.dot names are not supported"
+msgstr "dot.dot.dot-navne er ikke understøttet"
+
+msgid "missing argument 'query'"
+msgstr "mangler argument »query«"
+
+msgid "invalid numeric 'as.is' expression"
+msgstr "ugyldigt numerisk »as.is-udtryk«"
+
+msgid "'as.is' has the wrong length"
+msgstr "»as.is« har forkert længde"
+
+msgid "!= cols ="
+msgstr "!= kol ="
+
+msgid "should be a data frame or matrix"
+msgstr "skal være en dataramme eller matrix"
+
+msgid "index column(s)"
+msgstr "indekskolonner"
+
+msgid "not in database table"
+msgstr "ikke i databasetabel"
+
+msgid "not in data frame"
+msgstr "ikke i dataramme"
+
+msgid "cannot update"
+msgstr "kan ikke opdatere"
+
+msgid "without unique column"
+msgstr "uden unik kolonne"
+
+msgid "data frame column(s)"
+msgstr "datarammekolonner"
+
+msgid "odbcConnectExcel is only usable with 32-bit Windows"
+msgstr ""
+
+msgid "odbcConnectAccess is only usable with 32-bit Windows"
+msgstr ""
+
+msgid "odbcConnectDbase is probably only usable with 32-bit Windows"
+msgstr ""

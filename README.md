@@ -7,7 +7,7 @@ This is the repository containing the source code for the open source components
 Directory Structure
 -------------------
 
-/additionalPackages -> Microsoft authored GPLv2 licensed R packages
+/additionalPackages -> GPLv2 licensed R packages not part of the R source
 
 /patch              -> Patches made to the R source code when building Microsoft R Open
 

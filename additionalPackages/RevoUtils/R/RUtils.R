@@ -1,16 +1,30 @@
 totalSystemMemory <- function()
 {
     if (identical(.Platform$OS.type,"unix"))
-    {  
-        mem <- try(system2("head", args=c("-1", "/proc/meminfo"), stdout=TRUE), silent=TRUE)
-        if (inherits(mem, "try-error") || !length(grep("[0-9]",mem)))
-        {
-            mem <- NA
-        }
-        else
-        {
-            mem <- as.numeric(strsplit(mem, " +")[[1]][2])
-        }
+    {   
+	    if (identical(as.character(Sys.info()["sysname"]), "Darwin")){
+			mem <- try(system2("sysctl", args="hw.memsize", stdout=TRUE), silent=TRUE)
+			if (inherits(mem, "try-error") || !length(grep("[0-9]",mem)))
+			{
+				mem <- NA
+			}
+			else
+			{		
+				mem <- as.numeric(strsplit(mem, ": ")[[1]][2])		
+			}
+		}
+		else
+		{
+			mem <- try(system2("head", args=c("-1", "/proc/meminfo"), stdout=TRUE), silent=TRUE)
+			if (inherits(mem, "try-error") || !length(grep("[0-9]",mem)))
+			{
+				mem <- NA
+			}
+			else
+			{
+				mem <- as.numeric(strsplit(mem, " +")[[1]][2])
+			}
+		}
     }
     else if (identical(.Platform$OS.type, "windows"))
     {
