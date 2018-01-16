@@ -18,15 +18,15 @@ if (!identical(system.file(package="RevoScaleR") , "")) {
     "test.revor.RevoUtilsMath.version" <- function() checkTrue("checkPackageVersion"(pkg = "RevoUtilsMath", ver = "10.0.1"))
 }
 if (!identical(system.file(package="foreach") , "")) {
-    "test.revoparallelr.foreach.version" <- function() checkTrue("checkPackageVersion"(pkg = "foreach", ver = "1.4.4"))
-    "test.revoparallelr.iterators.version" <- function() checkTrue("checkPackageVersion"(pkg = "iterators", ver = "1.0.8"))
+    "test.revoparallelr.foreach.version" <- function() checkTrue("checkPackageVersion"(pkg = "foreach", ver = "1.4.5"))
+    "test.revoparallelr.iterators.version" <- function() checkTrue("checkPackageVersion"(pkg = "iterators", ver = "1.0.9"))
 }
 if (!identical(system.file(package="RevoMods"), ""))
 {
     "test.revor.RevoIOQ.version" <- function() checkTrue("checkPackageVersion"(pkg = "RevoIOQ", ver = revover))
     "test.revor.RUnit.version" <- function() checkTrue("checkPackageVersion"(pkg = "RUnit", ver = "0.4.26"))
-    "test.revoparallelr.doParallel.version" <- function() checkTrue("checkPackageVersion"(pkg = "doParallel", ver = "1.0.10"))
-    "test.revor.RevoUtils.version" <- function() checkTrue("checkPackageVersion"(pkg = "RevoUtils", ver = "10.0.6"))
+    "test.revoparallelr.doParallel.version" <- function() checkTrue("checkPackageVersion"(pkg = "doParallel", ver = "1.0.12"))
+    "test.revor.RevoUtils.version" <- function() checkTrue("checkPackageVersion"(pkg = "RevoUtils", ver = "10.0.7"))
     "test.revor.RevoMods.version" <- function() checkTrue("checkPackageVersion"(pkg = "RevoMods", ver = "11.0.0"))
 } else
 {
@@ -36,10 +36,10 @@ if (!identical(system.file(package="RevoMods"), ""))
     } 
 	if (!identical(system.file(package="RevoUtils"),""))
 	{
-		"test.revor.RevoUtils.version" <- function() checkTrue("checkPackageVersion"(pkg = "RevoUtils", ver = "10.0.6"))
+		"test.revor.RevoUtils.version" <- function() checkTrue("checkPackageVersion"(pkg = "RevoUtils", ver = "10.0.7"))
 	}
     if (!identical(system.file(package="doParallel"),""))
 	{
-        "test.revoparallelr.doParallel.version" <- function() checkTrue("checkPackageVersion"(pkg = "doParallel", ver = "1.0.10"))
+        "test.revoparallelr.doParallel.version" <- function() checkTrue("checkPackageVersion"(pkg = "doParallel", ver = "1.0.12"))
 	}
 }

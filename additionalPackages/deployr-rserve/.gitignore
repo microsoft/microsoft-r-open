@@ -1,0 +1,23 @@
+# Ignore extensions
+*.diff
+*.err
+*.log
+*.orig
+*.rej
+*.swo
+*.swp
+*.vi
+*.zip
+*~
+
+# Ignore OS or Editor folders
+._*
+.cache
+.DS_Store
+.project
+.settings
+.idea
+.tmproj
+*.esproj
+*.sublime-workspace
+*.sublime-project

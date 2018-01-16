@@ -43,7 +43,7 @@ if(require("RUnit", quietly=TRUE)) {
   tests <- runTestSuite(testSuite)
  
   ## Default report name
-  pathReport <- file.path(path, "report")
+  pathReport <- file.path(tempdir(), "report")
  
   ## Report to stdout and text files
   cat("------------------- UNIT TEST SUMMARY ---------------------\n\n")
