@@ -1,6 +1,6 @@
 Package: RevoIOQ
-Version: 9.3.0
-Date: 2017-05-23
+Version: 8.0.9
+Date: 2018-01-03
 Title: Microsoft R Services Test Suite
 Author: Microsoft Corporation
 Maintainer: Microsoft Corporation <mrspack@microsoft.com>
@@ -8,5 +8,6 @@ Depends: R (>= 2.6.2), RUnit (>= 0.4.26), tools
 Suggests: RevoUtils
 Description: Test suite for Microsoft R Services.
 License: GPL-2
-Copyright: Copyright 2017 Microsoft Corporation
-BuildID: 9.3.0.0015
+Copyright: Copyright Microsoft Corporation
+BuildID: 9.3.0.0020
+

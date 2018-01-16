@@ -1,5 +1,8 @@
 NEWS/ChangeLog for doParallel
 -----------------------------
+1.0.12 2017-12-08
+    o  Change test report path for compliance with CRAN policies.
+	
 1.0.9  2015-09-21
     o  Bug fixes to stopImplicitCluster functionality, courtesy of Dan Tenenbaum.
 	

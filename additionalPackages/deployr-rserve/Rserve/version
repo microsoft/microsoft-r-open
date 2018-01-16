@@ -1,0 +1,8 @@
+#!/bin/sh
+
+VER=`sed -n 's/.*Rserve v\([0-9.\-]*\).*/\1/p' src/Rsrv.h|head -n 1`
+if test "x$1" = "x-f"; then 
+    echo "Rserve_${VER}.tar.gz"
+else
+    echo "${VER}"
+fi
