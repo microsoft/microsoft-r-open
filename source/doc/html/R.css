@@ -1,6 +1,9 @@
 body {
     background: white;
     color: black;
+    max-width: 960px;
+    margin: auto;
+    transform-origin: top;
 }
 
 a:link {
@@ -94,4 +97,8 @@ span.samp{
 
 div.vignettes a:hover {
     background: rgb(85%, 85%, 85%);
+}
+
+@media screen and (min-width: 3200px) {
+    transform: scale(2);
 }
