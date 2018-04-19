@@ -10,7 +10,11 @@
                 if (identical(clientPath, Rpath)){
                     returnVal <- TRUE
                 }
-        }
+        } else {
+			if (!identical(system.file(package="RevoScaleR"), "")) {
+				returnVal <- RevoScaleR:::rxIsExpressEdition()		
+			}
+		}
     } else if(identical(.Platform$OS.type, "unix") && !identical(Sys.info()["sysname"], "Darwin")){
 		if (!identical(system.file(package="RevoScaleR"), "")) {
 			returnVal <- RevoScaleR:::rxIsExpressEdition()

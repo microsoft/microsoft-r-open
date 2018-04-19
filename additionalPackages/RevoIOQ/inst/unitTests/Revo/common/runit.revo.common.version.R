@@ -26,7 +26,7 @@ if (!identical(system.file(package="RevoMods"), ""))
     "test.revor.RevoIOQ.version" <- function() checkTrue("checkPackageVersion"(pkg = "RevoIOQ", ver = revover))
     "test.revor.RUnit.version" <- function() checkTrue("checkPackageVersion"(pkg = "RUnit", ver = "0.4.26"))
     "test.revoparallelr.doParallel.version" <- function() checkTrue("checkPackageVersion"(pkg = "doParallel", ver = "1.0.12"))
-    "test.revor.RevoUtils.version" <- function() checkTrue("checkPackageVersion"(pkg = "RevoUtils", ver = "10.0.7"))
+    "test.revor.RevoUtils.version" <- function() checkTrue("checkPackageVersion"(pkg = "RevoUtils", ver = "10.0.9"))
     "test.revor.RevoMods.version" <- function() checkTrue("checkPackageVersion"(pkg = "RevoMods", ver = "11.0.0"))
 } else
 {
