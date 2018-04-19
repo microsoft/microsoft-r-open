@@ -2,7 +2,7 @@ context("Multi handle")
 
 test_that("Max connections works", {
   skip_on_os("solaris")
-  skip_if_not(curl_version()$version >= as.numeric_version("7.30"),
+  skip_if_not(strsplit(curl_version()$version, "-")[[1]][1] >= as.numeric_version("7.30"),
     "libcurl does not support host_connections")
   multi_set(host_con = 2, multiplex = FALSE)
   for(i in 1:3){
@@ -152,6 +152,18 @@ test_that("callback protection", {
   gc(); gc();
   out <- multi_run(pool = pool)
   expect_equal(out$success, 1)
+})
+
+test_that("host_con works via and multi_fdset", {
+  pool <- new_pool(host_con = 3)
+  for (i in 4:0) {
+    h1 <- new_handle(url = httpbin(paste0("delay/", i)))
+    multi_add(h1, done = force, fail = cat, pool = pool)
+  }
+  for(i in 4:0){
+    res <- multi_run(pool = pool, poll = 1)
+    expect_length(multi_fdset(pool = pool)$reads, min(3, i))
+  }
 })
 
 test_that("GC works", {

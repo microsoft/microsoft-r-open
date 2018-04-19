@@ -19,8 +19,10 @@ if (compareVersion(paste(R.version$major, R.version$minor, sep=".") ,"2.9.0") < 
     load(system.file(file.path("unitTestData", "regression_3.0.3.Rdata"), package="RevoIOQ"))
 } else if (compareVersion(paste(R.version$major, R.version$minor, sep="."), "3.4.0") < 0){
 	load(system.file(file.path("unitTestData", "regression_3.1.0.Rdata"), package="RevoIOQ"))
-} else {
+} else if (compareVersion(paste(R.version$major, R.version$minor, sep="."), "3.4.4") < 0){
 	load(system.file(file.path("unitTestData", "regression_3.4.0.Rdata"), package="RevoIOQ"))
+} else {
+	load(system.file(file.path("unitTestData", "regression_3.4.4.Rdata"), package="RevoIOQ"))
 }
 
 test.lm<- function(){
