@@ -11,7 +11,8 @@ test.start <- switch(current.R,
                      "3.1" = "2014-10-01",
                      "3.2" = "2015-05-01",
                      "3.3" = "2016-04-01",
-                     "2016-04-01"
+                     "3.4" = "2017-04-24",
+                     "2017-04-24"
 )
 
 MRAN.default = test.start[1] # ensure only a single value

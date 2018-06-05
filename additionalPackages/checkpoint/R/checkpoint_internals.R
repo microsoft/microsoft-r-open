@@ -2,7 +2,9 @@
 setMranMirror <- function(
   snapshotDate, 
   snapshotUrl = checkpoint:::getSnapshotUrl(snapshotDate)){
-  options(repos = snapshotUrl)}
+  options(repos = snapshotUrl)
+}
+
 
 setLibPaths <- function(checkpointLocation, libPath){
   newLoc <- c(libPath, 

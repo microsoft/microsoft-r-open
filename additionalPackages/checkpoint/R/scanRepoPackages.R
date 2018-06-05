@@ -5,10 +5,18 @@ projectScanPackages <- function(...){
   scanForPackages(...)
 }
 
+#' Scans a project (or folder) for references to packages.
+#' 
+#' @inheritParams checkpoint
+#' @return A list with two elements:
+#' * pkgs: a character vector with the names of identified packages
+#' * error: a character vector with information about files that could not be parsed
+#' @export
 scanForPackages <- function(project = getwd(), verbose = TRUE, 
-                                use.knitr = FALSE, 
-                                auto.install.knitr = FALSE, 
-                                scan.rnw.with.knitr = FALSE){
+                            use.knitr = FALSE, 
+                            auto.install.knitr = FALSE, 
+                            scan.rnw.with.knitr = FALSE
+                          ){
   # detect all package dependencies for a project
   dir <- normalizePath(project, winslash='/', mustWork=FALSE)
   pattern <- if(!use.knitr) "\\.[rR]$|\\.[rR]nw$" else

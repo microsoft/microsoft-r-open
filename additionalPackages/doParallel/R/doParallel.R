@@ -412,7 +412,11 @@ doParallelSNOW <- function(obj, expr, envir, data) {
     new.env(parent=emptyenv())
   })
   noexport <- union(obj$noexport, obj$argnames)
-  getexports(expr, exportenv, envir, bad=noexport)
+  packages <- getexports(expr, exportenv, envir, bad=noexport)
+  if(obj$verbose)
+	cat(sprintf('discovered package(s): %s\n',
+                  paste(packages, collapse=', ')))
+  
   vars <- ls(exportenv)
   if (obj$verbose) {
     if (length(vars) > 0) {
@@ -466,10 +470,15 @@ doParallelSNOW <- function(obj, expr, envir, data) {
    else
      NULL
 
+  packages = c(packages, obj$packages)
+  if (obj$verbose) {
+	cat(sprintf('explicitly exporting package(s): %s\n',
+                  paste(packages, collapse=', ')))
+  }
   if (! preschedule) {
     # send exports to workers
     r <- clusterCall(cl, workerInit, c.expr, exportenv, pkgname, 
-                     obj$packages, attachExportEnv)
+                     packages, attachExportEnv)
     for (emsg in r) {
       if (!is.null(emsg))
         stop('worker initialization failed: ', emsg)
@@ -490,7 +499,7 @@ doParallelSNOW <- function(obj, expr, envir, data) {
     # execute the tasks
     results <- do.call(c, clusterApply(cl, argsList, workerPreschedule,
                                        c.expr, exportenv, pkgname, 
-                                       obj$packages))
+                                       packages))
   }
 
 

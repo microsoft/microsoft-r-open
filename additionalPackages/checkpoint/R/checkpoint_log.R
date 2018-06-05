@@ -42,4 +42,4 @@ checkpoint_log <- function(log, snapshotDate, pkg, file = NULL){
       )
     }
   }
-}  
+}
