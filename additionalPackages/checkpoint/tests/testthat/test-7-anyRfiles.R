@@ -24,15 +24,25 @@ test_that("finds no R files in fake checkpoint archive", {
 })
 
 test_that("deals correctly with invalid project paths", {
-  with_mock(
-    `base::normalizePath` = function(x, winslash, mustWork)"~/",
-    `base::readline` = function(x)"y",
-    expect_null(validateProjectFolder(td))
+  stub(validateProjectFolder, 
+       "normalizePath",
+       function(x, winslash, mustWork)"~/"
+  )
+  stub(validateProjectFolder,
+       "readline", 
+       function(x)"y"
+  )
+  expect_null(validateProjectFolder(td))
+  
+  stub(validateProjectFolder, 
+       "normalizePath",
+       function(x, winslash, mustWork)"~/"
+  )
+  stub(validateProjectFolder,
+       "readline", 
+       function(x)"n"
   )
   
-  with_mock(
-    `base::normalizePath` = function(x, winslash, mustWork)"~/",
-    `base::readline` = function(...)"n",
-    expect_error(validateProjectFolder(td), "Scanning stopped.")
-  )
+  expect_error(validateProjectFolder(td), "Scanning stopped.")
+  
 })

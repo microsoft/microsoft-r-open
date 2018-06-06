@@ -1,5 +1,9 @@
 NEWS/ChangeLog for doParallel
 -----------------------------
+
+1.0.13 2018-04-04
+    o  Changes to support enhanced exports via future (if available).
+
 1.0.12 2017-12-08
     o  Change test report path for compliance with CRAN policies.
 	

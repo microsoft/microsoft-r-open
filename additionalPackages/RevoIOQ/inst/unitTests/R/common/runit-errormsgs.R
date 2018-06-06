@@ -136,7 +136,9 @@ options(error=expression())
     checkException(delayedAssign(pi, "foo"))
     checkException(on.exit(ls(), add=NA_real_))
     checkException(on.exit(ls(), add=NA))
-    checkException(on.exit(1,2,3))
+	if (compareVersion(paste(R.version$major, R.version$minor, sep="."), "3.5.0") < 0) {
+		checkException(on.exit(1,2,3))
+	}
     (x <- new.env())
     (parent.env(x) <- emptyenv())
     checkException(parent.env(x) <- pi)

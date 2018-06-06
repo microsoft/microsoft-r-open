@@ -1,4 +1,5 @@
 if(interactive()) library("testthat")
+library(mockery)
 context("getValidSnapshots finds valid dates")
 
 
@@ -26,16 +27,17 @@ test_that("suggests a reasonable alternative", {
 })
 
 test_that("works with no network connection", {
-  with_mock(`getValidSnapshots` = function(...){x <- character(0); class(x) = "error"; x}, {
-    expect_message(stopIfInvalidDate("2015-06-05"),
-                   "Unable to connect to MRAN. Skipping some date validations."
-    )
-    with_mock(`getValidSnapshots` = function(...){x <- character(0); class(x) = "error"; x}, {
-      expect_message(stopIfInvalidDate("2015-06-05"),
-                     "Unable to connect to MRAN. Skipping some date validations."
-      )
-    })
-  })
+  stub(stopIfInvalidDate, "getValidSnapshots", 
+       function(...){x <- character(0); class(x) = "error"; x}
+  )
+  expect_message(
+    stopIfInvalidDate("2015-06-05"),
+    "Unable to connect to MRAN. Skipping some date validations."
+  )
+  expect_message(
+    stopIfInvalidDate("2015-06-05"),
+    "Unable to connect to MRAN. Skipping some date validations."
+  )
 })
 
 test_that("works on local file", {
