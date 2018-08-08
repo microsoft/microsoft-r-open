@@ -1,0 +1,7 @@
+#!/bin/bash
+
+VERSION=`echo $DPKG_MAINTSCRIPT_PACKAGE | sed 's/[[:alpha:]|(|[:space:]]//g' | sed 's/\-*//' | awk  -F. '{print $1 "." $2 "." $3}'`
+INSTALL_PREFIX="/opt/microsoft/ropen/${VERSION}/"
+
+rm -rf "${INSTALL_PREFIX}/lib64/R/backup"
+

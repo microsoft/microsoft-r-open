@@ -1,0 +1,129 @@
+﻿<Window x:Class="RInstaller.views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RInstaller.views"
+        WindowStyle="None"
+        BorderBrush="#FF8E8E8E"
+        BorderThickness="1px"
+        mc:Ignorable="d" Height="600" Width="700" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" Background="{Binding WindowBackground}">
+
+    <Window.Resources>
+        <BitmapImage x:Key="DefaultLogo" UriSource="Images/r_open_logo.png" />
+
+        <Style x:Key="BaseButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+
+        <Style x:Key="NavButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseButtonStyle}">
+            <Setter Property="Foreground" Value="{Binding PrimaryTextColor}"></Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Name="border"
+                            BorderThickness="1"
+                            BorderBrush="{Binding PrimaryTextColor, FallbackValue='#484848'}"
+                            Background="{Binding ButtonBackgroundColor}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{Binding ProductStyleColorOpaque}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="TitleButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseButtonStyle}">
+            <Setter Property="Foreground" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Name="border"
+                            BorderThickness="1"
+                            BorderBrush="Transparent"
+                            Background="Transparent">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#338D8D8D" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Storyboard x:Key="Storyboard1">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" Storyboard.TargetName="productLogoImage">
+                <EasingDoubleKeyFrame KeyTime="0" Value="-18.155">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="0:0:1.2" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CubicEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)" Storyboard.TargetName="productLogoImage">
+                <EasingDoubleKeyFrame KeyTime="0" Value="-0.008">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="0:0:1.2" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CubicEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="productLogoImage">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:1.2" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CubicEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+    </Window.Resources>
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+            <BeginStoryboard Storyboard="{StaticResource Storyboard1}"/>
+        </EventTrigger>
+    </Window.Triggers>
+
+    <Grid>
+        <StackPanel Orientation="Horizontal">
+            <Image x:Name="productLogoImage" HorizontalAlignment="Left" Height="40" Width="40" Margin="40,36,0,0" VerticalAlignment="Top" Source="{Binding HeaderLogoImage, FallbackValue={StaticResource DefaultLogo}}" RenderTransformOrigin="0.5,0.5">
+                <Image.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Image.RenderTransform>
+            </Image>
+            <Label x:Name="productTitlePrimaryLabel" Height="55" Content="{Binding HeaderTitlePrimary, FallbackValue='Microsoft'}" HorizontalAlignment="Left" Margin="5,30,0,0" VerticalAlignment="Top" FontSize="30" FontFamily="Segoe UI Semibold" Foreground="{Binding SecondaryTextColor}"/>
+            <Label x:Name="productTitleSecondaryLabel" Height="55" Content="{Binding HeaderTitleSecondary, FallbackValue='R Installer'}" HorizontalAlignment="Left" Margin="5,30,0,0" VerticalAlignment="Top" FontSize="30" FontFamily="Segoe UI Light" Foreground="{Binding PrimaryTextColor}"/>
+            <Label x:Name="versionLabel" Content="{Binding MarketingVersion, FallbackValue='3.4.1'}" HorizontalAlignment="Left" Margin="0,45,0,0" VerticalAlignment="Top" FontSize="15" FontFamily="Segoe UI" Foreground="{Binding PrimaryTextColor}"/>
+        </StackPanel>
+        <Frame x:Name="pageFrame" Content="Frame" HorizontalAlignment="Left" Height="500" Margin="0,80,0,0" VerticalAlignment="Top" Width="700" NavigationUIVisibility="Hidden"/>
+        <ContentControl Content="" HorizontalAlignment="Left" VerticalAlignment="Top" MouseLeftButtonDown="Window_MouseDown" Height="45" Width="700" Background="Transparent"/>
+        <Button x:Name="CloseButton" Style="{StaticResource TitleButtonStyle}" HorizontalAlignment="Left" Margin="638,10,0,0" VerticalAlignment="Top" Click="CloseButton_Click" Height="35" Width="50">
+            <Path Data="M0,0 L10,10 M10,0 L0,10" Margin="0,0,0,0" Stroke="{Binding PrimaryTextColor, FallbackValue='Black'}" StrokeThickness="1px" />
+        </Button>
+        <Button x:Name="MinimizeButton" Style="{StaticResource TitleButtonStyle}" HorizontalAlignment="Left" Margin="588,10,0,0" VerticalAlignment="Top" Click="MinimizeButton_Click" Height="35" Width="50">
+            <Path Data="M0,0 L12,0" Margin="0,0,0,0" Stroke="{Binding PrimaryTextColor, FallbackValue='Black'}" StrokeThickness="1px" />
+        </Button>
+        <Button x:Name="RightButton" Style="{StaticResource NavButtonStyle}" Content="Continue"  HorizontalAlignment="Right" Margin="0,0,30,25" VerticalAlignment="Bottom" Width="100" Height="37" Click="RightButton_Click"/>
+        <Button x:Name="LeftButton" Style="{StaticResource NavButtonStyle}" Content="Back"  HorizontalAlignment="Left" Margin="30,0,0,25" VerticalAlignment="Bottom" Width="100" Height="37" Click="LeftButton_Click"/>
+    </Grid>
+</Window>

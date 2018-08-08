@@ -1,6 +1,6 @@
 Package: RevoMods
-Version: 11.0.0
-Date: 2017-03-15
+Version: 11.0.1
+Date: 2018-08-09
 RevoBuildID: 1
 Title: R Functions Modified For Revolution R
 Author: Microsoft Corporation
@@ -9,4 +9,4 @@ Depends: R (>= 2.6.2)
 Enhances: rpart
 Description: Microsoft modifications and extensions to standard R functions
 License: GPL-2
-Copyright: Copyright 2016 Microsoft Corporation
+Copyright: Copyright 2018 Microsoft Corporation

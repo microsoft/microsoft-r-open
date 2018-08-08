@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set +f
+
+VERSION=`echo $DPKG_MAINTSCRIPT_PACKAGE | sed 's/[[:alpha:]|(|[:space:]]//g' | sed 's/\-*//' | awk  -F. '{print $1 "." $2 "." $3}'`
+DIRECTORY=/opt/microsoft/ropen/${VERSION}/lib64/R
+if [ -d "$DIRECTORY/backup" ]; then
+  rm ${DIRECTORY}/lib/*.so
+  mv ${DIRECTORY}/backup/lib/*.so ${DIRECTORY}/lib
+fi
