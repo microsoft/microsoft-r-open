@@ -8,16 +8,16 @@ output:
     number_sections: true
     keep_md: yes
 vignette: >
-  %\VignetteIndexEntry{Using checkpoint for reproducible research}
+  %\VignetteIndexEntry{Managing checkpoint snapshot archives}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-The `checkpoint()` function enables reproducible research by managing your R package versions. These pacakges are downloaded into a local `.checkpoint` folder.
+The `checkpoint()` function enables reproducible research by managing your R package versions. These packages are downloaded into a local `.checkpoint` folder.
 
 If you use `checkpoint()` for many projects, these local packages can consume some storage space, so the package also exposes functions to manage your snapshots.
 
-In summary:
+In this vignette:
 
 * Managing local archives:
 
@@ -29,14 +29,24 @@ In summary:
      * `unCheckpoint()`: reset `.libPaths` to the user library to undo the effect of `checkpoint()` (experimental).
 
 
-## Setting up an example project:
+# Setting up an example project:
 
 For illustration, set up a script referencing a single package:
 
 ```r
-library(MASS)
-hist(islands)
-truehist(islands)
+# Example from ?darts
+library(darts)
+x = c(12,16,19,3,17,1,25,19,17,50,18,1,3,17,2,2,13,18,16,2,25,5,5,
+      1,5,4,17,25,25,50,3,7,17,17,3,3,3,7,11,10,25,1,19,15,4,1,5,12,17,16,
+      50,20,20,20,25,50,2,17,3,20,20,20,5,1,18,15,2,3,25,12,9,3,3,19,16,20,
+      5,5,1,4,15,16,5,20,16,2,25,6,12,25,11,25,7,2,5,19,17,17,2,12)
+mod = simpleEM(x, niter=100)
+e = simpleExpScores(mod$s.final)
+oldpar <- par(mfrow=c(1, 2))
+drawHeatmap(e)
+drawBoard(new=TRUE)
+drawAimSpot(e, cex = 5)
+par(oldpar)
 ```
 
 
@@ -44,9 +54,10 @@ Next, create the checkpoint:
 
 
 ```{r setup-1, include=FALSE}
+
 ## Write dummy code file to project
 example_code <- '
-library(MASS)
+library(darts)
 '
 dir.create(tempdir(), recursive = TRUE)
 cat(example_code, file = file.path(tempdir(), "managing_checkpoint_example_code.R"))
@@ -54,13 +65,18 @@ cat(example_code, file = file.path(tempdir(), "managing_checkpoint_example_code.
 
 ```{r checkpoint, results="hide", message=FALSE, warning=FALSE}
 dir.create(file.path(tempdir(), ".checkpoint"), recursive = TRUE, showWarnings = FALSE)
+options(install.packages.compile.from.source = "no")
+oldLibPaths <- .libPaths()
+
 ## Create a checkpoint by specifying a snapshot date
 library(checkpoint)
 checkpoint("2015-04-26", project = tempdir(), checkpointLocation = tempdir())
 
 ```
 
-## Working with checkpoint archive snapshots
+
+
+# Working with checkpoint archive snapshots
 
 You can query the available snapshots on disk using the `checkpointArchives()` function. This returns a vector of snapshot folders. 
 
@@ -118,7 +134,7 @@ checkpointRemove("2015-04-26", notUsedSince = TRUE)
 ```
 
 
-## Reading the checkpoint log file
+# Reading the checkpoint log file
 
 One of the side effects of `checkpoint()` is to create a log file that contains information about packages that get downloaded, as well as the download size.
 
@@ -138,7 +154,7 @@ head(log)
 ```
 
 
-## Resetting the checkpoint
+# Resetting the checkpoint
 
 In older versions of `checkpoint()` the only way to reset the effect of `checkpoint()` was to restart your R session.
 
@@ -152,12 +168,12 @@ Now use `unCheckpoint()` to reset your library paths
 
 ```{r uncheckpoint-2}
 # Note this is still experimental
-unCheckpoint()
+unCheckpoint(oldLibPaths)
 .libPaths()
 ```
 
 
-```{r cleanup, include=FALSE}
+```{r cleanup, include=TRUE}
 ## cleanup
 unlink("manifest.R")
 unlink(file.path(tempdir(), "managing_checkpoint_example_code.R"))

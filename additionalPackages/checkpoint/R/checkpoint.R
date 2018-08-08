@@ -114,11 +114,11 @@ checkpoint <- function(snapshotDate, project = getwd(),
     }
   }
   
-  authorizeFileSystemUse(checkpointLocation)
-  
   fixRstudioBug()
   
+  
   # Create checkpoint folders
+  authorizeFileSystemUse(checkpointLocation)
   if(!createFolders(snapshotDate = snapshotDate, 
                     checkpointLocation = checkpointLocation))
     stop("Unable to create checkpoint folders at checkpointLocation = \"",
@@ -152,9 +152,10 @@ checkpoint <- function(snapshotDate, project = getwd(),
   if(isTRUE(scanForPackages)){
     mssg(verbose, "Scanning for packages used in this project")
     pkgs <- scanForPackages(project, use.knitr = use.knitr, 
-                                scan.rnw.with.knitr = scan.rnw.with.knitr,
-                                auto.install.knitr = auto.install.knitr
-                                )
+                            scan.rnw.with.knitr = scan.rnw.with.knitr,
+                            auto.install.knitr = auto.install.knitr,
+                            verbose = verbose
+    )
     packages.detected <- pkgs[["pkgs"]]
     mssg(verbose, "- Discovered ", length(packages.detected), " packages")
     
