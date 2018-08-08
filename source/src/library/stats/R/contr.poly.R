@@ -1,7 +1,7 @@
 #  File src/library/stats/R/contr.poly.R
 #  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2015 The R Core Team
+#  Copyright (C) 1995-2018 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -67,12 +67,13 @@ poly <- function(x, ..., degree = 1, coefs = NULL, raw = FALSE, simple = FALSE)
 {
     dots <- list(...)
     if(nd <- length(dots)) {
-        if(nd == 1 && length(dots[[1L]]) == 1L) # unnamed degree
+	dots_deg <- nd == 1L && length(dots[[1L]]) == 1L
+	if(dots_deg) # unnamed degree, nothing else in '...'
             degree <- dots[[1L]]
         else return(polym(x, ..., degree = degree, coefs=coefs, raw = raw))
     }
-    if(is.matrix(x)) { ## FIXME: fails when combined with 'unnamed degree' above
-        m <- unclass(as.data.frame(cbind(x, ...)))
+    if(is.matrix(x)) {
+	m <- unclass(as.data.frame(if(nd && dots_deg) x else cbind(x, ...)))
 	return(do.call(polym, c(m, degree = degree, raw = raw,
 				list(coefs=coefs))))
     }
@@ -130,8 +131,8 @@ predict.poly <- function(object, newdata, ...)
 
 makepredictcall.poly  <- function(var, call)
 {
-    if(as.character(call)[1L] != "poly") return(call)
-    call$coefs <- attr(var, "coefs")
+    if(as.character(call)[1L] == "poly" || (is.call(call) && identical(eval(call[[1L]]), poly)))
+	call$coefs <- attr(var, "coefs")
     call
 }
 

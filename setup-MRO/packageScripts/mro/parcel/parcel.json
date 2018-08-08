@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "name": "MRO",
+  "version": "<% productVersion %>",
+  "setActiveSymlink": true,
+
+  "depends": "",
+  "replaces": "",
+  "conflicts": "",
+
+  "provides": [
+  ],
+
+  "scripts": {
+    "defines": "defines.sh"
+  },
+
+  "packages": [
+    {
+      "name"   : "mro",
+      "version": "<% productVersion %>"
+    }
+  ],
+
+  "components": [
+    {
+      "name"       : "mro",
+      "version"    : "<% productVersion %>",
+      "pkg_version": "",
+      "pkg_release": ""
+    }
+  ],
+
+  "users": {
+  },
+
+  "groups": [
+  ]
+}
+

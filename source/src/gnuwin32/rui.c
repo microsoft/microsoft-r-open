@@ -1,7 +1,7 @@
 /*
- *  R : A Computer Langage for Statistical Data Analysis
+ *  R : A Computer Language for Statistical Data Analysis
  *  Copyright (C) 1998--2005  Guido Masarotto and Brian Ripley
- *  Copyright (C) 2004--2015  The R Foundation
+ *  Copyright (C) 2004--2018  The R Foundation
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -1026,8 +1026,8 @@ int setupui(void)
     /* set locale before doing anything with menus */
     setlocale(LC_CTYPE, ""); /* necessary in case next fails to set
 				a valid locale */
-    if((p = getenv("LC_ALL"))) strcpy(Rlocale, p);
-    if((p = getenv("LC_CTYPE"))) strcpy(Rlocale, p);
+    if((p = getenv("LC_ALL"))) strncpy(Rlocale, p, sizeof(Rlocale)-1);
+    if((p = getenv("LC_CTYPE"))) strncpy(Rlocale, p, sizeof(Rlocale)-1);
     if (strcmp(Rlocale, "C") == 0) strcpy(Rlocale, "en");
     setlocale(LC_CTYPE, Rlocale);
     mbcslocale = MB_CUR_MAX > 1;
@@ -1244,13 +1244,13 @@ menuItems *wingetmenuitems(const char *mname, char *errmsg) {
     char mitem[1002], *p, *q, *r;
     int i,j = 0;
 
-    q = (char *)malloc(1000 * sizeof(char));
-    r = (char *)malloc(1000 * sizeof(char));
-
     if (strlen(mname) > 1000) {
 	strcpy(errmsg, G_("'mname' is limited to 1000 bytes"));
 	return NULL;
     }
+
+    q = (char *)malloc(1000 * sizeof(char));
+    r = (char *)malloc(1000 * sizeof(char));
 
     items = (menuItems *)malloc(sizeof(menuItems));
     if(nitems > 0)

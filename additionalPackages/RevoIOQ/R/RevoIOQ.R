@@ -488,9 +488,10 @@ runRevoTestSuite <- function(testSuites, useOwnErrorHandler=TRUE, runTestFileInO
         save(.testLogger, testFile, testSuite, file=storefile)
         testscript <- gsub("\\\\", "/", tempfile(pattern="RevoIOQTest"))
         cat("library(RevoIOQ)\n",
-            if (length(grep("RevoScaleR", testFile)) > 0) "require(RevoScaleR)\n",
+            if (length(grep("RevoScaleR", testFile)) > 0) "require(RevoScaleR)\n",		
 			"Sys.setlocale('LC_COLLATE', 'C')\n",
             paste("load('", storefile, "', envir=.GlobalEnv)\n", sep=""),
+			"RUnitEnv <- .GlobalEnv\n",
             "RNGkind(kind=testSuite$rngKind, normal.kind=testSuite$rngNormalKind)\n",
              paste("RUnit:::.sourceTestFile('", testFile,"', '", testSuite$testFuncRegexp, "')\n",sep=""),
 		 paste("save(.testLogger, file='", storefile, "')\n",sep=""), "q('no')\n",

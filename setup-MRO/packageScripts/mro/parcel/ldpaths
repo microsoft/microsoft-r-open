@@ -1,0 +1,23 @@
+# An altered version or R's ldpaths
+#
+# The original version of this file gives precedence to R_LD_LIBRARY_PATH
+# over LD_LIBRARY_PATH. We need to switch this order to enable MRS parcel
+# to inject MKL libraries into R process.
+#
+: ${JAVA_HOME=/usr/lib/jvm/java-1.4.2-gcj-1.4.2.0/jre}
+: ${R_JAVA_LD_LIBRARY_PATH=}
+if test -n "/usr/local/lib64:/usr/X11R6/lib64"; then
+: ${R_LD_LIBRARY_PATH=${R_HOME}/lib:/usr/local/lib64:/usr/X11R6/lib64}
+else
+: ${R_LD_LIBRARY_PATH=${R_HOME}/lib}
+fi
+if test -n "${R_JAVA_LD_LIBRARY_PATH}"; then
+  R_LD_LIBRARY_PATH="${R_LD_LIBRARY_PATH}:${R_JAVA_LD_LIBRARY_PATH}"
+fi
+## This is DYLD_FALLBACK_LIBRARY_PATH on Darwin (OS X) and LD_LIBRARY_PATH elsewhere
+if test -z "${LD_LIBRARY_PATH}"; then
+  LD_LIBRARY_PATH="${R_LD_LIBRARY_PATH}"
+else
+  LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${R_LD_LIBRARY_PATH}"
+fi
+export LD_LIBRARY_PATH

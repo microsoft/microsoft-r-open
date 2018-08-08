@@ -1,7 +1,7 @@
 #  File src/library/utils/R/str.R
 #  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2017 The R Core Team
+#  Copyright (C) 1995-2018 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -162,8 +162,17 @@ str.default <-
         vec.len <- 0
     }
 
-    ## x: character
-    maybe_truncate <- function(x, nx = nchar(x, type="w"), S = "\"", ch = "| __truncated__")
+    nchar.w <- function(x) nchar(x, type="w", allowNA=TRUE)
+    ncharN  <- function(x) {
+	r <- nchar(x, type="w", allowNA=TRUE)
+	if(anyNA(r)) {
+	    iN <- is.na(r)
+	    r[iN] <- nchar(x[iN], type="bytes")
+	}
+	r
+    }
+    ## x: character ; using "global" 'nchar.max'
+    maybe_truncate <- function(x, nx = nchar.w(x), S = "\"", ch = "| __truncated__")
     {
 	ok <- if(anyNA(nx)) !is.na(nx) else TRUE
 	if(any(lrg <- ok & nx > nchar.max)) {
@@ -218,6 +227,15 @@ str.default <-
 				   control = dCtrl)
     n.of. <- function(n, singl, plural) paste(n, ngettext(n, singl, plural))
     n.of <- function(n, noun) n.of.(n, noun, paste0(noun,"s"))
+    arrLenstr <- function(obj) {
+	rnk <- length(di. <- dim(obj))
+	di <- paste0(ifelse(di. > 1, "1:",""), di.,
+		     ifelse(di. > 0, "" ," "))
+	pDi <- function(...) paste(c("[", ..., "]"), collapse = "")
+	if(rnk == 1)
+	     pDi(di[1L], "(1d)")
+	else pDi(paste0(di[-rnk], ", "), di[rnk])
+    }
     if(is.ts <- stats::is.ts(object))
         str1.ts <- function(o, lestr) {
             tsp.a <- stats::tsp(o)
@@ -307,7 +325,7 @@ str.default <-
 	    if (is.na(max.level) || nest.lev < max.level) {
 		nam.ob <-
 		    if(is.null(nam.ob <- names(object))) rep.int("", le)
-		    else { ncn <- nchar(nam.ob, type="w")
+		    else { ncn <- nchar.w(nam.ob)
 			   if(anyNA(ncn)) ## slower, but correct:
 			      ncn <- vapply(nam.ob, format.info, 0L)
 			   format(nam.ob, width = max(ncn), justify="left")
@@ -326,32 +344,62 @@ str.default <-
 		    cat(indent.str, "[list output truncated]\n")
 	    }
 	}
-    } else { #- not function, not list
-	if(is.vector(object)
-	   || (is.array(object) && is.atomic(object))
-	   ##f fails for formula:
-	   ##f typeof(object) in {"symbol", "language"} =: is.symbolic(.):
-	   ##f || (is.language(object) && !is.expression(object))
-	   || (is.language(object) && !is.expression(object) && !any(cl == "formula"))
-	   ) { ##-- Splus: FALSE for 'named vectors'
+    } else { # not  NULL, S4, function, or list
+	if (is.factor(object)) {
+	    nl <- length(lev.att <- levels(object))
+	    if(!is.character(lev.att)) {# should not happen..
+		warning("'object' does not have valid levels()")
+		nl <- 0
+	    } else { ## protect against large nl:
+                w <- min(max(width/2, 10), 1000)
+                if(nl > w) lev.att <- lev.att[seq_len(w)]
+                n.l <- length(lev.att) # possibly  n.l << nl
+                lev.att <- encodeString(lev.att, na.encode = FALSE, quote = '"')
+            }
+	    ord <- is.ordered(object)
+	    object <- unclass(object)
+	    if(nl) {
+		## as from 2.1.0, quotes are included ==> '-2':
+		lenl <- cumsum(3 + (ncharN(lev.att) - 2))# level space
+		ml <- if(n.l <= 1 || lenl[n.l] <= 13)
+		    n.l else which.max(lenl > 13)
+		lev.att <- maybe_truncate(lev.att[seq_len(ml)])
+	    }
+	    else # nl == 0
+		ml <- length(lev.att <- "")
+
+	    lsep <- if(ord) "<" else ","
+	    str1 <-
+		paste0(if(ord)" Ord.f" else " F", "actor",
+                       if(is.array(object)) arrLenstr(object),
+		       " w/ ", nl, " level", if(nl != 1) "s",
+		       if(nl) " ",
+		       if(nl) paste0(lev.att, collapse = lsep),
+		       if(ml < nl) paste0(lsep, ".."), ":")
+
+	    std.attr <- c("levels", "class", if(is.array(object)) "dim")
+	} else if(is.ts) {
+	    str1 <- str1.ts(object,
+                            if(isA <- is.array(object)) arrLenstr(object) else le.str)
+	    std.attr <- c("tsp", "class", if(isA) "dim")
+        } else if(is.vector(object)
+	       || is.atomic(object)
+               ##f fails for formula:
+               ##f typeof(object) in {"symbol", "language"} =: is.symbolic(.):
+               ##f || (is.language(object) && !is.expression(object))
+               || (is.language(object) && !is.expression(object) && !any(cl == "formula")) ) {
 	    if(is.atomic(object)) {
 		##-- atomic:   numeric{dbl|int} complex character logical raw
 		mod <- substr(mode(object), 1, 4)
 		if     (mod == "nume")
-		    mod <- if(is.integer(object)) "int"
-		    else if(has.class) cl[1L] else "num"
+		    mod <- if(is.integer(object)) "int" else "num"
 		else if(mod == "char") { mod <- "chr"; char.like <- TRUE }
 		else if(mod == "comp") mod <- "cplx" #- else: keep 'logi'
 		if(is.array(object)) {
-		    rnk <- length(di. <- dim(object))
-		    di <- paste0(ifelse(di. > 1, "1:",""), di.,
-				 ifelse(di. > 0, "" ," "))
-		    pDi <- function(...) paste(c("[", ..., "]"), collapse = "")
-		    le.str <- (if(rnk == 1) pDi(di[1L], "(1d)") else
-			       pDi(paste0(di[-rnk], ", "), di[rnk]))
+		    le.str <- arrLenstr(object)
 		    if(m <- match("AsIs", cl, 0L)) ## workaround bad format.AsIs()
 			oldClass(object) <- cl[-m]
-                    std.attr <- c("dim", if(is.ts) c("tsp", "class"))
+                    std.attr <- "dim"
 		} else if(!is.null(names(object))) {
 		    mod <- paste("Named", mod)
 		    std.attr <- std.attr[std.attr != "names"]
@@ -364,8 +412,7 @@ str.default <-
 		    std.attr <- c(std.attr, "class")
 		}
 		str1 <-
-		    if(is.ts) str1.ts(object, le.str)
-		    else if(le == 1 && !is.array(object)) paste(NULL, mod)
+		    if(le == 1 && !is.array(object)) paste(NULL, mod)
 		    else paste0(" ", mod, if(le>0)" ", le.str)
 	    } else { ##-- not atomic, but vector: #
 		mod <- typeof(object)#-- typeof(.) is more precise than mode!
@@ -382,41 +429,6 @@ str.default <-
 			       paste("		#>#>", mod, NULL)
 			       )
 	    }
-	} else if(is.ts) {
-	    str1 <- str1.ts(object, le.str)
-	    std.attr <- c("tsp","class") #- "names"
-	} else if (is.factor(object)) {
-	    nl <- length(lev.att <- levels(object))
-	    if(!is.character(lev.att)) {# should not happen..
-		warning("'object' does not have valid levels()")
-		nl <- 0
-	    } else { ## protect against large nl:
-                w <- min(max(width/2, 10), 1000)
-                if(nl > w) lev.att <- lev.att[seq_len(w)]
-                n.l <- length(lev.att) # possibly  n.l << nl
-                lev.att <- encodeString(lev.att, na.encode = FALSE, quote = '"')
-            }
-	    ord <- is.ordered(object)
-	    object <- unclass(object)
-	    if(nl) {
-		## as from 2.1.0, quotes are included ==> '-2':
-		lenl <- cumsum(3 + (nchar(lev.att, type="w") - 2))# level space
-		ml <- if(n.l <= 1 || lenl[n.l] <= 13)
-		    n.l else which.max(lenl > 13)
-		lev.att <- maybe_truncate(lev.att[seq_len(ml)])
-	    }
-	    else # nl == 0
-		ml <- length(lev.att <- "")
-
-	    lsep <- if(ord) "<" else ","
-	    str1 <-
-		paste0(if(ord)" Ord.f" else " F",
-		       "actor w/ ", nl, " level", if(nl != 1) "s",
-		       if(nl) " ",
-		       if(nl) paste0(lev.att, collapse = lsep),
-		       if(ml < nl) paste0(lsep, ".."), ":")
-
-	    std.attr <- c("levels", "class")
 	} else if(typeof(object) %in%
 		  c("externalptr", "weakref", "environment", "bytecode")) {
 	    ## Careful here, we don't want to change pointer objects
@@ -514,13 +526,15 @@ str.default <-
 	    int.surv <- iSurv || is.integer(object)
 	    if(!int.surv) {
 		ob <- if(le > iv.len) object[seq_len(iv.len)] else object
-		ao <- abs(ob <- ob[!is.na(ob)])
+		ao <- abs(ob <- unclass(ob[!is.na(ob)]))
 	    }
-	    else if(iSurv)
+	    else if(iSurv) {
+		nc <- ncol(object)
 		le <- length(object <- as.character(object))
+	    }
 	    if(int.surv || (all(ao > 1e-10 | ao==0) && all(ao < 1e10| ao==0) &&
 			    all(abs(ob - signif(ob, digits.d)) <= 9e-16*ao))) {
-		if(!iSurv || di.[2L] == 2) # "Surv" : implemented as matrix
+		if(!iSurv || nc == 2L) # "Surv" : implemented as matrix
 		    ## use integer-like length
 		    v.len <- iv.len
 		format.fun <- formatNum
@@ -543,18 +557,21 @@ str.default <-
 	    ## FIXME: need combined  encode.and.trim.string(object, m)  with O(m) !
 	    encObj <- tryCatch(strtrim(object, trimWidth), error=function(e) NULL)
 	    encObj <-
-		if(is.null(encObj)) # must first encodeString() before we can trim
-		    strtrim(encodeString(object, quote= '"', na.encode= FALSE),
-			    trimWidth)
+		if(is.null(encObj)) { # must first encodeString() before we can trim
+		    e <- encodeString(object, quote= '"', na.encode= FALSE)
+		    r <- tryCatch(strtrim(e, trimWidth), error=function(.) NULL)
+		    ## What else can we try?
+		    if(is.null(r)) e else r
+		}
 		else
 		    encodeString(encObj, quote= '"', na.encode= FALSE)
 	    if(le > 0) ## truncate if LONG char:
 		encObj <- maybe_truncate(encObj)
 	    v.len <-
 		if(missing(vec.len)) {
-		    max(1,sum(cumsum(1 + if(le>0) nchar(encObj, type="w") else 0) <
+		    max(1,sum(cumsum(1 + if(le>0) ncharN(encObj) else 0) <
 			      width - (4 + 5*nest.lev + nchar(str1, type="w"))))
-		}		      # '5*ne..' above is fudge factor
+		}	 	      # '5*ne..' above is fudge factor
 		else round(v.len)
 	    ile <- min(le, v.len)
 	    if(ile >= 1)

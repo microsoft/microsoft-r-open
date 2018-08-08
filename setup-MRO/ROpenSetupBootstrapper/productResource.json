@@ -1,0 +1,58 @@
+﻿{
+  "productId": "open",
+  "productStrings": {
+    "marketingPrefix": "Microsoft",
+    "marketingPostfix": "R Open",
+    "marketingVersion": "3.5.1",
+    "marketingDescriptionPrimary": "Microsoft R Open is the enhanced distribution of R from Microsoft Corporation. It is a complete open source platform for statistical analysis and data science.",
+    "marketingDescriptionSecondary": "You can get more information about Microsoft R Open at",
+    "marketingUrl": "https://aka.ms/microsoft-r-open-docs",
+    "installConfirmHeadline": "Almost there",
+    "installConfirmLineOne": "We are ready to start the installation.",
+    "installConfirmLineTwo": "Microsoft R Open will be installed into the directory: ",
+    "installConfirmLineThree": "Click Install to begin the installation.",
+    "installConfirmRightButton": "Install",
+    "installActionHeadline": "Installing",
+    "installFinishHeadline": "All done",
+    "installFinishLineOne": "The installation is complete. To learn more about Microsoft R Open, visit:",
+	"modifyConfirmHeadline": "Let's make some changes",
+    "modifyConfirmLineOne": "We are ready to modify the current installation.",
+    "modifyConfirmLineTwo": "We will be modifying Microsoft R Open in the directory: ",
+    "modifyConfirmLineThree": "Click Install to begin the installation.",
+    "modifyConfirmRightButton": "Install",
+    "modifyctionHeadline": "Modifying",
+    "modifyFinishHeadline": "All done",
+    "modifyFinishLineOne": "The changes are complete. To learn more about Microsoft R Open, visit:",
+    "uninstallConfirmHeadline": "We're sorry to see you go",
+    "uninstallConfirmLineOne": "We are ready to uninstall Microsoft R Open.",
+    "uninstallConfirmLineTwo": "The following installation will be removed:",
+    "uninstallConfirmLineThree": "Click Uninstall to continue.",
+    "uninstallConfirmRightButton": "Uninstall",
+    "uninstallActionHeadline": "Uninstalling",
+    "uninstallFinishHeadline": "Uninstallation Complete",
+    "uninstallFinishLineOne": "We'd love to see you come back. If you are interested in Microsoft R in the future, please visit:"
+  },
+  "productStyles": {
+    "logoAsset": "r_open_logo",
+    "productStyleColor": "#0099FD",
+    "windowBackgroundColor": "#2D2D2F",
+    "primaryTextColor": "#E8E8E8",
+    "secondaryTextColor": "#FFFFFF",
+    "linkTextColor": "#009DFF",
+    "buttonBackgroundColor": "#252525"
+  },
+  "productAgreements": [
+    {
+      "title": "License Agreement for Microsoft R Open",
+	    "featureId": "",
+      "file": "ROpenEula.rtf",
+      "agreeOption": "I acknowledge the above licensing information"
+    },
+    {
+      "title": "License Agreement for Math Kernel Libraries",
+	    "featureId": "MKL",
+      "file": "MklEula.rtf",
+      "agreeOption": "I accept these terms"
+    }
+  ]
+}

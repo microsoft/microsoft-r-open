@@ -1,7 +1,7 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
  *  Copyright (C) 1995, 1996	Robert Gentleman and Ross Ihaka
- *  Copyright (C) 2000--2016	The R Core Team
+ *  Copyright (C) 2000--2018	The R Core Team
  *  Copyright (C) 2001--2012	The R Foundation
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -128,7 +128,7 @@ static void printLogicalMatrix(SEXP sx, int offset, int r_pr, int r, int c,
     int i, j, jmin = 0, jmax = 0, lbloff = 0;		\
 							\
     if (!isNull(rl))					\
-	formatString(STRING_PTR(rl), r, &rlabw, 0);	\
+	formatString(STRING_PTR_RO(rl), r, &rlabw, 0);	\
     else						\
 	rlabw = IndexWidth(r + 1) + 3;			\
 							\
@@ -211,12 +211,12 @@ static void printLogicalMatrix(SEXP sx, int offset, int r_pr, int r, int c,
 	    MatrixColumnLabel(cl, j, w[j])
 
     _PRINT_INIT_rl_rn;
-    int *x = LOGICAL(sx) + offset;
+    const int *x = LOGICAL_RO(sx) + offset;
 
-    _COMPUTE_W_(formatLogical(&x[j * r], (R_xlen_t) r, &w[j]));
+    _COMPUTE_W_( formatLogical(&x[j * (R_xlen_t) r], (R_xlen_t) r, &w[j]) );
 
     _PRINT_MATRIX_( , STD_ColumnLabels,
-		   Rprintf("%s", EncodeLogical(x[i + j * r], w[j])));
+		   Rprintf("%s", EncodeLogical(x[i + j * (R_xlen_t) r], w[j])));
 
 }
 
@@ -225,12 +225,12 @@ static void printIntegerMatrix(SEXP sx, int offset, int r_pr, int r, int c,
 			       Rboolean print_ij)
 {
     _PRINT_INIT_rl_rn;
-    int *x = INTEGER(sx) + offset;
+    const int *x = INTEGER_RO(sx) + offset;
 
-    _COMPUTE_W_( formatInteger(&x[j * r], (R_xlen_t) r, &w[j]) );
+    _COMPUTE_W_( formatInteger(&x[j * (R_xlen_t) r], (R_xlen_t) r, &w[j]) );
 
     _PRINT_MATRIX_( , STD_ColumnLabels,
-		   Rprintf("%s", EncodeInteger(x[i + j * r], w[j])));
+		   Rprintf("%s", EncodeInteger(x[i + j * (R_xlen_t) r], w[j])));
 }
 
 static void printRealMatrix(SEXP sx, int offset, int r_pr, int r, int c,
@@ -238,14 +238,16 @@ static void printRealMatrix(SEXP sx, int offset, int r_pr, int r, int c,
 			    Rboolean print_ij)
 {
     _PRINT_INIT_rl_rn;
-    double *x = REAL(sx) + offset;
+    const double *x = REAL_RO(sx) + offset;
     int *d = (int *) R_alloc(c, sizeof(int)),
 	*e = (int *) R_alloc(c, sizeof(int));
 
-    _COMPUTE_W_( formatReal(&x[j * r], (R_xlen_t) r, &w[j], &d[j], &e[j], 0) );
+    _COMPUTE_W_( formatReal(&x[j * (R_xlen_t) r], (R_xlen_t) r, &w[j],
+                            &d[j], &e[j], 0) );
 
     _PRINT_MATRIX_( , STD_ColumnLabels,
-		   Rprintf("%s", EncodeReal0(x[i + j * r], w[j], d[j], e[j], OutDec)) );
+		   Rprintf("%s", EncodeReal0(x[i + j * (R_xlen_t) r],
+                                             w[j], d[j], e[j], OutDec)) );
 }
 
 static void printComplexMatrix(SEXP sx, int offset, int r_pr, int r, int c,
@@ -253,7 +255,7 @@ static void printComplexMatrix(SEXP sx, int offset, int r_pr, int r, int c,
 			       Rboolean print_ij)
 {
     _PRINT_INIT_rl_rn;
-    Rcomplex *x = COMPLEX(sx) + offset;
+    const Rcomplex *x = COMPLEX_RO(sx) + offset;
     int *dr = (int *) R_alloc(c, sizeof(int)),
 	*er = (int *) R_alloc(c, sizeof(int)),
 	*wr = (int *) R_alloc(c, sizeof(int)),
@@ -262,19 +264,21 @@ static void printComplexMatrix(SEXP sx, int offset, int r_pr, int r, int c,
 	*wi = (int *) R_alloc(c, sizeof(int));
 
     /* Determine the column widths */
-    _COMPUTE_W_( formatComplex(&x[j * r], (R_xlen_t) r,
+    _COMPUTE_W_( formatComplex(&x[j * (R_xlen_t) r], (R_xlen_t) r,
 			       &wr[j], &dr[j], &er[j],
 			       &wi[j], &di[j], &ei[j], 0);
 		 w[j] = wr[j] + wi[j] + 2 );
 
     _PRINT_MATRIX_( , STD_ColumnLabels,
-		   if (ISNA(x[i + j * r].r) || ISNA(x[i + j * r].i))
+		   if (ISNA(x[i + j * (R_xlen_t) r].r) ||
+		       ISNA(x[i + j * (R_xlen_t) r].i))
+
 		       Rprintf("%s", EncodeReal0(NA_REAL, w[j], 0, 0, OutDec));
 		   else
 		       /* Note that the label printing may modify w[j], so wr[j] is not 
 		          necessarily still valid, and we use w[j] - wi[j] - 2  */
 		       Rprintf("%s",
-			       EncodeComplex(x[i + j * r],
+			       EncodeComplex(x[i + j * (R_xlen_t) r],
 					     w[j] - wi[j] - 2, dr[j], er[j],
 					     wi[j], di[j], ei[j], OutDec)) )
 }
@@ -284,9 +288,10 @@ static void printStringMatrix(SEXP sx, int offset, int r_pr, int r, int c,
 			      const char *rn, const char *cn, Rboolean print_ij)
 {
     _PRINT_INIT_rl_rn;
-    SEXP *x = STRING_PTR(sx)+offset;
+    const SEXP *x = STRING_PTR_RO(sx)+offset;
 
-    _COMPUTE_W2_( formatString(&x[j * r], (R_xlen_t) r, &w[j], quote), );
+    _COMPUTE_W2_( formatString(&x[j * (R_xlen_t) r], (R_xlen_t) r,
+                               &w[j], quote), );
 
     _PRINT_MATRIX_( + R_print.gap,
 	           /* DO_COLUMN_LABELS = */
@@ -300,7 +305,8 @@ static void printStringMatrix(SEXP sx, int offset, int r_pr, int r, int c,
 		   },
 		   /* ENCODE_I = */
 		   Rprintf("%*s%s", R_print.gap, "",
-			   EncodeString(x[i + j * r], w[j], quote, right)) );
+			   EncodeString(x[i + j * (R_xlen_t) r],
+		                        w[j], quote, right)) );
 }
 
 static void printRawMatrix(SEXP sx, int offset, int r_pr, int r, int c,
@@ -308,12 +314,13 @@ static void printRawMatrix(SEXP sx, int offset, int r_pr, int r, int c,
 			   Rboolean print_ij)
 {
     _PRINT_INIT_rl_rn;
-    Rbyte *x = RAW(sx) + offset;
+    const Rbyte *x = RAW_RO(sx) + offset;
 
-    _COMPUTE_W_( formatRaw(&x[j * r], (R_xlen_t) r, &w[j]) )
+    _COMPUTE_W_( formatRaw(&x[j * (R_xlen_t) r], (R_xlen_t) r, &w[j]) )
 
     _PRINT_MATRIX_( , STD_ColumnLabels,
-		   Rprintf("%*s%s", w[j]-2, "", EncodeRaw(x[i + j * r], "")) );
+		   Rprintf("%*s%s", w[j]-2, "",
+		   EncodeRaw(x[i + j * (R_xlen_t) r], "")) );
 }
 
 /* rm and cn are found by GetMatrixDimnames so in native encoding */
@@ -325,8 +332,9 @@ void printMatrix(SEXP x, int offset, SEXP dim, int quote, int right,
  * 'rn' and 'cn' are the  names(dimnames(.))
  */
     const void *vmax = vmaxget();
-    int r = INTEGER(dim)[0];
-    int c = INTEGER(dim)[1], r_pr;
+    const int *pdim = INTEGER_RO(dim);
+    int r = pdim[0];
+    int c = pdim[1], r_pr;
     /* PR#850 */
     if ((rl != R_NilValue) && (r > length(rl)))
 	error(_("too few row labels"));
@@ -394,8 +402,9 @@ void printArray(SEXP x, SEXP dim, int quote, int right, SEXP dimnames)
     }
     else { /* ndim >= 3 */
 	SEXP dn, dnn, dn0, dn1;
+	const int *dims = INTEGER_RO(dim);
 	int i, j, nb, nb_pr, nr_last,
-	    *dims = INTEGER(dim), nr = dims[0], nc = dims[1],
+	    nr = dims[0], nc = dims[1],
 	    b = nr * nc;
 	Rboolean max_reached, has_dimnames = (dimnames != R_NilValue),
 	    has_dnn = has_dimnames;

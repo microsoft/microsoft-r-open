@@ -1,5 +1,5 @@
 
-R version 3.4.4 RC (2018-03-08 r74371) -- "Someone to Lean On"
+R version 3.5.0 Patched (2018-04-30 r74684) -- "Joy in Playing"
 Copyright (C) 2018 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
@@ -48,9 +48,9 @@ spontaneous     7.285     0.1373     3.651    14.536
 induced         4.092     0.2444     2.018     8.298
 
 Rsquare= 0.193   (max possible= 0.519 )
-Likelihood ratio test= 53.15  on 2 df,   p=2.869e-12
-Wald test            = 31.84  on 2 df,   p=1.221e-07
-Score (logrank) test = 48.44  on 2 df,   p=3.032e-11
+Likelihood ratio test= 53.15  on 2 df,   p=3e-12
+Wald test            = 31.84  on 2 df,   p=1e-07
+Score (logrank) test = 48.44  on 2 df,   p=3e-11
 
 > 
 > 
@@ -220,6 +220,19 @@ factor> factor(z, exclude = "B") # ditto
 [1] C    <NA> A   
 Levels: A < C
 
+factor> ## Now, labels maybe duplicated:
+factor> ## factor() with duplicated labels allowing to "merge levels"
+factor> x <- c("Man", "Male", "Man", "Lady", "Female")
+
+factor> ## Map from 4 different values to only two levels:
+factor> (xf <- factor(x, levels = c("Male", "Man" , "Lady",   "Female"),
+factor+                  labels = c("Male", "Male", "Female", "Female")))
+[1] Male   Male   Male   Female Female
+Levels: Male Female
+
+factor> #> [1] Male   Male   Male   Female Female
+factor> #> Levels: Male Female
+factor> 
 factor> ## Using addNA()
 factor> Month <- airquality$Month
 
@@ -503,6 +516,16 @@ pckgDs> ##D
 pckgDs> ##D if(packageVersion("MASS") < "7.3.29")
 pckgDs> ##D   message("you need to update 'MASS'")
 pckgDs> ## End(No test)
+pckgDs> pu <- packageDate("utils")
+
+pckgDs> ## No test: 
+pckgDs> ##D str(pu)
+pckgDs> ## End(No test)
+pckgDs> stopifnot(identical(pu, packageDate(desc = packageDescription("utils"))),
+pckgDs+           identical(pu, packageDate("stats"))) # as "utils" and "stats" are
+
+pckgDs>                                    # both 'base R' and "Built" at same time
+pckgDs> 
 pckgDs> 
 pckgDs> 
 > 

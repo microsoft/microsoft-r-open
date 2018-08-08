@@ -1,7 +1,7 @@
 #  File src/library/stats/R/anova.R
 #  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2016 The R Core Team
+#  Copyright (C) 1995-2018 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -64,10 +64,10 @@ printCoefmat <-
 	     dig.tst = max(1L, min(5L, digits - 1L)),
 	     cs.ind = 1:k, tst.ind = k+1, zap.ind = integer(),
 	     P.values = NULL,
-	     has.Pvalue = nc >= 4L &&
-                 substr(colnames(x)[nc], 1L, 3L) %in% c("Pr(", "p-v"),
+	     has.Pvalue = nc >= 4L && length(cn <- colnames(x)) &&
+		 substr(cn[nc], 1L, 3L) %in% c("Pr(", "p-v"),
              eps.Pvalue = .Machine$double.eps,
-	     na.print = "NA", ...)
+	     na.print = "NA", quote = FALSE, right = TRUE, ...)
 {
     ## For printing ``coefficient matrices'' as they are in summary.xxx(.) where
     ## xxx in {lm, glm, aov, ..}. (Note: summary.aov(.) gives a class "anova").
@@ -154,7 +154,7 @@ printCoefmat <-
 	    }
 	} else signif.stars <- FALSE
     } else signif.stars <- FALSE
-    print.default(Cf, quote = FALSE, right = TRUE, na.print = na.print, ...)
+    print.default(Cf, quote = quote, right = right, na.print = na.print, ...)
     if(signif.stars && signif.legend) {
 	if((w <- getOption("width")) < nchar(sleg <- attr(Signif,"legend")))# == 46
 	    sleg <- strwrap(sleg, width = w - 2, prefix = "  ")

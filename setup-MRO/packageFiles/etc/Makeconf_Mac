@@ -1,0 +1,187 @@
+# etc/Makeconf.  Generated from Makeconf.in by configure.
+#
+# ${R_HOME}/etc/Makeconf
+#
+# R was configured using the following call
+# (not including env. vars and site configuration)
+# configure  'CC=/usr/local/clang4/bin/clang' 'CXX=/usr/local/clang4/bin/clang++' 'OBJC=/usr/local/clang4/bin/clang' 'F77=gfortran -arch x86_64' 'FC=gfortran -arch x86_64' '--with-cairo' '--with-libtiff' '--with-readline' '--with-tcltk=/Users/Shared/Jenkins/workspace/External-R-3.4.1/vendor/build/lib' '--with-tcl-config=/Users/Shared/Jenkins/workspace/External-R-3.4.1/vendor/build/lib/tclConfig.sh' '--with-tk-config=/Users/Shared/Jenkins/workspace/External-R-3.4.1/vendor/build/lib/tkConfig.sh' '--with-blas=-framework Accelerate' '--with-lapack' '--enable-memory-profiling' '--enable-R-framework=/Library/Frameworks' 'FW_VERSION=3.4.1-MRO' 'PKG_CONFIG_PATH=/Users/Shared/Jenkins/workspace/External-R-3.4.1/vendor/build/lib/pkgconfig' 'CFLAGS=-I/Users/Shared/Jenkins/workspace/External-R-3.4.1/vendor/build/include -DU_STATIC_IMPLEMENTATION -Wall -mtune=core2 -g -O2 -I/opt/X11/include' 'LDFLAGS=-L/Users/Shared/Jenkins/workspace/External-R-3.4.1/vendor/build/lib -L/usr/local/clang4/lib' 'CPPFLAGS=-I/Users/Shared/Jenkins/workspace/External-R-3.4.1/vendor/build/include -DU_STATIC_IMPLEMENTATION -Wall -mtune=core2 -g -O2 -I/opt/X11/include' 'CXXFLAGS=-I/Users/Shared/Jenkins/workspace/External-R-3.4.1/vendor/build/include -DU_STATIC_IMPLEMENTATION -Wall -mtune=core2 -g -O2 -I/opt/X11/include' 'OBJCFLAGS=-I/Users/Shared/Jenkins/workspace/External-R-3.4.1/vendor/build/include -DU_STATIC_IMPLEMENTATION -Wall -mtune=core2 -g -O2 -I/opt/X11/include'
+
+## This fails if it contains spaces, or if it is quoted
+include $(R_SHARE_DIR)/make/vars.mk
+
+AR = ar
+BLAS_LIBS = -framework Accelerate
+C_VISIBILITY = 
+CC = /usr/local/clang4/bin/clang
+CFLAGS = -DU_STATIC_IMPLEMENTATION -Wall -mtune=core2 -g -O2 -I/opt/X11/include $(LTO)
+CPICFLAGS = -fPIC
+CPPFLAGS = -DU_STATIC_IMPLEMENTATION -Wall -mtune=core2 -g -O2 -I/opt/X11/include
+CXX = /usr/local/clang4/bin/clang++ 
+CXXCPP = $(CXX) -E
+CXXFLAGS = -DU_STATIC_IMPLEMENTATION -Wall -mtune=core2 -g -O2 -I/opt/X11/include $(LTO)
+CXXPICFLAGS = -fPIC
+CXX98 = /usr/local/clang4/bin/clang++
+CXX98FLAGS = -DU_STATIC_IMPLEMENTATION -Wall -mtune=core2 -g -O2 -I/opt/X11/include
+CXX98PICFLAGS = -fPIC
+CXX98STD = 
+CXX11 = /usr/local/clang4/bin/clang++
+CXX11FLAGS = -DU_STATIC_IMPLEMENTATION -Wall -mtune=core2 -g -O2 -I/opt/X11/include
+CXX11PICFLAGS = -fPIC
+CXX11STD = -std=gnu++11
+CXX14 = /usr/local/clang4/bin/clang++
+CXX14FLAGS =-DU_STATIC_IMPLEMENTATION -Wall -mtune=core2 -g -O2 -I/opt/X11/include
+CXX14PICFLAGS = -fPIC
+CXX14STD = -std=gnu++14
+CXX17 = /usr/local/clang4/bin/clang++
+CXX17FLAGS = -DU_STATIC_IMPLEMENTATION -Wall -mtune=core2 -g -O2 -I/opt/X11/include
+CXX17PICFLAGS = -fPIC
+CXX17STD = -std=gnu++1z
+DYLIB_EXT = .dylib
+DYLIB_LD = $(CC)
+DYLIB_LDFLAGS = -dynamiclib -Wl,-headerpad_max_install_names -undefined dynamic_lookup -single_module -multiply_defined suppress -fopenmp# $(CFLAGS) $(CPICFLAGS)
+DYLIB_LINK = $(DYLIB_LD) $(DYLIB_LDFLAGS) $(LDFLAGS)
+ECHO = echo
+ECHO_C = \c
+ECHO_N = 
+ECHO_T = 
+## NB, set FC before F77 as on Solaris make, setting FC sets F77
+FC = gfortran -arch x86_64
+FCFLAGS = -g -O2 $(LTO)
+## additional libs needed when linking with $(FC), e.g. on some Oracle compilers
+FCLIBS = 
+F77 = gfortran -arch x86_64
+F77_VISIBILITY = 
+FFLAGS = -g -O2 $(LTO)
+FLIBS =  -L/usr/local/gfortran/lib/gcc/x86_64-apple-darwin15/6.1.0 -L/usr/local/gfortran/lib -lgfortran -lquadmath -lm
+FCPICFLAGS = -fPIC
+FPICFLAGS = -fPIC
+FOUNDATION_CPPFLAGS = 
+FOUNDATION_LIBS = -framework Foundation
+JAR = /usr/bin/jar
+JAVA = /usr/bin/java
+JAVAC = /usr/bin/javac
+JAVAH = /usr/bin/javah
+## JAVA_HOME might be used in the next three.  
+## They are for packages 'JavaGD' and 'rJava'
+JAVA_HOME = /Library/Java/JavaVirtualMachines/jdk1.8.0_144.jdk/Contents/Home/jre
+JAVA_CPPFLAGS = -I$(JAVA_HOME)/../include -I$(JAVA_HOME)/../include/darwin
+JAVA_LIBS = -L$(JAVA_HOME)/lib/server -ljvm
+JAVA_LD_LIBRARY_PATH = $(JAVA_HOME)/lib/server
+LAPACK_LIBS = 
+## we only need this is if it is external, as otherwise link to R
+LIBINTL=   -Wl,-framework -Wl,CoreFoundation
+LIBM = 
+LIBR0 = -L$(R_HOME)/lib$(R_ARCH)
+LIBR1 = -lR
+LIBR = -F/Library/Frameworks/R.framework/.. -framework R
+LIBS =  -lpcre -llzma -lbz2 -lz -licucore -lm -liconv
+## needed by R CMD config
+LIBnn = lib
+LIBTOOL = $(SHELL) "$(R_HOME)/bin/libtool"
+LDFLAGS = -L/usr/local/clang4/lib 
+LTO = 
+## needed to build applications linking to static libR
+MAIN_LD = $(CC)
+MAIN_LDFLAGS = -fopenmp
+MAIN_LINK = $(MAIN_LD) $(MAIN_LDFLAGS) $(LDFLAGS)
+MKINSTALLDIRS = $(R_HOME)/bin/mkinstalldirs
+OBJC = /usr/local/clang4/bin/clang
+OBJCFLAGS = -DU_STATIC_IMPLEMENTATION -Wall -mtune=core2 -g -O2 -I/opt/X11/include -fobjc-exceptions $(LTO)
+OBJC_LIBS = -lobjc 
+OBJCXX = /usr/local/clang4/bin/clang++
+R_ARCH = 
+RANLIB = ranlib
+SAFE_FFLAGS = -g -O2 -ffloat-store
+SED = /usr/bin/sed
+SHELL = /bin/sh
+SHLIB_CFLAGS = 
+SHLIB_CXXFLAGS = 
+SHLIB_CXXLD = $(CXX)
+SHLIB_CXXLDFLAGS = -dynamiclib -Wl,-headerpad_max_install_names -undefined dynamic_lookup -single_module -multiply_defined suppress
+SHLIB_CXX98LD = $(CXX98) $(CXX98STD)
+SHLIB_CXX98LDFLAGS = -dynamiclib -Wl,-headerpad_max_install_names -undefined dynamic_lookup -single_module -multiply_defined suppress
+SHLIB_CXX11LD = $(CXX11) $(CXX11STD)
+SHLIB_CXX11LDFLAGS = -dynamiclib -Wl,-headerpad_max_install_names -undefined dynamic_lookup -single_module -multiply_defined suppress
+SHLIB_CXX14LD = $(CXX14) $(CXX14STD)
+SHLIB_CXX14LDFLAGS = -dynamiclib -Wl,-headerpad_max_install_names -undefined dynamic_lookup -single_module -multiply_defined suppress
+SHLIB_CXX17LD = $(CXX17) $(CXX17STD)
+SHLIB_CXX17LDFLAGS = -dynamiclib -Wl,-headerpad_max_install_names -undefined dynamic_lookup -single_module -multiply_defined suppress
+SHLIB_EXT = .so
+SHLIB_FCLD = $(FC)
+SHLIB_FCLDFLAGS = -dynamiclib -Wl,-headerpad_max_install_names -undefined dynamic_lookup -single_module -multiply_defined suppress
+SHLIB_FFLAGS = 
+SHLIB_LD = $(CC)
+SHLIB_LDFLAGS = -dynamiclib -Wl,-headerpad_max_install_names -undefined dynamic_lookup -single_module -multiply_defined suppress# $(CFLAGS) $(CPICFLAGS)
+SHLIB_LIBADD = 
+## We want to ensure libR is picked up from $(R_HOME)/lib
+## before e.g. /usr/local/lib if a version is already installed.
+SHLIB_LINK = $(SHLIB_LD) $(SHLIB_LDFLAGS) $(LIBR0) $(LDFLAGS)
+SHLIB_OPENMP_CFLAGS = -fopenmp
+SHLIB_OPENMP_CXXFLAGS = -fopenmp
+SHLIB_OPENMP_FCFLAGS = -fopenmp
+SHLIB_OPENMP_FFLAGS = -fopenmp
+STRIP_LIBS = strip -x
+STRIP_STATIC_LIBS = strip -S
+TCLTK_CPPFLAGS = -I/usr/X11R6/include
+TCLTK_LIBS = -ltcl8.6 -ltk8.6 -L/usr/X11R6/lib -lX11 -Wl,-weak-lXss -lXext
+YACC = bison -y
+
+## legacy
+CXX1X = /usr/local/clang4/bin/clang++
+CXX1XFLAGS = -DU_STATIC_IMPLEMENTATION -Wall -mtune=core2 -g -O2 -I/opt/X11/include
+CXX1XPICFLAGS = -fPIC
+CXX1XSTD = -std=gnu++11
+SHLIB_CXX1XLD = $(CXX11) $(CXX11STD)
+SHLIB_CXX1XLDFLAGS = -dynamiclib -Wl,-headerpad_max_install_names -undefined dynamic_lookup -single_module -multiply_defined suppress
+
+
+## for linking to libR.a
+STATIC_LIBR = #  "$(R_HOME)/lib$(R_ARCH)/libR.a"  $(BLAS_LIBS) $(FLIBS)  $(LIBINTL) -lreadline -lncurses  $(LIBS)
+
+R_XTRA_CFLAGS = 
+R_XTRA_CPPFLAGS =  -I$(R_INCLUDE_DIR) -DNDEBUG
+R_XTRA_CXXFLAGS = 
+R_XTRA_FFLAGS = 
+
+ALL_CFLAGS = $(R_XTRA_CFLAGS) $(PKG_CFLAGS) $(CPICFLAGS) $(SHLIB_CFLAGS) $(CFLAGS)
+ALL_CPPFLAGS = $(R_XTRA_CPPFLAGS) $(PKG_CPPFLAGS) $(CLINK_CPPFLAGS) $(CPPFLAGS)
+ALL_CXXFLAGS = $(R_XTRA_CXXFLAGS) $(PKG_CXXFLAGS) $(CXXPICFLAGS) $(SHLIB_CXXFLAGS) $(CXXFLAGS)
+ALL_OBJCFLAGS = $(PKG_OBJCFLAGS) $(CPICFLAGS) $(SHLIB_CFLAGS) $(OBJCFLAGS)
+ALL_OBJCXXFLAGS = $(PKG_OBJCXXFLAGS) $(CXXPICFLAGS) $(SHLIB_CXXFLAGS) $(OBJCXXFLAGS)
+ALL_FFLAGS = $(R_XTRA_FFLAGS) $(PKG_FFLAGS) $(FPICFLAGS) $(SHLIB_FFLAGS) $(FFLAGS)
+## LIBR here as a couple of packages use this without SHLIB_LINK
+ALL_LIBS = $(PKG_LIBS) $(SHLIB_LIBADD) $(LIBR) $(LIBINTL)
+
+.SUFFIXES:
+.SUFFIXES: .c .cc .cpp .d .f .f90 .f95 .m .mm .M .o
+
+.c.o:
+	$(CC) $(ALL_CPPFLAGS) $(ALL_CFLAGS) -c $< -o $@
+.c.d:
+	@echo "making $@ from $<"
+	@$(CC) -MM $(ALL_CPPFLAGS) $< > $@
+.cc.o:
+	$(CXX) $(ALL_CPPFLAGS) $(ALL_CXXFLAGS) -c $< -o $@
+.cpp.o:
+	$(CXX) $(ALL_CPPFLAGS) $(ALL_CXXFLAGS) -c $< -o $@
+.cc.d:
+	@echo "making $@ from $<"
+	@$(CXX) -M $(ALL_CPPFLAGS) $< > $@
+.cpp.d:
+	@echo "making $@ from $<"
+	@$(CXX) -M $(ALL_CPPFLAGS) $< > $@
+.m.o:
+	$(OBJC) $(ALL_CPPFLAGS) $(ALL_OBJCFLAGS) -c $< -o $@
+.m.d:
+	@echo "making $@ from $<"
+	@/usr/local/clang4/bin/clang -MM $(ALL_CPPFLAGS) $< > $@
+.mm.o:
+	$(OBJCXX) $(ALL_CPPFLAGS) $(ALL_OBJCXXFLAGS) -c $< -o $@
+.M.o:
+	$(OBJCXX) $(ALL_CPPFLAGS) $(ALL_OBJCXXFLAGS) -c $< -o $@
+.f.o:
+	$(F77) $(ALL_FFLAGS) -c $< -o $@
+.f95.o:
+	$(FC) $(PKG_FCFLAGS) $(FCPICFLAGS) $(FCFLAGS) -c  $< -o $@
+.f90.o:
+	$(FC) $(PKG_FCFLAGS) $(FCPICFLAGS) $(FCFLAGS) -c  $< -o $@

@@ -1,0 +1,63 @@
+diff -ur unpatched_source/src/gnuwin32/run.c source/src/gnuwin32/run.c
+--- unpatched_source/src/gnuwin32/run.c	2018-07-30 10:22:18.929851354 -0700
++++ source/src/gnuwin32/run.c	2018-07-30 10:40:31.646458839 -0700
+@@ -48,9 +48,10 @@
+ static char *expandcmd(const char *cmd, int whole)
+ {
+     char c = '\0';
+-    char *s, *p, *q = NULL, *f, *dest, *src;
++    char *s = NULL, *p = NULL, *q = NULL, *f = NULL, *dest = NULL, *src = NULL;
+     int   d, ext, len = strlen(cmd)+1;
+-    char buf[len], fl[len], fn[MAX_PATH];
++    char buf[len], fl[len], fn[MAX_PATH] = {0};
++    DWORD res = 0;
+
+     /* make a copy as we manipulate in place */
+     strcpy(buf, cmd);
+@@ -120,7 +121,14 @@
+       this is not documented so I prefer to be explicit.
+     */
+     /* NOTE: short names are not always enabled */
+-    GetShortPathName(fn, s, MAX_PATH);
++    res = GetShortPathName(fn, s, MAX_PATH);
++
++    /* If for any reason, GetShortPathName fails or the length of the path is too long,
++       simply return the full name*/
++    if (res == 0 || res > MAX_PATH) {
++        strncpy(s, fn, d);
++    }
++
+     if (!whole) {
+ 	*q = c;
+ 	strcat(s, q);
+diff -ur unpatched_source/src/main/sysutils.c source/src/main/sysutils.c
+--- unpatched_source/src/main/sysutils.c	2018-07-30 10:22:19.053851421 -0700
++++ source/src/main/sysutils.c	2018-07-30 16:24:29.380004133 -0700
+@@ -1619,9 +1619,9 @@
+
+ void R_reInitTempDir(int die_on_fail)
+ {
+-    char *tmp, *tm, tmp1[PATH_MAX+11], *p;
++    char *tmp = NULL, *tm = NULL, tmp1[PATH_MAX+11] = {0}, *p;
+ #ifdef Win32
+-    char tmp2[PATH_MAX];
++    char tmp2[PATH_MAX] = {0};
+     int hasspace = 0;
+ #endif
+
+@@ -1652,9 +1652,13 @@
+ 	for (p = tm; *p; p++)
+ 	    if (isspace(*p)) { hasspace = 1; break; }
+ 	if (hasspace) {
+-	    GetShortPathName(tm, tmp2, MAX_PATH);
+-	    tm = tmp2;
++        DWORD res = 0;
++        res = GetShortPathName(tm, tmp2, MAX_PATH);
++        if( res > 0 && res <= MAX_PATH ) {
++            tm = tmp2;
++        }
+ 	}
++
+ 	snprintf(tmp1, PATH_MAX+11, "%s\\RtmpXXXXXX", tm);
+ #else
+ 	snprintf(tmp1, PATH_MAX+11, "%s/RtmpXXXXXX", tm);

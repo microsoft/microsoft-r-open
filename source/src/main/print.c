@@ -338,9 +338,10 @@ static void PrintGenericVector(SEXP s, SEXP env)
 		break;
 	    case LGLSXP:
 		if (LENGTH(tmp) == 1) {
-		    formatLogical(LOGICAL(tmp), 1, &w);
+		    const int *x = LOGICAL_RO(tmp);
+		    formatLogical(x, 1, &w);
 		    snprintf(pbuf, 115, "%s",
-			     EncodeLogical(LOGICAL(tmp)[0], w));
+			     EncodeLogical(x[0], w));
 		} else
 		    snprintf(pbuf, 115, "Logical,%d", LENGTH(tmp));
 		break;
@@ -350,24 +351,26 @@ static void PrintGenericVector(SEXP s, SEXP env)
 		    snprintf(pbuf, 115, "factor,%d", LENGTH(tmp));
 		} else {
 		    if (LENGTH(tmp) == 1) {
-			formatInteger(INTEGER(tmp), 1, &w);
+			const int *x = INTEGER_RO(tmp);
+			formatInteger(x, 1, &w);
 			snprintf(pbuf, 115, "%s",
-				 EncodeInteger(INTEGER(tmp)[0], w));
+				 EncodeInteger(x[0], w));
 		    } else
 			snprintf(pbuf, 115, "Integer,%d", LENGTH(tmp));
 		}
 		break;
 	    case REALSXP:
 		if (LENGTH(tmp) == 1) {
-		    formatReal(REAL(tmp), 1, &w, &d, &e, 0);
+		    const double *x = REAL_RO(tmp);
+		    formatReal(x, 1, &w, &d, &e, 0);
 		    snprintf(pbuf, 115, "%s",
-			     EncodeReal0(REAL(tmp)[0], w, d, e, OutDec));
+			     EncodeReal0(x[0], w, d, e, OutDec));
 		} else
 		    snprintf(pbuf, 115, "Numeric,%d", LENGTH(tmp));
 		break;
 	    case CPLXSXP:
 		if (LENGTH(tmp) == 1) {
-		    Rcomplex *x = COMPLEX(tmp);
+		    const Rcomplex *x = COMPLEX_RO(tmp);
 		    if (ISNA(x[0].r) || ISNA(x[0].i))
 			/* formatReal(NA) --> w=R_print.na_width, d=0, e=0 */
 			snprintf(pbuf, 115, "%s",
@@ -476,11 +479,18 @@ static void PrintGenericVector(SEXP s, SEXP env)
 		}
 		Rprintf("%s\n", tagbuf);
 		if(isObject(VECTOR_ELT(s, i))) {
+		    SEXP x = VECTOR_ELT(s, i);
+		    int nprot = 0;
+		    if (TYPEOF(x) == LANGSXP) {
+			// quote(x)  to not accidentally evaluate it with newcall() below:
+			x = PROTECT(lang2(R_Primitive("quote"), x)); nprot++;
+		    }
 		    /* need to preserve tagbuf */
 		    strcpy(save, tagbuf);
-		    SETCADR(newcall, VECTOR_ELT(s, i));
+		    SETCADR(newcall, x);
 		    eval(newcall, env);
 		    strcpy(tagbuf, save);
+		    UNPROTECT(nprot);
 		}
 		else PrintValueRec(VECTOR_ELT(s, i), env);
 		*ptag = '\0';
@@ -629,8 +639,14 @@ static void printList(SEXP s, SEXP env)
 	    }
 	    Rprintf("%s\n", tagbuf);
 	    if(isObject(CAR(s))) {
-		SETCADR(newcall, CAR(s));
+		SEXP x = CAR(s);
+		int nprot = 0;
+		if (TYPEOF(x) == LANGSXP) {
+		    x = PROTECT(lang2(R_Primitive("quote"), x)); nprot++;
+		}
+		SETCADR(newcall, x);
 		eval(newcall, env);
+		UNPROTECT(nprot);
 	    }
 	    else PrintValueRec(CAR(s),env);
 	    *ptag = '\0';
@@ -681,7 +697,7 @@ static void PrintSpecial(SEXP s)
     if(s2 != R_UnboundValue) {
 	SEXP t;
 	PROTECT(s2);
-	t = deparse1(s2, 0, DEFAULTDEPARSE);
+	t = deparse1m(s2, 0, DEFAULTDEPARSE); // or deparse1() ?
 	Rprintf("%s ", CHAR(STRING_ELT(t, 0))); /* translated */
 	Rprintf(".Primitive(\"%s\")\n", PRIMNAME(s));
 	UNPROTECT(1);
@@ -728,7 +744,7 @@ void attribute_hidden PrintValueRec(SEXP s, SEXP env)
 	break;
     case SYMSXP: /* Use deparse here to handle backtick quotification
 		  * of "weird names" */
-	t = deparse1(s, 0, SIMPLEDEPARSE);
+	t = deparse1(s, 0, SIMPLEDEPARSE); // TODO ? rather deparse1m()
 	Rprintf("%s\n", CHAR(STRING_ELT(t, 0))); /* translated */
 	break;
     case SPECIALSXP:
@@ -933,14 +949,19 @@ static void printAttributes(SEXP s, SEXP env, Rboolean useSlots)
 		    na_width_noquote = R_print.na_width_noquote;
 		Rprt_adj right = R_print.right;
 
-		PROTECT(t = s = allocList(3));
+		SEXP x = CAR(a);
+		int nprot = 0;
+		if (TYPEOF(x) == LANGSXP) {
+		    x = PROTECT(lang2(R_Primitive("quote"), x)); nprot++;
+		}
+		PROTECT(t = s = allocList(3)); nprot++;
 		SET_TYPEOF(s, LANGSXP);
 		SETCAR(t, install("print")); t = CDR(t);
-		SETCAR(t,  CAR(a)); t = CDR(t);
+		SETCAR(t, x); t = CDR(t);
 		SETCAR(t, ScalarInteger(digits));
 		SET_TAG(t, install("digits"));
 		eval(s, env);
-		UNPROTECT(1);
+		UNPROTECT(nprot);
 		R_print.quote = quote;
 		R_print.right = right;
 		R_print.digits = digits;

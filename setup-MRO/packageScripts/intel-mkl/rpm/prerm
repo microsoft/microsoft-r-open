@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#Enable shell globbing
+set +f
+
+# We will let postinst of installing RPM take care of this if upgrade
+if [[ "$1" == "1" ]]; then
+    exit 0
+fi
+
+VERSION="3.5.1"
+DIRECTORY="${RPM_INSTALL_PREFIX}/ropen/${VERSION}/lib64/R"
+if [ -d "$DIRECTORY/backup" ]; then
+  rm ${DIRECTORY}/lib/*.so
+  mv ${DIRECTORY}/backup/lib/*.so ${DIRECTORY}/lib
+fi
+

@@ -1,0 +1,22 @@
+﻿<Page x:Class="RInstaller.views.Pages.ConfirmPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:RInstaller.views.Pages"
+      xmlns:models="clr-namespace:RInstaller.Models"
+      mc:Ignorable="d" 
+      d:DesignHeight="500" d:DesignWidth="700"
+      Title="ConfirmPage" Background="{Binding WindowBackground, FallbackValue='White'}">
+
+    <Grid>
+        <Label x:Name="title" Content="{Binding ProductResource.ProductStrings.ConfirmHeadline, FallbackValue='This value is set dynamically'}" HorizontalAlignment="Left" Margin="36,35,0,0" VerticalAlignment="Top" FontSize="28" Foreground="{Binding PrimaryTextColor}"/>
+        <StackPanel Orientation="Vertical">
+            <TextBlock x:Name="confirmLineOne" HorizontalAlignment="Left" Margin="40,100,0,0" FontSize="15" TextWrapping="Wrap" VerticalAlignment="Top" Width="620"  Foreground="{Binding PrimaryTextColor}" Text="{Binding ProductResource.ProductStrings.ConfirmLineOne, FallbackValue='This value is set dynamically'}" />
+            <TextBlock x:Name="confirmLineTwo" HorizontalAlignment="Left" Margin="40,15,0,0" FontSize="15" TextWrapping="Wrap" VerticalAlignment="Top" Width="620" Foreground="{Binding PrimaryTextColor}" Text="{Binding ProductResource.ProductStrings.ConfirmLineTwo}" />
+            <TextBlock x:Name="directoryPathLabel" HorizontalAlignment="Left" Margin="40,15,0,0" FontSize="15" TextWrapping="Wrap" VerticalAlignment="Top" Width="620" Foreground="{Binding PrimaryTextColor}" FontWeight="Bold"  Text="{Binding Installer.InstallPath}" />
+            <TextBlock x:Name="confirmLineThree" HorizontalAlignment="Left" Margin="40,25,0,0" FontSize="15" TextWrapping="Wrap" VerticalAlignment="Top" Width="620" Foreground="{Binding PrimaryTextColor}" Text="{Binding ProductResource.ProductStrings.ConfirmLineThree}" />
+        </StackPanel>
+    </Grid>
+</Page>
+
