@@ -1,7 +1,7 @@
 Microsoft R Open
 ================
 
-This is the repository containing the source code for the open source components of Microsoft R Open. If you're looking for the latest changes, check the "public" branch.
+This is the repository containing the source code for the open source components of Microsoft R Open.Microsoft R Open is the enhanced distribution of R used for statistical analysis and data science. If you're looking for the latest changes, check the "public" branch.
 
 
 Directory Structure
