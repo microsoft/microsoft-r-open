@@ -1,6 +1,5 @@
-<center>
-<img alt="vscode logo" src="https://mran.microsoft.com/assets/img/ClarkHead.png" width="100px">
-</center>
+![alt text](https://mran.microsoft.com/assets/img/ClarkHead.png "Microsoft R Open logo")
+
 # Microsoft R Open
 Microsoft R Open is the enhanced distribution of R used for for statistical analysis and Data science. This is the repository containing the source code for the open source components of Microsoft R Open. If you're looking for the latest changes, check the "public" branch.
 
