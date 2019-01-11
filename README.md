@@ -1,3 +1,6 @@
+<center>
+<img alt="vscode logo" src="https://mran.microsoft.com/assets/img/ClarkHead.png" width="100px">
+</center>
 Microsoft R Open
 ================
 
