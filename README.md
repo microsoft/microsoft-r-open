@@ -5,18 +5,18 @@ Microsoft R Open is the enhanced distribution of R used for for statistical anal
 
 # Directory Structure
 
-/additionalPackages -> Microsoft authored GPLv2 licensed R packages
+`/additionalPackages` -> Microsoft authored GPLv2 licensed R packages
 
-/patch              -> Patches made to the R source code when building Microsoft R Open
+`/patch`              -> Patches made to the R source code when building Microsoft R Open
 
-/source             -> CRAN R source code
+`/source`             -> CRAN R source code
 
-/vendor             -> Libraries needed to build Microsoft R Open
+`/vendor`             -> Libraries needed to build Microsoft R Open
 
 # Building
 
 Please see the [R Installation and Administration Guide](https://cran.r-project.org/doc/manuals/r-release/R-admin.html) for instructions on building the R source. Patches can be applied using GNU Patch.
 
-The additional Microsoft authored packages can be built and installed using R CMD INSTALL after the R source has been built.
+The additional Microsoft authored packages can be built and installed using `R CMD INSTALL` after the R source has been built.
 
 Learn more about Microsoft R open at <https://mran.microsoft.com/>.
