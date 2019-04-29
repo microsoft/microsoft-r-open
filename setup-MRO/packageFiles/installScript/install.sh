@@ -291,14 +291,12 @@ function install {
   if [[ ${USE_YUM} == true ]]; then
     mkdir -p ${SCRIPT_DIR}/logs
     install_rpm_yum ${SCRIPT_DIR}/rpm/microsoft-r-open-mro*.rpm ${SCRIPT_DIR}/logs/mro.txt
-    install_rpm_yum ${SCRIPT_DIR}/rpm/microsoft-r-open-foreachiterators*.rpm ${SCRIPT_DIR}/logs/foreachiterators.txt
     if [[ ${MKL_EULA_ACCEPTED} == true ]]; then
       install_rpm_yum ${SCRIPT_DIR}/rpm/microsoft-r-open-mkl*.rpm ${SCRIPT_DIR}/logs/mkl.txt
     fi
   elif [[ ${USE_ZYPPER} == true ]]; then
     mkdir -p ${SCRIPT_DIR}/logs
     install_rpm_zypper ${SCRIPT_DIR}/rpm/microsoft-r-open-mro*.rpm ${SCRIPT_DIR}/logs/mro.txt
-    install_rpm_zypper ${SCRIPT_DIR}/rpm/microsoft-r-open-foreachiterators*.rpm ${SCRIPT_DIR}/logs/foreachiterators.txt
     if [[ ${MKL_EULA_ACCEPTED} == true ]]; then
       install_rpm_zypper ${SCRIPT_DIR}/rpm/microsoft-r-open-mkl*.rpm ${SCRIPT_DIR}/logs/mkl.txt
     fi
@@ -314,7 +312,6 @@ function install {
     message "done\n"
 
     install_deb_dpkg ${SCRIPT_DIR}/deb/microsoft-r-open-mro*.deb ${SCRIPT_DIR}/logs/mro.txt
-    install_deb_dpkg ${SCRIPT_DIR}/deb/microsoft-r-open-foreachiterators*.deb ${SCRIPT_DIR}/logs/foreachiterators.txt
     if [[ ${MKL_EULA_ACCEPTED} == true ]]; then
       install_deb_dpkg ${SCRIPT_DIR}/deb/microsoft-r-open-mkl*.deb ${SCRIPT_DIR}/logs/mkl.txt
     fi

@@ -50,7 +50,7 @@ if(FALSE) {
 
 
 ##' @return ...
-.install_packages <- function(args = NULL, no.q = interactive())
+.install_packages <- function(args = NULL, no.q = interactive(), warnOption = 1)
 {
     ## calls system() on Windows for
     ## sh (configure.win/cleanup.win) make zip
@@ -148,7 +148,10 @@ if(FALSE) {
                              perl = TRUE))
     }
 
-    options(warn = 1)
+    if(getOption("warn") < warnOption) {
+        op <- options(warn = warnOption)
+        on.exit(options(op), add=TRUE)
+    }
     invisible(Sys.setlocale("LC_COLLATE", "C")) # discard output
 
     if (WINDOWS) {
@@ -1337,7 +1340,7 @@ if(FALSE) {
                 R.version[["major"]], ".",  R.version[["minor"]],
                 " (r", R.version[["svn rev"]], ")\n", sep = "")
             cat("",
-                "Copyright (C) 2000-2016 The R Core Team.",
+                "Copyright (C) 2000-2018 The R Core Team.",
                 "This is free software; see the GNU General Public License version 2",
                 "or later for copying conditions.  There is NO warranty.",
                 sep = "\n")

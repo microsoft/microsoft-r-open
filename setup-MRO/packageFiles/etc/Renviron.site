@@ -1,0 +1,2 @@
+# This Intel flag is needed for numerical reproducibility
+MKL_CBWR=AUTO

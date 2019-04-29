@@ -5,6 +5,14 @@ INSTALL_PREFIX="${RPM_INSTALL_PREFIX}/ropen/${VERSION}"
 
 echo $VERSION
 
+if [ -f /etc/issue ] ; then
+    ISSUSE=`cat /etc/issue | grep SUSE | wc -l`
+    if [ ${ISSUSE} -eq 1 ] ; then
+        if [ -f ${INSTALL_PREFIX}/lib64/R/lib/libreadline.so.6 ] ; then
+            mv ${INSTALL_PREFIX}/lib64/R/lib/libreadline.so.6 ${INSTALL_PREFIX}/lib64/R/lib/libreadline.so.6.sav
+        fi
+    fi
+fi
 if [ "$ROPEN_KEEPPATH" != "true" ] # currently we'll noop for declines
 then
     # /usr/bin/R and /usr/bin/Rscript are the entry points for R

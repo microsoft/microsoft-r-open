@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=3.5.1
+VERSION=3.5.2
 INSTALL_PREFIX="${RPM_INSTALL_PREFIX}/ropen/${VERSION}"
 
 for file in R Rscript
@@ -25,4 +25,12 @@ done
 
 if [[ -f ${INSTALL_PREFIX}/lib64/R/backup && "$1" == "0" ]]; then	
   rm -rf "${INSTALL_PREFIX}/lib64/R/backup"
+fi
+
+if [ -f /etc/ld.so.conf.d/microsoft-r-open.conf ] ; then
+  rm /etc/ld.so.conf.d/microsoft-r-open.conf
+fi
+
+if [ -f ${INSTALL_PREFIX}/lib64/R/lib/libreadline.so.6.sav ] ; then
+  rm ${INSTALL_PREFIX}/lib64/R/lib/libreadline.so.6.sav
 fi

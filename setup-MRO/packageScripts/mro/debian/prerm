@@ -5,3 +5,6 @@ INSTALL_PREFIX="/opt/microsoft/ropen/${VERSION}/"
 
 rm -rf "${INSTALL_PREFIX}/lib64/R/backup"
 
+if [ -f /etc/ld.so.conf.d/microsoft-r-open.conf ] ; then
+  rm /etc/ld.so.conf.d/microsoft-r-open.conf
+fi

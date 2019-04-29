@@ -10,14 +10,7 @@ PKG_DEB_NAME="libcurl4-openssl-dev"
 PKG_RPM_NAME="libcurl-devel"
 PKG_CSW_NAME="libcurl_dev"
 PKG_TEST_HEADER="<curl/curl.h>"
-
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    PKG_LIBS="-lcurl -lcrypto -lssl -lcrypto -lz"
-else
-    PKG_LIBS="-lcurl -lcrypto -lssl -lcrypto -lz -lrt"
-fi
-
-
+PKG_LIBS="-lcurl"
 PKG_CFLAGS=""
 
 # Use pkg-config if available

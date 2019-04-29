@@ -629,7 +629,8 @@ static char *getParseName(int n) {
 
 static rlen_t getStorageSize(SEXP x) {
     int t = TYPEOF(x);
-    rlen_t tl = LENGTH(x); /* although LENGTH can only be 32-bit use rlen_t to avoid downcasting */
+	/* Change LENGTH to XLENGTH to support long vectors for R 3.5*/
+    rlen_t tl = XLENGTH(x); /* although LENGTH can only be 32-bit use rlen_t to avoid downcasting */
     rlen_t len = 4;
     
 #ifdef RSERV_DEBUG
@@ -781,7 +782,7 @@ static unsigned int* storeSEXP(unsigned int* buf, SEXP x, rlen_t storage_size) {
 		*buf=itop(XT_ARRAY_DOUBLE|hasAttr);
 		buf++;
 		attrFixup;
-		while(i < LENGTH(x)) {
+		while(i < XLENGTH(x)) {
 			fixdcpy(buf, REAL(x) + i);
 			buf += 2; /* sizeof(double)=2*sizeof(int) */
 			i++;
@@ -794,7 +795,7 @@ static unsigned int* storeSEXP(unsigned int* buf, SEXP x, rlen_t storage_size) {
 		*buf = itop(XT_ARRAY_CPLX|hasAttr);
 		buf++;
 		attrFixup;
-		while(i < LENGTH(x)) {
+		while(i < XLENGTH(x)) {
 			fixdcpy(buf, &(COMPLEX(x)[i].r));
 			buf += 2; /* sizeof(double)=2*sizeof(int) */
 			fixdcpy(buf, &(COMPLEX(x)[i].i));
@@ -1812,7 +1813,13 @@ int detach_session(SOCKET s) {
 	while ((port = (((int) random()) & 0x7fff)+32768)>65000) {};
 #endif
 
-	while (bind(ss,build_sin(&ssa,0,port),sizeof(ssa))) {
+	char* listenip = 0;
+	char* localhostip = "127.0.0.1";
+	if (localonly) {
+		listenip = _strdup(localhostip);
+	}
+
+	while (bind(ss,build_sin(&ssa, listenip,port),sizeof(ssa))) {
 		if (errno!=EADDRINUSE) {
 #ifdef RSERV_DEBUG
 			printf("session: error in bind other than EADDRINUSE (0x%x)",  errno);
@@ -1830,6 +1837,10 @@ int detach_session(SOCKET s) {
 			sendResp(s,SET_STAT(RESP_ERR,ERR_detach_failed));
 			return -1;
 		}
+	}
+	if (listenip != 0)
+	{
+		free(listenip);
 	}
 
     if (listen(ss, maxlistenq)) {
@@ -3198,11 +3209,17 @@ SOCKET cs;
     printf("Rserve: bind socket port = %d\n",port);
     printf("Rserve: bind socket cancelPort = %d\n",cancelPort);
 #endif
-		FCF("bind",bind(ss,build_sin(&ssa,0,port),sizeof(ssa)));
-		FCF("bind",bind(cs,build_sin(&cssa,0,cancelPort),sizeof(cssa)));
+	if (localonly) {
+		FCF("bind", bind(ss, build_sin(&ssa, "127.0.0.1", port), sizeof(ssa)));
+		FCF("bind", bind(cs, build_sin(&cssa, "127.0.0.1", cancelPort), sizeof(cssa)));
+	}
+	else {
+		FCF("bind", bind(ss, build_sin(&ssa, 0, port), sizeof(ssa)));
+		FCF("bind", bind(cs, build_sin(&cssa, 0, cancelPort), sizeof(cssa)));
+	}
     
-        FCF("listen",listen(ss, maxlistenq));
-	    FCF("listen",listen(cs, maxlistenq));
+    FCF("listen",listen(ss, maxlistenq));
+	FCF("listen",listen(cs, maxlistenq));
      
     int maxfd = ss;
     if (cs > maxfd) maxfd = cs;

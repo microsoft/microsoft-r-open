@@ -63,7 +63,7 @@
 
 \title{Getting Started with doParallel and foreach}
 \author{Steve Weston\footnote{Steve Weston wrote the original version of this vignette for the doMC package. Rich Calaway
-adapted the vignette for doParallel.} and Rich Calaway \\ doc@revolutionanalytics.com}
+adapted the vignette for doParallel.} and Rich Calaway}
 
 
 \begin{document}
@@ -154,7 +154,7 @@ To use \texttt{multicore}-like functionality, we would specify the number
 of cores to use instead (but note that on Windows, attempting to use more
 than one core with \texttt{parallel} results in an error):
 \begin{verbatim}
-library(doParallel}
+library(doParallel)
 registerDoParallel(cores=2)
 foreach(i=1:3) %dopar% sqrt(i)
 \end{verbatim}

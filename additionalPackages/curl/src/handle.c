@@ -1,6 +1,8 @@
 #include "curl-common.h"
 #include "callbacks.h"
 
+#define make_string(x) x ? Rf_mkString(x) : ScalarString(NA_STRING)
+
 #ifndef MAX_PATH
 #define MAX_PATH 1024
 #endif
@@ -62,6 +64,35 @@ void fin_handle(SEXP ptr){
 
 /* the default readfunc os fread which can cause R to freeze */
 size_t dummy_read(char *buffer, size_t size, size_t nitems, void *instream){
+  return 0;
+}
+
+#ifdef HAS_XFERINFOFUNCTION
+#define xftype curl_off_t
+#else
+#define xftype double
+#endif
+
+static int xferinfo_callback(void *clientp, xftype dltotal, xftype dlnow, xftype ultotal, xftype ulnow){
+  static xftype dlprev = 0;
+  static xftype ulprev = 0;
+  if(dlnow && dlnow != dlprev){
+    dlprev = dlnow;
+    if(dltotal){
+      int pct_dn = (100 * dlnow)/dltotal;
+      REprintf("\r [%d%%] Downloaded %.0lf bytes...", (double) dlnow, pct_dn);
+      if(dlnow == dltotal)
+        REprintf("\n");
+    } else {
+      REprintf("\r Downloaded %.0lf bytes...", (double) dlnow);
+    }
+  } else if(ulnow && ulnow != ulprev){
+    ulprev = ulnow;
+    int pct_up = (100 * ulnow)/ultotal;
+    REprintf("\r [%d%%] Uploaded %.0lf bytes...", (double) ulnow, pct_up);
+    if(ulnow == ultotal)
+      REprintf("\n");
+  }
   return 0;
 }
 
@@ -137,6 +168,13 @@ void set_handle_defaults(reference *ref){
   assert(curl_easy_setopt(handle, CURLOPT_EXPECT_100_TIMEOUT_MS, 0L));
 #endif
   assert(curl_easy_setopt(handle, CURLOPT_HTTPHEADER, default_headers));
+
+  /* set default progress printer (disabled by default) */
+#ifdef HAS_XFERINFOFUNCTION
+  assert(curl_easy_setopt(handle, CURLOPT_XFERINFOFUNCTION, xferinfo_callback));
+#else
+  assert(curl_easy_setopt(handle, CURLOPT_PROGRESSFUNCTION, xferinfo_callback));
+#endif
 }
 
 SEXP R_new_handle(){
@@ -145,10 +183,11 @@ SEXP R_new_handle(){
   ref->handle = curl_easy_init();
   total_handles++;
   set_handle_defaults(ref);
-  SEXP ptr = PROTECT(R_MakeExternalPtr(ref, R_NilValue, R_NilValue));
+  SEXP prot = PROTECT(allocVector(VECSXP, 5)); //for protecting callback functions
+  SEXP ptr = PROTECT(R_MakeExternalPtr(ref, R_NilValue, prot));
   R_RegisterCFinalizerEx(ptr, fin_handle, TRUE);
   setAttrib(ptr, R_ClassSymbol, mkString("curl_handle"));
-  UNPROTECT(1);
+  UNPROTECT(2);
   ref->handleptr = ptr;
   return ptr;
 }
@@ -179,6 +218,7 @@ int opt_is_linked_list(int key) {
 
 SEXP R_handle_setopt(SEXP ptr, SEXP keys, SEXP values){
   CURL *handle = get_handle(ptr);
+  SEXP prot = R_ExternalPtrProtected(ptr);
   SEXP optnames = PROTECT(getAttrib(values, R_NamesSymbol));
 
   if(!isInteger(keys))
@@ -202,6 +242,7 @@ SEXP R_handle_setopt(SEXP ptr, SEXP keys, SEXP values){
                               (curl_progress_callback) R_curl_callback_xferinfo));
       assert(curl_easy_setopt(handle, CURLOPT_XFERINFODATA, val));
       assert(curl_easy_setopt(handle, CURLOPT_NOPROGRESS, 0));
+      SET_VECTOR_ELT(prot, 1, val); //protect gc
 #endif
     } else if (key == CURLOPT_PROGRESSFUNCTION) {
       if (TYPEOF(val) != CLOSXP)
@@ -211,6 +252,7 @@ SEXP R_handle_setopt(SEXP ptr, SEXP keys, SEXP values){
         (curl_progress_callback) R_curl_callback_progress));
       assert(curl_easy_setopt(handle, CURLOPT_PROGRESSDATA, val));
       assert(curl_easy_setopt(handle, CURLOPT_NOPROGRESS, 0));
+      SET_VECTOR_ELT(prot, 2, val); //protect gc
     } else if (key == CURLOPT_READFUNCTION) {
       if (TYPEOF(val) != CLOSXP)
         error("Value for option %s (%d) must be a function.", optname, key);
@@ -218,6 +260,7 @@ SEXP R_handle_setopt(SEXP ptr, SEXP keys, SEXP values){
       assert(curl_easy_setopt(handle, CURLOPT_READFUNCTION,
         (curl_read_callback) R_curl_callback_read));
       assert(curl_easy_setopt(handle, CURLOPT_READDATA, val));
+      SET_VECTOR_ELT(prot, 3, val); //protect gc
     } else if (key == CURLOPT_DEBUGFUNCTION) {
       if (TYPEOF(val) != CLOSXP)
         error("Value for option %s (%d) must be a function.", optname, key);
@@ -225,6 +268,7 @@ SEXP R_handle_setopt(SEXP ptr, SEXP keys, SEXP values){
       assert(curl_easy_setopt(handle, CURLOPT_DEBUGFUNCTION,
         (curl_debug_callback) R_curl_callback_debug));
       assert(curl_easy_setopt(handle, CURLOPT_DEBUGDATA, val));
+      SET_VECTOR_ELT(prot, 4, val); //protect gc
     } else if (key == CURLOPT_URL) {
       /* always use utf-8 for urls */
       const char * url_utf8 = translateCharUTF8(STRING_ELT(val, 0));
@@ -323,6 +367,12 @@ SEXP make_status(CURL *handle){
   return ScalarInteger(res_status);
 }
 
+SEXP make_ctype(CURL *handle){
+  char * ct;
+  assert(curl_easy_getinfo(handle, CURLINFO_CONTENT_TYPE, &ct));
+  return make_string(ct);
+}
+
 SEXP make_url(CURL *handle){
   char *res_url;
   assert(curl_easy_getinfo(handle, CURLINFO_EFFECTIVE_URL, &res_url));
@@ -355,13 +405,14 @@ SEXP make_rawvec(unsigned char *ptr, size_t size){
 }
 
 SEXP make_namesvec(){
-  SEXP names = PROTECT(allocVector(STRSXP, 6));
+  SEXP names = PROTECT(allocVector(STRSXP, 7));
   SET_STRING_ELT(names, 0, mkChar("url"));
   SET_STRING_ELT(names, 1, mkChar("status_code"));
-  SET_STRING_ELT(names, 2, mkChar("headers"));
-  SET_STRING_ELT(names, 3, mkChar("modified"));
-  SET_STRING_ELT(names, 4, mkChar("times"));
-  SET_STRING_ELT(names, 5, mkChar("content"));
+  SET_STRING_ELT(names, 2, mkChar("type"));
+  SET_STRING_ELT(names, 3, mkChar("headers"));
+  SET_STRING_ELT(names, 4, mkChar("modified"));
+  SET_STRING_ELT(names, 5, mkChar("times"));
+  SET_STRING_ELT(names, 6, mkChar("content"));
   UNPROTECT(1);
   return names;
 }
@@ -372,13 +423,14 @@ SEXP R_get_handle_cookies(SEXP ptr){
 
 SEXP make_handle_response(reference *ref){
   CURL *handle = ref->handle;
-  SEXP res = PROTECT(allocVector(VECSXP, 6));
+  SEXP res = PROTECT(allocVector(VECSXP, 7));
   SET_VECTOR_ELT(res, 0, make_url(handle));
   SET_VECTOR_ELT(res, 1, make_status(handle));
-  SET_VECTOR_ELT(res, 2, make_rawvec(ref->resheaders.buf, ref->resheaders.size));
-  SET_VECTOR_ELT(res, 3, make_filetime(handle));
-  SET_VECTOR_ELT(res, 4, make_timevec(handle));
-  SET_VECTOR_ELT(res, 5, R_NilValue);
+  SET_VECTOR_ELT(res, 2, make_ctype(handle));
+  SET_VECTOR_ELT(res, 3, make_rawvec(ref->resheaders.buf, ref->resheaders.size));
+  SET_VECTOR_ELT(res, 4, make_filetime(handle));
+  SET_VECTOR_ELT(res, 5, make_timevec(handle));
+  SET_VECTOR_ELT(res, 6, R_NilValue);
   setAttrib(res, R_NamesSymbol, make_namesvec());
   UNPROTECT(1);
   return res;

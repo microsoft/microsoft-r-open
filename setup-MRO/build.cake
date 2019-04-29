@@ -168,13 +168,7 @@ private string[] GetInstallFiles(string productName)
         }
         else
         {
-            if (IsDebug()){
-                return System.IO.Directory.GetFiles("target/Debug", "ROpenSetup.exe", System.IO.SearchOption.TopDirectoryOnly);   
-            }
-            else
-            {             
-                return System.IO.Directory.GetFiles("target/Release", "ROpenSetup.exe", System.IO.SearchOption.TopDirectoryOnly);
-            }
+            return System.IO.Directory.GetFiles("target/Release", "ROpenSetup.exe", System.IO.SearchOption.TopDirectoryOnly);
         }
     }
     else
@@ -361,11 +355,6 @@ private void RunMacUninstall(string productName, string[] installFiles)
      */
 }
 
-private bool IsDebug ()
-{
-    return RBuildEnvironment.Configuration.EndsWith("debug", StringComparison.OrdinalIgnoreCase);
-}
-
 private bool IsAdministrator()
 {
     if(IsRunningOnUnix())
@@ -455,10 +444,6 @@ Task("LayoutR").IsDependentOn("RestoreDependencies").IsDependentOn("RestorePacka
         }
 
         CreateDirectory(stageDirectory);
-        if (IsRunningOnWindows() && IsDebug())
-        {
-            platformString = "Windows_debug";
-        }
         CopyDirectory(string.Format("dependencies/R/{0}", platformString), stageDirectory);
     }
 });
@@ -469,9 +454,9 @@ Task("LayoutMRO").Does(() => {
     string platformString = GetDependencyPlatformString();
 
     /*Microsoft R Open Layout*/
-    List<string> MROPackages = new List<string> { "doParallel", "RevoUtils", "RevoMods", "RUnit", "RevoIOQ", "MicrosoftR", "checkpoint" };
-    List<string> MROExternalPackages = new List<string> { "R6", "jsonlite", "curl", "png" };
-    List<string> MROEtcFiles = new List<string> { "Rprofile.site" };
+    //List<string> MROPackages = new List<string> {  };
+    List<string> MROExternalPackages = new List<string> { "R6", "jsonlite", "curl", "png", "doParallel", "RevoUtils", "RevoMods", "RUnit", "RevoIOQ", "MicrosoftR", "checkpoint", "foreach", "iterators" };
+    List<string> MROEtcFiles = new List<string> { "Rprofile.site", "Renviron.site" };
 
     string MROStageDirectory = "stage/mro_install_stage";
     string MROLibraryPostFix = "library";
@@ -496,8 +481,6 @@ Task("LayoutMRO").Does(() => {
 
     if(IsRunningOnMac())
     {
-        MROPackages.Add("foreach");
-        MROPackages.Add("iterators");
         MROStageDirectory = System.IO.Path.Combine("stage", "mro_mac_install_stage");
         MROLibraryPostFix = "R.framework/Resources/library";
         MROEtcPostfix = "R.framework/Resources/etc";
@@ -517,23 +500,7 @@ Task("LayoutMRO").Does(() => {
     Information(string.Format("MRO Library Directory => {0}", MROLibraryDirectory));
     Information(string.Format("MRO Etc Directory => {0}", MROEtcDirectory));
 
-    //Pull in all of the Microsoft built packages
-    foreach(var package in MROPackages)
-    {
-        string source = System.IO.Path.Combine("dependencies", package, platformString, package);
-
-        if(DirectoryExists(source))
-        {
-            Information(string.Format("Found package {0} at {1}", package, source));
-            CopyDirectory(source, System.IO.Path.Combine(MROLibraryDirectory, package));
-        }
-        else
-        {
-            throw new Exception(string.Format("Could not find package {0}!", package));
-        }
-    }
-
-    //Pull in third party OSS packages
+     //Pull in OSS packages
     foreach(var package in MROExternalPackages)
     {
         string source = System.IO.Path.Combine("dependencies/MRSPackagesOSS", platformString, package);
@@ -566,31 +533,6 @@ Task("LayoutMRO").Does(() => {
     }
 });
 
-Task("LayoutMROPKGS").Does(() => {
-    string MROPackagesStageDirectory = "stage/mro_pkgs_stage";
-    string platformString = GetDependencyPlatformString();
-    List<string> Packages = new List<string> { "foreach", "iterators" };
-
-    if(IsRunningOnWindows())
-    {
-        MROPackagesStageDirectory = System.IO.Path.Combine(MROPackagesStageDirectory, "Windows/library");
-
-        foreach(var package in Packages)
-        {
-            string source = System.IO.Path.Combine("dependencies", package, platformString, package);
-
-            if(DirectoryExists(source))
-            {
-                Information(string.Format("Found package {0} at {1}", package, source));
-                CopyDirectory(source, System.IO.Path.Combine(MROPackagesStageDirectory, package));
-            }
-            else
-            {
-                throw new Exception(string.Format("Could not find package {0}!", package));
-            }
-        }
-    }
-});
 
 Task("LayoutMKL").Does(() => {
     if(IsRunningOnMac())
@@ -617,6 +559,7 @@ Task("LayoutMKL").Does(() => {
     else if(IsRunningOnLinux())
     {
         CopyFiles("dependencies/Intel_MKL/resources/Linux/64/*.so", mklStage);
+        CopyFile("packageFiles/installScript/MKL_EULA.txt", mklStage + "/MKL_EULA.txt");
     }
 });
 
@@ -624,7 +567,6 @@ Task("LayoutMKL").Does(() => {
 //Noop task for chaining the layout flow
 Task("Layout").IsDependentOn("LayoutR")
               .IsDependentOn("LayoutMRO")
-              .IsDependentOn("LayoutMROPKGS")
               .IsDependentOn("LayoutMKL")
               .Does(() => {});
 
@@ -737,6 +679,8 @@ RBuildEnvironment.Override("Build", () => {
     if (IsRunningOnMac())
     {
         RunDefault();
+        // Install packages
+        StartProcess("/usr/sbin/installer", new ProcessSettings{ Arguments = "-pkg dependencies/macOS-packager/Packages.pkg -target /"});
 
         // Get MRO version name
         var installFiles = System.IO.Directory.GetFiles("dependencies/R/Mac", "*.tar.gz");
@@ -755,12 +699,9 @@ RBuildEnvironment.Override("Build", () => {
         // Run CPack
         RunDefault();
 
-        string mrsSkuSecret   = "39850e113fd075bbbb7f578b97318730702d2b8c04e1a73ed77b6ba9b70017f6";
-        string mrcSkuSecret   = "1bbb221afd66a3b085921bdbcd0c56551685de1bf4d41cb9c1d7fdb5f3dad38a";
-
-
         /* -- R Open -- */
         CreateDirectory("target/MRO/Linux");
+        CreateDirectory("target/MRO/SLES");
         CreateDirectory("stage/tarballStage/microsoft-r-open/rpm");
         CreateDirectory("stage/tarballStage/microsoft-r-open/deb");
         CopyFile("packageFiles/installScript/install.sh", "stage/tarballStage/microsoft-r-open/install.sh");
@@ -768,11 +709,7 @@ RBuildEnvironment.Override("Build", () => {
         CopyFile("packageFiles/installScript/MRO_EULA.txt", "stage/tarballStage/microsoft-r-open/MRO_EULA.txt");
         CopyFile("packageFiles/installScript/MKL_EULA.txt", "stage/tarballStage/microsoft-r-open/MKL_EULA.txt");
 
-        CopyFiles("cmake_build_mro/microsoft-r-open*.deb", "stage/tarballStage/microsoft-r-open/deb");
-        CopyFiles("cmake_build_mro/microsoft-r-open*.rpm", "stage/tarballStage/microsoft-r-open/rpm");
 
-        var tarArgs = "-czvf target/MRO/Linux/microsoft-r-open.tar.gz -C stage/tarballStage microsoft-r-open/";
-        RunCommand("tar", tarArgs);
     }
     else // Windows
     {
@@ -808,20 +745,55 @@ RBuildEnvironment.Override("Build", () => {
             CreateDirectory("target/RInstaller/views/Pages");
 			CopyFiles("RInstaller/views/Pages/*", "target/RInstaller/views/Pages");
         }
-        if (DirectoryExists("target/Debug"))
-        {
-            if (DirectoryExists("target/MRO/Windows_debug")) { DeleteDirectory("target/MRO/Windows_debug", recursive:true); }
-            CreateDirectory("target/MRO/Windows_debug");
-            MoveFiles("target/Debug/ROpen/en-us/ROpen*.msi", "target/MRO/Windows_debug/");
-			CopyFile("target/Debug/ROpenSetup.exe", "target/MRO/Windows_debug/ROpenSetup.exe");
-        }
     }
 
-    // Remove staging directories
+});
 
-    if(IsRunningOnLinux())
+Task("ExtractWixEngine").Does(() => {
+    if(IsRunningOnWindows())
     {
-        DeleteDirectory("cmake_build_mro", true);
+        CreateDirectory("target/MRO/Windows/signing");
+        CopyFile("target/MRO/Windows/ROpenSetup.exe", "target/MRO/Windows/signing/ROpenSetup.exe");
+        var wixArgs = "-ib target/MRO/Windows/signing/ROpenSetup.exe -o target/MRO/Windows/signing/wixEngine.exe";
+        RunCommand("packages/Wix.3.10.1/tools/insignia.exe", wixArgs);
+    }
+
+});
+
+Task("AssembleDeliverables").Does(() => {
+    if(IsRunningOnUnix())
+    {
+        if (System.IO.Directory.Exists("cmake_build_mro")) 
+        {
+            CopyFiles("cmake_build_mro/microsoft-r-open*.deb", "stage/tarballStage/microsoft-r-open/deb");
+            CopyFiles("cmake_build_mro/microsoft-r-open*.rpm", "stage/tarballStage/microsoft-r-open/rpm");
+
+            var tarArgs = "-czvf target/MRO/Linux/microsoft-r-open.tar.gz -C stage/tarballStage microsoft-r-open/";
+            RunCommand("tar", tarArgs);
+            
+            DeleteDirectory("cmake_build_mro", true);
+        }
+        else if(System.IO.Directory.Exists("cmake_build_mro_rpm_sles"))
+        {
+            CopyFiles("cmake_build_mro_rpm_sles/microsoft-r-open*.rpm", "stage/tarballStage/microsoft-r-open/rpm");
+
+            var tarArgs = "-czvf target/MRO/SLES/microsoft-r-open.tar.gz -C stage/tarballStage microsoft-r-open/";
+            RunCommand("tar", tarArgs);  
+
+            DeleteDirectory("cmake_build_mro_rpm_sles", true);
+        }
+        else
+        {
+            Information("Nothing to be done");
+        }
+    }
+    else
+    {
+        if (System.IO.Directory.Exists("target/MRO/Windows/signing"))
+        { 
+            var wixArgs = "-ab target/MRO/Windows/signing/wixEngine.exe target/MRO/Windows/signing/ROpenSetup.exe -o target/MRO/Windows/signing/microsoft-r-open.exe";
+            RunCommand("packages/Wix.3.10.1/tools/insignia.exe", wixArgs); 
+        }
     }
 
 });
@@ -877,7 +849,6 @@ Task("GenerateCabs").Does(() => {
 
         cabList.Add("MKL", "stage/mkl_install_stage/Windows");
         cabList.Add("SRO", "stage/mro_install_stage/Windows");
-        cabList.Add("MROPKGS", "stage/mro_pkgs_stage/Windows");
         GenerateCabs(cabList);
     }
 });

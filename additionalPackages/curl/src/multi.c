@@ -30,7 +30,7 @@ void multi_release(reference *ref){
   /* Remove the curl handle from the handles list */
   ref->async.mref->handles = reflist_remove(ref->async.mref->handles, ref->handleptr);
   R_SetExternalPtrProtected(ref->async.mref->multiptr, ref->async.mref->handles);
-  R_SetExternalPtrProtected(ref->handleptr, R_NilValue);
+  SET_VECTOR_ELT(R_ExternalPtrProtected(ref->handleptr), 0, R_NilValue);
 
   /* Reset multi state struct */
   if(ref->async.content.buf){
@@ -88,7 +88,8 @@ SEXP R_multi_add(SEXP handle_ptr, SEXP cb_complete, SEXP cb_error, SEXP cb_data,
   ref->async.complete = cb_complete;
   ref->async.error = cb_error;
   ref->async.data = cb_data;
-  R_SetExternalPtrProtected(handle_ptr, Rf_list3(cb_error, cb_complete, cb_data));
+  SET_VECTOR_ELT(R_ExternalPtrProtected(handle_ptr), 0,
+                 Rf_list3(cb_error, cb_complete, cb_data));
 
   /* lock and protect handle */
   ref->refCount++;
@@ -124,6 +125,7 @@ SEXP R_multi_run(SEXP pool_ptr, SEXP timeout, SEXP max){
         // prepare for callback
         SEXP cb_complete = PROTECT(ref->async.complete);
         SEXP cb_error = PROTECT(ref->async.error);
+        SEXP cb_data = PROTECT(ref->async.data);
         SEXP buf = PROTECT(allocVector(RAWSXP, ref->async.content.size));
         if(ref->async.content.buf && ref->async.content.size)
           memcpy(RAW(buf), ref->async.content.buf, ref->async.content.size);
@@ -131,13 +133,22 @@ SEXP R_multi_run(SEXP pool_ptr, SEXP timeout, SEXP max){
         //release handle for use by callbacks
         multi_release(ref);
 
+        // Trigger a final 'data' with second argument to TRUE
+        // This also ensures that a file is consistently created, even for empty responses
+        if(Rf_isFunction(cb_data)){
+          SEXP buf = PROTECT(Rf_allocVector(RAWSXP, 0));
+          SEXP call = PROTECT(Rf_lang3(cb_data, buf, ScalarInteger(1)));
+          eval(call, R_GlobalEnv);
+          UNPROTECT(2);
+        }
+
         // callbacks must be trycatch! we should continue the loop
         if(status == CURLE_OK){
           total_success++;
           if(Rf_isFunction(cb_complete)){
             int arglen = Rf_length(FORMALS(cb_complete));
             SEXP out = PROTECT(make_handle_response(ref));
-            SET_VECTOR_ELT(out, 5, buf);
+            SET_VECTOR_ELT(out, 6, buf);
             SEXP call = PROTECT(LCONS(cb_complete, arglen ? LCONS(out, R_NilValue) : R_NilValue));
             //R_tryEval(call, R_GlobalEnv, &cbfail);
             eval(call, R_GlobalEnv); //OK to error here
@@ -154,7 +165,7 @@ SEXP R_multi_run(SEXP pool_ptr, SEXP timeout, SEXP max){
             UNPROTECT(2);
           }
         }
-        UNPROTECT(3);
+        UNPROTECT(4);
       }
       R_CheckUserInterrupt();
     }

@@ -1,6 +1,6 @@
  NEWS/Changelog for Rserve
 ---------------------------
-
+	o	support long vectors for R 3.5
 0.6-3	(under development)
     o	bug fix: the child process could get stuck in the server loop
 	after some abnormal return from the child connection code

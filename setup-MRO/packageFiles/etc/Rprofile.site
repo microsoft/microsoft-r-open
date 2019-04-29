@@ -47,7 +47,7 @@ local(
             if(!identical(system.file(package="mrsdeploy"), "") && identical(.Platform$OS, "windows") && !identical(Sys.getenv("MRS_IN_DATABASE_HOST_PLATFORM"), "1")) "mrsdeploy",
 			# we have MicrosoftML package
 			if(!identical(system.file(package="MicrosoftML"),"") && isMMLSupported) "MicrosoftML", 
-			"RevoMods", "RevoUtils", "RevoUtilsMath"))
+			"RevoMods", "RevoUtils", "RevoUtilsMath"), mleap.home = Sys.getenv("MLEAP_HOME"))
         if (nchar(hostName <- Sys.getenv("REVOHADOOPHOST")) && nchar(portNumber <- Sys.getenv("REVOHADOOPPORT")))
 		{
 			 RevoScaleR::rxHdfsConnect(hostName=hostName, portNumber=as.numeric(portNumber))
@@ -141,7 +141,6 @@ local(
 		}
 		cat(paste("Default CRAN mirror snapshot taken on ",repos.date, ".\n",sep=""))
 		cat("See: https://mran.microsoft.com/.", "\n\n", sep = "")
-		mrupdate::mrCheckForUpdates()
 	} else if (!quiet) {
 		cat("Microsoft R Open ",R.version$major,".",R.version$minor,"\n",sep="")
         cat("The enhanced R distribution from Microsoft\n",sep="")

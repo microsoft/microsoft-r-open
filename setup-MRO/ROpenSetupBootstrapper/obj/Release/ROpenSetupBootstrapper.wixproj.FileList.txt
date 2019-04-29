@@ -1,0 +1,6 @@
+C:\Users\richcala\Source\Repos\setup-MRO\target\Release\ROpenSetup.exe
+C:\Users\richcala\Source\Repos\setup-MRO\target\Release\ROpenSetup.wixpdb
+obj\Release\Bundle.wixobj
+obj\Release\ROpenSetupBootstrapper.wixproj.BindContentsFileList.txt
+obj\Release\ROpenSetupBootstrapper.wixproj.BindOutputsFileList.txt
+obj\Release\ROpenSetupBootstrapper.wixproj.BindBuiltOutputsFileList.txt

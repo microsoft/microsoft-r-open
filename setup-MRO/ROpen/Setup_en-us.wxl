@@ -2,7 +2,6 @@
 <WixLocalization Culture="en-us" xmlns="http://schemas.microsoft.com/wix/2006/localization">
 	<String Id="WelcomeDlgDescription">Microsoft R Open is the enhanced distribution of open source R from Microsoft Corporation. Enhancements include a fixed CRAN repository date, and reproducible R with the checkpoint package.&#xD;&#xA;&#x9;&#xD;&#xA;&#x9;The MKL library and RevoUtilsMath package provide multicore processing for many basic linear algebra operations and standard numerical algorithms.</String>
 	<String Id="ProgressInstallMkl">Installing MKL components</String>
-	<String Id="ProgressInstallMroPkgs">Installing packages</String>
 	<String Id="LicenseAgreementDlgTitle">{\WixUI_Font_Title}Licensing Information</String>
 	<String Id="LicenseAgreementDlgDescription"></String>
 	<String Id="LicenseAgreementDlgLicenseAcceptedCheckBox">I acknowledge the above licensing information</String>
@@ -14,7 +13,7 @@
 	<String Id="MklInstallDlgLearnMoreLinkText">Intel MKL</String>
 	<String Id="MklLicenseDlgTitle">{\WixUI_Font_Title}MKL Licensing Information</String>
 	<String Id="MklLicenseDlgLicenseAcceptedCheckBox">I accept the MKL license terms</String>
-	<String Id="ShortcutRguiName">Microsoft R Open 3.5.1</String>
+	<String Id="ShortcutRguiName">Microsoft R Open 3.5.2</String>
 	<String Id="ExitDialogDescription">Click the Finish button to exit the Setup Wizard and install any additional required software.</String>
 	<String Id="InvalidNetFramework">This application requires .NET Framework 4.5. Please install the .NET Framework then run this installer again.</String>
 </WixLocalization>
