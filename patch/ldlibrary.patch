@@ -1,0 +1,40 @@
+diff -ur unpatched_source/src/extra/graphapp/buttons.c source/src/extra/graphapp/buttons.c
+--- unpatched_source/src/extra/graphapp/buttons.c	2018-11-01 13:25:36.870837606 -0700
++++ source/src/extra/graphapp/buttons.c	2018-11-01 13:52:49.604564384 -0700
+@@ -986,8 +986,10 @@
+ textbox newrichtextarea(const char *text, rect r)
+ {
+     textbox obj;
+-    if (!LoadLibrary("riched20.dll")) /* RichEdit version 2.0, not included in Win95 */
+-	LoadLibrary("riched32.dll");  /* RichEdit version 1.0 */
++    char windir[MAX_PATH] = { 0 };
++    GetSystemDirectory(windir, MAX_PATH);
++    if (!LoadLibrary(strcat(windir, "//riched20.dll"))) /* RichEdit version 2.0, not included in Win95 */
++	LoadLibrary(strcat(windir, "//riched32.dll"));  /* RichEdit version 1.0 */
+     obj = newchildwin(RICHEDIT_CLASS, NULL,
+ 		      WS_HSCROLL | ES_AUTOHSCROLL |
+ 		      WS_VSCROLL | ES_AUTOVSCROLL |
+@@ -1393,3 +1395,4 @@
+     SendMessage(obj->handle, PBM_SETRANGE32, (WPARAM) pbmin,
+ 		(LPARAM) pbmax);
+ }
++
+diff -ur unpatched_source/src/extra/win_iconv/win_iconv.c source/src/extra/win_iconv/win_iconv.c
+--- unpatched_source/src/extra/win_iconv/win_iconv.c	2018-11-01 13:25:36.892837617 -0700
++++ source/src/extra/win_iconv/win_iconv.c	2018-11-01 13:54:17.537602847 -0700
+@@ -739,7 +739,9 @@
+     HMODULE h;
+     if (ConvertINetString != NULL)
+ 	return TRUE;
+-    h = LoadLibrary(TEXT("mlang.dll"));
++    char windir[MAX_PATH] = { 0 };
++    GetSystemDirectory(windir, MAX_PATH);
++    h = LoadLibrary(strcat(windir, "//mlang.dll"));
+     if (!h)
+ 	return FALSE;
+     ConvertINetString = (CONVERTINETSTRING)GetProcAddress(h, TEXT("ConvertINetString"));
+@@ -1822,3 +1824,4 @@
+     for (j = 0; codepage_alias[j].codepage ; j++)
+ 	if (do_one(1, &codepage_alias[j].name, data)) break;
+ }
++

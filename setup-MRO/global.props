@@ -5,18 +5,18 @@
     <PackagesRoot>$(CodeRoot)\packages</PackagesRoot>
     <DependenciesRoot>$(CodeRoot)dependencies</DependenciesRoot>
     
-    <MlmVersion Condition="'$(MlmVersion)' == '' ">9.4.4.0</MlmVersion>
-    <MklVersion Condition="'$(MklVersion)' == '' ">2017.0.36.5</MklVersion>
-    <MroVersion Condition="'$(MroVersion)' == '' ">3.5.1.0</MroVersion>
-    <SroVersion Condition="'$(SroVersion)' == '' ">3.5.1.0</SroVersion>
-    <SrsVersion Condition="'$(SrsVersion)' == '' ">9.4.4.0</SrsVersion>
-    <SpoVersion Condition="'$(SpoVersion)' == '' ">9.4.4.0</SpoVersion>
-    <SpsVersion Condition="'$(SpsVersion)' == '' ">9.4.4.0</SpsVersion>
+    <MlmVersion Condition="'$(MlmVersion)' == '' ">9.4.7.0</MlmVersion>
+    <MklVersion Condition="'$(MklVersion)' == '' ">2019.2.0.0</MklVersion>
+    <MroVersion Condition="'$(MroVersion)' == '' ">3.5.2.0</MroVersion>
+    <SroVersion Condition="'$(SroVersion)' == '' ">3.5.2.0</SroVersion>
+    <SrsVersion Condition="'$(SrsVersion)' == '' ">9.4.7.0</SrsVersion>
+    <SpoVersion Condition="'$(SpoVersion)' == '' ">9.4.7.0</SpoVersion>
+    <SpsVersion Condition="'$(SpsVersion)' == '' ">9.4.7.0</SpsVersion>
     
-    <MroPkgsVersion Condition="'$(MroPkgsVersion)' == '' ">3.5.1.0</MroPkgsVersion>
+    <MroPkgsVersion Condition="'$(MroPkgsVersion)' == '' ">3.5.2.0</MroPkgsVersion>
 
-    <MroShortVersion Condition="'$(MroShortVersion)' == '' ">3.5.1</MroShortVersion>
-    <SrsShortVersion Condition="'$(SrsShortVersion)' == '' ">9.4.4</SrsShortVersion>
+    <MroShortVersion Condition="'$(MroShortVersion)' == '' ">3.5.2</MroShortVersion>
+    <SrsShortVersion Condition="'$(SrsShortVersion)' == '' ">9.4.7</SrsShortVersion>
 
     <OutputBase Condition="'$(OutputBase)' == ''">$(CodeRoot)\target\$(Configuration)</OutputBase>
   </PropertyGroup>

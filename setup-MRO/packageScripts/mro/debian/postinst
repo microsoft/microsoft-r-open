@@ -15,5 +15,7 @@ do
    ln -s "${INSTALL_PREFIX}/lib64/R/bin/${file}" /usr/bin/${file}
 done
 
-
+RLIBS_DIR="${INSTALL_PREFIX}/lib64/R/lib"
+echo "${RLIBS_DIR}" > /etc/ld.so.conf.d/microsoft-r-open.conf
+ldconfig
 

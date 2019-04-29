@@ -1,7 +1,7 @@
 Rserve <- function(debug=FALSE, port=6311, args=NULL) {
   if (.Platform$OS.type == "windows") {
     ffn <- if (debug) "Rserve_d.exe" else "Rserve.exe"
-    fn <- system.file(package="Rserve", ffn)
+    fn <- system.file(package="deployrRserve", ffn)
     if (!nchar(fn) || !file.exists(fn))
       stop("Cannot find ", ffn)
     else {
@@ -19,7 +19,7 @@ Rserve <- function(debug=FALSE, port=6311, args=NULL) {
     }
   }
   name <- if (!debug) "Rserve-bin.so" else "Rserve-dbg.so"
-  fn <- system.file(package="Rserve", "libs", .Platform$r_arch, name)
+  fn <- system.file(package="deployrRserve", "libs", .Platform$r_arch, name)
   if (!nchar(fn)) fn <- if (!debug) "Rserve" else "Rserve.dbg"
   if ( port != 6311 ) fn <- paste( fn, "--RS-port", port )
   if ( !is.null(args) ) fn <- paste(fn, paste(args, collapse=' '))

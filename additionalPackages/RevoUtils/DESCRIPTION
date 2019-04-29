@@ -1,7 +1,6 @@
 Package: RevoUtils
-Version: 11.0.1
-Date: 2018-06-07
-RevoBuildID: {11.0.1.2}
+Version: 11.0.2
+Date: 2019-02-15
 Title: Microsoft R Utility Package
 Author: Microsoft Corporation
 Maintainer: Microsoft Corporation <mrspack@microsoft.com>
@@ -9,5 +8,4 @@ SystemRequirements: R (>= 3.0.0)
 Description: Utility functions for Microsoft R
 License: GPL-2
 Copyright: Microsoft Corporation
-MRANDate: 2018-08-01
-
+MRANDate: 2019-02-01

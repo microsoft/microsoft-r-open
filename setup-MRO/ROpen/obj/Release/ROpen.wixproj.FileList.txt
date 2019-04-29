@@ -1,0 +1,11 @@
+C:\Users\richcala\Source\Repos\setup-MRO\target\Release\ROpen\en-us\ROpen.msi
+C:\Users\richcala\Source\Repos\setup-MRO\target\Release\ROpen\en-us\ROpen.wixpdb
+obj\Release\MklInstallDlg.wixobj
+obj\Release\MklLicenseDlg.wixobj
+obj\Release\MRO-Files.wixobj
+obj\Release\MroWelcomeDlg.wixobj
+obj\Release\Product.wixobj
+obj\Release\SetupUI.wixobj
+obj\Release\ROpen.wixproj.BindContentsFileListen-us.txt
+obj\Release\ROpen.wixproj.BindOutputsFileListen-us.txt
+obj\Release\ROpen.wixproj.BindBuiltOutputsFileListen-us.txt

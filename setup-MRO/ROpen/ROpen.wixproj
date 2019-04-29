@@ -76,9 +76,6 @@
     <CreateProperty Condition="$(MklVersion) != ''" Value="MklVersion=$(MklVersion);$(DefineConstants)">
       <Output TaskParameter="Value" PropertyName="DefineConstants" />
     </CreateProperty>
-    <CreateProperty Condition="$(MroPkgsVersion) != ''" Value="MroPkgsVersion=$(MroPkgsVersion);$(DefineConstants)">
-      <Output TaskParameter="Value" PropertyName="DefineConstants" />
-    </CreateProperty>
     <CreateProperty Condition="$(SrsVersion) != ''" Value="SRSVERSION=$(SrsVersion);$(DefineConstants)">
       <Output TaskParameter="Value" PropertyName="DefineConstants" />
     </CreateProperty>

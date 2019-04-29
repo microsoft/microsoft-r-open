@@ -1,6 +1,10 @@
 NEWS/ChangeLog for doParallel
 -----------------------------
 
+1.0.14 2018-09-24
+    o  Re-enabled tests. 
+	o  Moved RUnit from Enhances to Suggests (request of Kurt Hornik)
+	
 1.0.13 2018-04-04
     o  Changes to support enhanced exports via future (if available).
 

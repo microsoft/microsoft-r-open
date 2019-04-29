@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
-    <Product Id="*" Name="Microsoft R Open $(var.MroShortVersion)" Language="1033" Version="$(var.MroVersion)" Manufacturer="Microsoft Corporation" UpgradeCode="F32C2F3C-289C-4A1E-AFC9-531338CBAF41">
+    <Product Id="*" Name="Microsoft R Open $(var.MroShortVersion)" Language="1033" Version="$(var.MroVersion)" Manufacturer="Microsoft Corporation" UpgradeCode="9A23D6F4-30E1-49A1-A071-06BAE69CF879">
 		<Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" Platform="x64" />
 
 		<PropertyRef Id="NETFRAMEWORK45"/>
@@ -15,7 +15,6 @@
 			<ComponentRef Id="cmp3FDEFA8D589D485392D184FBD96BE213"/>
 			<ComponentRef Id="cmpBF88542AC1324EF7A126693216259EF6"/>
       <ComponentRef Id="MklCab"/>
-      <ComponentRef Id="MroPkgsCab"/>
 			<ComponentRef Id="RegistryEntries"/>
 			<ComponentRef Id="ApplicationShortcuts" />
 			<ComponentRef Id="CleanupMainFolder" />
@@ -25,15 +24,12 @@
 
 		<InstallExecuteSequence>
 			<Custom Action="SetInstallMkl" After="CostFinalize"><![CDATA[(INSTALLMKL = "1" AND &MKL=3) AND NOT Installed AND NOT REMOVE]]></Custom>
-			<Custom Action="SetInstallMroPkgs" After="SetInstallMkl">NOT Installed AND NOT REMOVE</Custom>
 			<Custom Action="InstallMkl" After="InstallFiles"><![CDATA[(INSTALLMKL = "1" AND &MKL=3) AND NOT Installed AND NOT REMOVE]]></Custom>
-			<Custom Action="InstallMroPkgs" After="InstallMkl">NOT Installed AND NOT REMOVE</Custom>
 			<Custom Action="Xcopy_Msvcr_Cmd" After="InstallMkl">NOT Installed</Custom>
 		</InstallExecuteSequence>
 
 		<UI>
 			<ProgressText Action="InstallMkl">!(loc.ProgressInstallMkl)</ProgressText>
-			<ProgressText Action="InstallMroPkgs">!(loc.ProgressInstallMroPkgs)</ProgressText>
 			<Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="SetVcrt140"><![CDATA[NOT VCRT14_PRODUCTCODE AND NOT Installed]]></Publish>
 			<Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="LaunchVcrt140"><![CDATA[NOT VCRT14_PRODUCTCODE AND NOT Installed]]></Publish>
 		</UI>
@@ -90,9 +86,6 @@
 							<Component Id="MklCab" Guid="{4e602c01-c40e-4a9a-9c51-d244f3443abe}">
 								<File Id="MklCab" KeyPath="yes" Source="$(var.CodeRoot)\target\Cabs\MKL\MKL_$(var.MklVersion)_1033.cab" Name="MKL_$(var.MklVersion)_1033.cab"/>
 							</Component>
-              <Component Id="MroPkgsCab" Guid="{5554c453-3f63-422d-b84d-1b3afbb6ccc0}">
-                <File Id="MroPkgsCab" KeyPath="yes" Source="$(var.CodeRoot)\target\Cabs\MROPKGS\MROPKGS_$(var.MroPkgsVersion)_1033.cab" Name="MROPKGS_$(var.MroPkgsVersion)_1033.cab"/>
-              </Component>
 						</Directory>
 						<Directory Id="ProgramMenuFolder">
 							<Directory Id="ApplicationProgramsFolder" Name="Microsoft R Open"/>
@@ -158,19 +151,6 @@
             Execute="immediate" />
 		<CustomAction
 			Id="InstallMkl"
-			BinaryKey="WixCA"
-			DllEntry="CAQuietExec"
-			Execute="deferred"
-			Return="check"
-            Impersonate="no" />
-
-		<CustomAction
-			Id="SetInstallMroPkgs"
-			Property="InstallMroPkgs"
-            Value='"[INSTALLFOLDER]Setup\RSetup.exe" /install /component MroPkgs /version $(var.MroPkgsVersion) /language 1033 /cachedir "[INSTALLFOLDER]/Setup" /destdir "[INSTALLFOLDER]"'
-            Execute="immediate" />
-		<CustomAction
-			Id="InstallMroPkgs"
 			BinaryKey="WixCA"
 			DllEntry="CAQuietExec"
 			Execute="deferred"

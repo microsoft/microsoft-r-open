@@ -11,11 +11,13 @@
 \alias{multi_fdset}
 \title{Async Multi Download}
 \usage{
-multi_add(handle, done = NULL, fail = NULL, data = NULL, pool = NULL)
+multi_add(handle, done = NULL, fail = NULL, data = NULL,
+  pool = NULL)
 
 multi_run(timeout = Inf, poll = FALSE, pool = NULL)
 
-multi_set(total_con = 50, host_con = 6, multiplex = TRUE, pool = NULL)
+multi_set(total_con = 50, host_con = 6, multiplex = TRUE,
+  pool = NULL)
 
 multi_list(pool = NULL)
 
@@ -34,9 +36,12 @@ response data in same structure as \link{curl_fetch_memory}.}
 \item{fail}{callback function called on failed request. Argument contains
 error message.}
 
-\item{data}{callback function or open connection object for receiving data.
-If \code{NULL} the entire response content gets buffered and is returned
-in the \code{done} callback.}
+\item{data}{(advanced) callback function, file path, or connection object for writing
+incoming data. This callback should only be used for \emph{streaming} applications,
+where small pieces of incoming data get written before the request has completed. The
+signature for the callback function is \code{write(data, final = FALSE)}. If set
+to \code{NULL} the entire response gets buffered internally and returned by in
+the \code{done} callback (which is usually what you want).}
 
 \item{pool}{a multi handle created by \link{new_pool}. Default uses a global pool.}
 
@@ -105,7 +110,7 @@ h1 <- new_handle(url = "https://eu.httpbin.org/delay/3")
 multi_add(h1, done = success, fail = failure)
 
 # This handle writes data to a file
-con <- file("output.txt", open = "wb")
+con <- file("output.txt")
 h2 <- new_handle(url = "https://eu.httpbin.org/post", postfields = "bla bla")
 multi_add(h2, done = success, fail = failure, data = con)
 
@@ -118,7 +123,6 @@ multi_run(timeout = 2)
 multi_run()
 
 # Check the file
-close(con)
 readLines("output.txt")
 unlink("output.txt")
 }

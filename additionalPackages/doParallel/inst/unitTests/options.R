@@ -31,7 +31,6 @@ test.preschedule <- function() {
 }
 
 test.attach <- function() {
-    DEACTIVATED("Does not run in ShipR. Should be looked at by Rich C.")
     if (identical(getDoParName(), "doParallelMC")) {
         return(TRUE)
     } else {
@@ -78,7 +77,7 @@ pkgname.test.stress <- function() {
     }
 }
 
-test.pkgname.test.stress <- function()
+"test.pkgname.test.stress" <- function()
 {
     res <- try(pkgname.test.stress())
     checkTrue(!is(res, "try-error"), msg="pkgname stress test failed")    
