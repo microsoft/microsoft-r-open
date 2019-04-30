@@ -29,7 +29,8 @@ EXT_LIBS = $(LOCAL_SOFT)
 # EXT_LIBS = c:/applications/extsoft
 
 # an alternative is to use -gstabs here, if the debugger supports only stabs.
-# G_FLAG = -gdwarf-2
+G_FLAG = -gdwarf-2
+DEBUG = YES
 
 # Set to YES and specify the path if you want to use the ATLAS BLAS.
 # USE_ATLAS = NO

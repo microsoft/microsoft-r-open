@@ -1,7 +1,7 @@
 diff -ur unpatched_source/src/gnuwin32/run.c source/src/gnuwin32/run.c
---- unpatched_source/src/gnuwin32/run.c	2018-07-30 10:22:18.929851354 -0700
-+++ source/src/gnuwin32/run.c	2018-07-30 10:40:31.646458839 -0700
-@@ -48,9 +48,10 @@
+--- unpatched_source/src/gnuwin32/run.c 2018-08-30 16:11:30.410852870 -0700
++++ source/src/gnuwin32/run.c   2018-08-30 16:35:43.144337141 -0700
+@@ -47,9 +47,10 @@
  static char *expandcmd(const char *cmd, int whole)
  {
      char c = '\0';
@@ -14,7 +14,15 @@ diff -ur unpatched_source/src/gnuwin32/run.c source/src/gnuwin32/run.c
 
      /* make a copy as we manipulate in place */
      strcpy(buf, cmd);
-@@ -120,7 +121,14 @@
+@@ -74,6 +77,7 @@
+        strcpy(RunError, "Insufficient memory (expandcmd)");
+        return NULL;
+     }
++    memset(s, 0, MAX_PATH + strlen(cmd));
+
+    /*
+     * Guido resorted to this since SearchPath returned FOUND also
+@@ -118,7 +121,15 @@
        this is not documented so I prefer to be explicit.
      */
      /* NOTE: short names are not always enabled */
@@ -24,12 +32,13 @@ diff -ur unpatched_source/src/gnuwin32/run.c source/src/gnuwin32/run.c
 +    /* If for any reason, GetShortPathName fails or the length of the path is too long,
 +       simply return the full name*/
 +    if (res == 0 || res > MAX_PATH) {
-+        strncpy(s, fn, d);
++        // d is the length and + 1 for the null terminating character
++        strncpy(s, fn, d + 1);
 +    }
 +
      if (!whole) {
- 	*q = c;
- 	strcat(s, q);
+        *q = c;
+        strcat(s, q);
 diff -ur unpatched_source/src/main/sysutils.c source/src/main/sysutils.c
 --- unpatched_source/src/main/sysutils.c	2018-07-30 10:22:19.053851421 -0700
 +++ source/src/main/sysutils.c	2018-07-30 16:24:29.380004133 -0700
@@ -61,3 +70,25 @@ diff -ur unpatched_source/src/main/sysutils.c source/src/main/sysutils.c
  	snprintf(tmp1, PATH_MAX+11, "%s\\RtmpXXXXXX", tm);
  #else
  	snprintf(tmp1, PATH_MAX+11, "%s/RtmpXXXXXX", tm);
+diff -ur unpatched_source/src/main/platform.c source/src/main/platform.c
+--- unpatched_source/src/main/platform.c	2018-08-22 23:16:37.564398839 -0700
++++ source/src/main/platform.c	2018-08-22 23:18:00.660018936 -0700
+@@ -1430,9 +1430,15 @@
+ static int R_rmdir(const wchar_t *dir)
+ {
+-    wchar_t tmp[MAX_PATH];
+-    GetShortPathNameW(dir, tmp, MAX_PATH);
++    wchar_t tmp[MAX_PATH] = {0};
++    DWORD res = 0;
++    res = GetShortPathNameW(dir, tmp, MAX_PATH);
++    if ( res == 0 || res > MAX_PATH) {
+     //printf("removing directory %ls\n", tmp);
+-    return _wrmdir(tmp);
++        return _wrmdir(dir);
++    }
++    else {
++        return _wrmdir(tmp);
++    }
+ }
+ 
+ /* Junctions and symbolic links are fundamentally reparse points, so

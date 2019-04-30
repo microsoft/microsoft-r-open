@@ -6,46 +6,46 @@ include(ExternalProject)
 
 ExternalProject_Add(
   zlib
-  SOURCE_DIR ${CMAKE_SOURCE_DIR}/zlib-1.2.8
-  CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/zlib.sh ${CMAKE_SOURCE_DIR} zlib-1.2.8
+  SOURCE_DIR ${CMAKE_SOURCE_DIR}/zlib-1.2.11
+  CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/zlib.sh ${CMAKE_SOURCE_DIR} zlib-1.2.11
   BUILD_IN_SOURCE 1
 )
 
 ExternalProject_Add(
   libpng
   DEPENDS zlib
-  SOURCE_DIR ${CMAKE_SOURCE_DIR}/libpng-1.6.23
-  CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/png.sh ${CMAKE_SOURCE_DIR} libpng-1.6.23
+  SOURCE_DIR ${CMAKE_SOURCE_DIR}/libpng-1.6.36
+  CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/png.sh ${CMAKE_SOURCE_DIR} libpng-1.6.36
   BUILD_IN_SOURCE 1
 )
 
 ExternalProject_Add(
   libjpg
-  SOURCE_DIR ${CMAKE_SOURCE_DIR}/jpeg-9b
-  CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/jpeg.sh ${CMAKE_SOURCE_DIR} jpeg-9b
+  SOURCE_DIR ${CMAKE_SOURCE_DIR}/jpeg-9c
+  CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/jpeg.sh ${CMAKE_SOURCE_DIR} jpeg-9c
   BUILD_IN_SOURCE 1
 )
 
 ExternalProject_Add(
   libtiff
   DEPENDS zlib libpng libjpg
-  SOURCE_DIR ${CMAKE_SOURCE_DIR}/tiff-4.0.6
-  CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/png.sh ${CMAKE_SOURCE_DIR} tiff-4.0.6
+  SOURCE_DIR ${CMAKE_SOURCE_DIR}/tiff-4.0.10
+  CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/png.sh ${CMAKE_SOURCE_DIR} tiff-4.0.10
   BUILD_IN_SOURCE 1
 )
 
 ExternalProject_Add(
   xz
-  SOURCE_DIR ${CMAKE_SOURCE_DIR}/xz-5.2.2
-  CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/xz.sh ${CMAKE_SOURCE_DIR} xz-5.2.2
+  SOURCE_DIR ${CMAKE_SOURCE_DIR}/xz-5.2.4
+  CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/xz.sh ${CMAKE_SOURCE_DIR} xz-5.2.4
   BUILD_IN_SOURCE 1
 )
 
 ExternalProject_Add(
    openssl
    DEPENDS zlib
-   SOURCE_DIR ${CMAKE_SOURCE_DIR}/openssl-1.0.2h
-   CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/openssl.sh ${CMAKE_SOURCE_DIR} openssl-1.0.2h
+   SOURCE_DIR ${CMAKE_SOURCE_DIR}/openssl-1.0.2r
+   CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/openssl.sh ${CMAKE_SOURCE_DIR} openssl-1.0.2r
    BUILD_COMMAND make depend && make
    BUILD_IN_SOURCE 1
 )
@@ -91,16 +91,16 @@ else()
 
      ExternalProject_Add(
        ncurses
-       SOURCE_DIR ${CMAKE_SOURCE_DIR}/ncurses-5.9
-       CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/ncurses.sh ${CMAKE_SOURCE_DIR} ncurses-5.9
+       SOURCE_DIR ${CMAKE_SOURCE_DIR}/ncurses-6.1
+       CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/ncurses.sh ${CMAKE_SOURCE_DIR} ncurses-6.1
        BUILD_IN_SOURCE 1
      )
 
      ExternalProject_Add(
        curl
        DEPENDS openssl
-       SOURCE_DIR ${CMAKE_SOURCE_DIR}/curl-7.49.1
-       CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/curl.sh ${CMAKE_SOURCE_DIR} curl-7.49.1
+       SOURCE_DIR ${CMAKE_SOURCE_DIR}/curl-7.59.0
+       CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/curl.sh ${CMAKE_SOURCE_DIR} curl-7.59.0
        BUILD_IN_SOURCE 1
      )
 
@@ -115,31 +115,31 @@ ExternalProject_Add(
 
 ExternalProject_Add(
   tcl
-  SOURCE_DIR ${CMAKE_SOURCE_DIR}/tcl8.6.5/unix
-  CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/tcl.sh ${CMAKE_SOURCE_DIR} tcl8.6.5/unix
+  SOURCE_DIR ${CMAKE_SOURCE_DIR}/tcl8.6.9/unix
+  CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/tcl.sh ${CMAKE_SOURCE_DIR} tcl8.6.9/unix
   BUILD_IN_SOURCE 1
 )
 
 ExternalProject_Add(
   tk
   DEPENDS tcl
-  SOURCE_DIR ${CMAKE_SOURCE_DIR}/tk8.6.5/unix
-  CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/tcl.sh ${CMAKE_SOURCE_DIR} tk8.6.5/unix
+  SOURCE_DIR ${CMAKE_SOURCE_DIR}/tk8.6.9/unix
+  CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/tcl.sh ${CMAKE_SOURCE_DIR} tk8.6.9/unix
   BUILD_IN_SOURCE 1
 )
 
-ExternalProject_Add(
-  readline
-  SOURCE_DIR ${CMAKE_SOURCE_DIR}/readline-6.3
-  CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/readline.sh ${CMAKE_SOURCE_DIR} readline-6.3
-  BUILD_IN_SOURCE 1
-)
+# ExternalProject_Add(
+#  readline
+#  SOURCE_DIR ${CMAKE_SOURCE_DIR}/readline-6.3
+#  CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/readline.sh ${CMAKE_SOURCE_DIR} readline-6.3
+#  BUILD_IN_SOURCE 1
+#)
 
 ExternalProject_Add(
   pcre
   DEPENDS libpng
-  SOURCE_DIR ${CMAKE_SOURCE_DIR}/pcre-8.37
-  CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/pcre.sh ${CMAKE_SOURCE_DIR} pcre-8.37
+  SOURCE_DIR ${CMAKE_SOURCE_DIR}/pcre-8.42
+  CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/configure-scripts/pcre.sh ${CMAKE_SOURCE_DIR} pcre-8.42
   BUILD_IN_SOURCE 1
 )
 
