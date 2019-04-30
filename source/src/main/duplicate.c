@@ -435,11 +435,6 @@ void copyListMatrix(SEXP s, SEXP t, Rboolean byrow)
     }
 }
 
-static R_INLINE SEXP VECTOR_ELT_LD(SEXP x, R_xlen_t i)
-{
-    return lazy_duplicate(VECTOR_ELT(x, i));
-}
-
 void copyMatrix(SEXP s, SEXP t, Rboolean byrow)
 {
     int nr = nrows(s), nc = ncols(s);
@@ -470,7 +465,7 @@ void copyMatrix(SEXP s, SEXP t, Rboolean byrow)
 	case EXPRSXP:
 	case VECSXP:
 	    FILL_MATRIX_BYROW_ITERATE(0, nr, nc, nt)
-		SET_VECTOR_ELT(s, didx, VECTOR_ELT_LD(t, sidx));
+		SET_VECTOR_ELT(s, didx, VECTOR_ELT(t, sidx));
 	    break;
 	case RAWSXP:
 	    FILL_MATRIX_BYROW_ITERATE(0, nr, nc, nt)
@@ -539,7 +534,7 @@ xcopy##TNAME##WithRecycle(SEXP dst, SEXP src, R_xlen_t dstart, R_xlen_t n, R_xle
 }
 
 COPY_ELT_WITH_RECYCLE(String, STRING_ELT, SET_STRING_ELT) /* xcopyStringWithRecycle */
-COPY_ELT_WITH_RECYCLE(Vector, VECTOR_ELT_LD, SET_VECTOR_ELT) /* xcopyVectorWithRecycle */
+COPY_ELT_WITH_RECYCLE(Vector, VECTOR_ELT, SET_VECTOR_ELT) /* xcopyVectorWithRecycle */
 
 #define FILL_WITH_RECYCLE(VALTYPE, TNAME) \
 void attribute_hidden xfill##TNAME##MatrixWithRecycle(VALTYPE *dst, VALTYPE *src,	\
