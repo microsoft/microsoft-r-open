@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION="3.5.2"
+VERSION="3.5.3"
 INSTALL_PREFIX="${RPM_INSTALL_PREFIX}/ropen/${VERSION}"
 
 set +f
