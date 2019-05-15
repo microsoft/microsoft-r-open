@@ -3,7 +3,7 @@
 #Enable shell globbing
 set +f
 
-VERSION="3.5.2"
+VERSION="3.5.3"
 INSTALL_PREFIX="${RPM_INSTALL_PREFIX}/ropen/${VERSION}"
 
 # We will let postinst of installing RPM take care of this if upgrade

@@ -703,6 +703,8 @@ RBuildEnvironment.Override("Build", () => {
         CreateDirectory("target/MRO/Linux");
         CreateDirectory("target/MRO/SLES");
         CreateDirectory("stage/tarballStage/microsoft-r-open/rpm");
+        CreateDirectory("stage/tarballStage/microsoft-r-open/rpm/rhel");
+        CreateDirectory("stage/tarballStage/microsoft-r-open/rpm/sles");
         CreateDirectory("stage/tarballStage/microsoft-r-open/deb");
         CopyFile("packageFiles/installScript/install.sh", "stage/tarballStage/microsoft-r-open/install.sh");
         ChMod("a+x", "stage/tarballStage/microsoft-r-open/install.sh");
@@ -766,7 +768,7 @@ Task("AssembleDeliverables").Does(() => {
         if (System.IO.Directory.Exists("cmake_build_mro")) 
         {
             CopyFiles("cmake_build_mro/microsoft-r-open*.deb", "stage/tarballStage/microsoft-r-open/deb");
-            CopyFiles("cmake_build_mro/microsoft-r-open*.rpm", "stage/tarballStage/microsoft-r-open/rpm");
+            CopyFiles("cmake_build_mro/microsoft-r-open*.rpm", "stage/tarballStage/microsoft-r-open/rpm/rhel");
 
             var tarArgs = "-czvf target/MRO/Linux/microsoft-r-open.tar.gz -C stage/tarballStage microsoft-r-open/";
             RunCommand("tar", tarArgs);
@@ -775,7 +777,7 @@ Task("AssembleDeliverables").Does(() => {
         }
         else if(System.IO.Directory.Exists("cmake_build_mro_rpm_sles"))
         {
-            CopyFiles("cmake_build_mro_rpm_sles/microsoft-r-open*.rpm", "stage/tarballStage/microsoft-r-open/rpm");
+            CopyFiles("cmake_build_mro_rpm_sles/microsoft-r-open*.rpm", "stage/tarballStage/microsoft-r-open/rpm/sles");
 
             var tarArgs = "-czvf target/MRO/SLES/microsoft-r-open.tar.gz -C stage/tarballStage microsoft-r-open/";
             RunCommand("tar", tarArgs);  

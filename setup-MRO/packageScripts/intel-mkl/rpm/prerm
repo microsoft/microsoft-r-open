@@ -8,7 +8,7 @@ if [[ "$1" == "1" ]]; then
     exit 0
 fi
 
-VERSION="3.5.2"
+VERSION="3.5.3"
 INSTALL_DIR="${RPM_INSTALL_PREFIX}/ropen/${VERSION}"
 DIRECTORY="${INSTALL_DIR}/lib64/R"
 if [ -e "${INSTALL_DIR}/MKL_EULA.txt" ]; then

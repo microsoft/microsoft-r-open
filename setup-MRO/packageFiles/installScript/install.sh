@@ -18,6 +18,7 @@ USE_YUM=false
 USE_ZYPPER=false
 USE_DPKG=false
 USE_RPM=false
+DISTRO_NAME=""
 
 INTERNET_CONNECTION=false
 
@@ -101,10 +102,12 @@ function check_getopt {
 function detect_package_manager {
   if [ -f /etc/redhat-release ]; then
     USE_YUM=true
+    DISTRO_NAME="rhel"
   elif [ -f /etc/debian_version ]; then
     USE_DPKG=true
-  elif [ -f /etc/SuSE-brand ] || [ -f /etc/SuSE-release ]; then
+  elif [ -f /etc/SuSE-brand ] || [ -f /etc/SuSE-release ] || [ -f /etc/os-release ]; then
     USE_ZYPPER=true
+    DISTRO_NAME="sles"
   else
     echo "Unsupported OS"
     exit 1
@@ -290,15 +293,15 @@ function install_deb_dpkg {
 function install {
   if [[ ${USE_YUM} == true ]]; then
     mkdir -p ${SCRIPT_DIR}/logs
-    install_rpm_yum ${SCRIPT_DIR}/rpm/microsoft-r-open-mro*.rpm ${SCRIPT_DIR}/logs/mro.txt
+    install_rpm_yum ${SCRIPT_DIR}/rpm/${DISTRO_NAME}/microsoft-r-open-mro*.rpm ${SCRIPT_DIR}/logs/mro.txt
     if [[ ${MKL_EULA_ACCEPTED} == true ]]; then
-      install_rpm_yum ${SCRIPT_DIR}/rpm/microsoft-r-open-mkl*.rpm ${SCRIPT_DIR}/logs/mkl.txt
+      install_rpm_yum ${SCRIPT_DIR}/rpm/${DISTRO_NAME}/microsoft-r-open-mkl*.rpm ${SCRIPT_DIR}/logs/mkl.txt
     fi
   elif [[ ${USE_ZYPPER} == true ]]; then
     mkdir -p ${SCRIPT_DIR}/logs
-    install_rpm_zypper ${SCRIPT_DIR}/rpm/microsoft-r-open-mro*.rpm ${SCRIPT_DIR}/logs/mro.txt
+    install_rpm_zypper ${SCRIPT_DIR}/rpm/${DISTRO_NAME}/microsoft-r-open-mro*.rpm ${SCRIPT_DIR}/logs/mro.txt
     if [[ ${MKL_EULA_ACCEPTED} == true ]]; then
-      install_rpm_zypper ${SCRIPT_DIR}/rpm/microsoft-r-open-mkl*.rpm ${SCRIPT_DIR}/logs/mkl.txt
+      install_rpm_zypper ${SCRIPT_DIR}/rpm/${DISTRO_NAME}/microsoft-r-open-mkl*.rpm ${SCRIPT_DIR}/logs/mkl.txt
     fi
   elif [[ ${USE_DPKG} == true ]]; then
     mkdir -p ${SCRIPT_DIR}/logs

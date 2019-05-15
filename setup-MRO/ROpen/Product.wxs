@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
-    <Product Id="*" Name="Microsoft R Open $(var.MroShortVersion)" Language="1033" Version="$(var.MroVersion)" Manufacturer="Microsoft Corporation" UpgradeCode="9A23D6F4-30E1-49A1-A071-06BAE69CF879">
+    <Product Id="*" Name="Microsoft R Open $(var.MroShortVersion)" Language="1033" Version="$(var.MroVersion)" Manufacturer="Microsoft Corporation" UpgradeCode="8ACB5527-CE3E-4F65-BF00-D47C63FBBBF0">
 		<Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" Platform="x64" />
 
 		<PropertyRef Id="NETFRAMEWORK45"/>
