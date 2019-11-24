@@ -22,7 +22,7 @@ language allows branching and looping as well as modular programming
 using functions.  Most of the user-visible functions in R are written
 in R, calling upon a smaller set of internal primitives.  It is
 possible for the user to interface to procedures written in C or
-Fortran languages for efficiency, and also to write additional
+Fortran language for efficiency, and also to write additional
 primitives.
 
 The R distribution contains functionality for a large number of
