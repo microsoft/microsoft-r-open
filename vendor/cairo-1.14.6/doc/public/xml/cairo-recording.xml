@@ -1,0 +1,213 @@
+<?xml version='1.0' encoding='UTF-8'?> 
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!ENTITY version SYSTEM "version.xml">
+]>
+<refentry id="cairo-Recording-Surfaces">
+<refmeta>
+<refentrytitle role="top_of_page" id="cairo-Recording-Surfaces.top_of_page">Recording Surfaces</refentrytitle>
+<manvolnum>3</manvolnum>
+<refmiscinfo>
+  CAIRO Library
+</refmiscinfo>
+</refmeta>
+<refnamediv>
+<refname>Recording Surfaces</refname>
+<refpurpose>Records all drawing operations</refpurpose>
+</refnamediv>
+
+<refsect1 id="cairo-Recording-Surfaces.functions" role="functions_proto">
+<title role="functions_proto.title">Functions</title>
+<informaltable pgwide="1" frame="none">
+<tgroup cols="2">
+<colspec colname="functions_return" colwidth="150px"/>
+<colspec colname="functions_name"/>
+<tbody>
+<row><entry role="function_type"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+</entry><entry role="function_name"><link linkend="cairo-recording-surface-create">cairo_recording_surface_create</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-recording-surface-ink-extents">cairo_recording_surface_ink_extents</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-bool-t"><returnvalue>cairo_bool_t</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-recording-surface-get-extents">cairo_recording_surface_get_extents</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+
+</tbody>
+</tgroup>
+</informaltable>
+</refsect1>
+<refsect1 id="cairo-Recording-Surfaces.other" role="other_proto">
+<title role="other_proto.title">Types and Values</title>
+<informaltable role="enum_members_table" pgwide="1" frame="none">
+<tgroup cols="2">
+<colspec colname="name" colwidth="150px"/>
+<colspec colname="description"/>
+<tbody>
+<row><entry role="define_keyword">#define</entry><entry role="function_name"><link linkend="CAIRO-HAS-RECORDING-SURFACE:CAPS">CAIRO_HAS_RECORDING_SURFACE</link></entry></row>
+
+</tbody>
+</tgroup>
+</informaltable>
+</refsect1>
+<refsect1 id="cairo-Recording-Surfaces.object-hierarchy" role="object_hierarchy">
+<title role="object_hierarchy.title">Object Hierarchy</title>
+<screen>
+</screen>
+</refsect1>
+
+
+<refsect1 id="cairo-Recording-Surfaces.description" role="desc">
+<title role="desc.title">Description</title>
+<para>A recording surface is a surface that records all drawing operations at
+the highest level of the surface backend interface, (that is, the
+level of paint, mask, stroke, fill, and show_text_glyphs). The recording
+surface can then be "replayed" against any target surface by using it
+as a source surface.</para>
+<para>If you want to replay a surface so that the results in target will be
+identical to the results that would have been obtained if the original
+operations applied to the recording surface had instead been applied to the
+target surface, you can use code like this:</para>
+<informalexample><programlisting>
+cairo_t *cr;
+
+cr = cairo_create (target);
+cairo_set_source_surface (cr, recording_surface, 0.0, 0.0);
+cairo_paint (cr);
+cairo_destroy (cr);
+</programlisting></informalexample>
+<para>A recording surface is logically unbounded, i.e. it has no implicit constraint
+on the size of the drawing surface. However, in practice this is rarely
+useful as you wish to replay against a particular target surface with
+known bounds. For this case, it is more efficient to specify the target
+extents to the recording surface upon creation.</para>
+<para>The recording phase of the recording surface is careful to snapshot all
+necessary objects (paths, patterns, etc.), in order to achieve
+accurate replay. The efficiency of the recording surface could be
+improved by improving the implementation of snapshot for the
+various objects. For example, it would be nice to have a
+copy-on-write implementation for _cairo_surface_snapshot.</para>
+
+</refsect1>
+<refsect1 id="cairo-Recording-Surfaces.functions_details" role="details">
+<title role="details.title">Functions</title>
+<refsect2 id="cairo-recording-surface-create" role="function" condition="since:1.10">
+<title>cairo_recording_surface_create&#160;()</title>
+<indexterm zone="cairo-recording-surface-create" role="1.10"><primary sortas="recording_surface_create">cairo_recording_surface_create</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+cairo_recording_surface_create (<parameter><link linkend="cairo-content-t"><type>cairo_content_t</type></link> content</parameter>,
+                                <parameter>const <link linkend="cairo-rectangle-t"><type>cairo_rectangle_t</type></link> *extents</parameter>);</programlisting>
+<para>Creates a recording-surface which can be used to record all drawing operations
+at the highest level (that is, the level of paint, mask, stroke, fill
+and show_text_glyphs). The recording surface can then be "replayed" against
+any target surface by using it as a source to drawing operations.</para>
+<para>The recording phase of the recording surface is careful to snapshot all
+necessary objects (paths, patterns, etc.), in order to achieve
+accurate replay.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>content</para></entry>
+<entry role="parameter_description"><para>the content of the recording surface</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>extents</para></entry>
+<entry role="parameter_description"><para>the extents to record in pixels, can be <link linkend="NULL:CAPS"><literal>NULL</literal></link> to record
+unbounded operations.</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> a pointer to the newly created surface. The caller
+owns the surface and should call <link linkend="cairo-surface-destroy"><function>cairo_surface_destroy()</function></link> when done
+with it.</para>
+<para></para>
+</refsect3><para role="since">Since 1.10</para></refsect2>
+<refsect2 id="cairo-recording-surface-ink-extents" role="function" condition="since:1.10">
+<title>cairo_recording_surface_ink_extents&#160;()</title>
+<indexterm zone="cairo-recording-surface-ink-extents" role="1.10"><primary sortas="recording_surface_ink_extents">cairo_recording_surface_ink_extents</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_recording_surface_ink_extents (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>,
+                                     <parameter><link linkend="double"><type>double</type></link> *x0</parameter>,
+                                     <parameter><link linkend="double"><type>double</type></link> *y0</parameter>,
+                                     <parameter><link linkend="double"><type>double</type></link> *width</parameter>,
+                                     <parameter><link linkend="double"><type>double</type></link> *height</parameter>);</programlisting>
+<para>Measures the extents of the operations stored within the recording-surface.
+This is useful to compute the required size of an image surface (or
+equivalent) into which to replay the full sequence of drawing operations.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-recording-surface-t"><type>cairo_recording_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>x0</para></entry>
+<entry role="parameter_description"><para>the x-coordinate of the top-left of the ink bounding box</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>y0</para></entry>
+<entry role="parameter_description"><para>the y-coordinate of the top-left of the ink bounding box</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>width</para></entry>
+<entry role="parameter_description"><para>the width of the ink bounding box</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>height</para></entry>
+<entry role="parameter_description"><para>the height of the ink bounding box</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.10</para></refsect2>
+<refsect2 id="cairo-recording-surface-get-extents" role="function" condition="since:1.12">
+<title>cairo_recording_surface_get_extents&#160;()</title>
+<indexterm zone="cairo-recording-surface-get-extents" role="1.12"><primary sortas="recording_surface_get_extents">cairo_recording_surface_get_extents</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-bool-t"><returnvalue>cairo_bool_t</returnvalue></link>
+cairo_recording_surface_get_extents (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>,
+                                     <parameter><link linkend="cairo-rectangle-t"><type>cairo_rectangle_t</type></link> *extents</parameter>);</programlisting>
+<para>Get the extents of the recording-surface.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-recording-surface-t"><type>cairo_recording_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>extents</para></entry>
+<entry role="parameter_description"><para>the <link linkend="cairo-rectangle-t"><type>cairo_rectangle_t</type></link> to be assigned the extents</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> <link linkend="TRUE:CAPS"><literal>TRUE</literal></link> if the surface is bounded, of recording type, and
+not in an error state, otherwise <link linkend="FALSE:CAPS"><literal>FALSE</literal></link></para>
+<para></para>
+</refsect3><para role="since">Since 1.12</para></refsect2>
+
+</refsect1>
+<refsect1 id="cairo-Recording-Surfaces.other_details" role="details">
+<title role="details.title">Types and Values</title>
+<refsect2 id="CAIRO-HAS-RECORDING-SURFACE:CAPS" role="macro" condition="since:1.10">
+<title>CAIRO_HAS_RECORDING_SURFACE</title>
+<indexterm zone="CAIRO-HAS-RECORDING-SURFACE:CAPS" role="1.10"><primary sortas="HAS_RECORDING_SURFACE">CAIRO_HAS_RECORDING_SURFACE</primary></indexterm>
+<programlisting language="C">#define CAIRO_HAS_RECORDING_SURFACE 1
+</programlisting>
+<para>Defined if the recording surface backend is available.
+The recording surface backend is always built in.
+This macro was added for completeness in cairo 1.10.</para>
+<para role="since">Since 1.10</para></refsect2>
+
+</refsect1>
+<refsect1 id="cairo-Recording-Surfaces.see-also">
+<title>See Also</title>
+<para><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para>
+
+</refsect1>
+
+</refentry>

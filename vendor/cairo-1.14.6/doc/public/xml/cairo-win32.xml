@@ -1,0 +1,279 @@
+<?xml version='1.0' encoding='UTF-8'?> 
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!ENTITY version SYSTEM "version.xml">
+]>
+<refentry id="cairo-Win32-Surfaces">
+<refmeta>
+<refentrytitle role="top_of_page" id="cairo-Win32-Surfaces.top_of_page">Win32 Surfaces</refentrytitle>
+<manvolnum>3</manvolnum>
+<refmiscinfo>
+  CAIRO Library
+</refmiscinfo>
+</refmeta>
+<refnamediv>
+<refname>Win32 Surfaces</refname>
+<refpurpose>Microsoft Windows surface support</refpurpose>
+</refnamediv>
+
+<refsect1 id="cairo-Win32-Surfaces.functions" role="functions_proto">
+<title role="functions_proto.title">Functions</title>
+<informaltable pgwide="1" frame="none">
+<tgroup cols="2">
+<colspec colname="functions_return" colwidth="150px"/>
+<colspec colname="functions_name"/>
+<tbody>
+<row><entry role="function_type"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+</entry><entry role="function_name"><link linkend="cairo-win32-surface-create">cairo_win32_surface_create</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+</entry><entry role="function_name"><link linkend="cairo-win32-surface-create-with-dib">cairo_win32_surface_create_with_dib</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+</entry><entry role="function_name"><link linkend="cairo-win32-surface-create-with-ddb">cairo_win32_surface_create_with_ddb</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+</entry><entry role="function_name"><link linkend="cairo-win32-printing-surface-create">cairo_win32_printing_surface_create</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="HDC:CAPS"><returnvalue>HDC</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-win32-surface-get-dc">cairo_win32_surface_get_dc</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+</entry><entry role="function_name"><link linkend="cairo-win32-surface-get-image">cairo_win32_surface_get_image</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+
+</tbody>
+</tgroup>
+</informaltable>
+</refsect1>
+<refsect1 id="cairo-Win32-Surfaces.other" role="other_proto">
+<title role="other_proto.title">Types and Values</title>
+<informaltable role="enum_members_table" pgwide="1" frame="none">
+<tgroup cols="2">
+<colspec colname="name" colwidth="150px"/>
+<colspec colname="description"/>
+<tbody>
+<row><entry role="define_keyword">#define</entry><entry role="function_name"><link linkend="CAIRO-HAS-WIN32-SURFACE:CAPS">CAIRO_HAS_WIN32_SURFACE</link></entry></row>
+
+</tbody>
+</tgroup>
+</informaltable>
+</refsect1>
+<refsect1 id="cairo-Win32-Surfaces.object-hierarchy" role="object_hierarchy">
+<title role="object_hierarchy.title">Object Hierarchy</title>
+<screen>
+</screen>
+</refsect1>
+
+
+<refsect1 id="cairo-Win32-Surfaces.description" role="desc">
+<title role="desc.title">Description</title>
+<para>The Microsoft Windows surface is used to render cairo graphics to
+Microsoft Windows windows, bitmaps, and printing device contexts.</para>
+<para>The surface returned by <link linkend="cairo-win32-printing-surface-create"><function>cairo_win32_printing_surface_create()</function></link> is of surface
+type <link linkend="CAIRO-SURFACE-TYPE-WIN32-PRINTING:CAPS"><literal>CAIRO_SURFACE_TYPE_WIN32_PRINTING</literal></link> and is a multi-page vector surface
+type.</para>
+<para>The surface returned by the other win32 constructors is of surface type
+<link linkend="CAIRO-SURFACE-TYPE-WIN32:CAPS"><literal>CAIRO_SURFACE_TYPE_WIN32</literal></link> and is a raster surface type.</para>
+
+</refsect1>
+<refsect1 id="cairo-Win32-Surfaces.functions_details" role="details">
+<title role="details.title">Functions</title>
+<refsect2 id="cairo-win32-surface-create" role="function" condition="since:1.0">
+<title>cairo_win32_surface_create&#160;()</title>
+<indexterm zone="cairo-win32-surface-create" role="1.0"><primary sortas="win32_surface_create">cairo_win32_surface_create</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+cairo_win32_surface_create (<parameter><link linkend="HDC:CAPS"><type>HDC</type></link> hdc</parameter>);</programlisting>
+<para>Creates a cairo surface that targets the given DC.  The DC will be
+queried for its initial clip extents, and this will be used as the
+size of the cairo surface.  The resulting surface will always be of
+format <link linkend="CAIRO-FORMAT-RGB24:CAPS"><literal>CAIRO_FORMAT_RGB24</literal></link>; should you need another surface format,
+you will need to create one through
+<link linkend="cairo-win32-surface-create-with-dib"><function>cairo_win32_surface_create_with_dib()</function></link>.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>hdc</para></entry>
+<entry role="parameter_description"><para>the DC to create a surface for</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> the newly created surface</para>
+<para></para>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-win32-surface-create-with-dib" role="function" condition="since:1.2">
+<title>cairo_win32_surface_create_with_dib&#160;()</title>
+<indexterm zone="cairo-win32-surface-create-with-dib" role="1.2"><primary sortas="win32_surface_create_with_dib">cairo_win32_surface_create_with_dib</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+cairo_win32_surface_create_with_dib (<parameter><link linkend="cairo-format-t"><type>cairo_format_t</type></link> format</parameter>,
+                                     <parameter><link linkend="int"><type>int</type></link> width</parameter>,
+                                     <parameter><link linkend="int"><type>int</type></link> height</parameter>);</programlisting>
+<para>Creates a device-independent-bitmap surface not associated with
+any particular existing surface or device context. The created
+bitmap will be uninitialized.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>format</para></entry>
+<entry role="parameter_description"><para>format of pixels in the surface to create</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>width</para></entry>
+<entry role="parameter_description"><para>width of the surface, in pixels</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>height</para></entry>
+<entry role="parameter_description"><para>height of the surface, in pixels</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> the newly created surface</para>
+<para></para>
+</refsect3><para role="since">Since 1.2</para></refsect2>
+<refsect2 id="cairo-win32-surface-create-with-ddb" role="function" condition="since:1.4">
+<title>cairo_win32_surface_create_with_ddb&#160;()</title>
+<indexterm zone="cairo-win32-surface-create-with-ddb" role="1.4"><primary sortas="win32_surface_create_with_ddb">cairo_win32_surface_create_with_ddb</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+cairo_win32_surface_create_with_ddb (<parameter><link linkend="HDC:CAPS"><type>HDC</type></link> hdc</parameter>,
+                                     <parameter><link linkend="cairo-format-t"><type>cairo_format_t</type></link> format</parameter>,
+                                     <parameter><link linkend="int"><type>int</type></link> width</parameter>,
+                                     <parameter><link linkend="int"><type>int</type></link> height</parameter>);</programlisting>
+<para>Creates a device-dependent-bitmap surface not associated with
+any particular existing surface or device context. The created
+bitmap will be uninitialized.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>hdc</para></entry>
+<entry role="parameter_description"><para>a DC compatible with the surface to create</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>format</para></entry>
+<entry role="parameter_description"><para>format of pixels in the surface to create</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>width</para></entry>
+<entry role="parameter_description"><para>width of the surface, in pixels</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>height</para></entry>
+<entry role="parameter_description"><para>height of the surface, in pixels</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> the newly created surface</para>
+<para></para>
+</refsect3><para role="since">Since 1.4</para></refsect2>
+<refsect2 id="cairo-win32-printing-surface-create" role="function" condition="since:1.6">
+<title>cairo_win32_printing_surface_create&#160;()</title>
+<indexterm zone="cairo-win32-printing-surface-create" role="1.6"><primary sortas="win32_printing_surface_create">cairo_win32_printing_surface_create</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+cairo_win32_printing_surface_create (<parameter><link linkend="HDC:CAPS"><type>HDC</type></link> hdc</parameter>);</programlisting>
+<para>Creates a cairo surface that targets the given DC.  The DC will be
+queried for its initial clip extents, and this will be used as the
+size of the cairo surface.  The DC should be a printing DC;
+antialiasing will be ignored, and GDI will be used as much as
+possible to draw to the surface.</para>
+<para>The returned surface will be wrapped using the paginated surface to
+provide correct complex rendering behaviour; <link linkend="cairo-surface-show-page"><function>cairo_surface_show_page()</function></link> and
+associated methods must be used for correct output.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>hdc</para></entry>
+<entry role="parameter_description"><para>the DC to create a surface for</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> the newly created surface</para>
+<para></para>
+</refsect3><para role="since">Since 1.6</para></refsect2>
+<refsect2 id="cairo-win32-surface-get-dc" role="function" condition="since:1.2">
+<title>cairo_win32_surface_get_dc&#160;()</title>
+<indexterm zone="cairo-win32-surface-get-dc" role="1.2"><primary sortas="win32_surface_get_dc">cairo_win32_surface_get_dc</primary></indexterm>
+<programlisting language="C"><link linkend="HDC:CAPS"><returnvalue>HDC</returnvalue></link>
+cairo_win32_surface_get_dc (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>);</programlisting>
+<para>Returns the HDC associated with this surface, or <link linkend="NULL:CAPS"><literal>NULL</literal></link> if none.
+Also returns <link linkend="NULL:CAPS"><literal>NULL</literal></link> if the surface is not a win32 surface.</para>
+<para>A call to <link linkend="cairo-surface-flush"><function>cairo_surface_flush()</function></link> is required before using the HDC to
+ensure that all pending drawing operations are finished and to
+restore any temporary modification cairo has made to its state. A
+call to <link linkend="cairo-surface-mark-dirty"><function>cairo_surface_mark_dirty()</function></link> is required after the state or
+the content of the HDC has been modified.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> HDC or <link linkend="NULL:CAPS"><literal>NULL</literal></link> if no HDC available.</para>
+<para></para>
+</refsect3><para role="since">Since 1.2</para></refsect2>
+<refsect2 id="cairo-win32-surface-get-image" role="function" condition="since:1.4">
+<title>cairo_win32_surface_get_image&#160;()</title>
+<indexterm zone="cairo-win32-surface-get-image" role="1.4"><primary sortas="win32_surface_get_image">cairo_win32_surface_get_image</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+cairo_win32_surface_get_image (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>);</programlisting>
+<para>Returns a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> image surface that refers to the same bits
+as the DIB of the Win32 surface.  If the passed-in win32 surface
+is not a DIB surface, <link linkend="NULL:CAPS"><literal>NULL</literal></link> is returned.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> (owned by the win32 <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link>),
+or <link linkend="NULL:CAPS"><literal>NULL</literal></link> if the win32 surface is not a DIB.</para>
+<para></para>
+</refsect3><para role="since">Since 1.4</para></refsect2>
+
+</refsect1>
+<refsect1 id="cairo-Win32-Surfaces.other_details" role="details">
+<title role="details.title">Types and Values</title>
+<refsect2 id="CAIRO-HAS-WIN32-SURFACE:CAPS" role="macro" condition="since:1.0">
+<title>CAIRO_HAS_WIN32_SURFACE</title>
+<indexterm zone="CAIRO-HAS-WIN32-SURFACE:CAPS" role="1.0"><primary sortas="HAS_WIN32_SURFACE">CAIRO_HAS_WIN32_SURFACE</primary></indexterm>
+<programlisting language="C">#define CAIRO_HAS_WIN32_SURFACE 1
+</programlisting>
+<para>Defined if the Microsoft Windows surface backend is available.
+This macro can be used to conditionally compile backend-specific code.</para>
+<para role="since">Since 1.0</para></refsect2>
+
+</refsect1>
+<refsect1 id="cairo-Win32-Surfaces.see-also">
+<title>See Also</title>
+<para><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para>
+
+</refsect1>
+
+</refentry>

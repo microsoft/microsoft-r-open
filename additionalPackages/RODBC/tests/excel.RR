@@ -1,0 +1,46 @@
+##-*- R -*-
+library(RODBC)
+library(MASS)
+USArrests[1,2] <- NA
+hills <- hills[1:15,]
+row.names(hills)[12] <- "Dollar ('$')"
+
+
+# DBase: maps table/column names to u/case, max length 8
+dbf <- system.file("files", "sids.dbf", package="foreign")
+unlink("sids.dbf")
+file.copy(dbf, "sids.dbf")
+channel <- odbcConnectDbase("sids.dbf")
+str(sids <- sqlFetch(channel, "sids"))
+sqlUpdate(channel, sids[1:2, ], "sids", index="NAME", verbose=TRUE, fast=FALSE)
+close(channel)
+
+channel <- odbcConnectDbase("sids.dbf", case="toupper")
+sqlDrop(channel, "HILLS 2", errors=FALSE)
+sqlSave(channel, hills, "HILLS 2", verbose=TRUE)
+sqlUpdate(channel, hills[11:15,],  "HILLS 2", verbose=TRUE)
+sqlDrop(channel, "HILLS 2")
+close(channel)
+
+
+# Excel 2003
+channel <- odbcConnectExcel("hills.xls")
+## list the spreadsheets and marked ranges
+sqlTables(channel)
+sqlColumns(channel, "hills")
+## two ways to retrieve the contents of hills
+sqlFetch(channel, "hills")
+sqlQuery(channel, "select * from [hills$]")
+
+sqlFetch(channel, "women")
+close(channel)
+
+# The Excel driver maps ' ' to '_'.
+channel <- odbcConnectExcel("hills.xls", readOnly=FALSE)
+sqlSave(channel, hills, "hills_test", verbose=TRUE, fast=FALSE)
+sqlUpdate(channel, hills[11:15,], "hills_test", verbose=TRUE, fast=FALSE)
+sqlFetch(channel, "hills_test")
+sqlSave(channel, hills, "hills_test2", verbose=TRUE)
+sqlUpdate(channel, hills[11:15,], "hills_test2", verbose=TRUE)
+sqlFetch(channel, "hills_test2")
+close(channel)

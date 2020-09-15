@@ -1,0 +1,11 @@
+#!/bin/bash
+VERSION="4.0.2"
+INSTALL_PREFIX="${RPM_INSTALL_PREFIX}/ropen/${VERSION}"
+
+set +f
+
+mkdir -p ${INSTALL_PREFIX}/lib64/R/backup/lib
+mv ${INSTALL_PREFIX}/lib64/R/lib/*.so ${INSTALL_PREFIX}/lib64/R/backup/lib
+cp ${INSTALL_PREFIX}/lib64/R/backup/lib/libR.so ${INSTALL_PREFIX}/lib64/R/lib
+cp ${INSTALL_PREFIX}/stage/Linux/bin/x64/*.so ${INSTALL_PREFIX}/lib64/R/lib
+cp ${INSTALL_PREFIX}/stage/Linux/bin/x64/MKL_EULA.txt ${INSTALL_PREFIX}/MKL_EULA.txt

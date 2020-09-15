@@ -1,0 +1,45 @@
+diff -ur unpatched_source/src/gnuwin32/extra.c source/src/gnuwin32/extra.c
+--- unpatched_source/src/gnuwin32/extra.c	2018-06-25 15:33:20.563228800 -0700
++++ source/src/gnuwin32/extra.c	2018-06-25 16:52:20.786364600 -0700
+@@ -412,6 +412,27 @@
+     return buf;
+ }
+ 
++BOOL IS_APPCONTAINER_ENABLED()
++{
++    BOOL result = FALSE;
++    LPCSTR environmentVariableName = "IS_APPCONTAINER_ENABLED";
++    DWORD bufferSize = MAX_PATH;
++    char buffer[bufferSize];
++    memset(buffer, 0x0, sizeof(buffer));
++    
++    DWORD length = GetEnvironmentVariable(environmentVariableName, buffer, bufferSize);
++
++    // If this is a SPEES query and inside appcontainer, the environment variable 
++    // "IS_APPCONTAINER_ENABLED" will bet set to 1 or True.
++    //
++    if(length > 0 && GetLastError() != ERROR_ENVVAR_NOT_FOUND && (strcmp(buffer, "1") == 0 || stricmp(buffer, "TRUE") == 0))
++    {
++        result = TRUE;
++    }
++
++    return result;
++}
++
+ 
+ void R_UTF8fixslash(char *s); /* from main/util.c */
+ SEXP do_normalizepath(SEXP call, SEXP op, SEXP args, SEXP rho)
+@@ -435,6 +456,13 @@
+     if (strcmp(sl, "/") == 0) fslash = 1;
+     
+     mustWork = asLogical(CADDR(args));
++	
++    // If this is running inside appcontainer, we override mustWork to 0.
++    //
++    if(IS_APPCONTAINER_ENABLED())
++    {
++        mustWork = 0;
++    }
+ 
+     PROTECT(ans = allocVector(STRSXP, n));
+     for (i = 0; i < n; i++) {

@@ -1,0 +1,173 @@
+<?xml version='1.0' encoding='UTF-8'?> 
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!ENTITY version SYSTEM "version.xml">
+]>
+<refentry id="cairo-Types">
+<refmeta>
+<refentrytitle role="top_of_page" id="cairo-Types.top_of_page">Types</refentrytitle>
+<manvolnum>3</manvolnum>
+<refmiscinfo>
+  CAIRO Library
+</refmiscinfo>
+</refmeta>
+<refnamediv>
+<refname>Types</refname>
+<refpurpose>Generic data types</refpurpose>
+</refnamediv>
+
+<refsect1 id="cairo-Types.functions" role="functions_proto">
+<title role="functions_proto.title">Functions</title>
+<informaltable pgwide="1" frame="none">
+<tgroup cols="2">
+<colspec colname="functions_return" colwidth="150px"/>
+<colspec colname="functions_name"/>
+<tbody>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><phrase role="c_punctuation">(</phrase><link linkend="cairo-destroy-func-t">*cairo_destroy_func_t</link><phrase role="c_punctuation">)</phrase>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+
+</tbody>
+</tgroup>
+</informaltable>
+</refsect1>
+<refsect1 id="cairo-Types.other" role="other_proto">
+<title role="other_proto.title">Types and Values</title>
+<informaltable role="enum_members_table" pgwide="1" frame="none">
+<tgroup cols="2">
+<colspec colname="name" colwidth="150px"/>
+<colspec colname="description"/>
+<tbody>
+<row><entry role="typedef_keyword">typedef</entry><entry role="function_name"><link linkend="cairo-bool-t">cairo_bool_t</link></entry></row>
+<row><entry role="datatype_keyword"></entry><entry role="function_name"><link linkend="cairo-user-data-key-t">cairo_user_data_key_t</link></entry></row>
+<row><entry role="datatype_keyword"></entry><entry role="function_name"><link linkend="cairo-rectangle-int-t">cairo_rectangle_int_t</link></entry></row>
+
+</tbody>
+</tgroup>
+</informaltable>
+</refsect1>
+<refsect1 id="cairo-Types.object-hierarchy" role="object_hierarchy">
+<title role="object_hierarchy.title">Object Hierarchy</title>
+<screen>
+</screen>
+</refsect1>
+
+
+<refsect1 id="cairo-Types.description" role="desc">
+<title role="desc.title">Description</title>
+<para>This section lists generic data types used in the cairo API.</para>
+
+</refsect1>
+<refsect1 id="cairo-Types.functions_details" role="details">
+<title role="details.title">Functions</title>
+<refsect2 id="cairo-destroy-func-t" role="function" condition="since:1.0">
+<title>cairo_destroy_func_t&#160;()</title>
+<indexterm zone="cairo-destroy-func-t" role="1.0"><primary sortas="destroy_func_t">cairo_destroy_func_t</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+<phrase role="c_punctuation">(</phrase>*cairo_destroy_func_t<phrase role="c_punctuation">)</phrase> (<parameter><link linkend="void"><type>void</type></link> *data</parameter>);</programlisting>
+<para><link linkend="cairo-destroy-func-t"><type>cairo_destroy_func_t</type></link> the type of function which is called when a
+data element is destroyed. It is passed the pointer to the data
+element and should free any memory and resources allocated for it.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>data</para></entry>
+<entry role="parameter_description"><para>The data element being destroyed.</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+
+</refsect1>
+<refsect1 id="cairo-Types.other_details" role="details">
+<title role="details.title">Types and Values</title>
+<refsect2 id="cairo-bool-t" role="typedef" condition="since:1.0">
+<title>cairo_bool_t</title>
+<indexterm zone="cairo-bool-t" role="1.0"><primary sortas="bool_t">cairo_bool_t</primary></indexterm>
+<programlisting language="C">typedef int cairo_bool_t;
+</programlisting>
+<para><link linkend="cairo-bool-t"><type>cairo_bool_t</type></link> is used for boolean values. Returns of type
+<link linkend="cairo-bool-t"><type>cairo_bool_t</type></link> will always be either 0 or 1, but testing against
+these values explicitly is not encouraged; just use the
+value as a boolean condition.</para>
+<informalexample><programlisting>
+ if (cairo_in_stroke (cr, x, y)) {
+     /<!-- -->* do something *<!-- -->/
+ }
+</programlisting></informalexample>
+<para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-user-data-key-t" role="struct" condition="since:1.0">
+<title>cairo_user_data_key_t</title>
+<indexterm zone="cairo-user-data-key-t" role="1.0"><primary sortas="user_data_key_t">cairo_user_data_key_t</primary></indexterm>
+<programlisting language="C">typedef struct {
+    int unused;
+} cairo_user_data_key_t;
+</programlisting>
+<para><link linkend="cairo-user-data-key-t"><type>cairo_user_data_key_t</type></link> is used for attaching user data to cairo
+data structures.  The actual contents of the struct is never used,
+and there is no need to initialize the object; only the unique
+address of a <link linkend="cairo-data-key-t"><type>cairo_data_key_t</type></link> object is used.  Typically, you
+would just use the address of a static <link linkend="cairo-data-key-t"><type>cairo_data_key_t</type></link> object.</para>
+<refsect3 role="struct_members">
+<title>Members</title>
+<informaltable role="struct_members_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="struct_members_name" colwidth="300px"/>
+<colspec colname="struct_members_description"/>
+<colspec colname="struct_members_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="struct_member_name"><para><link linkend="int"><type>int</type></link>&#160;<structfield id="cairo-user-data-key-t.unused">unused</structfield>;</para></entry>
+<listitem><para>not used; ignore.</para></listitem>
+<entry role="struct_member_description"><para>not used; ignore.</para></entry>
+<entry role="struct_member_annotations"></entry>
+</row>
+</tbody></tgroup></informaltable>
+</refsect3>
+<para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-rectangle-int-t" role="struct" condition="since:1.10">
+<title>cairo_rectangle_int_t</title>
+<indexterm zone="cairo-rectangle-int-t" role="1.10"><primary sortas="rectangle_int_t">cairo_rectangle_int_t</primary></indexterm>
+<programlisting language="C">typedef struct {
+    int x, y;
+    int width, height;
+} cairo_rectangle_int_t;
+</programlisting>
+<para>A data structure for holding a rectangle with integer coordinates.</para>
+<refsect3 role="struct_members">
+<title>Members</title>
+<informaltable role="struct_members_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="struct_members_name" colwidth="300px"/>
+<colspec colname="struct_members_description"/>
+<colspec colname="struct_members_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="struct_member_name"><para><link linkend="int"><type>int</type></link>&#160;<structfield id="cairo-rectangle-int-t.x">x</structfield>;</para></entry>
+<listitem><para>X coordinate of the left side of the rectangle</para></listitem>
+<entry role="struct_member_description"><para>X coordinate of the left side of the rectangle</para></entry>
+<entry role="struct_member_annotations"></entry>
+</row>
+<row><entry role="struct_member_name"><para><link linkend="int"><type>int</type></link>&#160;<structfield id="cairo-rectangle-int-t.y">y</structfield>;</para></entry>
+<listitem><para>Y coordinate of the the top side of the rectangle</para></listitem>
+<entry role="struct_member_description"><para>Y coordinate of the the top side of the rectangle</para></entry>
+<entry role="struct_member_annotations"></entry>
+</row>
+<row><entry role="struct_member_name"><para><link linkend="int"><type>int</type></link>&#160;<structfield id="cairo-rectangle-int-t.width">width</structfield>;</para></entry>
+<listitem><para>width of the rectangle</para></listitem>
+<entry role="struct_member_description"><para>width of the rectangle</para></entry>
+<entry role="struct_member_annotations"></entry>
+</row>
+<row><entry role="struct_member_name"><para><link linkend="int"><type>int</type></link>&#160;<structfield id="cairo-rectangle-int-t.height">height</structfield>;</para></entry>
+<listitem><para>height of the rectangle</para></listitem>
+<entry role="struct_member_description"><para>height of the rectangle</para></entry>
+<entry role="struct_member_annotations"></entry>
+</row>
+</tbody></tgroup></informaltable>
+</refsect3>
+<para role="since">Since 1.10</para></refsect2>
+
+</refsect1>
+
+</refentry>

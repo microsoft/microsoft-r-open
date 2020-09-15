@@ -1,0 +1,171 @@
+<?xml version='1.0' encoding='UTF-8'?> 
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!ENTITY version SYSTEM "version.xml">
+]>
+<refentry id="cairo-XLib-XRender-Backend">
+<refmeta>
+<refentrytitle role="top_of_page" id="cairo-XLib-XRender-Backend.top_of_page">XLib-XRender Backend</refentrytitle>
+<manvolnum>3</manvolnum>
+<refmiscinfo>
+  CAIRO Library
+</refmiscinfo>
+</refmeta>
+<refnamediv>
+<refname>XLib-XRender Backend</refname>
+<refpurpose>X Window System rendering using XLib and the X Render extension</refpurpose>
+</refnamediv>
+
+<refsect1 id="cairo-XLib-XRender-Backend.functions" role="functions_proto">
+<title role="functions_proto.title">Functions</title>
+<informaltable pgwide="1" frame="none">
+<tgroup cols="2">
+<colspec colname="functions_return" colwidth="150px"/>
+<colspec colname="functions_name"/>
+<tbody>
+<row><entry role="function_type"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+</entry><entry role="function_name"><link linkend="cairo-xlib-surface-create-with-xrender-format">cairo_xlib_surface_create_with_xrender_format</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="XRenderPictFormat"><returnvalue>XRenderPictFormat</returnvalue></link>&#160;*
+</entry><entry role="function_name"><link linkend="cairo-xlib-surface-get-xrender-format">cairo_xlib_surface_get_xrender_format</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+
+</tbody>
+</tgroup>
+</informaltable>
+</refsect1>
+<refsect1 id="cairo-XLib-XRender-Backend.other" role="other_proto">
+<title role="other_proto.title">Types and Values</title>
+<informaltable role="enum_members_table" pgwide="1" frame="none">
+<tgroup cols="2">
+<colspec colname="name" colwidth="150px"/>
+<colspec colname="description"/>
+<tbody>
+<row><entry role="define_keyword">#define</entry><entry role="function_name"><link linkend="CAIRO-HAS-XLIB-XRENDER-SURFACE:CAPS">CAIRO_HAS_XLIB_XRENDER_SURFACE</link></entry></row>
+
+</tbody>
+</tgroup>
+</informaltable>
+</refsect1>
+<refsect1 id="cairo-XLib-XRender-Backend.object-hierarchy" role="object_hierarchy">
+<title role="object_hierarchy.title">Object Hierarchy</title>
+<screen>
+</screen>
+</refsect1>
+
+
+<refsect1 id="cairo-XLib-XRender-Backend.description" role="desc">
+<title role="desc.title">Description</title>
+<para>The XLib surface is used to render cairo graphics to X Window System
+windows and pixmaps using the XLib and Xrender libraries.</para>
+<para>Note that the XLib surface automatically takes advantage of X Render extension
+if it is available.</para>
+
+</refsect1>
+<refsect1 id="cairo-XLib-XRender-Backend.functions_details" role="details">
+<title role="details.title">Functions</title>
+<refsect2 id="cairo-xlib-surface-create-with-xrender-format" role="function" condition="since:1.0">
+<title>cairo_xlib_surface_create_with_xrender_format&#160;()</title>
+<indexterm zone="cairo-xlib-surface-create-with-xrender-format" role="1.0"><primary sortas="xlib_surface_create_with_xrender_format">cairo_xlib_surface_create_with_xrender_format</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+cairo_xlib_surface_create_with_xrender_format
+                               (<parameter><link linkend="Display"><type>Display</type></link> *dpy</parameter>,
+                                <parameter><link linkend="Drawable"><type>Drawable</type></link> drawable</parameter>,
+                                <parameter><link linkend="Screen"><type>Screen</type></link> *screen</parameter>,
+                                <parameter><link linkend="XRenderPictFormat"><type>XRenderPictFormat</type></link> *format</parameter>,
+                                <parameter><link linkend="int"><type>int</type></link> width</parameter>,
+                                <parameter><link linkend="int"><type>int</type></link> height</parameter>);</programlisting>
+<para>Creates an Xlib surface that draws to the given drawable.
+The way that colors are represented in the drawable is specified
+by the provided picture format.</para>
+<para>Note: If <parameter>drawable</parameter>
+ is a Window, then the function
+<link linkend="cairo-xlib-surface-set-size"><function>cairo_xlib_surface_set_size()</function></link> must be called whenever the size of the
+window changes.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>dpy</para></entry>
+<entry role="parameter_description"><para>an X Display</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>drawable</para></entry>
+<entry role="parameter_description"><para>an X Drawable, (a Pixmap or a Window)</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>screen</para></entry>
+<entry role="parameter_description"><para>the X Screen associated with <parameter>drawable</parameter>
+</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>format</para></entry>
+<entry role="parameter_description"><para>the picture format to use for drawing to <parameter>drawable</parameter>
+. The depth
+of <parameter>format</parameter>
+must match the depth of the drawable.</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>width</para></entry>
+<entry role="parameter_description"><para>the current width of <parameter>drawable</parameter>
+.</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>height</para></entry>
+<entry role="parameter_description"><para>the current height of <parameter>drawable</parameter>
+.</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> the newly created surface</para>
+<para></para>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-xlib-surface-get-xrender-format" role="function" condition="since:1.6">
+<title>cairo_xlib_surface_get_xrender_format&#160;()</title>
+<indexterm zone="cairo-xlib-surface-get-xrender-format" role="1.6"><primary sortas="xlib_surface_get_xrender_format">cairo_xlib_surface_get_xrender_format</primary></indexterm>
+<programlisting language="C"><link linkend="XRenderPictFormat"><returnvalue>XRenderPictFormat</returnvalue></link>&#160;*
+cairo_xlib_surface_get_xrender_format (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>);</programlisting>
+<para>Gets the X Render picture format that <parameter>surface</parameter>
+ uses for rendering with the
+X Render extension. If the surface was created by
+<link linkend="cairo-xlib-surface-create-with-xrender-format"><function>cairo_xlib_surface_create_with_xrender_format()</function></link> originally, the return
+value is the format passed to that constructor.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>an xlib surface</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> the XRenderPictFormat* associated with <parameter>surface</parameter>
+,
+or <link linkend="NULL:CAPS"><literal>NULL</literal></link> if the surface is not an xlib surface
+or if the X Render extension is not available.</para>
+<para></para>
+</refsect3><para role="since">Since 1.6</para></refsect2>
+
+</refsect1>
+<refsect1 id="cairo-XLib-XRender-Backend.other_details" role="details">
+<title role="details.title">Types and Values</title>
+<refsect2 id="CAIRO-HAS-XLIB-XRENDER-SURFACE:CAPS" role="macro" condition="since:1.6">
+<title>CAIRO_HAS_XLIB_XRENDER_SURFACE</title>
+<indexterm zone="CAIRO-HAS-XLIB-XRENDER-SURFACE:CAPS" role="1.6"><primary sortas="HAS_XLIB_XRENDER_SURFACE">CAIRO_HAS_XLIB_XRENDER_SURFACE</primary></indexterm>
+<programlisting language="C">#define CAIRO_HAS_XLIB_XRENDER_SURFACE 1
+</programlisting>
+<para>Defined if the XLib/XRender surface functions are available.
+This macro can be used to conditionally compile backend-specific code.</para>
+<para role="since">Since 1.6</para></refsect2>
+
+</refsect1>
+<refsect1 id="cairo-XLib-XRender-Backend.see-also">
+<title>See Also</title>
+<para><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para>
+
+</refsect1>
+
+</refentry>

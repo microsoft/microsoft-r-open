@@ -1,0 +1,36 @@
+#!/bin/bash
+
+VERSION=4.0.2
+INSTALL_PREFIX="${RPM_INSTALL_PREFIX}/ropen/${VERSION}"
+
+for file in R Rscript
+do
+    # Test whether R and Rscript are still "owned" by R
+    if [[ -f "/usr/bin/$file.distrib" ]]; then
+      # Remove MRO as alternative provider
+      update-alternatives --remove $file "${INSTALL_PREFIX}/lib64/R/bin/$file" 2> /dev/null || MRO_ALT_RETURNED=$? && true
+      # Remove our installed original R/RScript provider  
+      update-alternatives --remove $file "/usr/bin/$file.distrib" 2> /dev/null || ORIG_ALT_RETURNED=$? && true
+
+      if [[ ${MRO_ALT_RETURNED} -eq 0 && ${ORIG_ALT_RETURNED} -eq 0 && ! -f "/usr/bin/$file" ]]; then
+        mv /usr/bin/$file.distrib /usr/bin/$file
+      else
+        rm /usr/bin/$file.distrib
+      fi
+    else
+      # Attempt to remove us, if we were set up without a previous R
+      update-alternatives --remove $file "${INSTALL_PREFIX}/lib64/R/bin/$file" || true
+    fi
+done
+
+if [[ -f ${INSTALL_PREFIX}/lib64/R/backup && "$1" == "0" ]]; then	
+  rm -rf "${INSTALL_PREFIX}/lib64/R/backup"
+fi
+
+if [ -f /etc/ld.so.conf.d/microsoft-r-open.conf ] ; then
+  rm /etc/ld.so.conf.d/microsoft-r-open.conf
+fi
+
+if [ -f ${INSTALL_PREFIX}/lib64/R/lib/libreadline.so.6.sav ] ; then
+  rm ${INSTALL_PREFIX}/lib64/R/lib/libreadline.so.6.sav
+fi

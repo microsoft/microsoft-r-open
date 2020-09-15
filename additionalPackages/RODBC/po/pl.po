@@ -1,0 +1,120 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR The R Foundation
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: RODBC 1.3-5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-07-14 16:29+0100\n"
+"PO-Revision-Date: 2012-06-26 19:38+0100\n"
+"Last-Translator: Łukasz Daniel <lukasz.daniel@gmail.com>\n"
+"Language-Team: Łukasz Daniel <lukasz.daniel@gmail.com>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-SourceCharset: iso-8859-1\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
+"|| n%100>=20) ? 1 : 2)\n"
+"X-Poedit-Language: polish\n"
+"X-Poedit-Country: POLAND\n"
+
+#: RODBC.c:156
+msgid "[RODBC] ERROR: Could not SQLAllocStmt"
+msgstr "BŁĄD [RODBC]: Nie można wykonać SQLAllocStmt"
+
+#: RODBC.c:169
+msgid "[RODBC] ERROR: Could not SQLAllocEnv"
+msgstr "BŁĄD [RODBC]: Nie można wykonać SQLAllocEnv"
+
+#: RODBC.c:220
+msgid "[RODBC] ERROR:invalid connection argument"
+msgstr "BŁĄD [RODBC]: niepoprawny argument połączenia"
+
+#: RODBC.c:289
+#, c-format
+msgid "[RODBC] ERROR: state %s, code %d, message %s"
+msgstr "BŁĄD [RODBC]: stan %s, kod %d, komunikat %s"
+
+#: RODBC.c:292
+msgid "[RODBC] ERROR: Could not SQLDriverConnect"
+msgstr "BŁĄD [RODBC]: Nie można wykonać SQLDriverConnect"
+
+#: RODBC.c:296
+msgid "[RODBC] ERROR: Could not SQLAllocConnect"
+msgstr "BŁĄD [RODBC]: Nie można wykonać SQLAllocConnect"
+
+#: RODBC.c:389
+msgid "[RODBC] ERROR: Failure in SQLPrimary keys"
+msgstr "BŁĄD [RODBC]: Niepowodzenie w kluczach SQLPrimary"
+
+#: RODBC.c:434
+msgid "[RODBC] ERROR: Failure in SQLColumns"
+msgstr "BŁĄD [RODBC]: Niepowodzenie w SQLColumns"
+
+#: RODBC.c:470
+msgid "[RODBC] ERROR: Failure in SQLSpecialColumns"
+msgstr "BŁĄD [RODBC]: Niepowodzenie w SQLSpecialColumns"
+
+#: RODBC.c:524 RODBC.c:572
+msgid "[RODBC] ERROR: SQLTables failed"
+msgstr "BŁĄD [RODBC]: SQLTables nie powiodło się"
+
+#: RODBC.c:647
+msgid "[RODBC] ERROR: SQLRowCount failed"
+msgstr "BŁĄD [RODBC]: SQLRowCount nie powiodło się"
+
+#: RODBC.c:697
+msgid "[RODBC] ERROR: SQLDescribeCol failed"
+msgstr "BŁĄD [RODBC]: SQLDescribeCol nie powiodło się"
+
+#: RODBC.c:744
+msgid "[RODBC] ERROR: SQLBindCol failed"
+msgstr "BŁĄD [RODBC]: SQLBindCol nie powiodło się"
+
+#: RODBC.c:763 RODBC.c:795 RODBC.c:964
+msgid "[RODBC] No results available"
+msgstr "[RODBC] Brak dostępnych wyników"
+
+#: RODBC.c:801
+msgid "No Data"
+msgstr "Brak danych"
+
+#: RODBC.c:865
+#, c-format
+msgid "character data truncated in column '%s'"
+msgstr "dane tekstowe obcięte w kolumnie '%s'"
+
+#: RODBC.c:1113
+msgid "[RODBC] SQLBindParameter failed"
+msgstr "[RODBC] SQLBindParameter nie powiodło się"
+
+#: RODBC.c:1158
+#, c-format
+msgid "character data '%s' truncated to %d bytes in column '%s'"
+msgstr "dane tekstowe '%s' obcięte do %d bajtów w kolumnie '%s'"
+
+#: RODBC.c:1175
+msgid "[RODBC] Failed exec in Update"
+msgstr "[RODBC] Niepowodzenie w wykonaniu Update"
+
+#: RODBC.c:1207
+msgid "[RODBC] Error in SQLDisconnect"
+msgstr "[RODBC] Błąd w SQLDisconnect"
+
+#: RODBC.c:1212
+msgid "[RODBC] Error in SQLFreeconnect"
+msgstr "[RODBC] Błąd w SQLFreeconnect"
+
+#: RODBC.c:1231
+#, c-format
+msgid "closing unused RODBC handle %d\n"
+msgstr "zamykanie nieużywanej obsługi RODBC %d\n"
+
+#~ msgid "[RODBC] ERROR: DBC driver claims there are < 0 columns!"
+#~ msgstr "BŁĄD [RODBC]: Sterownik DBC twierdzi, że jest < 0 kolumn!"
+
+#~ msgid "[RODBC] ERROR: DBC driver claims there are < 0 rows!"
+#~ msgstr "BŁĄD [RODBC]: Sterownik DBC twierdzi, że jest < 0 wierszy!"

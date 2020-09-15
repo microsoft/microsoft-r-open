@@ -1,0 +1,524 @@
+<?xml version='1.0' encoding='UTF-8'?> 
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!ENTITY version SYSTEM "version.xml">
+]>
+<refentry id="cairo-XLib-Surfaces">
+<refmeta>
+<refentrytitle role="top_of_page" id="cairo-XLib-Surfaces.top_of_page">XLib Surfaces</refentrytitle>
+<manvolnum>3</manvolnum>
+<refmiscinfo>
+  CAIRO Library
+</refmiscinfo>
+</refmeta>
+<refnamediv>
+<refname>XLib Surfaces</refname>
+<refpurpose>X Window System rendering using XLib</refpurpose>
+</refnamediv>
+
+<refsect1 id="cairo-XLib-Surfaces.functions" role="functions_proto">
+<title role="functions_proto.title">Functions</title>
+<informaltable pgwide="1" frame="none">
+<tgroup cols="2">
+<colspec colname="functions_return" colwidth="150px"/>
+<colspec colname="functions_name"/>
+<tbody>
+<row><entry role="function_type"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+</entry><entry role="function_name"><link linkend="cairo-xlib-surface-create">cairo_xlib_surface_create</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+</entry><entry role="function_name"><link linkend="cairo-xlib-surface-create-for-bitmap">cairo_xlib_surface_create_for_bitmap</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-xlib-surface-set-size">cairo_xlib_surface_set_size</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="Display"><returnvalue>Display</returnvalue></link>&#160;*
+</entry><entry role="function_name"><link linkend="cairo-xlib-surface-get-display">cairo_xlib_surface_get_display</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="Screen"><returnvalue>Screen</returnvalue></link>&#160;*
+</entry><entry role="function_name"><link linkend="cairo-xlib-surface-get-screen">cairo_xlib_surface_get_screen</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-xlib-surface-set-drawable">cairo_xlib_surface_set_drawable</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="Drawable"><returnvalue>Drawable</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-xlib-surface-get-drawable">cairo_xlib_surface_get_drawable</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="Visual"><returnvalue>Visual</returnvalue></link>&#160;*
+</entry><entry role="function_name"><link linkend="cairo-xlib-surface-get-visual">cairo_xlib_surface_get_visual</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="int"><returnvalue>int</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-xlib-surface-get-width">cairo_xlib_surface_get_width</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="int"><returnvalue>int</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-xlib-surface-get-height">cairo_xlib_surface_get_height</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="int"><returnvalue>int</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-xlib-surface-get-depth">cairo_xlib_surface_get_depth</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-xlib-device-debug-cap-xrender-version">cairo_xlib_device_debug_cap_xrender_version</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="int"><returnvalue>int</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-xlib-device-debug-get-precision">cairo_xlib_device_debug_get_precision</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-xlib-device-debug-set-precision">cairo_xlib_device_debug_set_precision</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+
+</tbody>
+</tgroup>
+</informaltable>
+</refsect1>
+<refsect1 id="cairo-XLib-Surfaces.other" role="other_proto">
+<title role="other_proto.title">Types and Values</title>
+<informaltable role="enum_members_table" pgwide="1" frame="none">
+<tgroup cols="2">
+<colspec colname="name" colwidth="150px"/>
+<colspec colname="description"/>
+<tbody>
+<row><entry role="define_keyword">#define</entry><entry role="function_name"><link linkend="CAIRO-HAS-XLIB-SURFACE:CAPS">CAIRO_HAS_XLIB_SURFACE</link></entry></row>
+
+</tbody>
+</tgroup>
+</informaltable>
+</refsect1>
+<refsect1 id="cairo-XLib-Surfaces.object-hierarchy" role="object_hierarchy">
+<title role="object_hierarchy.title">Object Hierarchy</title>
+<screen>
+</screen>
+</refsect1>
+
+
+<refsect1 id="cairo-XLib-Surfaces.description" role="desc">
+<title role="desc.title">Description</title>
+<para>The XLib surface is used to render cairo graphics to X Window System
+windows and pixmaps using the XLib library.</para>
+<para>Note that the XLib surface automatically takes advantage of X render extension
+if it is available.</para>
+
+</refsect1>
+<refsect1 id="cairo-XLib-Surfaces.functions_details" role="details">
+<title role="details.title">Functions</title>
+<refsect2 id="cairo-xlib-surface-create" role="function" condition="since:1.0">
+<title>cairo_xlib_surface_create&#160;()</title>
+<indexterm zone="cairo-xlib-surface-create" role="1.0"><primary sortas="xlib_surface_create">cairo_xlib_surface_create</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+cairo_xlib_surface_create (<parameter><link linkend="Display"><type>Display</type></link> *dpy</parameter>,
+                           <parameter><link linkend="Drawable"><type>Drawable</type></link> drawable</parameter>,
+                           <parameter><link linkend="Visual"><type>Visual</type></link> *visual</parameter>,
+                           <parameter><link linkend="int"><type>int</type></link> width</parameter>,
+                           <parameter><link linkend="int"><type>int</type></link> height</parameter>);</programlisting>
+<para>Creates an Xlib surface that draws to the given drawable.
+The way that colors are represented in the drawable is specified
+by the provided visual.</para>
+<para>Note: If <parameter>drawable</parameter>
+ is a Window, then the function
+<link linkend="cairo-xlib-surface-set-size"><function>cairo_xlib_surface_set_size()</function></link> must be called whenever the size of the
+window changes.</para>
+<para>When <parameter>drawable</parameter>
+ is a Window containing child windows then drawing to
+the created surface will be clipped by those child windows.  When
+the created surface is used as a source, the contents of the
+children will be included.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>dpy</para></entry>
+<entry role="parameter_description"><para>an X Display</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>drawable</para></entry>
+<entry role="parameter_description"><para>an X Drawable, (a Pixmap or a Window)</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>visual</para></entry>
+<entry role="parameter_description"><para>the visual to use for drawing to <parameter>drawable</parameter>
+. The depth
+of the visual must match the depth of the drawable.
+Currently, only TrueColor visuals are fully supported.</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>width</para></entry>
+<entry role="parameter_description"><para>the current width of <parameter>drawable</parameter>
+.</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>height</para></entry>
+<entry role="parameter_description"><para>the current height of <parameter>drawable</parameter>
+.</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> the newly created surface</para>
+<para></para>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-xlib-surface-create-for-bitmap" role="function" condition="since:1.0">
+<title>cairo_xlib_surface_create_for_bitmap&#160;()</title>
+<indexterm zone="cairo-xlib-surface-create-for-bitmap" role="1.0"><primary sortas="xlib_surface_create_for_bitmap">cairo_xlib_surface_create_for_bitmap</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+cairo_xlib_surface_create_for_bitmap (<parameter><link linkend="Display"><type>Display</type></link> *dpy</parameter>,
+                                      <parameter><link linkend="Pixmap"><type>Pixmap</type></link> bitmap</parameter>,
+                                      <parameter><link linkend="Screen"><type>Screen</type></link> *screen</parameter>,
+                                      <parameter><link linkend="int"><type>int</type></link> width</parameter>,
+                                      <parameter><link linkend="int"><type>int</type></link> height</parameter>);</programlisting>
+<para>Creates an Xlib surface that draws to the given bitmap.
+This will be drawn to as a <link linkend="CAIRO-FORMAT-A1:CAPS"><literal>CAIRO_FORMAT_A1</literal></link> object.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>dpy</para></entry>
+<entry role="parameter_description"><para>an X Display</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>bitmap</para></entry>
+<entry role="parameter_description"><para>an X Drawable, (a depth-1 Pixmap)</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>screen</para></entry>
+<entry role="parameter_description"><para>the X Screen associated with <parameter>bitmap</parameter>
+</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>width</para></entry>
+<entry role="parameter_description"><para>the current width of <parameter>bitmap</parameter>
+.</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>height</para></entry>
+<entry role="parameter_description"><para>the current height of <parameter>bitmap</parameter>
+.</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> the newly created surface</para>
+<para></para>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-xlib-surface-set-size" role="function" condition="since:1.0">
+<title>cairo_xlib_surface_set_size&#160;()</title>
+<indexterm zone="cairo-xlib-surface-set-size" role="1.0"><primary sortas="xlib_surface_set_size">cairo_xlib_surface_set_size</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_xlib_surface_set_size (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>,
+                             <parameter><link linkend="int"><type>int</type></link> width</parameter>,
+                             <parameter><link linkend="int"><type>int</type></link> height</parameter>);</programlisting>
+<para>Informs cairo of the new size of the X Drawable underlying the
+surface. For a surface created for a Window (rather than a Pixmap),
+this function must be called each time the size of the window
+changes. (For a subwindow, you are normally resizing the window
+yourself, but for a toplevel window, it is necessary to listen for
+ConfigureNotify events.)</para>
+<para>A Pixmap can never change size, so it is never necessary to call
+this function on a surface created for a Pixmap.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> for the XLib backend</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>width</para></entry>
+<entry role="parameter_description"><para>the new width of the surface</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>height</para></entry>
+<entry role="parameter_description"><para>the new height of the surface</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-xlib-surface-get-display" role="function" condition="since:1.2">
+<title>cairo_xlib_surface_get_display&#160;()</title>
+<indexterm zone="cairo-xlib-surface-get-display" role="1.2"><primary sortas="xlib_surface_get_display">cairo_xlib_surface_get_display</primary></indexterm>
+<programlisting language="C"><link linkend="Display"><returnvalue>Display</returnvalue></link>&#160;*
+cairo_xlib_surface_get_display (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>);</programlisting>
+<para>Get the X Display for the underlying X Drawable.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-xlib-surface-t"><type>cairo_xlib_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> the display.</para>
+<para></para>
+</refsect3><para role="since">Since 1.2</para></refsect2>
+<refsect2 id="cairo-xlib-surface-get-screen" role="function" condition="since:1.2">
+<title>cairo_xlib_surface_get_screen&#160;()</title>
+<indexterm zone="cairo-xlib-surface-get-screen" role="1.2"><primary sortas="xlib_surface_get_screen">cairo_xlib_surface_get_screen</primary></indexterm>
+<programlisting language="C"><link linkend="Screen"><returnvalue>Screen</returnvalue></link>&#160;*
+cairo_xlib_surface_get_screen (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>);</programlisting>
+<para>Get the X Screen for the underlying X Drawable.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-xlib-surface-t"><type>cairo_xlib_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> the screen.</para>
+<para></para>
+</refsect3><para role="since">Since 1.2</para></refsect2>
+<refsect2 id="cairo-xlib-surface-set-drawable" role="function" condition="since:1.0">
+<title>cairo_xlib_surface_set_drawable&#160;()</title>
+<indexterm zone="cairo-xlib-surface-set-drawable" role="1.0"><primary sortas="xlib_surface_set_drawable">cairo_xlib_surface_set_drawable</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_xlib_surface_set_drawable (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>,
+                                 <parameter><link linkend="Drawable"><type>Drawable</type></link> drawable</parameter>,
+                                 <parameter><link linkend="int"><type>int</type></link> width</parameter>,
+                                 <parameter><link linkend="int"><type>int</type></link> height</parameter>);</programlisting>
+<para>Informs cairo of a new X Drawable underlying the
+surface. The drawable must match the display, screen
+and format of the existing drawable or the application
+will get X protocol errors and will probably terminate.
+No checks are done by this function to ensure this
+compatibility.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> for the XLib backend</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>drawable</para></entry>
+<entry role="parameter_description"><para>the new drawable for the surface</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>width</para></entry>
+<entry role="parameter_description"><para>the width of the new drawable</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>height</para></entry>
+<entry role="parameter_description"><para>the height of the new drawable</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-xlib-surface-get-drawable" role="function" condition="since:1.2">
+<title>cairo_xlib_surface_get_drawable&#160;()</title>
+<indexterm zone="cairo-xlib-surface-get-drawable" role="1.2"><primary sortas="xlib_surface_get_drawable">cairo_xlib_surface_get_drawable</primary></indexterm>
+<programlisting language="C"><link linkend="Drawable"><returnvalue>Drawable</returnvalue></link>
+cairo_xlib_surface_get_drawable (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>);</programlisting>
+<para>Get the underlying X Drawable used for the surface.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-xlib-surface-t"><type>cairo_xlib_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> the drawable.</para>
+<para></para>
+</refsect3><para role="since">Since 1.2</para></refsect2>
+<refsect2 id="cairo-xlib-surface-get-visual" role="function" condition="since:1.2">
+<title>cairo_xlib_surface_get_visual&#160;()</title>
+<indexterm zone="cairo-xlib-surface-get-visual" role="1.2"><primary sortas="xlib_surface_get_visual">cairo_xlib_surface_get_visual</primary></indexterm>
+<programlisting language="C"><link linkend="Visual"><returnvalue>Visual</returnvalue></link>&#160;*
+cairo_xlib_surface_get_visual (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>);</programlisting>
+<para>Gets the X Visual associated with <parameter>surface</parameter>
+, suitable for use with the
+underlying X Drawable.  If <parameter>surface</parameter>
+ was created by
+<link linkend="cairo-xlib-surface-create"><function>cairo_xlib_surface_create()</function></link>, the return value is the Visual passed to that
+constructor.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-xlib-surface-t"><type>cairo_xlib_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> the Visual or <link linkend="NULL:CAPS"><literal>NULL</literal></link> if there is no appropriate Visual for
+<parameter>surface</parameter>
+.</para>
+<para></para>
+</refsect3><para role="since">Since 1.2</para></refsect2>
+<refsect2 id="cairo-xlib-surface-get-width" role="function" condition="since:1.2">
+<title>cairo_xlib_surface_get_width&#160;()</title>
+<indexterm zone="cairo-xlib-surface-get-width" role="1.2"><primary sortas="xlib_surface_get_width">cairo_xlib_surface_get_width</primary></indexterm>
+<programlisting language="C"><link linkend="int"><returnvalue>int</returnvalue></link>
+cairo_xlib_surface_get_width (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>);</programlisting>
+<para>Get the width of the X Drawable underlying the surface in pixels.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-xlib-surface-t"><type>cairo_xlib_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> the width of the surface in pixels.</para>
+<para></para>
+</refsect3><para role="since">Since 1.2</para></refsect2>
+<refsect2 id="cairo-xlib-surface-get-height" role="function" condition="since:1.2">
+<title>cairo_xlib_surface_get_height&#160;()</title>
+<indexterm zone="cairo-xlib-surface-get-height" role="1.2"><primary sortas="xlib_surface_get_height">cairo_xlib_surface_get_height</primary></indexterm>
+<programlisting language="C"><link linkend="int"><returnvalue>int</returnvalue></link>
+cairo_xlib_surface_get_height (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>);</programlisting>
+<para>Get the height of the X Drawable underlying the surface in pixels.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-xlib-surface-t"><type>cairo_xlib_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> the height of the surface in pixels.</para>
+<para></para>
+</refsect3><para role="since">Since 1.2</para></refsect2>
+<refsect2 id="cairo-xlib-surface-get-depth" role="function" condition="since:1.2">
+<title>cairo_xlib_surface_get_depth&#160;()</title>
+<indexterm zone="cairo-xlib-surface-get-depth" role="1.2"><primary sortas="xlib_surface_get_depth">cairo_xlib_surface_get_depth</primary></indexterm>
+<programlisting language="C"><link linkend="int"><returnvalue>int</returnvalue></link>
+cairo_xlib_surface_get_depth (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>);</programlisting>
+<para>Get the number of bits used to represent each pixel value.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-xlib-surface-t"><type>cairo_xlib_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> the depth of the surface in bits.</para>
+<para></para>
+</refsect3><para role="since">Since 1.2</para></refsect2>
+<refsect2 id="cairo-xlib-device-debug-cap-xrender-version" role="function" condition="since:1.12">
+<title>cairo_xlib_device_debug_cap_xrender_version&#160;()</title>
+<indexterm zone="cairo-xlib-device-debug-cap-xrender-version" role="1.12"><primary sortas="xlib_device_debug_cap_xrender_version">cairo_xlib_device_debug_cap_xrender_version</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_xlib_device_debug_cap_xrender_version
+                               (<parameter><link linkend="cairo-device-t"><type>cairo_device_t</type></link> *device</parameter>,
+                                <parameter><link linkend="int"><type>int</type></link> major_version</parameter>,
+                                <parameter><link linkend="int"><type>int</type></link> minor_version</parameter>);</programlisting>
+<para>Restricts all future Xlib surfaces for this devices to the specified version
+of the RENDER extension. This function exists solely for debugging purpose.
+It lets you find out how cairo would behave with an older version of
+the RENDER extension.</para>
+<para>Use the special values -1 and -1 for disabling the RENDER extension.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>device</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-device-t"><type>cairo_device_t</type></link> for the Xlib backend</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>major_version</para></entry>
+<entry role="parameter_description"><para>major version to restrict to</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>minor_version</para></entry>
+<entry role="parameter_description"><para>minor version to restrict to</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.12</para></refsect2>
+<refsect2 id="cairo-xlib-device-debug-get-precision" role="function" condition="since:1.12">
+<title>cairo_xlib_device_debug_get_precision&#160;()</title>
+<indexterm zone="cairo-xlib-device-debug-get-precision" role="1.12"><primary sortas="xlib_device_debug_get_precision">cairo_xlib_device_debug_get_precision</primary></indexterm>
+<programlisting language="C"><link linkend="int"><returnvalue>int</returnvalue></link>
+cairo_xlib_device_debug_get_precision (<parameter><link linkend="cairo-device-t"><type>cairo_device_t</type></link> *device</parameter>);</programlisting>
+<para>Get the Xrender precision mode.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>device</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-device-t"><type>cairo_device_t</type></link> for the Xlib backend</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> the render precision mode</para>
+<para></para>
+</refsect3><para role="since">Since 1.12</para></refsect2>
+<refsect2 id="cairo-xlib-device-debug-set-precision" role="function" condition="since:1.12">
+<title>cairo_xlib_device_debug_set_precision&#160;()</title>
+<indexterm zone="cairo-xlib-device-debug-set-precision" role="1.12"><primary sortas="xlib_device_debug_set_precision">cairo_xlib_device_debug_set_precision</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_xlib_device_debug_set_precision (<parameter><link linkend="cairo-device-t"><type>cairo_device_t</type></link> *device</parameter>,
+                                       <parameter><link linkend="int"><type>int</type></link> precision</parameter>);</programlisting>
+<para>Render supports two modes of precision when rendering trapezoids. Set
+the precision to the desired mode.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>device</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-device-t"><type>cairo_device_t</type></link> for the Xlib backend</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>precision</para></entry>
+<entry role="parameter_description"><para>the precision to use</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.12</para></refsect2>
+
+</refsect1>
+<refsect1 id="cairo-XLib-Surfaces.other_details" role="details">
+<title role="details.title">Types and Values</title>
+<refsect2 id="CAIRO-HAS-XLIB-SURFACE:CAPS" role="macro" condition="since:1.0">
+<title>CAIRO_HAS_XLIB_SURFACE</title>
+<indexterm zone="CAIRO-HAS-XLIB-SURFACE:CAPS" role="1.0"><primary sortas="HAS_XLIB_SURFACE">CAIRO_HAS_XLIB_SURFACE</primary></indexterm>
+<programlisting language="C">#define CAIRO_HAS_XLIB_SURFACE 1
+</programlisting>
+<para>Defined if the Xlib surface backend is available.
+This macro can be used to conditionally compile backend-specific code.</para>
+<para role="since">Since 1.0</para></refsect2>
+
+</refsect1>
+<refsect1 id="cairo-XLib-Surfaces.see-also">
+<title>See Also</title>
+<para><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para>
+
+</refsect1>
+
+</refentry>

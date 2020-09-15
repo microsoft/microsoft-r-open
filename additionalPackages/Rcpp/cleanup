@@ -1,0 +1,39 @@
+#!/bin/sh
+
+#cd inst/doc && rm -f index.html *.tex *.bbl *.blg *.aux *.out *.log && cd -
+
+rm -f confdefs.h config.log config.status \
+	src/*.o src/*.so src/*.a src/*.d src/*.dll src/*.rc \
+	RcppSrc/*.o RcppSrc/*.a inst/Rcpp-version.txt \
+	inst/lib/libRcpp.so inst/lib/Rcpp*.h inst/lib/libRcpp.a \
+	inst/doc/*.cpp inst/doc/*.hpp \
+	inst/doc/*.out \
+	inst/doc/.build.timestamp \
+	inst/doc/*.Rd inst/doc/*.aux inst/doc/*.log inst/doc/*.tex \
+	inst/doc/latex/*.aux inst/doc/latex/*.log \
+	inst/examples/ConvolveBenchmarks/*.o  \
+        inst/examples/ConvolveBenchmarks/*.so \
+	inst/examples/functionCallback/*.so \
+	inst/examples/functionCallback/*.o \
+	inst/examples/OpenMP/piWithInterrupts.o \
+	inst/examples/OpenMP/piWithInterrupts.so \
+        inst/discovery/cxx0x.Rout \
+	inst/unitTests/testRcppModule/src/*.o \
+	inst/unitTests/testRcppModule/src/*.so \
+	inst/unitTests/testRcppClass/src/*.o \
+	inst/unitTests/testRcppClass/src/*.so \
+	src/Makedeps libRcpp.a \
+	src/symbols.rds \
+	inst/unitTests/testRcppClass/src/symbols.rds \
+	vignettes/*.aux vignettes/*.log vignettes/*.out \
+	vignettes/*.tex vignettes/*.bbl vignettes/*.blg \
+	vignettes/*.toc vignettes/*.tpt vignettes/*.xwm
+
+rm -rf	autom4te.cache inst/lib/ inst/doc/man/ inst/doc/html/ inst/doc/latex/ \
+        inst/doc/auto inst/bib/auto inst/doc/Rcpp-*/auto/ src-* vignettes/auto
+
+find . -name \*~ -exec rm {} \;
+find . -name \*.flc -exec rm {} \;
+
+(cd vignettes/ && make clean && cd -) >/dev/null
+(cd vignettes/rmd/ && make clean && cd -) >/dev/null

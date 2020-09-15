@@ -1,0 +1,881 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the stats package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: stats 3.6.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-03-29 07:06-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: Srunmed.c:54
+msgid "bandwidth/span of running medians is larger than n"
+msgstr ""
+
+#: ansari.c:118
+msgid "probabilities outside [0,1] in qansari()"
+msgstr ""
+
+#: approx.c:113
+msgid "approx(): invalid f value"
+msgstr ""
+
+#: approx.c:116
+msgid "approx(): invalid interpolation method"
+msgstr ""
+
+#: approx.c:122
+msgid "approx(): attempted to interpolate NA values"
+msgstr ""
+
+#: arima.c:81 arima.c:192 arima.c:377 arima.c:608 optim.c:39
+msgid "invalid argument type"
+msgstr ""
+
+#: arima.c:444 arima.c:530 pacf.c:324 pacf.c:363
+msgid "can only transform 100 pars in arima0"
+msgstr ""
+
+#: arima.c:1016
+msgid "maximum supported lag is 350"
+msgstr ""
+
+#: bandwidths.c:126
+#, c-format
+msgid "non-finite x[%d] in bandwidth calculation"
+msgstr ""
+
+#: complete_cases.c:26
+#, c-format
+msgid "invalid 'type' (%s) of argument"
+msgstr ""
+
+#: complete_cases.c:120
+msgid "no input has determined the number of cases"
+msgstr ""
+
+#: complete_cases.c:223
+msgid "not all arguments have the same length"
+msgstr ""
+
+#: cov.c:569
+msgid "missing observations in cov/cor"
+msgstr ""
+
+#: cov.c:643
+msgid "'x' is NULL"
+msgstr ""
+
+#: cov.c:645
+msgid "'x' is a factor"
+msgstr ""
+
+#: cov.c:665
+msgid "'y' is a factor"
+msgstr ""
+
+#: cov.c:673 cov.c:679
+msgid "incompatible dimensions"
+msgstr ""
+
+#: cov.c:698 cov.c:739 cov.c:772
+msgid "no complete element pairs"
+msgstr ""
+
+#: cov.c:711
+msgid "invalid 'use' (computational method)"
+msgstr ""
+
+#: cov.c:714
+msgid "'x' is empty"
+msgstr ""
+
+#: cov.c:808
+msgid "the standard deviation is zero"
+msgstr ""
+
+#: deriv.c:158
+msgid "invalid form in unary minus check"
+msgstr ""
+
+#: deriv.c:682
+#, c-format
+msgid "Function '%s' is not in the derivatives table"
+msgstr ""
+
+#: deriv.c:789
+#, c-format
+msgid "expression must not be type '%s'"
+msgstr ""
+
+#: deriv.c:792
+msgid "variable must be a character string"
+msgstr ""
+
+#: deriv.c:794
+msgid "only the first element is used as variable name"
+msgstr ""
+
+#: deriv.c:807
+#, c-format
+msgid "invalid expression in '%s'"
+msgstr ""
+
+#: deriv.c:1085 model.c:99
+msgid "invalid variable names"
+msgstr ""
+
+#: deriv.c:1094
+msgid "invalid tag"
+msgstr ""
+
+#: distance.c:152
+msgid "treating non-finite values as NA"
+msgstr ""
+
+#: distance.c:225
+msgid "distance(): invalid p"
+msgstr ""
+
+#: distance.c:229
+msgid "distance(): invalid distance"
+msgstr ""
+
+#: distn.c:44
+msgid "NaNs produced"
+msgstr ""
+
+#: distn.c:45
+msgid "Non-numeric argument to mathematical function"
+msgstr ""
+
+#: family.c:45
+#, c-format
+msgid "Value %g out of range (0, 1)"
+msgstr ""
+
+#: family.c:66 family.c:80 family.c:98
+#, c-format
+msgid "Argument %s must be a nonempty numeric vector"
+msgstr ""
+
+#: family.c:131 family.c:134
+#, c-format
+msgid "argument %s must be a numeric vector of length 1 or length %d"
+msgstr ""
+
+#: fexact.c:273
+#, c-format
+msgid "integer overflow would happen in 'mult * ldkey' = %g"
+msgstr ""
+
+#: fexact.c:653
+#, c-format
+msgid ""
+"FEXACT error 6.  LDKEY=%d is too small for this problem,\n"
+"  (ii := key2[itp=%d] = %d, ldstp=%d)\n"
+"Try increasing the size of the workspace and possibly 'mult'"
+msgstr ""
+
+#: fexact.c:1035
+#, c-format
+msgid "Bug in fexact3, it[i=%d]=%d: negative key %d (kyy=%d)\n"
+msgstr ""
+
+#: fexact.c:1064
+#, c-format
+msgid ""
+"FEXACT error 30.  Stack length exceeded in f3xact,\n"
+"  (ldst=%d, key=%d, ipn=%d, itp=%d, ist[ii=%d]=%d).\n"
+"Increase workspace or consider using 'simulate.p.value=TRUE'"
+msgstr ""
+
+#: fexact.c:1399
+#, c-format
+msgid ""
+"FEXACT error 6 (f5xact).  LDKEY=%d is too small for this problem: kval=%d.\n"
+"Try increasing the size of the workspace."
+msgstr ""
+
+#: fexact.c:1412
+#, c-format
+msgid ""
+"FEXACT error 7(%s). LDSTP=%d is too small for this problem,\n"
+"  (kval=%d, itop-ldstp=%d).\n"
+"Increase workspace or consider using 'simulate.p.value=TRUE'."
+msgstr ""
+
+#: fexact.c:1449
+#, c-format
+msgid ""
+"FEXACT error 7(%s). LDSTP=%d is too small for this problem,\n"
+"  (pastp=%g, ipn_0:=ipoin[itp=%d]=%d, stp[ipn_0]=%g).\n"
+"Increase workspace or consider using 'simulate.p.value=TRUE'"
+msgstr ""
+
+#: fourier.c:66 fourier.c:161
+msgid "non-numeric argument"
+msgstr ""
+
+#: fourier.c:84 fourier.c:102 fourier.c:175
+msgid "fft factorization error"
+msgstr ""
+
+#: fourier.c:147
+msgid "vector-valued (multivariate) series required"
+msgstr ""
+
+#: fourier.c:223
+msgid "no factors"
+msgstr ""
+
+#: fourier.c:226
+msgid "invalid factors"
+msgstr ""
+
+#: integrate.c:84 integrate.c:86 integrate.c:128
+#, c-format
+msgid "'%s' must be of length one"
+msgstr ""
+
+#: ksmooth.c:69
+msgid "only 2500 rows are allowed for sm.method=\"spline\""
+msgstr ""
+
+#: lm.c:57
+msgid "'x' is not a matrix"
+msgstr ""
+
+#: lm.c:62
+#, c-format
+msgid "dimensions of 'x' (%d,%d) and 'y' (%d) do not match"
+msgstr ""
+
+#: lm.c:77 lm.c:81
+#, c-format
+msgid "NA/NaN/Inf in '%s'"
+msgstr ""
+
+#: loessc.c:240
+msgid "span is too small"
+msgstr ""
+
+#: loglin.c:371
+msgid "this should not happen"
+msgstr ""
+
+#: loglin.c:373
+msgid "algorithm did not converge"
+msgstr ""
+
+#: loglin.c:375
+msgid "incorrect specification of 'table' or 'start'"
+msgstr ""
+
+#: lowess.c:292
+msgid "'f' must be finite and > 0"
+msgstr ""
+
+#: lowess.c:295
+msgid "'iter' must be finite and >= 0"
+msgstr ""
+
+#: lowess.c:298
+msgid "'delta' must be finite and > 0"
+msgstr ""
+
+#: mAR.c:470
+msgid "Singular matrix in qr_solve"
+msgstr ""
+
+#: mAR.c:513
+msgid "Singular matrix in ldet"
+msgstr ""
+
+#: mAR.c:700
+msgid "Invalid vmethod"
+msgstr ""
+
+#: mAR.c:836
+msgid "Burg's algorithm failed to find partial correlation"
+msgstr ""
+
+#: model.c:97
+msgid "invalid variables"
+msgstr ""
+
+#: model.c:101 model.c:106
+msgid "number of variables != number of variable names"
+msgstr ""
+
+#: model.c:104
+msgid "invalid extra variables"
+msgstr ""
+
+#: model.c:108
+msgid "invalid extra variable names"
+msgstr ""
+
+#: model.c:129
+#, c-format
+msgid "overlong names in '%s'"
+msgstr ""
+
+#: model.c:156
+#, c-format
+msgid "invalid type (%s) for variable '%s'"
+msgstr ""
+
+#: model.c:161
+#, c-format
+msgid "variable lengths differ (found for '%s')"
+msgstr ""
+
+#: model.c:215
+msgid "invalid result from na.action"
+msgstr ""
+
+#: model.c:372 model.c:380 optim.c:199
+#, c-format
+msgid "invalid '%s' argument"
+msgstr ""
+
+#: model.c:391
+msgid "invalid model frame"
+msgstr ""
+
+#: model.c:393
+msgid "do not know how many cases"
+msgstr ""
+
+#: model.c:417
+#, c-format
+msgid "variable lengths differ (found for variable %d)"
+msgstr ""
+
+#: model.c:421 model.c:428
+#, c-format
+msgid "variable %d has no levels"
+msgstr ""
+
+#: model.c:540
+msgid "the response appeared on the right-hand side and was dropped"
+msgstr ""
+
+#: model.c:560
+#, c-format
+msgid "term %d would require %.0g columns"
+msgstr ""
+
+#: model.c:564
+#, c-format
+msgid "matrix would require %.0g columns"
+msgstr ""
+
+#: model.c:575
+#, c-format
+msgid "problem with term %d in model.matrix: no columns are assigned"
+msgstr ""
+
+#: model.c:624 model.c:629 model.c:635 model.c:646 model.c:652 model.c:658
+msgid "term names will be truncated"
+msgstr ""
+
+#: model.c:638
+msgid "complex variables are not currently allowed in model matrices"
+msgstr ""
+
+#: model.c:662
+#, c-format
+msgid "variables of type '%s' are not allowed in model matrices"
+msgstr ""
+
+#: model.c:884
+msgid "invalid formula in 'update'"
+msgstr ""
+
+#: model.c:918
+msgid "formula expected"
+msgstr ""
+
+#: model.c:1050
+msgid "invalid term in model formula"
+msgstr ""
+
+#: model.c:1125
+msgid "invalid model formula"
+msgstr ""
+
+#: model.c:1151 model.c:1411
+msgid "invalid power in formula"
+msgstr ""
+
+#: model.c:1187
+msgid "invalid model formula in ExtractVars"
+msgstr ""
+
+#: model.c:1534
+#, c-format
+msgid "duplicated name '%s' in data frame using '.'"
+msgstr ""
+
+#: model.c:1595
+msgid "invalid model formula in EncodeVars"
+msgstr ""
+
+#: model.c:1681
+msgid "argument is not a valid model"
+msgstr ""
+
+#: model.c:1691
+msgid "'specials' must be NULL or a character vector"
+msgstr ""
+
+#: model.c:1703
+msgid "'data' argument is of the wrong type"
+msgstr ""
+
+#: model.c:1974
+msgid "'.' in formula and no 'data' argument"
+msgstr ""
+
+#: monoSpl.c:36
+msgid "n must be at least two"
+msgstr ""
+
+#: monoSpl.c:69
+msgid "Argument m must be numeric"
+msgstr ""
+
+#: monoSpl.c:72
+msgid "length(m) must be at least two"
+msgstr ""
+
+#: monoSpl.c:74
+msgid "Argument Sx must be numeric vector one shorter than m[]"
+msgstr ""
+
+#: nls.c:99
+msgid "'control' must be a list"
+msgstr ""
+
+#: nls.c:101
+msgid "'m' must be a list"
+msgstr ""
+
+#: nls.c:107 nls.c:112 nls.c:117 nls.c:122 nls.c:127 nls.c:168 nls.c:173
+#: nls.c:178 nls.c:183 nls.c:188 nls.c:193
+#, c-format
+msgid "'%s' absent"
+msgstr ""
+
+#: nls.c:234
+msgid "singular gradient"
+msgstr ""
+
+#: nls.c:255
+#, c-format
+msgid "step factor %g reduced below 'minFactor' of %g"
+msgstr ""
+
+#: nls.c:264
+#, c-format
+msgid "number of iterations exceeded maximum of %d"
+msgstr ""
+
+#: nls.c:269
+msgid "converged"
+msgstr ""
+
+#: nls.c:290
+msgid "'theta' should be of type character"
+msgstr ""
+
+#: nls.c:292 port.c:376
+msgid "use of NULL environment is defunct"
+msgstr ""
+
+#: nls.c:296
+msgid "'rho' should be an environment"
+msgstr ""
+
+#: nls.c:299
+msgid "'dir' is not a numeric vector of the correct length"
+msgstr ""
+
+#: nls.c:313 nls.c:347
+msgid "Missing value or an infinity produced when evaluating the model"
+msgstr ""
+
+#: nls.c:321
+#, c-format
+msgid "variable '%s' is integer, not numeric"
+msgstr ""
+
+#: nls.c:323
+#, c-format
+msgid "variable '%s' is not numeric"
+msgstr ""
+
+#: optim.c:82 optim.c:109
+msgid "non-finite value supplied by optim"
+msgstr ""
+
+#: optim.c:89
+#, c-format
+msgid "objective function in optim evaluates to length %d not 1"
+msgstr ""
+
+#: optim.c:116
+#, c-format
+msgid "gradient in optim evaluated to length %d not %d"
+msgstr ""
+
+#: optim.c:195 optim.c:401
+msgid "'fn' is not a function"
+msgstr ""
+
+#: optim.c:213 optim.c:407
+msgid "'parscale' is of the wrong length"
+msgstr ""
+
+#: optim.c:242
+msgid "'maxit' is not an integer"
+msgstr ""
+
+#: optim.c:262
+msgid "'tmax' is not a positive integer"
+msgstr ""
+
+#: optim.c:264 optim.c:281 optim.c:306 optim.c:336 optim.c:415
+msgid "'gr' is not a function"
+msgstr ""
+
+#: optim.c:287 optim.c:312 optim.c:342 optim.c:421
+msgid "'ndeps' is of the wrong length"
+msgstr ""
+
+#: optim.c:372
+msgid "unknown 'method'"
+msgstr ""
+
+#: optimize.c:220 optimize.c:306 optimize.c:528
+msgid "NA replaced by maximum positive value"
+msgstr ""
+
+#: optimize.c:228 optimize.c:318 optimize.c:536
+msgid "NA/Inf replaced by maximum positive value"
+msgstr ""
+
+#: optimize.c:237
+msgid "invalid function value in 'optimize'"
+msgstr ""
+
+#: optimize.c:255 optimize.c:347 optimize.c:721
+msgid "attempt to minimize non-function"
+msgstr ""
+
+#: optimize.c:262 optimize.c:269 optimize.c:278 optimize.c:352 optimize.c:357
+#: optimize.c:373
+#, c-format
+msgid "invalid '%s' value"
+msgstr ""
+
+#: optimize.c:271 optimize.c:358
+msgid "'xmin' not less than 'xmax'"
+msgstr ""
+
+#: optimize.c:315
+msgid "-Inf replaced by maximally negative value"
+msgstr ""
+
+#: optimize.c:328
+msgid "invalid function value in 'zeroin'"
+msgstr ""
+
+#: optimize.c:363 optimize.c:368
+#, c-format
+msgid "NA value for '%s' is not allowed"
+msgstr ""
+
+#: optimize.c:378
+msgid "'maxiter' must be positive"
+msgstr ""
+
+#: optimize.c:520
+msgid "non-finite value supplied by 'nlm'"
+msgstr ""
+
+#: optimize.c:555
+msgid "invalid function value in 'nlm' optimizer"
+msgstr ""
+
+#: optimize.c:566 optimize.c:581
+msgid "function value caching for optimization is seriously confused"
+msgstr ""
+
+#: optimize.c:596
+msgid "numeric parameter expected"
+msgstr ""
+
+#: optimize.c:600
+msgid "conflicting parameter lengths"
+msgstr ""
+
+#: optimize.c:604
+msgid "invalid parameter length"
+msgstr ""
+
+#: optimize.c:614 optimize.c:621
+msgid "missing value in parameter"
+msgstr ""
+
+#: optimize.c:626
+msgid "invalid parameter type"
+msgstr ""
+
+#: optimize.c:637
+msgid "non-positive number of parameters in nlm"
+msgstr ""
+
+#: optimize.c:639
+msgid "nlm is inefficient for 1-d problems"
+msgstr ""
+
+#: optimize.c:641
+msgid "invalid gradient tolerance in nlm"
+msgstr ""
+
+#: optimize.c:643
+msgid "invalid iteration limit in nlm"
+msgstr ""
+
+#: optimize.c:645
+msgid "minimization function has no good digits in nlm"
+msgstr ""
+
+#: optimize.c:647
+msgid "no analytic gradient to check in nlm!"
+msgstr ""
+
+#: optimize.c:649
+msgid "no analytic Hessian to check in nlm!"
+msgstr ""
+
+#: optimize.c:651
+msgid "probable coding error in analytic gradient"
+msgstr ""
+
+#: optimize.c:653
+msgid "probable coding error in analytic Hessian"
+msgstr ""
+
+#: optimize.c:655
+#, c-format
+msgid ""
+"*** unknown error message (msg = %d) in nlm()\n"
+"*** should not happen!"
+msgstr ""
+
+#: optimize.c:666
+msgid "Relative gradient close to zero.\n"
+msgstr ""
+
+#: optimize.c:667 optimize.c:671
+msgid "Current iterate is probably solution.\n"
+msgstr ""
+
+#: optimize.c:670
+msgid "Successive iterates within tolerance.\n"
+msgstr ""
+
+#: optimize.c:674
+msgid "Last global step failed to locate a point lower than x.\n"
+msgstr ""
+
+#: optimize.c:675
+msgid ""
+"Either x is an approximate local minimum of the function,\n"
+"the function is too non-linear for this algorithm,\n"
+"or steptol is too large.\n"
+msgstr ""
+
+#: optimize.c:680
+msgid "Iteration limit exceeded.  Algorithm failed.\n"
+msgstr ""
+
+#: optimize.c:683
+msgid ""
+"Maximum step size exceeded 5 consecutive times.\n"
+"Either the function is unbounded below,\n"
+"becomes asymptotic to a finite value\n"
+"from above in some direction,\n"
+"or stepmx is too small.\n"
+msgstr ""
+
+#: optimize.c:745 optimize.c:750 optimize.c:754 optimize.c:758 optimize.c:762
+#: optimize.c:766 optimize.c:771
+msgid "invalid NA value in parameter"
+msgstr ""
+
+#: optimize.c:800
+msgid "hessian supplied is of the wrong length or mode, so ignored"
+msgstr ""
+
+#: optimize.c:804
+msgid "gradient supplied is of the wrong length or mode, so ignored"
+msgstr ""
+
+#: pacf.c:87
+msgid "bad Starma struct"
+msgstr ""
+
+#: pacf.c:233
+#, c-format
+msgid "starma error code %d"
+msgstr ""
+
+#: pacf.c:293
+#, c-format
+msgid "forkal error code %d"
+msgstr ""
+
+#: pacf.c:466
+msgid "invalid value of lag.max"
+msgstr ""
+
+#: port.c:133
+#, c-format
+msgid "Rf_divset: alg = %d must be 1, 2, 3, or 4"
+msgstr ""
+
+#: port.c:149
+msgid "port algorithms 3 or higher are not supported"
+msgstr ""
+
+#: port.c:313
+#, c-format
+msgid "gradient function must return a numeric vector of length %d"
+msgstr ""
+
+#: port.c:325
+#, c-format
+msgid "Hessian function must return a square numeric matrix of order %d"
+msgstr ""
+
+#: port.c:380
+msgid "'rho' must be an environment"
+msgstr ""
+
+#: port.c:382 port.c:548
+msgid "'d' must be a nonempty numeric vector"
+msgstr ""
+
+#: port.c:384
+msgid "When Hessian defined must also have gradient defined"
+msgstr ""
+
+#: port.c:387
+#, c-format
+msgid "environment 'rho' must contain a numeric vector '.par' of length %d"
+msgstr ""
+
+#: port.c:401
+msgid "'lower' and 'upper' must be numeric vectors"
+msgstr ""
+
+#: port.c:460
+msgid "'getElement' applies only to named lists"
+msgstr ""
+
+#: port.c:481
+#, c-format
+msgid "%s$%s() not found"
+msgstr ""
+
+#: port.c:494
+#, c-format
+msgid "'gradient' must be a numeric matrix of dimension (%d,%d)"
+msgstr ""
+
+#: port.c:515
+#, c-format
+msgid "fcn produced mode %d, length %d - wanted mode %d, length %d"
+msgstr ""
+
+#: port.c:528
+msgid "invalid type for eval_check_store"
+msgstr ""
+
+#: port.c:549
+msgid "m must be a list"
+msgstr ""
+
+#: port.c:569
+msgid "'lowerb' and 'upperb' must be numeric vectors"
+msgstr ""
+
+#: rWishart.c:53
+msgid "inconsistent degrees of freedom and dimension"
+msgstr ""
+
+#: rWishart.c:86
+msgid "'scal' must be a square, real matrix"
+msgstr ""
+
+#: rWishart.c:98
+msgid "'scal' matrix is not positive-definite"
+msgstr ""
+
+#: random.c:53 random.c:128 random.c:200 random.c:284
+msgid "NAs produced"
+msgstr ""
+
+#: random.c:60 random.c:66 random.c:72 random.c:90 random.c:161 random.c:242
+#: random.c:376
+msgid "invalid arguments"
+msgstr ""
+
+#: random.c:310
+msgid "NA in probability vector"
+msgstr ""
+
+#: random.c:312
+msgid "negative probability"
+msgstr ""
+
+#: random.c:318
+msgid "no positive probabilities"
+msgstr ""
+
+#: random.c:330
+msgid "invalid first argument 'n'"
+msgstr ""
+
+#: random.c:332
+msgid "invalid second argument 'size'"
+msgstr ""
+
+#: rcont.c:83
+#, c-format
+msgid "rcont2 [%d,%d]: exp underflow to 0; algorithm failure"
+msgstr ""
+
+#: smooth.c:107
+#, c-format
+msgid "invalid end-rule for running median of 3: %d"
+msgstr ""
+
+#: starma.c:364
+#, c-format
+msgid "missing value in last %d observations"
+msgstr ""

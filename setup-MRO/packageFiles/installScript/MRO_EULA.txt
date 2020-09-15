@@ -1,0 +1,5 @@
+Microsoft R Open is an enhanced distribution of R made available by Microsoft under the GNU General Public License v2.
+
+R is © the R Foundation for Statistical Computing. For more information on R-related products and services, visit http://r-project.org.
+
+By accepting this agreement you are choosing to download Microsoft R Open and install it on your machine, and agreeing to accept patches and updates to this software according to your Windows Update preferences.

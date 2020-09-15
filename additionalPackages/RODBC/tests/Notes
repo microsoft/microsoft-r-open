@@ -1,0 +1,15 @@
+These tests are intended to be run as-is only on BDR's machines.
+Others will need to set up suitable DSNs or change the scripts to
+point to existing DSNs.  They will only be run by R CMD check if
+RODBC_TESTING is set.
+
+I don't currently run MySQL as a service on Windows, so it is started by
+d:/packages/mysql/bin/mysqld --standalone &
+
+PostgreSQL, SQL Server, Oracle, DB2 and Mimer run as services, but may
+need to be started.  The shell used to run these tests must have the
+Oracle binaries (e:/Oracle/bin) in the path.
+
+The Oracle and Mimer tests need DB_PWD set.
+
+sqlite3 worked with sqliteodbc 0.83 but not 0.91.

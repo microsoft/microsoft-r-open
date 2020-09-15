@@ -1,0 +1,21 @@
+#!/bin/bash
+
+VERSION=`echo $DPKG_MAINTSCRIPT_PACKAGE | sed 's/[[:alpha:]|(|[:space:]]//g' | sed 's/\-*//' | awk  -F. '{print $1 "." $2 "." $3}'`
+INSTALL_PREFIX="/opt/microsoft/ropen/${VERSION}"
+
+echo $VERSION
+
+
+# /usr/bin/R and /usr/bin/Rscript are the entry points for R
+# On a Debian system, users might have r-base installed, which
+# provides /usr/bin/R and /usr/bin/Rscript but not as an alternative.
+    
+for file in R Rscript
+do
+   ln -s "${INSTALL_PREFIX}/lib64/R/bin/${file}" /usr/bin/${file}
+done
+
+RLIBS_DIR="${INSTALL_PREFIX}/lib64/R/lib"
+echo "${RLIBS_DIR}" > /etc/ld.so.conf.d/microsoft-r-open.conf
+ldconfig
+

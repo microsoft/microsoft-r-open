@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:bal ="http://schemas.microsoft.com/wix/BalExtension" xmlns:util ="http://schemas.microsoft.com/wix/UtilExtension">
+	<Bundle Name="Microsoft R Open $(var.MroShortVersion)" Version="$(var.MroShortVersion).$(var.BuildNumber)" Manufacturer="Microsoft" UpgradeCode="D9F0EF80-3113-449E-8359-6B067DCFAECE">
+    <BootstrapperApplicationRef Id="ManagedBootstrapperApplicationHost">
+      <PayloadGroupRef Id ="RSetup"/>
+      <PayloadGroupRef Id="RInstaller"/>
+    </BootstrapperApplicationRef>
+
+		<Chain>
+      <PackageGroupRef Id="InstallerPackages"/>
+      <PackageGroupRef Id="NetFx45Web"/>
+      <PackageGroupRef Id="VCRT"/>
+		</Chain>
+	</Bundle>
+
+  <Fragment>
+    <PayloadGroup Id="RSetup">
+      <Payload SourceFile="..\dependencies\RSetup\RSetup.exe" />
+      <Payload SourceFile="..\dependencies\RSetup\Microsoft.Deployment.Compression.dll"/>
+      <Payload SourceFile="..\dependencies\RSetup\Microsoft.Deployment.Compression.Cab.dll"/>
+    </PayloadGroup>
+  </Fragment>
+
+  <Fragment>
+    <PayloadGroup Id="RInstaller">
+      <Payload SourceFile="$(var.RInstaller.TargetPath)"/>
+      <Payload SourceFile="$(var.RInstaller.TargetDir)\BootstrapperCore.config" />
+      <Payload SourceFile="$(var.RInstaller.TargetDir)\Microsoft.Deployment.WindowsInstaller.dll"/>
+      <Payload SourceFile="$(var.RInstaller.TargetDir)\Newtonsoft.Json.dll"/>
+      <Payload SourceFile="$(var.RInstaller.TargetDir)\CommandLine.dll"/>
+      <Payload SourceFile="$(var.RInstaller.TargetDir)\Microsoft.WindowsAPICodePack.dll"/>
+      <Payload SourceFile="$(var.RInstaller.TargetDir)\Microsoft.WindowsAPICodePack.Shell.dll"/>
+      <Payload SourceFile="productResource.json"/>
+      <Payload SourceFile="..\ROpen\MklEula.rtf"/>
+      <Payload SourceFile="..\ROpen\ROpenEula.rtf"/>
+    </PayloadGroup>
+  </Fragment>
+  <Fragment>
+    <Variable Name="InstallFolder" Type="string" Value="[ProgramFiles64Folder]Microsoft\R Open\R-$(var.MroShortVersion)" bal:Overridable="yes"/>
+    
+    <!--VC2015 File/Version detection-->
+    <util:FileSearch Id="GetVC14X64Exists" Condition="VersionNT64" Variable="vc14x64Exists" Path="[SystemFolder]vcruntime140.dll" Result="exists"/>
+    <util:FileSearch Id="GetVC14X64Version" Condition="VersionNT64" Variable="vc14x64Version" Path="[SystemFolder]vcruntime140.dll" Result="version"/>
+
+    <PackageGroup Id="InstallerPackages">
+      <MsiPackage SourceFile="$(var.ROpen.TargetPath)" Compressed="yes" EnableFeatureSelection="yes" DisplayName="Microsoft R Open" >
+        <MsiProperty Name="INSTALLFOLDER" Value="[InstallFolder]"/>
+      </MsiPackage>
+    </PackageGroup>
+
+    <PackageGroup Id="VCRT">
+      <ExePackage SourceFile="..\packages\VCRT.14.0.24215\VCRT_14.0.24215.0_1033.exe" DisplayName="Visual C/C++ Runtime 2015"
+            InstallCommand="/install /quiet /norestart"
+            RepairCommand="/repair /quiet /norestart"
+            UninstallCommand="/uninstall /quiet /norestart"
+            DetectCondition="vc14x64Exists AND vc14x64Version &gt;= v14.0.24215"
+            Vital="yes"
+            Permanent="yes">
+        <!--Reboot Required-->
+        <ExitCode Value="3010" Behavior="forceReboot"/>
+        <!--Newer installed-->
+        <ExitCode Value="1638" Behavior="success"/>
+      </ExePackage>
+    </PackageGroup>
+  </Fragment>
+</Wix>

@@ -1,0 +1,588 @@
+<?xml version='1.0' encoding='UTF-8'?> 
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!ENTITY version SYSTEM "version.xml">
+]>
+<refentry id="cairo-cairo-matrix-t">
+<refmeta>
+<refentrytitle role="top_of_page" id="cairo-cairo-matrix-t.top_of_page">cairo_matrix_t</refentrytitle>
+<manvolnum>3</manvolnum>
+<refmiscinfo>
+  CAIRO Library
+</refmiscinfo>
+</refmeta>
+<refnamediv>
+<refname>cairo_matrix_t</refname>
+<refpurpose>Generic matrix operations</refpurpose>
+</refnamediv>
+
+<refsect1 id="cairo-cairo-matrix-t.functions" role="functions_proto">
+<title role="functions_proto.title">Functions</title>
+<informaltable pgwide="1" frame="none">
+<tgroup cols="2">
+<colspec colname="functions_return" colwidth="150px"/>
+<colspec colname="functions_name"/>
+<tbody>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-matrix-init">cairo_matrix_init</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-matrix-init-identity">cairo_matrix_init_identity</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-matrix-init-translate">cairo_matrix_init_translate</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-matrix-init-scale">cairo_matrix_init_scale</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-matrix-init-rotate">cairo_matrix_init_rotate</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-matrix-translate">cairo_matrix_translate</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-matrix-scale">cairo_matrix_scale</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-matrix-rotate">cairo_matrix_rotate</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-status-t"><returnvalue>cairo_status_t</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-matrix-invert">cairo_matrix_invert</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-matrix-multiply">cairo_matrix_multiply</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-matrix-transform-distance">cairo_matrix_transform_distance</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-matrix-transform-point">cairo_matrix_transform_point</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+
+</tbody>
+</tgroup>
+</informaltable>
+</refsect1>
+<refsect1 id="cairo-cairo-matrix-t.other" role="other_proto">
+<title role="other_proto.title">Types and Values</title>
+<informaltable role="enum_members_table" pgwide="1" frame="none">
+<tgroup cols="2">
+<colspec colname="name" colwidth="150px"/>
+<colspec colname="description"/>
+<tbody>
+<row><entry role="datatype_keyword"></entry><entry role="function_name"><link linkend="cairo-matrix-t">cairo_matrix_t</link></entry></row>
+
+</tbody>
+</tgroup>
+</informaltable>
+</refsect1>
+<refsect1 id="cairo-cairo-matrix-t.object-hierarchy" role="object_hierarchy">
+<title role="object_hierarchy.title">Object Hierarchy</title>
+<screen>
+</screen>
+</refsect1>
+
+
+<refsect1 id="cairo-cairo-matrix-t.description" role="desc">
+<title role="desc.title">Description</title>
+<para><link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link> is used throughout cairo to convert between different
+coordinate spaces.  A <link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link> holds an affine transformation,
+such as a scale, rotation, shear, or a combination of these.
+The transformation of a point (<literal>x</literal>,<literal>y</literal>)
+is given by:</para>
+<programlisting>
+x_new = xx * x + xy * y + x0;
+y_new = yx * x + yy * y + y0;
+</programlisting>
+<para>The current transformation matrix of a <link linkend="cairo-t"><type>cairo_t</type></link>, represented as a
+<link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link>, defines the transformation from user-space
+coordinates to device-space coordinates. See <link linkend="cairo-get-matrix"><function>cairo_get_matrix()</function></link> and
+<link linkend="cairo-set-matrix"><function>cairo_set_matrix()</function></link>.</para>
+
+</refsect1>
+<refsect1 id="cairo-cairo-matrix-t.functions_details" role="details">
+<title role="details.title">Functions</title>
+<refsect2 id="cairo-matrix-init" role="function" condition="since:1.0">
+<title>cairo_matrix_init&#160;()</title>
+<indexterm zone="cairo-matrix-init" role="1.0"><primary sortas="matrix_init">cairo_matrix_init</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_matrix_init (<parameter><link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link> *matrix</parameter>,
+                   <parameter><link linkend="double"><type>double</type></link> xx</parameter>,
+                   <parameter><link linkend="double"><type>double</type></link> yx</parameter>,
+                   <parameter><link linkend="double"><type>double</type></link> xy</parameter>,
+                   <parameter><link linkend="double"><type>double</type></link> yy</parameter>,
+                   <parameter><link linkend="double"><type>double</type></link> x0</parameter>,
+                   <parameter><link linkend="double"><type>double</type></link> y0</parameter>);</programlisting>
+<para>Sets <parameter>matrix</parameter>
+ to be the affine transformation given by
+<parameter>xx</parameter>
+, <parameter>yx</parameter>
+, <parameter>xy</parameter>
+, <parameter>yy</parameter>
+, <parameter>x0</parameter>
+, <parameter>y0</parameter>
+. The transformation is given
+by:</para>
+<programlisting>
+ x_new = xx * x + xy * y + x0;
+ y_new = yx * x + yy * y + y0;
+</programlisting>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>matrix</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>xx</para></entry>
+<entry role="parameter_description"><para>xx component of the affine transformation</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>yx</para></entry>
+<entry role="parameter_description"><para>yx component of the affine transformation</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>xy</para></entry>
+<entry role="parameter_description"><para>xy component of the affine transformation</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>yy</para></entry>
+<entry role="parameter_description"><para>yy component of the affine transformation</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>x0</para></entry>
+<entry role="parameter_description"><para>X translation component of the affine transformation</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>y0</para></entry>
+<entry role="parameter_description"><para>Y translation component of the affine transformation</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-matrix-init-identity" role="function" condition="since:1.0">
+<title>cairo_matrix_init_identity&#160;()</title>
+<indexterm zone="cairo-matrix-init-identity" role="1.0"><primary sortas="matrix_init_identity">cairo_matrix_init_identity</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_matrix_init_identity (<parameter><link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link> *matrix</parameter>);</programlisting>
+<para>Modifies <parameter>matrix</parameter>
+ to be an identity transformation.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>matrix</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-matrix-init-translate" role="function" condition="since:1.0">
+<title>cairo_matrix_init_translate&#160;()</title>
+<indexterm zone="cairo-matrix-init-translate" role="1.0"><primary sortas="matrix_init_translate">cairo_matrix_init_translate</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_matrix_init_translate (<parameter><link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link> *matrix</parameter>,
+                             <parameter><link linkend="double"><type>double</type></link> tx</parameter>,
+                             <parameter><link linkend="double"><type>double</type></link> ty</parameter>);</programlisting>
+<para>Initializes <parameter>matrix</parameter>
+ to a transformation that translates by <parameter>tx</parameter>
+ and
+<parameter>ty</parameter>
+ in the X and Y dimensions, respectively.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>matrix</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>tx</para></entry>
+<entry role="parameter_description"><para>amount to translate in the X direction</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>ty</para></entry>
+<entry role="parameter_description"><para>amount to translate in the Y direction</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-matrix-init-scale" role="function" condition="since:1.0">
+<title>cairo_matrix_init_scale&#160;()</title>
+<indexterm zone="cairo-matrix-init-scale" role="1.0"><primary sortas="matrix_init_scale">cairo_matrix_init_scale</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_matrix_init_scale (<parameter><link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link> *matrix</parameter>,
+                         <parameter><link linkend="double"><type>double</type></link> sx</parameter>,
+                         <parameter><link linkend="double"><type>double</type></link> sy</parameter>);</programlisting>
+<para>Initializes <parameter>matrix</parameter>
+ to a transformation that scales by <parameter>sx</parameter>
+ and <parameter>sy</parameter>
+
+in the X and Y dimensions, respectively.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>matrix</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>sx</para></entry>
+<entry role="parameter_description"><para>scale factor in the X direction</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>sy</para></entry>
+<entry role="parameter_description"><para>scale factor in the Y direction</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-matrix-init-rotate" role="function" condition="since:1.0">
+<title>cairo_matrix_init_rotate&#160;()</title>
+<indexterm zone="cairo-matrix-init-rotate" role="1.0"><primary sortas="matrix_init_rotate">cairo_matrix_init_rotate</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_matrix_init_rotate (<parameter><link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link> *matrix</parameter>,
+                          <parameter><link linkend="double"><type>double</type></link> radians</parameter>);</programlisting>
+<para>Initialized <parameter>matrix</parameter>
+ to a transformation that rotates by <parameter>radians</parameter>
+.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>matrix</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>radians</para></entry>
+<entry role="parameter_description"><para>angle of rotation, in radians. The direction of rotation
+is defined such that positive angles rotate in the direction from
+the positive X axis toward the positive Y axis. With the default
+axis orientation of cairo, positive angles rotate in a clockwise
+direction.</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-matrix-translate" role="function" condition="since:1.0">
+<title>cairo_matrix_translate&#160;()</title>
+<indexterm zone="cairo-matrix-translate" role="1.0"><primary sortas="matrix_translate">cairo_matrix_translate</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_matrix_translate (<parameter><link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link> *matrix</parameter>,
+                        <parameter><link linkend="double"><type>double</type></link> tx</parameter>,
+                        <parameter><link linkend="double"><type>double</type></link> ty</parameter>);</programlisting>
+<para>Applies a translation by <parameter>tx</parameter>
+, <parameter>ty</parameter>
+ to the transformation in
+<parameter>matrix</parameter>
+. The effect of the new transformation is to first translate
+the coordinates by <parameter>tx</parameter>
+ and <parameter>ty</parameter>
+, then apply the original transformation
+to the coordinates.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>matrix</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>tx</para></entry>
+<entry role="parameter_description"><para>amount to translate in the X direction</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>ty</para></entry>
+<entry role="parameter_description"><para>amount to translate in the Y direction</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-matrix-scale" role="function" condition="since:1.0">
+<title>cairo_matrix_scale&#160;()</title>
+<indexterm zone="cairo-matrix-scale" role="1.0"><primary sortas="matrix_scale">cairo_matrix_scale</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_matrix_scale (<parameter><link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link> *matrix</parameter>,
+                    <parameter><link linkend="double"><type>double</type></link> sx</parameter>,
+                    <parameter><link linkend="double"><type>double</type></link> sy</parameter>);</programlisting>
+<para>Applies scaling by <parameter>sx</parameter>
+, <parameter>sy</parameter>
+ to the transformation in <parameter>matrix</parameter>
+. The
+effect of the new transformation is to first scale the coordinates
+by <parameter>sx</parameter>
+ and <parameter>sy</parameter>
+, then apply the original transformation to the coordinates.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>matrix</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>sx</para></entry>
+<entry role="parameter_description"><para>scale factor in the X direction</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>sy</para></entry>
+<entry role="parameter_description"><para>scale factor in the Y direction</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-matrix-rotate" role="function" condition="since:1.0">
+<title>cairo_matrix_rotate&#160;()</title>
+<indexterm zone="cairo-matrix-rotate" role="1.0"><primary sortas="matrix_rotate">cairo_matrix_rotate</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_matrix_rotate (<parameter><link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link> *matrix</parameter>,
+                     <parameter><link linkend="double"><type>double</type></link> radians</parameter>);</programlisting>
+<para>Applies rotation by <parameter>radians</parameter>
+ to the transformation in
+<parameter>matrix</parameter>
+. The effect of the new transformation is to first rotate the
+coordinates by <parameter>radians</parameter>
+, then apply the original transformation
+to the coordinates.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>matrix</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>radians</para></entry>
+<entry role="parameter_description"><para>angle of rotation, in radians. The direction of rotation
+is defined such that positive angles rotate in the direction from
+the positive X axis toward the positive Y axis. With the default
+axis orientation of cairo, positive angles rotate in a clockwise
+direction.</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-matrix-invert" role="function" condition="since:1.0">
+<title>cairo_matrix_invert&#160;()</title>
+<indexterm zone="cairo-matrix-invert" role="1.0"><primary sortas="matrix_invert">cairo_matrix_invert</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-status-t"><returnvalue>cairo_status_t</returnvalue></link>
+cairo_matrix_invert (<parameter><link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link> *matrix</parameter>);</programlisting>
+<para>Changes <parameter>matrix</parameter>
+ to be the inverse of its original value. Not
+all transformation matrices have inverses; if the matrix
+collapses points together (it is <firstterm>degenerate</firstterm>),
+then it has no inverse and this function will fail.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>matrix</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> If <parameter>matrix</parameter>
+has an inverse, modifies <parameter>matrix</parameter>
+to
+be the inverse matrix and returns <link linkend="CAIRO-STATUS-SUCCESS:CAPS"><literal>CAIRO_STATUS_SUCCESS</literal></link>. Otherwise,
+returns <link linkend="CAIRO-STATUS-INVALID-MATRIX:CAPS"><literal>CAIRO_STATUS_INVALID_MATRIX</literal></link>.</para>
+<para></para>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-matrix-multiply" role="function" condition="since:1.0">
+<title>cairo_matrix_multiply&#160;()</title>
+<indexterm zone="cairo-matrix-multiply" role="1.0"><primary sortas="matrix_multiply">cairo_matrix_multiply</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_matrix_multiply (<parameter><link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link> *result</parameter>,
+                       <parameter>const <link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link> *a</parameter>,
+                       <parameter>const <link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link> *b</parameter>);</programlisting>
+<para>Multiplies the affine transformations in <parameter>a</parameter>
+ and <parameter>b</parameter>
+ together
+and stores the result in <parameter>result</parameter>
+. The effect of the resulting
+transformation is to first apply the transformation in <parameter>a</parameter>
+ to the
+coordinates and then apply the transformation in <parameter>b</parameter>
+ to the
+coordinates.</para>
+<para>It is allowable for <parameter>result</parameter>
+ to be identical to either <parameter>a</parameter>
+ or <parameter>b</parameter>
+.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>result</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link> in which to store the result</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>a</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>b</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-matrix-transform-distance" role="function" condition="since:1.0">
+<title>cairo_matrix_transform_distance&#160;()</title>
+<indexterm zone="cairo-matrix-transform-distance" role="1.0"><primary sortas="matrix_transform_distance">cairo_matrix_transform_distance</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_matrix_transform_distance (<parameter>const <link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link> *matrix</parameter>,
+                                 <parameter><link linkend="double"><type>double</type></link> *dx</parameter>,
+                                 <parameter><link linkend="double"><type>double</type></link> *dy</parameter>);</programlisting>
+<para>Transforms the distance vector (<parameter>dx</parameter>
+,<parameter>dy</parameter>
+) by <parameter>matrix</parameter>
+. This is
+similar to <link linkend="cairo-matrix-transform-point"><function>cairo_matrix_transform_point()</function></link> except that the translation
+components of the transformation are ignored. The calculation of
+the returned vector is as follows:</para>
+<programlisting>
+dx2 = dx1 * a + dy1 * c;
+dy2 = dx1 * b + dy1 * d;
+</programlisting>
+<para>Affine transformations are position invariant, so the same vector
+always transforms to the same vector. If (<parameter>x1</parameter>
+,<parameter>y1</parameter>
+) transforms
+to (<parameter>x2</parameter>
+,<parameter>y2</parameter>
+) then (<parameter>x1</parameter>
++<parameter>dx1</parameter>
+,<parameter>y1</parameter>
++<parameter>dy1</parameter>
+) will transform to
+(<parameter>x1</parameter>
++<parameter>dx2</parameter>
+,<parameter>y1</parameter>
++<parameter>dy2</parameter>
+) for all values of <parameter>x1</parameter>
+ and <parameter>x2</parameter>
+.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>matrix</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>dx</para></entry>
+<entry role="parameter_description"><para>X component of a distance vector. An in/out parameter</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>dy</para></entry>
+<entry role="parameter_description"><para>Y component of a distance vector. An in/out parameter</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-matrix-transform-point" role="function" condition="since:1.0">
+<title>cairo_matrix_transform_point&#160;()</title>
+<indexterm zone="cairo-matrix-transform-point" role="1.0"><primary sortas="matrix_transform_point">cairo_matrix_transform_point</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_matrix_transform_point (<parameter>const <link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link> *matrix</parameter>,
+                              <parameter><link linkend="double"><type>double</type></link> *x</parameter>,
+                              <parameter><link linkend="double"><type>double</type></link> *y</parameter>);</programlisting>
+<para>Transforms the point (<parameter>x</parameter>
+, <parameter>y</parameter>
+) by <parameter>matrix</parameter>
+.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>matrix</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>x</para></entry>
+<entry role="parameter_description"><para>X position. An in/out parameter</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>y</para></entry>
+<entry role="parameter_description"><para>Y position. An in/out parameter</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+
+</refsect1>
+<refsect1 id="cairo-cairo-matrix-t.other_details" role="details">
+<title role="details.title">Types and Values</title>
+<refsect2 id="cairo-matrix-t" role="struct" condition="since:1.0">
+<title>cairo_matrix_t</title>
+<indexterm zone="cairo-matrix-t" role="1.0"><primary sortas="matrix_t">cairo_matrix_t</primary></indexterm>
+<programlisting language="C">typedef struct {
+    double xx; double yx;
+    double xy; double yy;
+    double x0; double y0;
+} cairo_matrix_t;
+</programlisting>
+<para>A <link linkend="cairo-matrix-t"><type>cairo_matrix_t</type></link> holds an affine transformation, such as a scale,
+rotation, shear, or a combination of those. The transformation of
+a point (x, y) is given by:</para>
+<programlisting>
+    x_new = xx * x + xy * y + x0;
+    y_new = yx * x + yy * y + y0;
+</programlisting>
+<refsect3 role="struct_members">
+<title>Members</title>
+<informaltable role="struct_members_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="struct_members_name" colwidth="300px"/>
+<colspec colname="struct_members_description"/>
+<colspec colname="struct_members_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="struct_member_name"><para><link linkend="double"><type>double</type></link>&#160;<structfield id="cairo-matrix-t.xx">xx</structfield>;</para></entry>
+<listitem><para>xx component of the affine transformation</para></listitem>
+<entry role="struct_member_description"><para>xx component of the affine transformation</para></entry>
+<entry role="struct_member_annotations"></entry>
+</row>
+<row><entry role="struct_member_name"><para><link linkend="double"><type>double</type></link>&#160;<structfield id="cairo-matrix-t.yx">yx</structfield>;</para></entry>
+<listitem><para>yx component of the affine transformation</para></listitem>
+<entry role="struct_member_description"><para>yx component of the affine transformation</para></entry>
+<entry role="struct_member_annotations"></entry>
+</row>
+<row><entry role="struct_member_name"><para><link linkend="double"><type>double</type></link>&#160;<structfield id="cairo-matrix-t.xy">xy</structfield>;</para></entry>
+<listitem><para>xy component of the affine transformation</para></listitem>
+<entry role="struct_member_description"><para>xy component of the affine transformation</para></entry>
+<entry role="struct_member_annotations"></entry>
+</row>
+<row><entry role="struct_member_name"><para><link linkend="double"><type>double</type></link>&#160;<structfield id="cairo-matrix-t.yy">yy</structfield>;</para></entry>
+<listitem><para>yy component of the affine transformation</para></listitem>
+<entry role="struct_member_description"><para>yy component of the affine transformation</para></entry>
+<entry role="struct_member_annotations"></entry>
+</row>
+<row><entry role="struct_member_name"><para><link linkend="double"><type>double</type></link>&#160;<structfield id="cairo-matrix-t.x0">x0</structfield>;</para></entry>
+<listitem><para>X translation component of the affine transformation</para></listitem>
+<entry role="struct_member_description"><para>X translation component of the affine transformation</para></entry>
+<entry role="struct_member_annotations"></entry>
+</row>
+<row><entry role="struct_member_name"><para><link linkend="double"><type>double</type></link>&#160;<structfield id="cairo-matrix-t.y0">y0</structfield>;</para></entry>
+<listitem><para>Y translation component of the affine transformation</para></listitem>
+<entry role="struct_member_description"><para>Y translation component of the affine transformation</para></entry>
+<entry role="struct_member_annotations"></entry>
+</row>
+</tbody></tgroup></informaltable>
+</refsect3>
+<para role="since">Since 1.0</para></refsect2>
+
+</refsect1>
+<refsect1 id="cairo-cairo-matrix-t.see-also">
+<title>See Also</title>
+<para><link linkend="cairo-t"><type>cairo_t</type></link></para>
+
+</refsect1>
+
+</refentry>

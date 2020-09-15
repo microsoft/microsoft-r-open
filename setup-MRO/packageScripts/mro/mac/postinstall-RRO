@@ -1,0 +1,78 @@
+#!/bin/sh
+
+# postflight script for R
+
+# create convenience links to redistributed compiler libs:
+pwd
+cd /usr/local
+if [ ! -e /usr/local/gfortran ]; then
+	mkdir -p /usr/local/gfortran/lib
+	ln -s /Library/Frameworks/R.framework/Resources/lib/libgfortran.3.dylib /usr/local/gfortran/lib/libgfortran.3.dylib
+	ln -s /Library/Frameworks/R.framework/Resources/lib/libgcc_s.1.dylib /usr/local/gfortran/lib/libgcc_s.1.dylib
+	ln -s /Library/Frameworks/R.framework/Resources/lib/libquadmath.0.dylib /usr/local/gfortran/lib/libquadmath.0.dylib
+fi
+
+if [ ! -e /usr/local/clang4 ]; then
+	mkdir -p /usr/local/clang4/lib
+	ln -s /Library/Frameworks/R.framework/Resources/lib/libc++.1.dylib /usr/local/clang4/lib/libc++.1.dylib
+	ln -s /Library/Frameworks/R.framework/Resources/lib/libc++abi.1.dylib /usr/local/clang4/lib/libc++abi.1.dylib
+	ln -s /Library/Frameworks/R.framework/Resources/lib/libomp.dylib /usr/local/clang4/lib/libomp.dylib
+	ln -s /Library/Frameworks/R.framework/Resources/lib/libunwind.1.dylib /usr/local/clang4/lib/libunwind.1.dylib
+fi
+
+
+ln -s /Library/Frameworks/R.framework/Resources/lib/libR.dylib /usr/local/lib/libR.dylib
+
+# create convenience links to R and Rscript
+if [ ! -e /usr/local/bin ]; then
+	mkdir -p /usr/local/bin
+fi
+
+cd /usr/local/bin
+rm -f R Rscript
+ln -s /Library/Frameworks/R.framework/Resources/bin/R .
+ln -s /Library/Frameworks/R.framework/Resources/bin/Rscript .
+cd /Library/Frameworks/R.framework/Resources/etc
+
+# update font cache (if this R includes fontconfig)
+if [ -e /Library/Frameworks/R.framework/Resources/bin/fc-cache ]; then
+    /Library/Frameworks/R.framework/Resources/bin/fc-cache
+fi
+
+# # remove llvm- prefix and -4.2 suffix from compilers on 10.8+ where we can encounter Xcode 5+
+# if uname -r | grep '^1[2-7]' >/dev/null; then
+   # sed -e 's:llvm-g\(..\)-4.2:g\1:g' /Library/Frameworks/RRO.framework/Resources/etc/Makeconf > /Library/Frameworks/RRO.framework/Resources/etc/Makeconf.new && mv /Library/Frameworks/RRO.framework/Resources/etc/Makeconf.new /Library/Frameworks/RRO.framework/Resources/etc/Makeconf
+   # echo '' >> /Library/Frameworks/RRO.framework/Resources/etc/Makeconf
+   # echo '## NOTE: originally compiled with llvm-gcc-4.2, post-processed by postflight script to use gcc' >> /Library/Frameworks/RRO.framework/Resources/etc/Makeconf
+# fi
+
+# make sure the framework is admin-writable
+chown -Rh root:admin /Library/Frameworks/R.framework
+chmod -R g+w /Library/Frameworks/R.framework
+
+# some jobs needed specifically on Mac OS X 10.6 (Snow Leopard) and 10.7 (Lion)
+
+# we ship with R-BLAS due to bugs in vecLib, but so far it seems Lion has fixed those so we can go back to vecLib
+# update: (2.14.0) no we don't, sicne vecLib crashes in Lion, possibly due to ABI issues, so we still use R BLAS
+#if uname -r | grep ^11 >/dev/null; then
+#    ln -sfn libRblas.vecLib.dylib /Library/Frameworks/RRO.framework/Resources/lib/libRblas.dylib
+#fi
+
+# check gfortran - if it's our previously installed Xcode 3.1.x build, remove it since it breaks on SL
+# if /usr/bin/gfortran -v 2>/dev/null | grep '/Volumes/Data/Builds/apple/gcc_42-55'; then
+    # rm -f /usr/bin/gfortran
+# fi
+# if /usr/bin/gfortran-4.2 -v 2>/dev/null | grep '/Volumes/Data/Builds/apple/gcc_42-55'; then
+    # rm -f /usr/bin/gfortran-4.2
+    # for dir in /usr/lib/gcc/i686-apple-darwin9 /usr/lib/gcc/powerpc-apple-darwin9 /usr/libexec/gcc/i686-apple-darwin9 /usr/libexec/gcc/powerpc-apple-darwin9; do
+	# rm -rf "$dir/4.2.1"
+	# rmdir "$dir" 2>/dev/null
+    # done
+# fi
+
+# this may sound a bit radical, but because the package id is different
+# we can't use upgrade script for this -- and old R64.app will break
+# when used with our framework, so better get rid of it
+# if grep -i org.R-project /Applications/R64.app/Contents/Info.plist >/dev/null; then
+    # rm -rf /Applications/R64.app
+# fi

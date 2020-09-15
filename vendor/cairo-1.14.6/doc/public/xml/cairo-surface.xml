@@ -1,0 +1,1510 @@
+<?xml version='1.0' encoding='UTF-8'?> 
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!ENTITY version SYSTEM "version.xml">
+]>
+<refentry id="cairo-cairo-surface-t">
+<refmeta>
+<refentrytitle role="top_of_page" id="cairo-cairo-surface-t.top_of_page">cairo_surface_t</refentrytitle>
+<manvolnum>3</manvolnum>
+<refmiscinfo>
+  CAIRO Library
+</refmiscinfo>
+</refmeta>
+<refnamediv>
+<refname>cairo_surface_t</refname>
+<refpurpose>Base class for surfaces</refpurpose>
+</refnamediv>
+
+<refsect1 id="cairo-cairo-surface-t.functions" role="functions_proto">
+<title role="functions_proto.title">Functions</title>
+<informaltable pgwide="1" frame="none">
+<tgroup cols="2">
+<colspec colname="functions_return" colwidth="150px"/>
+<colspec colname="functions_name"/>
+<tbody>
+<row><entry role="function_type"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+</entry><entry role="function_name"><link linkend="cairo-surface-create-similar">cairo_surface_create_similar</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+</entry><entry role="function_name"><link linkend="cairo-surface-create-similar-image">cairo_surface_create_similar_image</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+</entry><entry role="function_name"><link linkend="cairo-surface-create-for-rectangle">cairo_surface_create_for_rectangle</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+</entry><entry role="function_name"><link linkend="cairo-surface-reference">cairo_surface_reference</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-surface-destroy">cairo_surface_destroy</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-status-t"><returnvalue>cairo_status_t</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-surface-status">cairo_surface_status</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-surface-finish">cairo_surface_finish</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-surface-flush">cairo_surface_flush</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-device-t"><returnvalue>cairo_device_t</returnvalue></link>&#160;*
+</entry><entry role="function_name"><link linkend="cairo-surface-get-device">cairo_surface_get_device</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-surface-get-font-options">cairo_surface_get_font_options</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-content-t"><returnvalue>cairo_content_t</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-surface-get-content">cairo_surface_get_content</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-surface-mark-dirty">cairo_surface_mark_dirty</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-surface-mark-dirty-rectangle">cairo_surface_mark_dirty_rectangle</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-surface-set-device-offset">cairo_surface_set_device_offset</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-surface-get-device-offset">cairo_surface_get_device_offset</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-surface-get-device-scale">cairo_surface_get_device_scale</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-surface-set-device-scale">cairo_surface_set_device_scale</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-surface-set-fallback-resolution">cairo_surface_set_fallback_resolution</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-surface-get-fallback-resolution">cairo_surface_get_fallback_resolution</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-surface-type-t"><returnvalue>cairo_surface_type_t</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-surface-get-type">cairo_surface_get_type</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type">unsigned <link linkend="int"><returnvalue>int</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-surface-get-reference-count">cairo_surface_get_reference_count</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-status-t"><returnvalue>cairo_status_t</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-surface-set-user-data">cairo_surface_set_user_data</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>&#160;*
+</entry><entry role="function_name"><link linkend="cairo-surface-get-user-data">cairo_surface_get_user_data</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-surface-copy-page">cairo_surface_copy_page</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-surface-show-page">cairo_surface_show_page</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-bool-t"><returnvalue>cairo_bool_t</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-surface-has-show-text-glyphs">cairo_surface_has_show_text_glyphs</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-status-t"><returnvalue>cairo_status_t</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-surface-set-mime-data">cairo_surface_set_mime_data</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-surface-get-mime-data">cairo_surface_get_mime_data</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-bool-t"><returnvalue>cairo_bool_t</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-surface-supports-mime-type">cairo_surface_supports_mime_type</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+</entry><entry role="function_name"><link linkend="cairo-surface-map-to-image">cairo_surface_map_to_image</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-surface-unmap-image">cairo_surface_unmap_image</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+
+</tbody>
+</tgroup>
+</informaltable>
+</refsect1>
+<refsect1 id="cairo-cairo-surface-t.other" role="other_proto">
+<title role="other_proto.title">Types and Values</title>
+<informaltable role="enum_members_table" pgwide="1" frame="none">
+<tgroup cols="2">
+<colspec colname="name" colwidth="150px"/>
+<colspec colname="description"/>
+<tbody>
+<row><entry role="define_keyword">#define</entry><entry role="function_name"><link linkend="CAIRO-HAS-MIME-SURFACE:CAPS">CAIRO_HAS_MIME_SURFACE</link></entry></row>
+<row><entry role="define_keyword">#define</entry><entry role="function_name"><link linkend="CAIRO-MIME-TYPE-JBIG2:CAPS">CAIRO_MIME_TYPE_JBIG2</link></entry></row>
+<row><entry role="define_keyword">#define</entry><entry role="function_name"><link linkend="CAIRO-MIME-TYPE-JBIG2-GLOBAL:CAPS">CAIRO_MIME_TYPE_JBIG2_GLOBAL</link></entry></row>
+<row><entry role="define_keyword">#define</entry><entry role="function_name"><link linkend="CAIRO-MIME-TYPE-JBIG2-GLOBAL-ID:CAPS">CAIRO_MIME_TYPE_JBIG2_GLOBAL_ID</link></entry></row>
+<row><entry role="define_keyword">#define</entry><entry role="function_name"><link linkend="CAIRO-MIME-TYPE-JP2:CAPS">CAIRO_MIME_TYPE_JP2</link></entry></row>
+<row><entry role="define_keyword">#define</entry><entry role="function_name"><link linkend="CAIRO-MIME-TYPE-JPEG:CAPS">CAIRO_MIME_TYPE_JPEG</link></entry></row>
+<row><entry role="define_keyword">#define</entry><entry role="function_name"><link linkend="CAIRO-MIME-TYPE-PNG:CAPS">CAIRO_MIME_TYPE_PNG</link></entry></row>
+<row><entry role="define_keyword">#define</entry><entry role="function_name"><link linkend="CAIRO-MIME-TYPE-URI:CAPS">CAIRO_MIME_TYPE_URI</link></entry></row>
+<row><entry role="define_keyword">#define</entry><entry role="function_name"><link linkend="CAIRO-MIME-TYPE-UNIQUE-ID:CAPS">CAIRO_MIME_TYPE_UNIQUE_ID</link></entry></row>
+<row><entry role="typedef_keyword">typedef</entry><entry role="function_name"><link linkend="cairo-surface-t">cairo_surface_t</link></entry></row>
+<row><entry role="datatype_keyword">enum</entry><entry role="function_name"><link linkend="cairo-content-t">cairo_content_t</link></entry></row>
+<row><entry role="datatype_keyword">enum</entry><entry role="function_name"><link linkend="cairo-surface-type-t">cairo_surface_type_t</link></entry></row>
+
+</tbody>
+</tgroup>
+</informaltable>
+</refsect1>
+<refsect1 id="cairo-cairo-surface-t.object-hierarchy" role="object_hierarchy">
+<title role="object_hierarchy.title">Object Hierarchy</title>
+<screen>
+</screen>
+</refsect1>
+
+
+<refsect1 id="cairo-cairo-surface-t.description" role="desc">
+<title role="desc.title">Description</title>
+<para><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> is the abstract type representing all different drawing
+targets that cairo can render to.  The actual drawings are
+performed using a cairo <firstterm>context</firstterm>.</para>
+<para>A cairo surface is created by using <firstterm>backend</firstterm>-specific
+constructors, typically of the form
+<function>cairo_<emphasis>backend</emphasis>_surface_create(<!-- -->)</function>.</para>
+<para>Most surface types allow accessing the surface without using Cairo
+functions. If you do this, keep in mind that it is mandatory that you call
+<link linkend="cairo-surface-flush"><function>cairo_surface_flush()</function></link> before reading from or writing to the surface and that
+you must use <link linkend="cairo-surface-mark-dirty"><function>cairo_surface_mark_dirty()</function></link> after modifying it.</para>
+<example>
+<title>Directly modifying an image surface</title>
+<programlisting>
+void
+modify_image_surface (cairo_surface_t *surface)
+{
+  unsigned char *data;
+  int width, height, stride;
+
+  // flush to ensure all writing to the image was done
+  cairo_surface_flush (surface);
+
+  // modify the image
+  data = cairo_image_surface_get_data (surface);
+  width = cairo_image_surface_get_width (surface);
+  height = cairo_image_surface_get_height (surface);
+  stride = cairo_image_surface_get_stride (surface);
+  modify_image_data (data, width, height, stride);
+
+  // mark the image dirty so Cairo clears its caches.
+  cairo_surface_mark_dirty (surface);
+}
+</programlisting>
+</example>
+<para>Note that for other surface types it might be necessary to acquire the
+surface's device first. See <link linkend="cairo-device-acquire"><function>cairo_device_acquire()</function></link> for a discussion of
+devices.</para>
+
+</refsect1>
+<refsect1 id="cairo-cairo-surface-t.functions_details" role="details">
+<title role="details.title">Functions</title>
+<refsect2 id="cairo-surface-create-similar" role="function" condition="since:1.0">
+<title>cairo_surface_create_similar&#160;()</title>
+<indexterm zone="cairo-surface-create-similar" role="1.0"><primary sortas="surface_create_similar">cairo_surface_create_similar</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+cairo_surface_create_similar (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *other</parameter>,
+                              <parameter><link linkend="cairo-content-t"><type>cairo_content_t</type></link> content</parameter>,
+                              <parameter><link linkend="int"><type>int</type></link> width</parameter>,
+                              <parameter><link linkend="int"><type>int</type></link> height</parameter>);</programlisting>
+<para>Create a new surface that is as compatible as possible with an
+existing surface. For example the new surface will have the same
+fallback resolution and font options as <parameter>other</parameter>
+. Generally, the new
+surface will also use the same backend as <parameter>other</parameter>
+, unless that is
+not possible for some reason. The type of the returned surface may
+be examined with <link linkend="cairo-surface-get-type"><function>cairo_surface_get_type()</function></link>.</para>
+<para>Initially the surface contents are all 0 (transparent if contents
+have transparency, black otherwise.)</para>
+<para>Use <link linkend="cairo-surface-create-similar-image"><function>cairo_surface_create_similar_image()</function></link> if you need an image surface
+which can be painted quickly to the target surface.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>other</para></entry>
+<entry role="parameter_description"><para>an existing surface used to select the backend of the new surface</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>content</para></entry>
+<entry role="parameter_description"><para>the content for the new surface</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>width</para></entry>
+<entry role="parameter_description"><para>width of the new surface, (in device-space units)</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>height</para></entry>
+<entry role="parameter_description"><para>height of the new surface (in device-space units)</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> a pointer to the newly allocated surface. The caller
+owns the surface and should call <link linkend="cairo-surface-destroy"><function>cairo_surface_destroy()</function></link> when done
+with it.</para>
+<para>This function always returns a valid pointer, but it will return a
+pointer to a "nil" surface if <parameter>other</parameter>
+is already in an error state
+or any other error occurs.</para>
+<para></para>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-surface-create-similar-image" role="function" condition="since:1.12">
+<title>cairo_surface_create_similar_image&#160;()</title>
+<indexterm zone="cairo-surface-create-similar-image" role="1.12"><primary sortas="surface_create_similar_image">cairo_surface_create_similar_image</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+cairo_surface_create_similar_image (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *other</parameter>,
+                                    <parameter><link linkend="cairo-format-t"><type>cairo_format_t</type></link> format</parameter>,
+                                    <parameter><link linkend="int"><type>int</type></link> width</parameter>,
+                                    <parameter><link linkend="int"><type>int</type></link> height</parameter>);</programlisting>
+<para>Create a new image surface that is as compatible as possible for uploading
+to and the use in conjunction with an existing surface. However, this surface
+can still be used like any normal image surface.</para>
+<para>Initially the surface contents are all 0 (transparent if contents
+have transparency, black otherwise.)</para>
+<para>Use <link linkend="cairo-surface-create-similar"><function>cairo_surface_create_similar()</function></link> if you don't need an image surface.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>other</para></entry>
+<entry role="parameter_description"><para>an existing surface used to select the preference of the new surface</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>format</para></entry>
+<entry role="parameter_description"><para>the format for the new surface</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>width</para></entry>
+<entry role="parameter_description"><para>width of the new surface, (in device-space units)</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>height</para></entry>
+<entry role="parameter_description"><para>height of the new surface (in device-space units)</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> a pointer to the newly allocated image surface. The caller
+owns the surface and should call <link linkend="cairo-surface-destroy"><function>cairo_surface_destroy()</function></link> when done
+with it.</para>
+<para>This function always returns a valid pointer, but it will return a
+pointer to a "nil" surface if <parameter>other</parameter>
+is already in an error state
+or any other error occurs.</para>
+<para></para>
+</refsect3><para role="since">Since 1.12</para></refsect2>
+<refsect2 id="cairo-surface-create-for-rectangle" role="function" condition="since:1.10">
+<title>cairo_surface_create_for_rectangle&#160;()</title>
+<indexterm zone="cairo-surface-create-for-rectangle" role="1.10"><primary sortas="surface_create_for_rectangle">cairo_surface_create_for_rectangle</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+cairo_surface_create_for_rectangle (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *target</parameter>,
+                                    <parameter><link linkend="double"><type>double</type></link> x</parameter>,
+                                    <parameter><link linkend="double"><type>double</type></link> y</parameter>,
+                                    <parameter><link linkend="double"><type>double</type></link> width</parameter>,
+                                    <parameter><link linkend="double"><type>double</type></link> height</parameter>);</programlisting>
+<para>Create a new surface that is a rectangle within the target surface.
+All operations drawn to this surface are then clipped and translated
+onto the target surface. Nothing drawn via this sub-surface outside of
+its bounds is drawn onto the target surface, making this a useful method
+for passing constrained child surfaces to library routines that draw
+directly onto the parent surface, i.e. with no further backend allocations,
+double buffering or copies.</para>
+<note><para>The semantics of subsurfaces have not been finalized yet
+unless the rectangle is in full device units, is contained within
+the extents of the target surface, and the target or subsurface's
+device transforms are not changed.</para></note>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>target</para></entry>
+<entry role="parameter_description"><para>an existing surface for which the sub-surface will point to</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>x</para></entry>
+<entry role="parameter_description"><para>the x-origin of the sub-surface from the top-left of the target surface (in device-space units)</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>y</para></entry>
+<entry role="parameter_description"><para>the y-origin of the sub-surface from the top-left of the target surface (in device-space units)</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>width</para></entry>
+<entry role="parameter_description"><para>width of the sub-surface (in device-space units)</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>height</para></entry>
+<entry role="parameter_description"><para>height of the sub-surface (in device-space units)</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> a pointer to the newly allocated surface. The caller
+owns the surface and should call <link linkend="cairo-surface-destroy"><function>cairo_surface_destroy()</function></link> when done
+with it.</para>
+<para>This function always returns a valid pointer, but it will return a
+pointer to a "nil" surface if <parameter>other</parameter>
+is already in an error state
+or any other error occurs.</para>
+<para></para>
+</refsect3><para role="since">Since 1.10</para></refsect2>
+<refsect2 id="cairo-surface-reference" role="function" condition="since:1.0">
+<title>cairo_surface_reference&#160;()</title>
+<indexterm zone="cairo-surface-reference" role="1.0"><primary sortas="surface_reference">cairo_surface_reference</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+cairo_surface_reference (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>);</programlisting>
+<para>Increases the reference count on <parameter>surface</parameter>
+ by one. This prevents
+<parameter>surface</parameter>
+ from being destroyed until a matching call to
+<link linkend="cairo-surface-destroy"><function>cairo_surface_destroy()</function></link> is made.</para>
+<para>The number of references to a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> can be get using
+<link linkend="cairo-surface-get-reference-count"><function>cairo_surface_get_reference_count()</function></link>.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> the referenced <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link>.</para>
+<para></para>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-surface-destroy" role="function" condition="since:1.0">
+<title>cairo_surface_destroy&#160;()</title>
+<indexterm zone="cairo-surface-destroy" role="1.0"><primary sortas="surface_destroy">cairo_surface_destroy</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_surface_destroy (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>);</programlisting>
+<para>Decreases the reference count on <parameter>surface</parameter>
+ by one. If the result is
+zero, then <parameter>surface</parameter>
+ and all associated resources are freed.  See
+<link linkend="cairo-surface-reference"><function>cairo_surface_reference()</function></link>.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-surface-status" role="function" condition="since:1.0">
+<title>cairo_surface_status&#160;()</title>
+<indexterm zone="cairo-surface-status" role="1.0"><primary sortas="surface_status">cairo_surface_status</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-status-t"><returnvalue>cairo_status_t</returnvalue></link>
+cairo_surface_status (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>);</programlisting>
+<para>Checks whether an error has previously occurred for this
+surface.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> <link linkend="CAIRO-STATUS-SUCCESS:CAPS"><literal>CAIRO_STATUS_SUCCESS</literal></link>, <link linkend="CAIRO-STATUS-NULL-POINTER:CAPS"><literal>CAIRO_STATUS_NULL_POINTER</literal></link>,
+<link linkend="CAIRO-STATUS-NO-MEMORY:CAPS"><literal>CAIRO_STATUS_NO_MEMORY</literal></link>, <link linkend="CAIRO-STATUS-READ-ERROR:CAPS"><literal>CAIRO_STATUS_READ_ERROR</literal></link>,
+<link linkend="CAIRO-STATUS-INVALID-CONTENT:CAPS"><literal>CAIRO_STATUS_INVALID_CONTENT</literal></link>, <link linkend="CAIRO-STATUS-INVALID-FORMAT:CAPS"><literal>CAIRO_STATUS_INVALID_FORMAT</literal></link>, or
+<link linkend="CAIRO-STATUS-INVALID-VISUAL:CAPS"><literal>CAIRO_STATUS_INVALID_VISUAL</literal></link>.</para>
+<para></para>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-surface-finish" role="function" condition="since:1.0">
+<title>cairo_surface_finish&#160;()</title>
+<indexterm zone="cairo-surface-finish" role="1.0"><primary sortas="surface_finish">cairo_surface_finish</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_surface_finish (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>);</programlisting>
+<para>This function finishes the surface and drops all references to
+external resources.  For example, for the Xlib backend it means
+that cairo will no longer access the drawable, which can be freed.
+After calling <link linkend="cairo-surface-finish"><function>cairo_surface_finish()</function></link> the only valid operations on a
+surface are getting and setting user, referencing and
+destroying, and flushing and finishing it.
+Further drawing to the surface will not affect the
+surface but will instead trigger a <link linkend="CAIRO-STATUS-SURFACE-FINISHED:CAPS"><literal>CAIRO_STATUS_SURFACE_FINISHED</literal></link>
+error.</para>
+<para>When the last call to <link linkend="cairo-surface-destroy"><function>cairo_surface_destroy()</function></link> decreases the
+reference count to zero, cairo will call <link linkend="cairo-surface-finish"><function>cairo_surface_finish()</function></link> if
+it hasn't been called already, before freeing the resources
+associated with the surface.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>the <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> to finish</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-surface-flush" role="function" condition="since:1.0">
+<title>cairo_surface_flush&#160;()</title>
+<indexterm zone="cairo-surface-flush" role="1.0"><primary sortas="surface_flush">cairo_surface_flush</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_surface_flush (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>);</programlisting>
+<para>Do any pending drawing for the surface and also restore any temporary
+modifications cairo has made to the surface's state. This function
+must be called before switching from drawing on the surface with
+cairo to drawing on it directly with native APIs, or accessing its
+memory outside of Cairo. If the surface doesn't support direct
+access, then this function does nothing.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-surface-get-device" role="function" condition="since:1.10">
+<title>cairo_surface_get_device&#160;()</title>
+<indexterm zone="cairo-surface-get-device" role="1.10"><primary sortas="surface_get_device">cairo_surface_get_device</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-device-t"><returnvalue>cairo_device_t</returnvalue></link>&#160;*
+cairo_surface_get_device (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>);</programlisting>
+<para>This function returns the device for a <parameter>surface</parameter>
+.
+See <link linkend="cairo-device-t"><type>cairo_device_t</type></link>.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> The device for <parameter>surface</parameter>
+or <link linkend="NULL:CAPS"><literal>NULL</literal></link> if the surface does
+not have an associated device.</para>
+<para></para>
+</refsect3><para role="since">Since 1.10</para></refsect2>
+<refsect2 id="cairo-surface-get-font-options" role="function" condition="since:1.0">
+<title>cairo_surface_get_font_options&#160;()</title>
+<indexterm zone="cairo-surface-get-font-options" role="1.0"><primary sortas="surface_get_font_options">cairo_surface_get_font_options</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_surface_get_font_options (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>,
+                                <parameter><link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link> *options</parameter>);</programlisting>
+<para>Retrieves the default font rendering options for the surface.
+This allows display surfaces to report the correct subpixel order
+for rendering on them, print surfaces to disable hinting of
+metrics and so forth. The result can then be used with
+<link linkend="cairo-scaled-font-create"><function>cairo_scaled_font_create()</function></link>.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>options</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-font-options-t"><type>cairo_font_options_t</type></link> object into which to store
+the retrieved options. All existing values are overwritten</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-surface-get-content" role="function" condition="since:1.2">
+<title>cairo_surface_get_content&#160;()</title>
+<indexterm zone="cairo-surface-get-content" role="1.2"><primary sortas="surface_get_content">cairo_surface_get_content</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-content-t"><returnvalue>cairo_content_t</returnvalue></link>
+cairo_surface_get_content (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>);</programlisting>
+<para>This function returns the content type of <parameter>surface</parameter>
+ which indicates
+whether the surface contains color and/or alpha information. See
+<link linkend="cairo-content-t"><type>cairo_content_t</type></link>.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> The content type of <parameter>surface</parameter>
+.</para>
+<para></para>
+</refsect3><para role="since">Since 1.2</para></refsect2>
+<refsect2 id="cairo-surface-mark-dirty" role="function" condition="since:1.0">
+<title>cairo_surface_mark_dirty&#160;()</title>
+<indexterm zone="cairo-surface-mark-dirty" role="1.0"><primary sortas="surface_mark_dirty">cairo_surface_mark_dirty</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_surface_mark_dirty (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>);</programlisting>
+<para>Tells cairo that drawing has been done to surface using means other
+than cairo, and that cairo should reread any cached areas. Note
+that you must call <link linkend="cairo-surface-flush"><function>cairo_surface_flush()</function></link> before doing such drawing.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-surface-mark-dirty-rectangle" role="function" condition="since:1.0">
+<title>cairo_surface_mark_dirty_rectangle&#160;()</title>
+<indexterm zone="cairo-surface-mark-dirty-rectangle" role="1.0"><primary sortas="surface_mark_dirty_rectangle">cairo_surface_mark_dirty_rectangle</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_surface_mark_dirty_rectangle (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>,
+                                    <parameter><link linkend="int"><type>int</type></link> x</parameter>,
+                                    <parameter><link linkend="int"><type>int</type></link> y</parameter>,
+                                    <parameter><link linkend="int"><type>int</type></link> width</parameter>,
+                                    <parameter><link linkend="int"><type>int</type></link> height</parameter>);</programlisting>
+<para>Like <link linkend="cairo-surface-mark-dirty"><function>cairo_surface_mark_dirty()</function></link>, but drawing has been done only to
+the specified rectangle, so that cairo can retain cached contents
+for other parts of the surface.</para>
+<para>Any cached clip set on the surface will be reset by this function,
+to make sure that future cairo calls have the clip set that they
+expect.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>x</para></entry>
+<entry role="parameter_description"><para>X coordinate of dirty rectangle</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>y</para></entry>
+<entry role="parameter_description"><para>Y coordinate of dirty rectangle</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>width</para></entry>
+<entry role="parameter_description"><para>width of dirty rectangle</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>height</para></entry>
+<entry role="parameter_description"><para>height of dirty rectangle</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-surface-set-device-offset" role="function" condition="since:1.0">
+<title>cairo_surface_set_device_offset&#160;()</title>
+<indexterm zone="cairo-surface-set-device-offset" role="1.0"><primary sortas="surface_set_device_offset">cairo_surface_set_device_offset</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_surface_set_device_offset (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>,
+                                 <parameter><link linkend="double"><type>double</type></link> x_offset</parameter>,
+                                 <parameter><link linkend="double"><type>double</type></link> y_offset</parameter>);</programlisting>
+<para>Sets an offset that is added to the device coordinates determined
+by the CTM when drawing to <parameter>surface</parameter>
+. One use case for this function
+is when we want to create a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> that redirects drawing
+for a portion of an onscreen surface to an offscreen surface in a
+way that is completely invisible to the user of the cairo
+API. Setting a transformation via <link linkend="cairo-translate"><function>cairo_translate()</function></link> isn't
+sufficient to do this, since functions like
+<link linkend="cairo-device-to-user"><function>cairo_device_to_user()</function></link> will expose the hidden offset.</para>
+<para>Note that the offset affects drawing to the surface as well as
+using the surface in a source pattern.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>x_offset</para></entry>
+<entry role="parameter_description"><para>the offset in the X direction, in device units</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>y_offset</para></entry>
+<entry role="parameter_description"><para>the offset in the Y direction, in device units</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-surface-get-device-offset" role="function" condition="since:1.2">
+<title>cairo_surface_get_device_offset&#160;()</title>
+<indexterm zone="cairo-surface-get-device-offset" role="1.2"><primary sortas="surface_get_device_offset">cairo_surface_get_device_offset</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_surface_get_device_offset (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>,
+                                 <parameter><link linkend="double"><type>double</type></link> *x_offset</parameter>,
+                                 <parameter><link linkend="double"><type>double</type></link> *y_offset</parameter>);</programlisting>
+<para>This function returns the previous device offset set by
+<link linkend="cairo-surface-set-device-offset"><function>cairo_surface_set_device_offset()</function></link>.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>x_offset</para></entry>
+<entry role="parameter_description"><para>the offset in the X direction, in device units</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>y_offset</para></entry>
+<entry role="parameter_description"><para>the offset in the Y direction, in device units</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.2</para></refsect2>
+<refsect2 id="cairo-surface-get-device-scale" role="function" condition="since:1.14">
+<title>cairo_surface_get_device_scale&#160;()</title>
+<indexterm zone="cairo-surface-get-device-scale" role="1.14"><primary sortas="surface_get_device_scale">cairo_surface_get_device_scale</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_surface_get_device_scale (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>,
+                                <parameter><link linkend="double"><type>double</type></link> *x_scale</parameter>,
+                                <parameter><link linkend="double"><type>double</type></link> *y_scale</parameter>);</programlisting>
+<para>This function returns the previous device offset set by
+<link linkend="cairo-surface-set-device-scale"><function>cairo_surface_set_device_scale()</function></link>.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>x_scale</para></entry>
+<entry role="parameter_description"><para>the scale in the X direction, in device units</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>y_scale</para></entry>
+<entry role="parameter_description"><para>the scale in the Y direction, in device units</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.14</para></refsect2>
+<refsect2 id="cairo-surface-set-device-scale" role="function" condition="since:1.14">
+<title>cairo_surface_set_device_scale&#160;()</title>
+<indexterm zone="cairo-surface-set-device-scale" role="1.14"><primary sortas="surface_set_device_scale">cairo_surface_set_device_scale</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_surface_set_device_scale (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>,
+                                <parameter><link linkend="double"><type>double</type></link> x_scale</parameter>,
+                                <parameter><link linkend="double"><type>double</type></link> y_scale</parameter>);</programlisting>
+<para>Sets a scale that is multiplied to the device coordinates determined
+by the CTM when drawing to <parameter>surface</parameter>
+. One common use for this is to
+render to very high resolution display devices at a scale factor, so
+that code that assumes 1 pixel will be a certain size will still work.
+Setting a transformation via <link linkend="cairo-translate"><function>cairo_translate()</function></link> isn't
+sufficient to do this, since functions like
+<link linkend="cairo-device-to-user"><function>cairo_device_to_user()</function></link> will expose the hidden scale.</para>
+<para>Note that the scale affects drawing to the surface as well as
+using the surface in a source pattern.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>x_scale</para></entry>
+<entry role="parameter_description"><para>a scale factor in the X direction</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>y_scale</para></entry>
+<entry role="parameter_description"><para>a scale factor in the Y direction</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.14</para></refsect2>
+<refsect2 id="cairo-surface-set-fallback-resolution" role="function" condition="since:1.2">
+<title>cairo_surface_set_fallback_resolution&#160;()</title>
+<indexterm zone="cairo-surface-set-fallback-resolution" role="1.2"><primary sortas="surface_set_fallback_resolution">cairo_surface_set_fallback_resolution</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_surface_set_fallback_resolution (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>,
+                                       <parameter><link linkend="double"><type>double</type></link> x_pixels_per_inch</parameter>,
+                                       <parameter><link linkend="double"><type>double</type></link> y_pixels_per_inch</parameter>);</programlisting>
+<para>Set the horizontal and vertical resolution for image fallbacks.</para>
+<para>When certain operations aren't supported natively by a backend,
+cairo will fallback by rendering operations to an image and then
+overlaying that image onto the output. For backends that are
+natively vector-oriented, this function can be used to set the
+resolution used for these image fallbacks, (larger values will
+result in more detailed images, but also larger file sizes).</para>
+<para>Some examples of natively vector-oriented backends are the ps, pdf,
+and svg backends.</para>
+<para>For backends that are natively raster-oriented, image fallbacks are
+still possible, but they are always performed at the native
+device resolution. So this function has no effect on those
+backends.</para>
+<para>Note: The fallback resolution only takes effect at the time of
+completing a page (with <link linkend="cairo-show-page"><function>cairo_show_page()</function></link> or <link linkend="cairo-copy-page"><function>cairo_copy_page()</function></link>) so
+there is currently no way to have more than one fallback resolution
+in effect on a single page.</para>
+<para>The default fallback resoultion is 300 pixels per inch in both
+dimensions.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>x_pixels_per_inch</para></entry>
+<entry role="parameter_description"><para>horizontal setting for pixels per inch</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>y_pixels_per_inch</para></entry>
+<entry role="parameter_description"><para>vertical setting for pixels per inch</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.2</para></refsect2>
+<refsect2 id="cairo-surface-get-fallback-resolution" role="function" condition="since:1.8">
+<title>cairo_surface_get_fallback_resolution&#160;()</title>
+<indexterm zone="cairo-surface-get-fallback-resolution" role="1.8"><primary sortas="surface_get_fallback_resolution">cairo_surface_get_fallback_resolution</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_surface_get_fallback_resolution (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>,
+                                       <parameter><link linkend="double"><type>double</type></link> *x_pixels_per_inch</parameter>,
+                                       <parameter><link linkend="double"><type>double</type></link> *y_pixels_per_inch</parameter>);</programlisting>
+<para>This function returns the previous fallback resolution set by
+<link linkend="cairo-surface-set-fallback-resolution"><function>cairo_surface_set_fallback_resolution()</function></link>, or default fallback
+resolution if never set.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>x_pixels_per_inch</para></entry>
+<entry role="parameter_description"><para>horizontal pixels per inch</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>y_pixels_per_inch</para></entry>
+<entry role="parameter_description"><para>vertical pixels per inch</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.8</para></refsect2>
+<refsect2 id="cairo-surface-get-type" role="function" condition="since:1.2">
+<title>cairo_surface_get_type&#160;()</title>
+<indexterm zone="cairo-surface-get-type" role="1.2"><primary sortas="surface_get_type">cairo_surface_get_type</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-surface-type-t"><returnvalue>cairo_surface_type_t</returnvalue></link>
+cairo_surface_get_type (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>);</programlisting>
+<para>This function returns the type of the backend used to create
+a surface. See <link linkend="cairo-surface-type-t"><type>cairo_surface_type_t</type></link> for available types.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> The type of <parameter>surface</parameter>
+.</para>
+<para></para>
+</refsect3><para role="since">Since 1.2</para></refsect2>
+<refsect2 id="cairo-surface-get-reference-count" role="function" condition="since:1.4">
+<title>cairo_surface_get_reference_count&#160;()</title>
+<indexterm zone="cairo-surface-get-reference-count" role="1.4"><primary sortas="surface_get_reference_count">cairo_surface_get_reference_count</primary></indexterm>
+<programlisting language="C">unsigned <link linkend="int"><returnvalue>int</returnvalue></link>
+cairo_surface_get_reference_count (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>);</programlisting>
+<para>Returns the current reference count of <parameter>surface</parameter>
+.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> the current reference count of <parameter>surface</parameter>
+.  If the
+object is a nil object, 0 will be returned.</para>
+<para></para>
+</refsect3><para role="since">Since 1.4</para></refsect2>
+<refsect2 id="cairo-surface-set-user-data" role="function" condition="since:1.0">
+<title>cairo_surface_set_user_data&#160;()</title>
+<indexterm zone="cairo-surface-set-user-data" role="1.0"><primary sortas="surface_set_user_data">cairo_surface_set_user_data</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-status-t"><returnvalue>cairo_status_t</returnvalue></link>
+cairo_surface_set_user_data (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>,
+                             <parameter>const <link linkend="cairo-user-data-key-t"><type>cairo_user_data_key_t</type></link> *key</parameter>,
+                             <parameter><link linkend="void"><type>void</type></link> *user_data</parameter>,
+                             <parameter><link linkend="cairo-destroy-func-t"><type>cairo_destroy_func_t</type></link> destroy</parameter>);</programlisting>
+<para>Attach user data to <parameter>surface</parameter>
+.  To remove user data from a surface,
+call this function with the key that was used to set it and <link linkend="NULL:CAPS"><literal>NULL</literal></link>
+for <parameter>data</parameter>
+.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>key</para></entry>
+<entry role="parameter_description"><para>the address of a <link linkend="cairo-user-data-key-t"><type>cairo_user_data_key_t</type></link> to attach the user data to</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>user_data</para></entry>
+<entry role="parameter_description"><para>the user data to attach to the surface</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>destroy</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-destroy-func-t"><type>cairo_destroy_func_t</type></link> which will be called when the
+surface is destroyed or when new user data is attached using the
+same key.</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> <link linkend="CAIRO-STATUS-SUCCESS:CAPS"><literal>CAIRO_STATUS_SUCCESS</literal></link> or <link linkend="CAIRO-STATUS-NO-MEMORY:CAPS"><literal>CAIRO_STATUS_NO_MEMORY</literal></link> if a
+slot could not be allocated for the user data.</para>
+<para></para>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-surface-get-user-data" role="function" condition="since:1.0">
+<title>cairo_surface_get_user_data&#160;()</title>
+<indexterm zone="cairo-surface-get-user-data" role="1.0"><primary sortas="surface_get_user_data">cairo_surface_get_user_data</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>&#160;*
+cairo_surface_get_user_data (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>,
+                             <parameter>const <link linkend="cairo-user-data-key-t"><type>cairo_user_data_key_t</type></link> *key</parameter>);</programlisting>
+<para>Return user data previously attached to <parameter>surface</parameter>
+ using the specified
+key.  If no user data has been attached with the given key this
+function returns <link linkend="NULL:CAPS"><literal>NULL</literal></link>.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>key</para></entry>
+<entry role="parameter_description"><para>the address of the <link linkend="cairo-user-data-key-t"><type>cairo_user_data_key_t</type></link> the user data was
+attached to</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> the user data previously attached or <link linkend="NULL:CAPS"><literal>NULL</literal></link>.</para>
+<para></para>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-surface-copy-page" role="function" condition="since:1.6">
+<title>cairo_surface_copy_page&#160;()</title>
+<indexterm zone="cairo-surface-copy-page" role="1.6"><primary sortas="surface_copy_page">cairo_surface_copy_page</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_surface_copy_page (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>);</programlisting>
+<para>Emits the current page for backends that support multiple pages,
+but doesn't clear it, so that the contents of the current page will
+be retained for the next page.  Use <link linkend="cairo-surface-show-page"><function>cairo_surface_show_page()</function></link> if you
+want to get an empty page after the emission.</para>
+<para>There is a convenience function for this that takes a <link linkend="cairo-t"><type>cairo_t</type></link>,
+namely <link linkend="cairo-copy-page"><function>cairo_copy_page()</function></link>.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.6</para></refsect2>
+<refsect2 id="cairo-surface-show-page" role="function" condition="since:1.6">
+<title>cairo_surface_show_page&#160;()</title>
+<indexterm zone="cairo-surface-show-page" role="1.6"><primary sortas="surface_show_page">cairo_surface_show_page</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_surface_show_page (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>);</programlisting>
+<para>Emits and clears the current page for backends that support multiple
+pages.  Use <link linkend="cairo-surface-copy-page"><function>cairo_surface_copy_page()</function></link> if you don't want to clear the page.</para>
+<para>There is a convenience function for this that takes a <link linkend="cairo-t"><type>cairo_t</type></link>,
+namely <link linkend="cairo-show-page"><function>cairo_show_page()</function></link>.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-Surface-t"><type>cairo_Surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.6</para></refsect2>
+<refsect2 id="cairo-surface-has-show-text-glyphs" role="function" condition="since:1.8">
+<title>cairo_surface_has_show_text_glyphs&#160;()</title>
+<indexterm zone="cairo-surface-has-show-text-glyphs" role="1.8"><primary sortas="surface_has_show_text_glyphs">cairo_surface_has_show_text_glyphs</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-bool-t"><returnvalue>cairo_bool_t</returnvalue></link>
+cairo_surface_has_show_text_glyphs (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>);</programlisting>
+<para>Returns whether the surface supports
+sophisticated <link linkend="cairo-show-text-glyphs"><function>cairo_show_text_glyphs()</function></link> operations.  That is,
+whether it actually uses the provided text and cluster data
+to a <link linkend="cairo-show-text-glyphs"><function>cairo_show_text_glyphs()</function></link> call.</para>
+<para>Note: Even if this function returns <link linkend="FALSE:CAPS"><literal>FALSE</literal></link>, a
+<link linkend="cairo-show-text-glyphs"><function>cairo_show_text_glyphs()</function></link> operation targeted at <parameter>surface</parameter>
+ will
+still succeed.  It just will
+act like a <link linkend="cairo-show-glyphs"><function>cairo_show_glyphs()</function></link> operation.  Users can use this
+function to avoid computing UTF-8 text and cluster mapping if the
+target surface does not use it.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> <link linkend="TRUE:CAPS"><literal>TRUE</literal></link> if <parameter>surface</parameter>
+supports
+<link linkend="cairo-show-text-glyphs"><function>cairo_show_text_glyphs()</function></link>, <link linkend="FALSE:CAPS"><literal>FALSE</literal></link> otherwise</para>
+<para></para>
+</refsect3><para role="since">Since 1.8</para></refsect2>
+<refsect2 id="cairo-surface-set-mime-data" role="function" condition="since:1.10">
+<title>cairo_surface_set_mime_data&#160;()</title>
+<indexterm zone="cairo-surface-set-mime-data" role="1.10"><primary sortas="surface_set_mime_data">cairo_surface_set_mime_data</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-status-t"><returnvalue>cairo_status_t</returnvalue></link>
+cairo_surface_set_mime_data (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>,
+                             <parameter>const <link linkend="char"><type>char</type></link> *mime_type</parameter>,
+                             <parameter>const unsigned <link linkend="char"><type>char</type></link> *data</parameter>,
+                             <parameter><type>unsigned long </type> length</parameter>,
+                             <parameter><link linkend="cairo-destroy-func-t"><type>cairo_destroy_func_t</type></link> destroy</parameter>,
+                             <parameter><link linkend="void"><type>void</type></link> *closure</parameter>);</programlisting>
+<para>Attach an image in the format <parameter>mime_type</parameter>
+ to <parameter>surface</parameter>
+. To remove
+the data from a surface, call this function with same mime type
+and <link linkend="NULL:CAPS"><literal>NULL</literal></link> for <parameter>data</parameter>
+.</para>
+<para>The attached image (or filename) data can later be used by backends
+which support it (currently: PDF, PS, SVG and Win32 Printing
+surfaces) to emit this data instead of making a snapshot of the
+<parameter>surface</parameter>
+.  This approach tends to be faster and requires less
+memory and disk space.</para>
+<para>The recognized MIME types are the following: <link linkend="CAIRO-MIME-TYPE-JPEG:CAPS"><literal>CAIRO_MIME_TYPE_JPEG</literal></link>,
+<link linkend="CAIRO-MIME-TYPE-PNG:CAPS"><literal>CAIRO_MIME_TYPE_PNG</literal></link>, <link linkend="CAIRO-MIME-TYPE-JP2:CAPS"><literal>CAIRO_MIME_TYPE_JP2</literal></link>, <link linkend="CAIRO-MIME-TYPE-URI:CAPS"><literal>CAIRO_MIME_TYPE_URI</literal></link>,
+<link linkend="CAIRO-MIME-TYPE-UNIQUE-ID:CAPS"><literal>CAIRO_MIME_TYPE_UNIQUE_ID</literal></link>, <link linkend="CAIRO-MIME-TYPE-JBIG2:CAPS"><literal>CAIRO_MIME_TYPE_JBIG2</literal></link>,
+<link linkend="CAIRO-MIME-TYPE-JBIG2-GLOBAL:CAPS"><literal>CAIRO_MIME_TYPE_JBIG2_GLOBAL</literal></link>, <link linkend="CAIRO-MIME-TYPE-JBIG2-GLOBAL-ID:CAPS"><literal>CAIRO_MIME_TYPE_JBIG2_GLOBAL_ID</literal></link>.</para>
+<para>See corresponding backend surface docs for details about which MIME
+types it can handle. Caution: the associated MIME data will be
+discarded if you draw on the surface afterwards. Use this function
+with care.</para>
+<para>Even if a backend supports a MIME type, that does not mean cairo
+will always be able to use the attached MIME data. For example, if
+the backend does not natively support the compositing operation used
+to apply the MIME data to the backend. In that case, the MIME data
+will be ignored. Therefore, to apply an image in all cases, it is best
+to create an image surface which contains the decoded image data and
+then attach the MIME data to that. This ensures the image will always
+be used while still allowing the MIME data to be used whenever
+possible.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>mime_type</para></entry>
+<entry role="parameter_description"><para>the MIME type of the image data</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>data</para></entry>
+<entry role="parameter_description"><para>the image data to attach to the surface</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>length</para></entry>
+<entry role="parameter_description"><para>the length of the image data</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>destroy</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-destroy-func-t"><type>cairo_destroy_func_t</type></link> which will be called when the
+surface is destroyed or when new image data is attached using the
+same mime type.</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>closure</para></entry>
+<entry role="parameter_description"><para>the data to be passed to the <parameter>destroy</parameter>
+notifier</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> <link linkend="CAIRO-STATUS-SUCCESS:CAPS"><literal>CAIRO_STATUS_SUCCESS</literal></link> or <link linkend="CAIRO-STATUS-NO-MEMORY:CAPS"><literal>CAIRO_STATUS_NO_MEMORY</literal></link> if a
+slot could not be allocated for the user data.</para>
+<para></para>
+</refsect3><para role="since">Since 1.10</para></refsect2>
+<refsect2 id="cairo-surface-get-mime-data" role="function" condition="since:1.10">
+<title>cairo_surface_get_mime_data&#160;()</title>
+<indexterm zone="cairo-surface-get-mime-data" role="1.10"><primary sortas="surface_get_mime_data">cairo_surface_get_mime_data</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_surface_get_mime_data (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>,
+                             <parameter>const <link linkend="char"><type>char</type></link> *mime_type</parameter>,
+                             <parameter>const unsigned <link linkend="char"><type>char</type></link> **data</parameter>,
+                             <parameter>unsigned <link linkend="long"><type>long</type></link> *length</parameter>);</programlisting>
+<para>Return mime data previously attached to <parameter>surface</parameter>
+ using the
+specified mime type.  If no data has been attached with the given
+mime type, <parameter>data</parameter>
+ is set <link linkend="NULL:CAPS"><literal>NULL</literal></link>.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>mime_type</para></entry>
+<entry role="parameter_description"><para>the mime type of the image data</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>data</para></entry>
+<entry role="parameter_description"><para>the image data to attached to the surface</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>length</para></entry>
+<entry role="parameter_description"><para>the length of the image data</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.10</para></refsect2>
+<refsect2 id="cairo-surface-supports-mime-type" role="function" condition="since:1.12">
+<title>cairo_surface_supports_mime_type&#160;()</title>
+<indexterm zone="cairo-surface-supports-mime-type" role="1.12"><primary sortas="surface_supports_mime_type">cairo_surface_supports_mime_type</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-bool-t"><returnvalue>cairo_bool_t</returnvalue></link>
+cairo_surface_supports_mime_type (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>,
+                                  <parameter>const <link linkend="char"><type>char</type></link> *mime_type</parameter>);</programlisting>
+<para>Return whether <parameter>surface</parameter>
+ supports <parameter>mime_type</parameter>
+.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>mime_type</para></entry>
+<entry role="parameter_description"><para>the mime type</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> <link linkend="TRUE:CAPS"><literal>TRUE</literal></link> if <parameter>surface</parameter>
+supports
+<parameter>mime_type</parameter>
+, <link linkend="FALSE:CAPS"><literal>FALSE</literal></link> otherwise</para>
+<para></para>
+</refsect3><para role="since">Since 1.12</para></refsect2>
+<refsect2 id="cairo-surface-map-to-image" role="function" condition="since:1.12">
+<title>cairo_surface_map_to_image&#160;()</title>
+<indexterm zone="cairo-surface-map-to-image" role="1.12"><primary sortas="surface_map_to_image">cairo_surface_map_to_image</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+cairo_surface_map_to_image (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>,
+                            <parameter>const <link linkend="cairo-rectangle-int-t"><type>cairo_rectangle_int_t</type></link> *extents</parameter>);</programlisting>
+<para>Returns an image surface that is the most efficient mechanism for
+modifying the backing store of the target surface. The region retrieved
+may be limited to the <parameter>extents</parameter>
+ or <link linkend="NULL:CAPS"><literal>NULL</literal></link> for the whole surface</para>
+<para>Note, the use of the original surface as a target or source whilst
+it is mapped is undefined. The result of mapping the surface
+multiple times is undefined. Calling <link linkend="cairo-surface-destroy"><function>cairo_surface_destroy()</function></link> or
+<link linkend="cairo-surface-finish"><function>cairo_surface_finish()</function></link> on the resulting image surface results in
+undefined behavior. Changing the device transform of the image
+surface or of <parameter>surface</parameter>
+ before the image surface is unmapped results
+in undefined behavior.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>an existing surface used to extract the image from</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>extents</para></entry>
+<entry role="parameter_description"><para>limit the extraction to an rectangular region</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> a pointer to the newly allocated image surface. The caller
+must use <link linkend="cairo-surface-unmap-image"><function>cairo_surface_unmap_image()</function></link> to destroy this image surface.</para>
+<para>This function always returns a valid pointer, but it will return a
+pointer to a "nil" surface if <parameter>other</parameter>
+is already in an error state
+or any other error occurs. If the returned pointer does not have an
+error status, it is guaranteed to be an image surface whose format
+is not <link linkend="CAIRO-FORMAT-INVALID:CAPS"><literal>CAIRO_FORMAT_INVALID</literal></link>.</para>
+<para></para>
+</refsect3><para role="since">Since 1.12</para></refsect2>
+<refsect2 id="cairo-surface-unmap-image" role="function" condition="since:1.12">
+<title>cairo_surface_unmap_image&#160;()</title>
+<indexterm zone="cairo-surface-unmap-image" role="1.12"><primary sortas="surface_unmap_image">cairo_surface_unmap_image</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_surface_unmap_image (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>,
+                           <parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *image</parameter>);</programlisting>
+<para>Unmaps the image surface as returned from <link linkend="cairo-surface-map-to-image"><function><link linkend="cairo-surface-map-to-image"><function>cairo_surface_map_to_image()</function></link></function></link>.</para>
+<para>The content of the image will be uploaded to the target surface.
+Afterwards, the image is destroyed.</para>
+<para>Using an image surface which wasn't returned by <link linkend="cairo-surface-map-to-image"><function>cairo_surface_map_to_image()</function></link>
+results in undefined behavior.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>the surface passed to <link linkend="cairo-surface-map-to-image"><function>cairo_surface_map_to_image()</function></link>.</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>image</para></entry>
+<entry role="parameter_description"><para>the currently mapped image</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.12</para></refsect2>
+
+</refsect1>
+<refsect1 id="cairo-cairo-surface-t.other_details" role="details">
+<title role="details.title">Types and Values</title>
+<refsect2 id="CAIRO-HAS-MIME-SURFACE:CAPS" role="macro">
+<title>CAIRO_HAS_MIME_SURFACE</title>
+<indexterm zone="CAIRO-HAS-MIME-SURFACE:CAPS"><primary sortas="HAS_MIME_SURFACE">CAIRO_HAS_MIME_SURFACE</primary></indexterm>
+<programlisting language="C">#define CAIRO_HAS_MIME_SURFACE 1
+</programlisting>
+<para>
+</para>
+</refsect2>
+<refsect2 id="CAIRO-MIME-TYPE-JBIG2:CAPS" role="macro" condition="since:1.14">
+<title>CAIRO_MIME_TYPE_JBIG2</title>
+<indexterm zone="CAIRO-MIME-TYPE-JBIG2:CAPS" role="1.14"><primary sortas="MIME_TYPE_JBIG2">CAIRO_MIME_TYPE_JBIG2</primary></indexterm>
+<programlisting language="C">#define CAIRO_MIME_TYPE_JBIG2 "application/x-cairo.jbig2"
+</programlisting>
+<para>Joint Bi-level Image Experts Group image coding standard (ISO/IEC 11544).</para>
+<para role="since">Since 1.14</para></refsect2>
+<refsect2 id="CAIRO-MIME-TYPE-JBIG2-GLOBAL:CAPS" role="macro" condition="since:1.14">
+<title>CAIRO_MIME_TYPE_JBIG2_GLOBAL</title>
+<indexterm zone="CAIRO-MIME-TYPE-JBIG2-GLOBAL:CAPS" role="1.14"><primary sortas="MIME_TYPE_JBIG2_GLOBAL">CAIRO_MIME_TYPE_JBIG2_GLOBAL</primary></indexterm>
+<programlisting language="C">#define CAIRO_MIME_TYPE_JBIG2_GLOBAL "application/x-cairo.jbig2-global"
+</programlisting>
+<para>Joint Bi-level Image Experts Group image coding standard (ISO/IEC 11544) global segment.</para>
+<para role="since">Since 1.14</para></refsect2>
+<refsect2 id="CAIRO-MIME-TYPE-JBIG2-GLOBAL-ID:CAPS" role="macro" condition="since:1.14">
+<title>CAIRO_MIME_TYPE_JBIG2_GLOBAL_ID</title>
+<indexterm zone="CAIRO-MIME-TYPE-JBIG2-GLOBAL-ID:CAPS" role="1.14"><primary sortas="MIME_TYPE_JBIG2_GLOBAL_ID">CAIRO_MIME_TYPE_JBIG2_GLOBAL_ID</primary></indexterm>
+<programlisting language="C">#define CAIRO_MIME_TYPE_JBIG2_GLOBAL_ID "application/x-cairo.jbig2-global-id"
+</programlisting>
+<para>An unique identifier shared by a JBIG2 global segment and all JBIG2 images
+that depend on the global segment.</para>
+<para role="since">Since 1.14</para></refsect2>
+<refsect2 id="CAIRO-MIME-TYPE-JP2:CAPS" role="macro" condition="since:1.10">
+<title>CAIRO_MIME_TYPE_JP2</title>
+<indexterm zone="CAIRO-MIME-TYPE-JP2:CAPS" role="1.10"><primary sortas="MIME_TYPE_JP2">CAIRO_MIME_TYPE_JP2</primary></indexterm>
+<programlisting language="C">#define CAIRO_MIME_TYPE_JP2 "image/jp2"
+</programlisting>
+<para>The Joint Photographic Experts Group (JPEG) 2000 image coding standard (ISO/IEC 15444-1).</para>
+<para role="since">Since 1.10</para></refsect2>
+<refsect2 id="CAIRO-MIME-TYPE-JPEG:CAPS" role="macro" condition="since:1.10">
+<title>CAIRO_MIME_TYPE_JPEG</title>
+<indexterm zone="CAIRO-MIME-TYPE-JPEG:CAPS" role="1.10"><primary sortas="MIME_TYPE_JPEG">CAIRO_MIME_TYPE_JPEG</primary></indexterm>
+<programlisting language="C">#define CAIRO_MIME_TYPE_JPEG "image/jpeg"
+</programlisting>
+<para>The Joint Photographic Experts Group (JPEG) image coding standard (ISO/IEC 10918-1).</para>
+<para role="since">Since 1.10</para></refsect2>
+<refsect2 id="CAIRO-MIME-TYPE-PNG:CAPS" role="macro" condition="since:1.10">
+<title>CAIRO_MIME_TYPE_PNG</title>
+<indexterm zone="CAIRO-MIME-TYPE-PNG:CAPS" role="1.10"><primary sortas="MIME_TYPE_PNG">CAIRO_MIME_TYPE_PNG</primary></indexterm>
+<programlisting language="C">#define CAIRO_MIME_TYPE_PNG "image/png"
+</programlisting>
+<para>The Portable Network Graphics image file format (ISO/IEC 15948).</para>
+<para role="since">Since 1.10</para></refsect2>
+<refsect2 id="CAIRO-MIME-TYPE-URI:CAPS" role="macro" condition="since:1.10">
+<title>CAIRO_MIME_TYPE_URI</title>
+<indexterm zone="CAIRO-MIME-TYPE-URI:CAPS" role="1.10"><primary sortas="MIME_TYPE_URI">CAIRO_MIME_TYPE_URI</primary></indexterm>
+<programlisting language="C">#define CAIRO_MIME_TYPE_URI "text/x-uri"
+</programlisting>
+<para>URI for an image file (unofficial MIME type).</para>
+<para role="since">Since 1.10</para></refsect2>
+<refsect2 id="CAIRO-MIME-TYPE-UNIQUE-ID:CAPS" role="macro" condition="since:1.12">
+<title>CAIRO_MIME_TYPE_UNIQUE_ID</title>
+<indexterm zone="CAIRO-MIME-TYPE-UNIQUE-ID:CAPS" role="1.12"><primary sortas="MIME_TYPE_UNIQUE_ID">CAIRO_MIME_TYPE_UNIQUE_ID</primary></indexterm>
+<programlisting language="C">#define CAIRO_MIME_TYPE_UNIQUE_ID "application/x-cairo.uuid"
+</programlisting>
+<para>Unique identifier for a surface (cairo specific MIME type). All surfaces with
+the same unique identifier will only be embedded once.</para>
+<para role="since">Since 1.12</para></refsect2>
+<refsect2 id="cairo-surface-t" role="typedef" condition="since:1.0">
+<title>cairo_surface_t</title>
+<indexterm zone="cairo-surface-t" role="1.0"><primary sortas="surface_t">cairo_surface_t</primary></indexterm>
+<programlisting language="C">typedef struct _cairo_surface cairo_surface_t;
+</programlisting>
+<para>A <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> represents an image, either as the destination
+of a drawing operation or as source when drawing onto another
+surface.  To draw to a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link>, create a cairo context
+with the surface as the target, using <link linkend="cairo-create"><function>cairo_create()</function></link>.</para>
+<para>There are different subtypes of <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> for
+different drawing backends; for example, <link linkend="cairo-image-surface-create"><function>cairo_image_surface_create()</function></link>
+creates a bitmap image in memory.
+The type of a surface can be queried with <link linkend="cairo-surface-get-type"><function>cairo_surface_get_type()</function></link>.</para>
+<para>The initial contents of a surface after creation depend upon the manner
+of its creation. If cairo creates the surface and backing storage for
+the user, it will be initially cleared; for example,
+<link linkend="cairo-image-surface-create"><function>cairo_image_surface_create()</function></link> and <link linkend="cairo-surface-create-similar"><function>cairo_surface_create_similar()</function></link>.
+Alternatively, if the user passes in a reference to some backing storage
+and asks cairo to wrap that in a <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link>, then the contents are
+not modified; for example, <link linkend="cairo-image-surface-create-for-data"><function>cairo_image_surface_create_for_data()</function></link> and
+<link linkend="cairo-xlib-surface-create"><function>cairo_xlib_surface_create()</function></link>.</para>
+<para>Memory management of <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> is done with
+<link linkend="cairo-surface-reference"><function>cairo_surface_reference()</function></link> and <link linkend="cairo-surface-destroy"><function>cairo_surface_destroy()</function></link>.</para>
+<para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-content-t" role="enum" condition="since:1.0">
+<title>enum cairo_content_t</title>
+<indexterm zone="cairo-content-t" role="1.0"><primary sortas="content_t">cairo_content_t</primary></indexterm>
+<para><link linkend="cairo-content-t"><type>cairo_content_t</type></link> is used to describe the content that a surface will
+contain, whether color information, alpha information (translucence
+vs. opacity), or both.</para>
+<para>Note: The large values here are designed to keep <link linkend="cairo-content-t"><type>cairo_content_t</type></link>
+values distinct from <link linkend="cairo-format-t"><type>cairo_format_t</type></link> values so that the
+implementation can detect the error if users confuse the two types.</para>
+<refsect3 role="enum_members">
+<title>Members</title>
+<informaltable role="enum_members_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="enum_members_name" colwidth="300px"/>
+<colspec colname="enum_members_description"/>
+<colspec colname="enum_members_annotations" colwidth="200px"/>
+<tbody>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-CONTENT-COLOR:CAPS">CAIRO_CONTENT_COLOR</para></entry>
+<entry role="enum_member_description"><para>The surface will hold color content only. (Since 1.0)</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-CONTENT-ALPHA:CAPS">CAIRO_CONTENT_ALPHA</para></entry>
+<entry role="enum_member_description"><para>The surface will hold alpha content only. (Since 1.0)</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-CONTENT-COLOR-ALPHA:CAPS">CAIRO_CONTENT_COLOR_ALPHA</para></entry>
+<entry role="enum_member_description"><para>The surface will hold color and alpha content. (Since 1.0)</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.0</para></refsect2>
+<refsect2 id="cairo-surface-type-t" role="enum" condition="since:1.2">
+<title>enum cairo_surface_type_t</title>
+<indexterm zone="cairo-surface-type-t" role="1.2"><primary sortas="surface_type_t">cairo_surface_type_t</primary></indexterm>
+<para><link linkend="cairo-surface-type-t"><type>cairo_surface_type_t</type></link> is used to describe the type of a given
+surface. The surface types are also known as "backends" or "surface
+backends" within cairo.</para>
+<para>The type of a surface is determined by the function used to create
+it, which will generally be of the form
+<function>cairo_<emphasis>type</emphasis>_surface_create(<!-- -->)</function>,
+(though see <link linkend="cairo-surface-create-similar"><function>cairo_surface_create_similar()</function></link> as well).</para>
+<para>The surface type can be queried with <link linkend="cairo-surface-get-type"><function>cairo_surface_get_type()</function></link></para>
+<para>The various <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> functions can be used with surfaces of
+any type, but some backends also provide type-specific functions
+that must only be called with a surface of the appropriate
+type. These functions have names that begin with
+<literal>cairo_<emphasis>type</emphasis>_surface</literal> such as <link linkend="cairo-image-surface-get-width"><function>cairo_image_surface_get_width()</function></link>.</para>
+<para>The behavior of calling a type-specific function with a surface of
+the wrong type is undefined.</para>
+<para>New entries may be added in future versions.</para>
+<refsect3 role="enum_members">
+<title>Members</title>
+<informaltable role="enum_members_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="enum_members_name" colwidth="300px"/>
+<colspec colname="enum_members_description"/>
+<colspec colname="enum_members_annotations" colwidth="200px"/>
+<tbody>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-SURFACE-TYPE-IMAGE:CAPS">CAIRO_SURFACE_TYPE_IMAGE</para></entry>
+<entry role="enum_member_description"><para>The surface is of type image, since 1.2</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-SURFACE-TYPE-PDF:CAPS">CAIRO_SURFACE_TYPE_PDF</para></entry>
+<entry role="enum_member_description"><para>The surface is of type pdf, since 1.2</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-SURFACE-TYPE-PS:CAPS">CAIRO_SURFACE_TYPE_PS</para></entry>
+<entry role="enum_member_description"><para>The surface is of type ps, since 1.2</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-SURFACE-TYPE-XLIB:CAPS">CAIRO_SURFACE_TYPE_XLIB</para></entry>
+<entry role="enum_member_description"><para>The surface is of type xlib, since 1.2</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-SURFACE-TYPE-XCB:CAPS">CAIRO_SURFACE_TYPE_XCB</para></entry>
+<entry role="enum_member_description"><para>The surface is of type xcb, since 1.2</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-SURFACE-TYPE-GLITZ:CAPS">CAIRO_SURFACE_TYPE_GLITZ</para></entry>
+<entry role="enum_member_description"><para>The surface is of type glitz, since 1.2</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-SURFACE-TYPE-QUARTZ:CAPS">CAIRO_SURFACE_TYPE_QUARTZ</para></entry>
+<entry role="enum_member_description"><para>The surface is of type quartz, since 1.2</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-SURFACE-TYPE-WIN32:CAPS">CAIRO_SURFACE_TYPE_WIN32</para></entry>
+<entry role="enum_member_description"><para>The surface is of type win32, since 1.2</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-SURFACE-TYPE-BEOS:CAPS">CAIRO_SURFACE_TYPE_BEOS</para></entry>
+<entry role="enum_member_description"><para>The surface is of type beos, since 1.2</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-SURFACE-TYPE-DIRECTFB:CAPS">CAIRO_SURFACE_TYPE_DIRECTFB</para></entry>
+<entry role="enum_member_description"><para>The surface is of type directfb, since 1.2</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-SURFACE-TYPE-SVG:CAPS">CAIRO_SURFACE_TYPE_SVG</para></entry>
+<entry role="enum_member_description"><para>The surface is of type svg, since 1.2</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-SURFACE-TYPE-OS2:CAPS">CAIRO_SURFACE_TYPE_OS2</para></entry>
+<entry role="enum_member_description"><para>The surface is of type os2, since 1.4</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-SURFACE-TYPE-WIN32-PRINTING:CAPS">CAIRO_SURFACE_TYPE_WIN32_PRINTING</para></entry>
+<entry role="enum_member_description"><para>The surface is a win32 printing surface, since 1.6</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-SURFACE-TYPE-QUARTZ-IMAGE:CAPS">CAIRO_SURFACE_TYPE_QUARTZ_IMAGE</para></entry>
+<entry role="enum_member_description"><para>The surface is of type quartz_image, since 1.6</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-SURFACE-TYPE-SCRIPT:CAPS">CAIRO_SURFACE_TYPE_SCRIPT</para></entry>
+<entry role="enum_member_description"><para>The surface is of type script, since 1.10</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-SURFACE-TYPE-QT:CAPS">CAIRO_SURFACE_TYPE_QT</para></entry>
+<entry role="enum_member_description"><para>The surface is of type Qt, since 1.10</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-SURFACE-TYPE-RECORDING:CAPS">CAIRO_SURFACE_TYPE_RECORDING</para></entry>
+<entry role="enum_member_description"><para>The surface is of type recording, since 1.10</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-SURFACE-TYPE-VG:CAPS">CAIRO_SURFACE_TYPE_VG</para></entry>
+<entry role="enum_member_description"><para>The surface is a OpenVG surface, since 1.10</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-SURFACE-TYPE-GL:CAPS">CAIRO_SURFACE_TYPE_GL</para></entry>
+<entry role="enum_member_description"><para>The surface is of type OpenGL, since 1.10</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-SURFACE-TYPE-DRM:CAPS">CAIRO_SURFACE_TYPE_DRM</para></entry>
+<entry role="enum_member_description"><para>The surface is of type Direct Render Manager, since 1.10</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-SURFACE-TYPE-TEE:CAPS">CAIRO_SURFACE_TYPE_TEE</para></entry>
+<entry role="enum_member_description"><para>The surface is of type 'tee' (a multiplexing surface), since 1.10</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-SURFACE-TYPE-XML:CAPS">CAIRO_SURFACE_TYPE_XML</para></entry>
+<entry role="enum_member_description"><para>The surface is of type XML (for debugging), since 1.10</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-SURFACE-TYPE-SKIA:CAPS">CAIRO_SURFACE_TYPE_SKIA</para></entry>
+<entry role="enum_member_description"><para>The surface is of type Skia, since 1.10</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-SURFACE-TYPE-SUBSURFACE:CAPS">CAIRO_SURFACE_TYPE_SUBSURFACE</para></entry>
+<entry role="enum_member_description"><para>The surface is a subsurface created with
+  <link linkend="cairo-surface-create-for-rectangle"><function>cairo_surface_create_for_rectangle()</function></link>, since 1.10</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-SURFACE-TYPE-COGL:CAPS">CAIRO_SURFACE_TYPE_COGL</para></entry>
+<entry role="enum_member_description"><para>This surface is of type Cogl, since 1.12</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.2</para></refsect2>
+
+</refsect1>
+<refsect1 id="cairo-cairo-surface-t.see-also">
+<title>See Also</title>
+<para><link linkend="cairo-t"><type>cairo_t</type></link>, <link linkend="cairo-pattern-t"><type>cairo_pattern_t</type></link></para>
+
+</refsect1>
+
+</refentry>

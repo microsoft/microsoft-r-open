@@ -1,0 +1,72 @@
+#!/bin/sh
+
+echo "  checking PNG headers and libraries"
+allok=yes
+use_local=no
+
+## In the future we should be able to use
+## local=`${R_HOME}/bin/R CMD config LOCAL_SOFT`
+## but up to at least R 3.0.1 that doesn't work
+if [ -z "$MAKE" ]; then
+    MAKE=`${R_HOME}/bin/R CMD config MAKE`
+    if [ -z "$MAKE" ]; then
+	MAKE=make
+    fi
+fi
+makefiles="-f ${R_HOME}/etc${R_ARCH}/Makeconf -f ${R_SHARE_DIR}/make/config.mk"
+local=`${MAKE} -s ${makefiles} print R_HOME=${R_HOME} VAR=LOCAL_SOFT`
+
+if [ -e $local/lib ]; then
+    if ls $local/lib/libpng.* 2>/dev/null; then
+	echo "  found libpng in LOCAL_SOFT: $local/lib"
+	use_local=yes
+    elif ls $local/lib${R_ARCH}/libpng.* 2>/dev/null; then
+	echo "  found libpng in LOCAL_SOFT: $local/lib${R_ARCH}"
+	use_local=yes
+    else
+	echo "  LOCAL_SOFT does not contain libpng, fall back to external png"
+    fi
+else
+    echo "  LOCAL_SOFT does not exist, fall back to external png"
+fi
+
+if [ ${use_local} = no ]; then
+    if [ ! -e src/win32/libz.a ]; then
+	if [ ! -e src/libpng-current-win.tar.gz ]; then
+	    echo "  cannot find current PNG files"
+	    echo "  attempting to download them"
+	    echo 'download.file("http://www.rforge.net/png/files/libpng-current-win.tar.gz","src/libpng-current-win.tar.gz",mode="wb",quiet=TRUE)'|${R_HOME}/bin/R --vanilla --slave
+	fi
+	if [ ! -e src/libpng-current-win.tar.gz ]; then
+	    allok=no
+	else
+	    echo "  unpacking current PNG"
+	    tar fxz src/libpng-current-win.tar.gz -C src
+            if [ ! -e src/win32/libz.a ]; then
+		allok=no
+	    fi
+	fi
+    fi
+
+    if [ ! -e src/win32/libz.a ]; then
+	allok=no
+    fi
+fi
+
+if [ ${allok} != yes ]; then
+    echo ""
+    echo " *** ERROR: unable to find PNG files"
+    echo ""
+    echo " They must be either in src/win32, in a tar-ball"
+    echo " src/libpng-current-win.tar.gz or"
+    echo " available via the LOCAL_SOFT R make setting."
+    echo ""
+    echo " You can get the latest binary tar ball from"
+    echo " http://www.rforge.net/png/files/"
+    echo ""
+    exit 1
+fi
+
+echo "  seems ok, ready to go"
+
+exit 0

@@ -1,0 +1,335 @@
+<?xml version='1.0' encoding='UTF-8'?> 
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!ENTITY version SYSTEM "version.xml">
+]>
+<refentry id="cairo-PDF-Surfaces">
+<refmeta>
+<refentrytitle role="top_of_page" id="cairo-PDF-Surfaces.top_of_page">PDF Surfaces</refentrytitle>
+<manvolnum>3</manvolnum>
+<refmiscinfo>
+  CAIRO Library
+</refmiscinfo>
+</refmeta>
+<refnamediv>
+<refname>PDF Surfaces</refname>
+<refpurpose>Rendering PDF documents</refpurpose>
+</refnamediv>
+
+<refsect1 id="cairo-PDF-Surfaces.functions" role="functions_proto">
+<title role="functions_proto.title">Functions</title>
+<informaltable pgwide="1" frame="none">
+<tgroup cols="2">
+<colspec colname="functions_return" colwidth="150px"/>
+<colspec colname="functions_name"/>
+<tbody>
+<row><entry role="function_type"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+</entry><entry role="function_name"><link linkend="cairo-pdf-surface-create">cairo_pdf_surface_create</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+</entry><entry role="function_name"><link linkend="cairo-pdf-surface-create-for-stream">cairo_pdf_surface_create_for_stream</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-pdf-surface-restrict-to-version">cairo_pdf_surface_restrict_to_version</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-pdf-get-versions">cairo_pdf_get_versions</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type">const <link linkend="char"><returnvalue>char</returnvalue></link>&#160;*
+</entry><entry role="function_name"><link linkend="cairo-pdf-version-to-string">cairo_pdf_version_to_string</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+<row><entry role="function_type"><link linkend="void"><returnvalue>void</returnvalue></link>
+</entry><entry role="function_name"><link linkend="cairo-pdf-surface-set-size">cairo_pdf_surface_set_size</link>&#160;<phrase role="c_punctuation">()</phrase></entry></row>
+
+</tbody>
+</tgroup>
+</informaltable>
+</refsect1>
+<refsect1 id="cairo-PDF-Surfaces.other" role="other_proto">
+<title role="other_proto.title">Types and Values</title>
+<informaltable role="enum_members_table" pgwide="1" frame="none">
+<tgroup cols="2">
+<colspec colname="name" colwidth="150px"/>
+<colspec colname="description"/>
+<tbody>
+<row><entry role="define_keyword">#define</entry><entry role="function_name"><link linkend="CAIRO-HAS-PDF-SURFACE:CAPS">CAIRO_HAS_PDF_SURFACE</link></entry></row>
+<row><entry role="datatype_keyword">enum</entry><entry role="function_name"><link linkend="cairo-pdf-version-t">cairo_pdf_version_t</link></entry></row>
+
+</tbody>
+</tgroup>
+</informaltable>
+</refsect1>
+<refsect1 id="cairo-PDF-Surfaces.object-hierarchy" role="object_hierarchy">
+<title role="object_hierarchy.title">Object Hierarchy</title>
+<screen>
+</screen>
+</refsect1>
+
+
+<refsect1 id="cairo-PDF-Surfaces.description" role="desc">
+<title role="desc.title">Description</title>
+<para>The PDF surface is used to render cairo graphics to Adobe
+PDF files and is a multi-page vector surface backend.</para>
+<para>The following mime types are supported: <link linkend="CAIRO-MIME-TYPE-JPEG:CAPS"><literal>CAIRO_MIME_TYPE_JPEG</literal></link>,
+<link linkend="CAIRO-MIME-TYPE-JP2:CAPS"><literal>CAIRO_MIME_TYPE_JP2</literal></link>, <link linkend="CAIRO-MIME-TYPE-UNIQUE-ID:CAPS"><literal>CAIRO_MIME_TYPE_UNIQUE_ID</literal></link>,
+<link linkend="CAIRO-MIME-TYPE-JBIG2:CAPS"><literal>CAIRO_MIME_TYPE_JBIG2</literal></link>, <link linkend="CAIRO-MIME-TYPE-JBIG2-GLOBAL:CAPS"><literal>CAIRO_MIME_TYPE_JBIG2_GLOBAL</literal></link>,
+<link linkend="CAIRO-MIME-TYPE-JBIG2-GLOBAL-ID:CAPS"><literal>CAIRO_MIME_TYPE_JBIG2_GLOBAL_ID</literal></link>.</para>
+<para>JBIG2 data in PDF must be in the embedded format as described in
+ISO/IEC 11544. Image specific JBIG2 data must be in
+<link linkend="CAIRO-MIME-TYPE-JBIG2:CAPS"><literal>CAIRO_MIME_TYPE_JBIG2</literal></link>.  Any global segments in the JBIG2 data
+(segments with page association field set to 0) must be in
+<link linkend="CAIRO-MIME-TYPE-JBIG2-GLOBAL:CAPS"><literal>CAIRO_MIME_TYPE_JBIG2_GLOBAL</literal></link>. The global data may be shared by
+multiple images. All images sharing the same global data must set
+<link linkend="CAIRO-MIME-TYPE-JBIG2-GLOBAL-ID:CAPS"><literal>CAIRO_MIME_TYPE_JBIG2_GLOBAL_ID</literal></link> to a unique identifer. At least
+one of the images must provide the global data using
+<link linkend="CAIRO-MIME-TYPE-JBIG2-GLOBAL:CAPS"><literal>CAIRO_MIME_TYPE_JBIG2_GLOBAL</literal></link>. The global data will only be
+embedded once but shared by all JBIG2 images with the same
+<link linkend="CAIRO-MIME-TYPE-JBIG2-GLOBAL-ID:CAPS"><literal>CAIRO_MIME_TYPE_JBIG2_GLOBAL_ID</literal></link>.</para>
+
+</refsect1>
+<refsect1 id="cairo-PDF-Surfaces.functions_details" role="details">
+<title role="details.title">Functions</title>
+<refsect2 id="cairo-pdf-surface-create" role="function" condition="since:1.2">
+<title>cairo_pdf_surface_create&#160;()</title>
+<indexterm zone="cairo-pdf-surface-create" role="1.2"><primary sortas="pdf_surface_create">cairo_pdf_surface_create</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+cairo_pdf_surface_create (<parameter>const <link linkend="char"><type>char</type></link> *filename</parameter>,
+                          <parameter><link linkend="double"><type>double</type></link> width_in_points</parameter>,
+                          <parameter><link linkend="double"><type>double</type></link> height_in_points</parameter>);</programlisting>
+<para>Creates a PDF surface of the specified size in points to be written
+to <parameter>filename</parameter>
+.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>filename</para></entry>
+<entry role="parameter_description"><para>a filename for the PDF output (must be writable), <link linkend="NULL:CAPS"><literal>NULL</literal></link> may be
+used to specify no output. This will generate a PDF surface that
+may be queried and used as a source, without generating a
+temporary file.</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>width_in_points</para></entry>
+<entry role="parameter_description"><para>width of the surface, in points (1 point == 1/72.0 inch)</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>height_in_points</para></entry>
+<entry role="parameter_description"><para>height of the surface, in points (1 point == 1/72.0 inch)</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> a pointer to the newly created surface. The caller
+owns the surface and should call <link linkend="cairo-surface-destroy"><function>cairo_surface_destroy()</function></link> when done
+with it.</para>
+<para>This function always returns a valid pointer, but it will return a
+pointer to a "nil" surface if an error such as out of memory
+occurs. You can use <link linkend="cairo-surface-status"><function>cairo_surface_status()</function></link> to check for this.</para>
+<para></para>
+</refsect3><para role="since">Since 1.2</para></refsect2>
+<refsect2 id="cairo-pdf-surface-create-for-stream" role="function" condition="since:1.2">
+<title>cairo_pdf_surface_create_for_stream&#160;()</title>
+<indexterm zone="cairo-pdf-surface-create-for-stream" role="1.2"><primary sortas="pdf_surface_create_for_stream">cairo_pdf_surface_create_for_stream</primary></indexterm>
+<programlisting language="C"><link linkend="cairo-surface-t"><returnvalue>cairo_surface_t</returnvalue></link>&#160;*
+cairo_pdf_surface_create_for_stream (<parameter><link linkend="cairo-write-func-t"><type>cairo_write_func_t</type></link> write_func</parameter>,
+                                     <parameter><link linkend="void"><type>void</type></link> *closure</parameter>,
+                                     <parameter><link linkend="double"><type>double</type></link> width_in_points</parameter>,
+                                     <parameter><link linkend="double"><type>double</type></link> height_in_points</parameter>);</programlisting>
+<para>Creates a PDF surface of the specified size in points to be written
+incrementally to the stream represented by <parameter>write_func</parameter>
+ and <parameter>closure</parameter>
+.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>write_func</para></entry>
+<entry role="parameter_description"><para>a <link linkend="cairo-write-func-t"><type>cairo_write_func_t</type></link> to accept the output data, may be <link linkend="NULL:CAPS"><literal>NULL</literal></link>
+to indicate a no-op <parameter>write_func</parameter>
+. With a no-op <parameter>write_func</parameter>
+,
+the surface may be queried or used as a source without
+generating any temporary files.</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>closure</para></entry>
+<entry role="parameter_description"><para>the closure argument for <parameter>write_func</parameter>
+</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>width_in_points</para></entry>
+<entry role="parameter_description"><para>width of the surface, in points (1 point == 1/72.0 inch)</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>height_in_points</para></entry>
+<entry role="parameter_description"><para>height of the surface, in points (1 point == 1/72.0 inch)</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> a pointer to the newly created surface. The caller
+owns the surface and should call <link linkend="cairo-surface-destroy"><function>cairo_surface_destroy()</function></link> when done
+with it.</para>
+<para>This function always returns a valid pointer, but it will return a
+pointer to a "nil" surface if an error such as out of memory
+occurs. You can use <link linkend="cairo-surface-status"><function>cairo_surface_status()</function></link> to check for this.</para>
+<para></para>
+</refsect3><para role="since">Since 1.2</para></refsect2>
+<refsect2 id="cairo-pdf-surface-restrict-to-version" role="function" condition="since:1.10">
+<title>cairo_pdf_surface_restrict_to_version&#160;()</title>
+<indexterm zone="cairo-pdf-surface-restrict-to-version" role="1.10"><primary sortas="pdf_surface_restrict_to_version">cairo_pdf_surface_restrict_to_version</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_pdf_surface_restrict_to_version (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>,
+                                       <parameter><link linkend="cairo-pdf-version-t"><type>cairo_pdf_version_t</type></link> version</parameter>);</programlisting>
+<para>Restricts the generated PDF file to <parameter>version</parameter>
+. See <link linkend="cairo-pdf-get-versions"><function>cairo_pdf_get_versions()</function></link>
+for a list of available version values that can be used here.</para>
+<para>This function should only be called before any drawing operations
+have been performed on the given surface. The simplest way to do
+this is to call this function immediately after creating the
+surface.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a PDF <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>version</para></entry>
+<entry role="parameter_description"><para>PDF version</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.10</para></refsect2>
+<refsect2 id="cairo-pdf-get-versions" role="function" condition="since:1.10">
+<title>cairo_pdf_get_versions&#160;()</title>
+<indexterm zone="cairo-pdf-get-versions" role="1.10"><primary sortas="pdf_get_versions">cairo_pdf_get_versions</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_pdf_get_versions (<parameter><link linkend="cairo-pdf-version-t"><type>cairo_pdf_version_t</type></link> const **versions</parameter>,
+                        <parameter><link linkend="int"><type>int</type></link> *num_versions</parameter>);</programlisting>
+<para>Used to retrieve the list of supported versions. See
+<link linkend="cairo-pdf-surface-restrict-to-version"><function>cairo_pdf_surface_restrict_to_version()</function></link>.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>versions</para></entry>
+<entry role="parameter_description"><para>supported version list</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>num_versions</para></entry>
+<entry role="parameter_description"><para>list length</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.10</para></refsect2>
+<refsect2 id="cairo-pdf-version-to-string" role="function" condition="since:1.10">
+<title>cairo_pdf_version_to_string&#160;()</title>
+<indexterm zone="cairo-pdf-version-to-string" role="1.10"><primary sortas="pdf_version_to_string">cairo_pdf_version_to_string</primary></indexterm>
+<programlisting language="C">const <link linkend="char"><returnvalue>char</returnvalue></link>&#160;*
+cairo_pdf_version_to_string (<parameter><link linkend="cairo-pdf-version-t"><type>cairo_pdf_version_t</type></link> version</parameter>);</programlisting>
+<para>Get the string representation of the given <parameter>version</parameter>
+ id. This function
+will return <link linkend="NULL:CAPS"><literal>NULL</literal></link> if <parameter>version</parameter>
+ isn't valid. See <link linkend="cairo-pdf-get-versions"><function>cairo_pdf_get_versions()</function></link>
+for a way to get the list of valid version ids.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>version</para></entry>
+<entry role="parameter_description"><para>a version id</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><refsect3 role="returns">
+<title>Returns</title>
+<para> the string associated to given version.</para>
+<para></para>
+</refsect3><para role="since">Since 1.10</para></refsect2>
+<refsect2 id="cairo-pdf-surface-set-size" role="function" condition="since:1.2">
+<title>cairo_pdf_surface_set_size&#160;()</title>
+<indexterm zone="cairo-pdf-surface-set-size" role="1.2"><primary sortas="pdf_surface_set_size">cairo_pdf_surface_set_size</primary></indexterm>
+<programlisting language="C"><link linkend="void"><returnvalue>void</returnvalue></link>
+cairo_pdf_surface_set_size (<parameter><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link> *surface</parameter>,
+                            <parameter><link linkend="double"><type>double</type></link> width_in_points</parameter>,
+                            <parameter><link linkend="double"><type>double</type></link> height_in_points</parameter>);</programlisting>
+<para>Changes the size of a PDF surface for the current (and
+subsequent) pages.</para>
+<para>This function should only be called before any drawing operations
+have been performed on the current page. The simplest way to do
+this is to call this function immediately after creating the
+surface or immediately after completing a page with either
+<link linkend="cairo-show-page"><function>cairo_show_page()</function></link> or <link linkend="cairo-copy-page"><function>cairo_copy_page()</function></link>.</para>
+<refsect3 role="parameters">
+<title>Parameters</title>
+<informaltable role="parameters_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="parameters_name" colwidth="150px"/>
+<colspec colname="parameters_description"/>
+<colspec colname="parameters_annotations" colwidth="200px"/>
+<tbody>
+<row><entry role="parameter_name"><para>surface</para></entry>
+<entry role="parameter_description"><para>a PDF <link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>width_in_points</para></entry>
+<entry role="parameter_description"><para>new surface width, in points (1 point == 1/72.0 inch)</para></entry>
+<entry role="parameter_annotations"></entry></row>
+<row><entry role="parameter_name"><para>height_in_points</para></entry>
+<entry role="parameter_description"><para>new surface height, in points (1 point == 1/72.0 inch)</para></entry>
+<entry role="parameter_annotations"></entry></row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.2</para></refsect2>
+
+</refsect1>
+<refsect1 id="cairo-PDF-Surfaces.other_details" role="details">
+<title role="details.title">Types and Values</title>
+<refsect2 id="CAIRO-HAS-PDF-SURFACE:CAPS" role="macro" condition="since:1.2">
+<title>CAIRO_HAS_PDF_SURFACE</title>
+<indexterm zone="CAIRO-HAS-PDF-SURFACE:CAPS" role="1.2"><primary sortas="HAS_PDF_SURFACE">CAIRO_HAS_PDF_SURFACE</primary></indexterm>
+<programlisting language="C">#define CAIRO_HAS_PDF_SURFACE 1
+</programlisting>
+<para>Defined if the PDF surface backend is available.
+This macro can be used to conditionally compile backend-specific code.</para>
+<para role="since">Since 1.2</para></refsect2>
+<refsect2 id="cairo-pdf-version-t" role="enum" condition="since:1.10">
+<title>enum cairo_pdf_version_t</title>
+<indexterm zone="cairo-pdf-version-t" role="1.10"><primary sortas="pdf_version_t">cairo_pdf_version_t</primary></indexterm>
+<para><link linkend="cairo-pdf-version-t"><type>cairo_pdf_version_t</type></link> is used to describe the version number of the PDF
+specification that a generated PDF file will conform to.</para>
+<refsect3 role="enum_members">
+<title>Members</title>
+<informaltable role="enum_members_table" pgwide="1" frame="none">
+<tgroup cols="3">
+<colspec colname="enum_members_name" colwidth="300px"/>
+<colspec colname="enum_members_description"/>
+<colspec colname="enum_members_annotations" colwidth="200px"/>
+<tbody>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-PDF-VERSION-1-4:CAPS">CAIRO_PDF_VERSION_1_4</para></entry>
+<entry role="enum_member_description"><para>The version 1.4 of the PDF specification. (Since 1.10)</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+<row role="constant"><entry role="enum_member_name"><para id="CAIRO-PDF-VERSION-1-5:CAPS">CAIRO_PDF_VERSION_1_5</para></entry>
+<entry role="enum_member_description"><para>The version 1.5 of the PDF specification. (Since 1.10)</para>
+</entry>
+<entry role="enum_member_annotations"></entry>
+</row>
+</tbody></tgroup></informaltable>
+</refsect3><para role="since">Since 1.10</para></refsect2>
+
+</refsect1>
+<refsect1 id="cairo-PDF-Surfaces.see-also">
+<title>See Also</title>
+<para><link linkend="cairo-surface-t"><type>cairo_surface_t</type></link></para>
+
+</refsect1>
+
+</refentry>

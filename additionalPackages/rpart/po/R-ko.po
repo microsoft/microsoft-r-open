@@ -1,0 +1,213 @@
+# Korean translation for R rpart package
+# Recommended/rpart/po/R-ko.po
+# Maintainer: Brian Ripley <ripley@stats.ox.ac.uk>
+# 
+# This file is distributed under the same license as the R rpart package.
+# Chel Hee Lee <chl948@mail.usask.ca>, 2013-2015.
+# 
+# Reviewing process is completed (14-JAN-2015) 
+# The original source code review is completed (14-JAN-2015)
+# QC:PASS
+# Freezing on 06-FEB-2015 for R-3.1.3
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: rpart 4.1-0\n"
+"POT-Creation-Date: 2014-03-27 21:46\n"
+"PO-Revision-Date: 2015-02-06 21:56-0600\n"
+"Last-Translator:Chel Hee Lee  <chl948@mail.usask.ca>\n"
+"Language-Team: Chel Hee Lee  <chl948@mail.usask.ca>\n"
+"Language: ko\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "'x' must be a numeric vector"
+msgstr "'x'는 반드시 수치형 벡터이어야 합니다."
+
+msgid "Not a legitimate \"rpart\" object"
+msgstr "올바른 \"rpart\" 객체가 아닙니다."
+
+msgid "Plot not useful for classification or poisson trees"
+msgstr "분류(classification) 또는 포이송 트리(poisson trees)에 유용하지 않은 플롯입니다."
+
+msgid "fit is not a tree, just a root"
+msgstr "적합(fit)은 트리(tree)가 아니라 뿌리(root)일 뿐입니다."
+
+msgid "'cptable' does not contain cross-validation results"
+msgstr "'cptable'은 교차검증(cross-validation)한 결과를 포함하고 있지 않습니다."
+
+msgid "Tree has variables not found in new data"
+msgstr "트리(tree)는 새데이터에서 찾을 수 없는 변수들을 가지고 있습니다."
+
+msgid "type 'class' is only appropriate for classification"
+msgstr "타입 'class'는 오로지 클래시피케이션에서만 적절합니다"
+
+msgid "Invalid prediction for \"rpart\" object"
+msgstr "\"rpart\" 객체에 대한 올바른 예측이 아닙니다."
+
+msgid "'x' must be an \"rpart\" object"
+msgstr "'x'는 반드시 \"rpart\"이라는 객체이어야 합니다."
+
+msgid "Invalid type of residual"
+msgstr "올바른 잔차(residual)의 유형이 아닙니다."
+
+msgid "Not legitimate \"rpart\" tree and endpoint not a 2 level-factor"
+msgstr "타당한 \"rpart\" 트리(tree)가 아니며 엔드포인트(endpoint)가 두 개의 수준(levels)을 가진 요인(factor)가 아닙니다."
+
+msgid "a 'formula' argument is required"
+msgstr "'formula'라는 이름의 인자가 필요합니다."
+
+msgid "Trees cannot handle interaction terms"
+msgstr "트리(trees)는 교호작용항(interaction terms)을 다룰 수 없습니다."
+
+msgid "negative weights not allowed"
+msgstr "가중치(weights)는 음의 값을 가질 수 없습니다."
+
+msgid "Invalid method"
+msgstr "입력된 메소드가 올바르지 않습니다."
+
+msgid "Argument %s not matched"
+msgstr "%s와 일치하는 인자가 없습니다."
+
+msgid "Wrong length for 'xval'"
+msgstr "'xval'의 길이가 올바르지 않습니다."
+
+msgid "Cost vector is the wrong length"
+msgstr "cost 벡터의 길이가 올바르지 않습니다."
+
+msgid "Cost vector must be positive"
+msgstr "cost 벡터는 반드시 양의 값만을 가져야 합니다."
+
+msgid "Initialization routine is missing the 'summary' function"
+msgstr "'summary' 함수가 초기화 루틴(initialization routine)에서 누락되어 있습니다."
+
+msgid "no information available on parameters from previous call to plot()"
+msgstr "이전 호출로부터 plot()에 전달될 인자들에 사용가능한 정보가 없습니다."
+
+msgid "No offset allowed in classification models"
+msgstr "분류모델(classification models)에서는 offset을 사용할 수 없습니다."
+
+msgid "The parms list must have names"
+msgstr "parms의 구성요소들은 반드시 이름을 가지고 있어야 합니다."
+
+msgid "'parms' component not matched: %s"
+msgstr "다음은 'parms'을 구성하는 요소가 아닙니다: %s"
+
+msgid "Priors must sum to 1"
+msgstr "사전확률(priors)의 합은 반드시 1이어야 합니다."
+
+msgid "Priors must be >= 0"
+msgstr "사전확률(priors)은 반드시 0보다 크거나 같아야 합니다."
+
+msgid "Wrong length for priors"
+msgstr "사전확률(priors)의 길이가 잘못되었습니다."
+
+msgid "Wrong length for loss matrix"
+msgstr "손실행렬(loss matrix)의 길이가 잘못되었습니다."
+
+msgid "Loss matrix must have zero on diagonals"
+msgstr "손실행렬(loss matrix)의 대각요소는 반드시 0을 포함하고 있어야 합니다."
+
+msgid "Loss matrix cannot have negative elements"
+msgstr "손실행렬(Loss matrix)은 음의 값을 구성요소로 가질 수 없습니다."
+
+msgid "Loss matrix has a row of zeros"
+msgstr "손실행렬(loss matrix)는 영으로 이루어진 행을 가지고 있습니다."
+
+msgid "Invalid splitting rule"
+msgstr "올바르지 않은 분리기준(splitting rule)입니다."
+
+msgid "Parameter argument must be a list"
+msgstr "파라미터 인자(parms)는 반드시 리스트(list)이어야 합니다."
+
+msgid "The value of 'maxcompete' supplied is < 0; the value 0 was used instead"
+msgstr "입력된 'maxcompete'의 값이 0 보다 작기 때문에 0으로 대체되었습니다."
+
+msgid "The value of 'xval' supplied is < 0; the value 0 was used instead"
+msgstr "입력된 'xval'의 값이 0보다 작기때문에 0으로 대체되었습니다."
+
+msgid "Maximum depth is 30"
+msgstr "최대 깊이(depth)는 30입니다."
+
+msgid "Maximum depth must be at least 1"
+msgstr "최대 깊이(depth)는 반드시 적어도 1 이상이어야 합니다."
+
+msgid "The value of 'usesurrogate' supplied was out of range, the default value of 2 is used instead."
+msgstr "입력된 'usesurrogate'의 값은 허용범위 밖에 있으므로 기본값 2를 대신 사용합니다."
+
+msgid "The value of 'surrogatestyle' supplied was out of range, the default value of 0 is used instead."
+msgstr "입력된 'surrogatestyle'의 값은 허용범위 밖에 있기 때문에 기본값 0을 대신 사용합니다."
+
+msgid "Response must be a 'survival' object - use the 'Surv()' function"
+msgstr "y는 반드시 'survival'이라는 객체가 와야 하므로 'Surv()'함수를 사용하길 바랍니다."
+
+msgid "Observation time must be > 0"
+msgstr "관찰시간(observation time)은 반드시 0 보다 커야 합니다."
+
+msgid "No deaths in data set"
+msgstr "데이터셋으로부터 이벤트(사망, death)를 찾을 수 없습니다."
+
+msgid "You must input a named list for parms"
+msgstr "parm에는 반드시 구성요소에 이름이 부여된 리스트(list)가 입력되어야 합니다."
+
+msgid "Invalid error method for Poisson"
+msgstr "포아송에 사용되는 올바른 에러메소드(error method)가 아닙니다."
+
+msgid "Invalid shrinkage value"
+msgstr "올바른 수축값(shrinkage value)가 아닙니다."
+
+msgid "response must be a 2 column matrix or a vector"
+msgstr "y는 반드시 2개의 열을 가진 행렬 또는 벡터이어야 합니다."
+
+msgid "Number of events must be >= 0"
+msgstr "이벤트(event)의 수는 반드시 0보다 크거나 같아야 합니다."
+
+msgid "User written methods must have 3 functions"
+msgstr "사용자에 의하여 작성된 메소드는 반드시 3개의 함수를 가지고 있어야 합니다."
+
+msgid "User written method does not contain an 'init' function"
+msgstr "사용자에 의하여 작성된 메소드에서 'init' 함수를 찾을 수 없습니다."
+
+msgid "User written method does not contain a 'split' function"
+msgstr "사용자에 의하여 작성된 메소드에서 'split' 함수를 찾을 수 없습니다."
+
+msgid "User written method does not contain an 'eval' function"
+msgstr "사용자에 의하여 작성된 메소드에서 'eval' 함수를 찾을 수 없습니다."
+
+msgid "User 'eval' function returned invalid label"
+msgstr "사용자의 'eval' 함수로부터 반환된 라벨(label)의 길이가 올바르지 않습니다."
+
+msgid "User 'eval' function returned invalid deviance"
+msgstr "사용자의 'eval' 함수로부터 반환된 편차(deviance)의 길이가 올바르지 않습니다."
+
+msgid "Invalid return from categorical 'split' function"
+msgstr "'split' 함수로부터 반환된 범주의 개수가 올바르지 않습니다."
+
+msgid "User 'split' function returned invalid goodness"
+msgstr "사용자의 'split' 함수로부터 반환된 goodness의 길이가 올바르지 않습니다."
+
+msgid "User 'split' function returned invalid direction"
+msgstr "사용자의 'split' 함수로부터 반환된 direction의 길이가 올바르지 않습니다."
+
+msgid "may not be applicable for this method"
+msgstr "이 메소드에 적용할 수 없을지도 모릅니다."
+
+msgid "Not an \"rpart\" object"
+msgstr "\"rpart\" 객체가 아닙니다."
+
+msgid "Nodes %s are not in this tree"
+msgstr "노드(nodes) %s를 이 트리(tree)안에서 찾을 수 없습니다."
+
+msgid "argument 'label' is no longer used"
+msgstr "인자 'label'은 더 이상 사용되지 않습니다."
+
+msgid "Invalid fit object"
+msgstr "올바르게 적합된 객체(fit object)가 아닙니다."
+
+msgid "supplied nodes %s are not in this tree"
+msgstr "제공된 노드(nodes) %s를 이 트리(tree)안에서 찾을 수 없습니다."
+
+msgid "supplied nodes %s are leaves"
+msgstr "제공된 노드(nodes) %s는 끝마디(leaves)입니다."

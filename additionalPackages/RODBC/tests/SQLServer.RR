@@ -1,0 +1,86 @@
+##-*- R -*-
+library(RODBC)
+library(MASS)
+USArrests[1,2] <- NA
+hills <- hills[1:15,]
+row.names(hills)[12] <- "Dollar ('$')"
+
+# SQL Server 2008 Express Edition
+channel <- odbcConnect("SQLServer")
+if(!inherits(channel, "RODBC")) q("no")
+odbcGetInfo(channel)
+# sqlTables(channel, schema="dbo")
+sqlTables(channel, tableType="TABLE")
+sqlDrop(channel, "USArrests", errors = FALSE)
+sqlSave(channel, USArrests, addPK = TRUE)
+sqlTables(channel, tableType="TABLE")
+sqlColumns(channel, "USArrests")
+sqlPrimaryKeys(channel, "USArrests")
+sqlFetch(channel, "USArrests")
+query <- paste("select rownames, murder from USArrests",
+               "where Rape > 30",  "order by Murder")
+sqlQuery(channel, query)
+sqlCopy(channel, query, "HighRape", rownames = FALSE)
+sqlFetch(channel, "HighRape", max = 5)
+# sqlTables(channel)
+sqlDrop(channel, "HighRape")
+foo <-  USArrests[1:3, 2, drop = FALSE]
+foo[1,1] <- 236
+sqlUpdate(channel, foo, "USArrests")
+sqlFetch(channel, "USArrests", max = 5)
+sqlFetchMore(channel, max = 8)
+sqlDrop(channel, "USArrests")
+
+Btest <- Atest <-
+    data.frame(x = c(paste(1:100, collapse="+"), letters[2:4]), rn=1:4)
+Btest[,1] <- Atest[c(4,1:3),1]
+sqlDrop(channel, "Atest", errors = FALSE)
+## char and varchar max is 8000
+colspec <- list(character="varchar(1000)", double="float",
+                integer="int", logical="varchar(5)")
+sqlSave(channel, Atest, typeInfo = colspec)
+sqlColumns(channel, "Atest")
+sqlFetch(channel, "Atest")
+sqlUpdate(channel, Btest, "Atest", index = "rn")
+sqlFetch(channel, "Atest")
+sqlDrop(channel, "Atest")
+varspec <- "varchar(1000)"; names(varspec) <- "x"
+sqlSave(channel, Atest, varTypes = varspec)
+sqlColumns(channel, "Atest")
+sqlFetch(channel, "Atest")
+sqlDrop(channel, "Atest")
+
+dates <- as.character(seq(as.Date("2004-01-01"), by="week", length=10))
+times <- paste(1:10, "05", "00", sep=":")
+Dtest <- data.frame(dates, times, logi=c(TRUE, NA, FALSE, FALSE, FALSE))
+sqlDrop(channel, "Dtest", errors = FALSE)
+varspec <- c("smalldatetime", "smalldatetime", "varchar(5)")
+names(varspec) <- names(Dtest)
+# fast = TRUE fails, claims data is invalid
+sqlSave(channel, Dtest, varTypes = varspec, verbose=TRUE, fast=FALSE)
+sqlColumns(channel, "Dtest")
+sqlFetch(channel, "Dtest")
+sqlDrop(channel, "Dtest")
+
+sqlDrop(channel, "hills test", errors = FALSE)
+sqlSave(channel, hills, "hills test", verbose=TRUE)
+sqlUpdate(channel, hills[11:15,], "hills test", verbose=TRUE, fast=TRUE)
+sqlFetch(channel, "hills test")
+sqlDrop(channel, "hills test")
+sqlSave(channel, hills, "hills test", verbose=TRUE, fast=FALSE)
+sqlUpdate(channel, hills[11:15,], "hills test", verbose=TRUE, fast=FALSE)
+sqlDrop(channel, "hills test")
+
+sqlTables(channel, catalog="", schema="", tableName="", tableType="%")
+sqlTables(channel, catalog="%", schema="", tableName="")
+# sqlQuery(channel, "create schema test2")
+## only list schemas which contain objects
+sqlTables(channel, catalog="", schema="%", tableName="")
+## list all schema
+sqlQuery(channel, "select * from sys.schemas")
+sqlSave(channel, women, "test2.women")
+sqlTables(channel, catalog="", schema="%", tableName="")
+sqlTables(channel, tableType="TABLE")
+sqlDrop(channel, "test2.women")
+
+close(channel)

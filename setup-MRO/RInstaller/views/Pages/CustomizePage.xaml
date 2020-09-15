@@ -1,0 +1,57 @@
+﻿<Page x:Class="RInstaller.views.Pages.CustomizePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:RInstaller.views.Pages"
+      xmlns:models="clr-namespace:RInstaller.Models"
+      xmlns:viewModels="clr-namespace:RInstaller.ViewModels"
+      xmlns:system="clr-namespace:System;assembly=mscorlib"
+      mc:Ignorable="d" 
+      d:DesignHeight="500" d:DesignWidth="700"
+      Title="CustomizePage" Background="{Binding WindowBackground, FallbackValue='White'}">
+    <Grid>
+        <Label x:Name="title" Content="Configure the installation" HorizontalAlignment="Left" Margin="36,35,0,0" VerticalAlignment="Top" FontSize="28" Foreground="{Binding PrimaryTextColor}"/>
+        <StackPanel Orientation="Vertical">
+            <TextBlock x:Name="chooseLocationLabel" HorizontalAlignment="Left" Margin="40,100,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="620" FontSize="15" Text="Choose an installation directory:" Foreground="{Binding PrimaryTextColor}"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBox x:Name="textBox" HorizontalAlignment="Left" FontSize="12" Margin="40,15,0,0" TextWrapping="Wrap" Text="{Binding Installer.InstallPath}" VerticalAlignment="Top" Width="555" Background="#FFF3F3F3" Foreground="#FF2B2B2B" Height="21"/>
+                <Button x:Name="browseButton" Content="Browse" FontSize="12" HorizontalAlignment="Left" Margin="15,15,0,0" VerticalAlignment="Top" Width="50" Click="browseButton_Click"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock x:Name="chooseComponentsLabel" HorizontalAlignment="Left" Margin="40,35,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="310" FontSize="15" Text="The following components will be included:" Foreground="{Binding PrimaryTextColor}"/>
+                <TextBlock x:Name="chooseBindingLabel" HorizontalAlignment="Left" Margin="20,35,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="620" FontSize="15" Text="Bind to the following SQL Server instances:" Foreground="{Binding PrimaryTextColor}" Visibility="{Binding BindingVisibility}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TreeView x:Name="ComponentList" HorizontalAlignment="Left" Margin="40,15,0,0" Padding="-5,10,0,0" Height="180" Width="290"  ItemsSource="{Binding Packages}" Background="#00DEDEDE" BorderBrush="#00DEDEDE">
+                    <TreeView.ItemContainerStyle>
+                        <Style TargetType="{x:Type TreeViewItem}">
+                            <Setter Property="IsExpanded" Value="True"/>
+                        </Style>
+                    </TreeView.ItemContainerStyle>
+                    <TreeView.Resources>
+                        <HierarchicalDataTemplate DataType="{x:Type models:BundlePackage}" ItemsSource="{Binding AllFeatures}">
+                            <StackPanel Focusable="False">
+                                <CheckBox Content="{Binding Path=DisplayName, FallbackValue='Test'}" Margin="0,0,10,10" IsThreeState="True" IsChecked="{Binding ShowSelected}" IsEnabled="{Binding Optional, FallbackValue='true'}" Focusable="False" Foreground="{Binding DataContext.PrimaryTextColor, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TreeView}}}"></CheckBox>
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+                        <DataTemplate DataType="{x:Type models:PackageFeature}">
+                            <StackPanel Focusable="False">
+                                <CheckBox Content="{Binding Path=Title, FallbackValue='Test'}" Margin="0,0,10,10" IsChecked="{Binding ShowSelected}" IsEnabled="{Binding Optional, FallbackValue='True'}" Focusable="False" Foreground="{Binding DataContext.PrimaryTextColor, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TreeView}}}"></CheckBox>
+                            </StackPanel>
+                        </DataTemplate>
+                    </TreeView.Resources>
+                </TreeView>
+                <TreeView x:Name="BindingList" HorizontalAlignment="Left" Margin="40,15,0,0" Padding="-5,10,0,0" Height="180" Width="290" ItemsSource="{Binding SqlInstances}" Background="#00DEDEDE" BorderBrush="#00DEDEDE" Visibility="{Binding BindingVisibility}">
+                    <TreeView.Resources>
+                        <HierarchicalDataTemplate DataType="{x:Type models:SqlInstance}">
+                            <StackPanel Focusable="False">
+                                <CheckBox Content="{Binding Path=Id, FallbackValue='Test'}" Margin="0,0,10,10" IsThreeState="False" IsEnabled="{Binding Path=Enabled}" IsChecked="{Binding Checked}" Focusable="False" Foreground="{Binding DataContext.PrimaryTextColor, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TreeView}}}"></CheckBox>
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+                    </TreeView.Resources>
+                </TreeView>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>

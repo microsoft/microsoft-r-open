@@ -1,0 +1,254 @@
+# Russian translations for R
+# Русский перевод для R
+#
+# Copyright (C) 2008 The R Foundation
+# This file is distributed under the same license as the R package.
+# Alexey Shipunov <dactylorhiza at gmail> 2008
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: R 2.7.0\n"
+"Report-Msgid-Bugs-To: bugs@r-project.org\n"
+"POT-Creation-Date: 2012-11-22 09:24\n"
+"PO-Revision-Date: 2013-03-19 14:46-0600\n"
+"Last-Translator: Alexey Shipunov <dactylorhiza@gmail.com>\n"
+"Language-Team: Russian\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=KOI8-R\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Russian\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+msgid "'x' must be a numeric vector"
+msgstr "'x' должен быть числовым вектором"
+
+msgid "Not a legitimate \"rpart\" object"
+msgstr "Неправильный \"rpart\" объект"
+
+msgid "Plot not useful for classification or poisson trees"
+msgstr "График бесполезен для классификации или пуассоновских деревьев"
+
+msgid "fit is not a tree, just a root"
+msgstr "подгонка -- не дерево, а просто корень"
+
+msgid "'cptable' does not contain cross-validation results"
+msgstr "'cptable' не содержит результатов перекрестной проверки"
+
+msgid "Tree has variables not found in new data"
+msgstr "У дерева есть переменные, не найденные в данных"
+
+msgid "type 'class' is only appropriate for classification"
+msgstr "тип 'class' подходит только для классификации"
+
+msgid "Invalid prediction for \"rpart\" object"
+msgstr "Неправильное предсказание для \"rpart\" объекта"
+
+msgid "'x' must be an \"rpart\" object"
+msgstr "'x' должен быть объектом \"rpart\""
+
+msgid "Invalid type of residual"
+msgstr "Не знаю о таком типе остатков"
+
+msgid "Not legitimate \"rpart\" tree and endpoint not a 2 level-factor"
+msgstr "Незаконное дерево \"rpart\" и конечная точка не фактор из двух уровней"
+
+msgid "a 'formula' argument is required"
+msgstr "в аргументе нужна формула"
+
+msgid "Trees cannot handle interaction terms"
+msgstr "Деревья не переносят терминов взаимодействия"
+
+msgid "negative weights not allowed"
+msgstr "отрицательные веса не разрешены"
+
+msgid "Invalid method"
+msgstr "Неправильный метод"
+
+msgid "Argument %s not matched"
+msgstr "Аргумент %s не соответствует"
+
+msgid "Wrong length for 'xval'"
+msgstr "Неправильная длина 'xval'"
+
+msgid "Cost vector is the wrong length"
+msgstr "Cost-вектор неправильной длины"
+
+msgid "Cost vector must be positive"
+msgstr "Cost-вектор должен быть положительным"
+
+msgid "Initialization routine is missing the 'summary' function"
+msgstr "Подпрограмма инициализации для функции 'summary' пропущена"
+
+msgid "no information available on parameters from previous call to plot()"
+msgstr "нет информации о параметрах из предыдущего вызова plot()"
+
+msgid "No offset allowed in classification models"
+msgstr "Смещение в моделях классификации не разрешено"
+
+msgid "The parms list must have names"
+msgstr "Параметры должны иметь имена"
+
+msgid "'parms' component not matched: %s"
+msgstr "'parms'-компонент не соответствует: %s"
+
+msgid "Priors must sum to 1"
+msgstr "А приори должны быть в сумме 1"
+
+msgid "Priors must be >= 0"
+msgstr "А приори должны быть >= 0"
+
+msgid "Wrong length for priors"
+msgstr "Неправильная длина а приори"
+
+msgid "Wrong length for loss matrix"
+msgstr "Неправильная длина матрицы потерь"
+
+msgid "Loss matrix must have zero on diagonals"
+msgstr "Матрица потерь должна иметь ноль по диагонали"
+
+msgid "Loss matrix cannot have negative elements"
+msgstr "Матрица потерь не может иметь отрицательных элементов"
+
+msgid "Loss matrix has a row of zeros"
+msgstr "У матрицы потерь есть строка из нулей"
+
+msgid "Invalid splitting rule"
+msgstr "Неправильное правило разделения"
+
+msgid "Parameter argument must be a list"
+msgstr "Аргумент параметра должен быть списком"
+
+msgid "The value of 'maxcompete' supplied is < 0; the value 0 was used instead"
+msgstr "Указанное значение 'maxcompete' < 0; вместо него использован 0"
+
+msgid "The value of 'xval' supplied is < 0; the value 0 was used instead"
+msgstr "Указанное значение 'xval' < 0; вместо него использован 0"
+
+msgid "Maximum depth is 30"
+msgstr "Максимальная глубина -- 30"
+
+msgid "Maximum depth must be at least 1"
+msgstr "Максимальная глубина должна быть по меньшей мере 1"
+
+msgid "The value of 'usesurrogate' supplied was out of range, the default value of 2 is used instead."
+msgstr "Указанное значение usesurrogate было вне размаха,вместо него использовано умалчиваемое значение 2 "
+
+msgid "The value of 'surrogatestyle' supplied was out of range, the default value of 0 is used instead."
+msgstr "Указанное значение usesurrogate было вне размаха,вместо него использовано умалчиваемое значение 0 "
+
+msgid "Response must be a 'survival' object - use the 'Surv()' function"
+msgstr "Ответ должен быть survival-объектом -- используйте функцию 'Surv()'"
+
+msgid "Observation time must be > 0"
+msgstr "Время наблюдений должно быть > 0"
+
+msgid "No deaths in data set"
+msgstr "В данный нет смертей"
+
+msgid "You must input a named list for parms"
+msgstr "Вы должны ввести именованный список для parms"
+
+msgid "Invalid error method for Poisson"
+msgstr "Неправильный метод ошибок для Poisson"
+
+msgid "Invalid shrinkage value"
+msgstr "Неправильное значение сжатия"
+
+msgid "response must be a 2 column matrix or a vector"
+msgstr "ответ должен быть 2-колоночной матрицей или вектором"
+
+msgid "Number of events must be >= 0"
+msgstr "Количество событий должно быть >= 0"
+
+msgid "User written methods must have 3 functions"
+msgstr "Методы пользователя должны иметь по 3 функции"
+
+msgid "User written method does not contain an 'init' function"
+msgstr "Метод пользователя не имеет функции 'init'"
+
+msgid "User written method does not contain a 'split' function"
+msgstr "Метод пользователя не имеет функции 'split'"
+
+msgid "User written method does not contain an 'eval' function"
+msgstr "Метод пользователя не имеет функции 'eval'"
+
+msgid "User 'eval' function returned invalid label"
+msgstr "Пользовательская функция 'eval' вернула неправильную метку"
+
+msgid "User 'eval' function returned invalid deviance"
+msgstr "Пользовательская функция 'eval' вернула неправильное отклонение"
+
+msgid "Invalid return from categorical 'split' function"
+msgstr "Неправильный результат categorical функции 'split"
+
+msgid "User 'split' function returned invalid goodness"
+msgstr "Пользовательская функция 'split' вернула неправильную доброкачественность"
+
+msgid "User 'split' function returned invalid direction"
+msgstr "Пользовательская функция 'split' вернула неправильное направление"
+
+msgid "may not be applicable for this method"
+msgstr "может быть неприменимо к этому методу"
+
+msgid "Not an \"rpart\" object"
+msgstr "Не объект \"rpart\""
+
+msgid "Nodes %s are not in this tree"
+msgstr "Узлы %s не в этом дереве"
+
+msgid "argument 'label' is no longer used"
+msgstr "аргумент 'label' больше не используется"
+
+msgid "Invalid fit object"
+msgstr "Неправильный объект подгонки"
+
+msgid "supplied nodes %s are not in this tree"
+msgstr "указанные узлы %s не в этом дереве"
+
+msgid "supplied nodes %s are leaves"
+msgstr "указанные узлы %s листья"
+
+#~ msgid "more than 52 levels in a predicting factor, truncated for printout"
+#~ msgstr "больше 52 уровней предсказующего фактора, обрезано для печати"
+#~ msgid "x does not appear to be an \"rpart\" object"
+#~ msgstr "похоже, что x -- не \"rpart\"-объект"
+#~ msgid "'x' not converted"
+#~ msgstr "'x' не преобразован"
+
+#, fuzzy
+#~ msgid "'fit' must be an \"rpart\" object"
+#~ msgstr "Не объект rpart"
+
+#, fuzzy
+#~ msgid "'parms' component not matched:"
+#~ msgstr "'parms'-компонент не соответствует:"
+
+#, fuzzy
+#~ msgid "Not a legitimate tree"
+#~ msgstr "Неправильное дерево"
+
+#, fuzzy
+#~ msgid "Not a legitimate 'rpart' object"
+#~ msgstr "Неправильный rpart-объект"
+#~ msgid "The value of surrogatestyle supplied was out of range,"
+#~ msgstr "Указанное значение surrogatestyle было вне размаха,"
+#~ msgid "the default value of 0 is used instead."
+#~ msgstr "вместо него использовано умалчиваемое значение 0 "
+#~ msgid "Not legitimate rpart"
+#~ msgstr "Неправильный rpart"
+#~ msgid "Must be an rpart x"
+#~ msgstr "Должен быть rpart x"
+#~ msgid "the default value of 2 is used instead."
+#~ msgstr "вместо него использовано умалчиваемое значение 2 "
+#~ msgid "Argument"
+#~ msgstr "Аргумент"
+#~ msgid "Nodes"
+#~ msgstr "Узлы"
+#~ msgid ","
+#~ msgstr ","
+#~ msgid "are leaves"
+#~ msgstr "листья"
+#~ msgid "Observation time must be >0"
+#~ msgstr "Время наблюдений должно быть > 0"
+

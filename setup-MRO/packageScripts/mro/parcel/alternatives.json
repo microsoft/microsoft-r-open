@@ -1,0 +1,9 @@
+{
+  "R": {
+    "destination": "/usr/bin/R",
+    "source": "lib64/R/bin/R",
+    "priority": <% symlinkPriority %>0,
+    "isDirectory": false
+  }
+}
+

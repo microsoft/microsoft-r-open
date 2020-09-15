@@ -1,0 +1,144 @@
+<!-- ##### SECTION Title ##### -->
+cairo-xcb
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### MACRO CAIRO_HAS_XCB_SURFACE ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO CAIRO_HAS_XCB_SHM_FUNCTIONS ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### FUNCTION cairo_xcb_surface_create ##### -->
+<para>
+
+</para>
+
+@connection: 
+@drawable: 
+@visual: 
+@width: 
+@height: 
+@Returns: 
+
+
+<!-- ##### FUNCTION cairo_xcb_surface_create_for_bitmap ##### -->
+<para>
+
+</para>
+
+@connection: 
+@screen: 
+@bitmap: 
+@width: 
+@height: 
+@Returns: 
+
+
+<!-- ##### FUNCTION cairo_xcb_surface_create_with_xrender_format ##### -->
+<para>
+
+</para>
+
+@connection: 
+@screen: 
+@drawable: 
+@format: 
+@width: 
+@height: 
+@Returns: 
+
+
+<!-- ##### FUNCTION cairo_xcb_surface_set_size ##### -->
+<para>
+
+</para>
+
+@surface: 
+@width: 
+@height: 
+
+
+<!-- ##### FUNCTION cairo_xcb_surface_set_drawable ##### -->
+<para>
+
+</para>
+
+@surface: 
+@drawable: 
+@width: 
+@height: 
+
+
+<!-- ##### FUNCTION cairo_xcb_device_get_connection ##### -->
+<para>
+
+</para>
+
+@device: 
+@Returns: 
+
+
+<!-- ##### FUNCTION cairo_xcb_device_debug_cap_xrender_version ##### -->
+<para>
+
+</para>
+
+@device: 
+@major_version: 
+@minor_version: 
+
+
+<!-- ##### FUNCTION cairo_xcb_device_debug_cap_xshm_version ##### -->
+<para>
+
+</para>
+
+@device: 
+@major_version: 
+@minor_version: 
+
+
+<!-- ##### FUNCTION cairo_xcb_device_debug_get_precision ##### -->
+<para>
+
+</para>
+
+@device: 
+@Returns: 
+
+
+<!-- ##### FUNCTION cairo_xcb_device_debug_set_precision ##### -->
+<para>
+
+</para>
+
+@device: 
+@precision: 
+
+

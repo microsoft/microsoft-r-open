@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#Enable shell globbing
+set +f
+
+VERSION="4.0.2"
+INSTALL_PREFIX="${RPM_INSTALL_PREFIX}/ropen/${VERSION}"
+
+# We will let postinst of installing RPM take care of this if upgrade
+if [[ "$1" == "1" ]]; then
+    exit 0
+fi
+
+rm ${INSTALL_PREFIX}/lib64/R/lib/*.so
+mv ${INSTALL_PREFIX}/lib64/R/backup/lib/*.so ${INSTALL_PREFIX}/lib64/R/lib
+

@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+    <Product Id="*" Name="Microsoft R Open $(var.MroShortVersion)" Language="1033" Version="$(var.MroVersion)" Manufacturer="Microsoft Corporation" UpgradeCode="9A23D6F4-30E1-49A1-A071-06BAE69CF879">
+		<Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" Platform="x64" />
+
+		<PropertyRef Id="NETFRAMEWORK45"/>
+
+		<Condition Message="!(loc.InvalidNetFramework)"><![CDATA[Installed OR NETFRAMEWORK45]]></Condition>
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate EmbedCab="yes"/>
+
+		<Feature Id="ProductFeature" Title="MRO" Level="1" Absent="disallow">
+			<ComponentGroupRef Id="MRO" />
+			<ComponentRef Id="cmp3FDEFA8D589D485392D184FBD96BE213"/>
+			<ComponentRef Id="cmpBF88542AC1324EF7A126693216259EF6"/>
+      <ComponentRef Id="MklCab"/>
+			<ComponentRef Id="RegistryEntries"/>
+			<ComponentRef Id="ApplicationShortcuts" />
+			<ComponentRef Id="CleanupMainFolder" />
+		</Feature>
+
+    <Feature Id="MKL" Title="MKL" Level="1" />
+
+		<InstallExecuteSequence>
+			<Custom Action="SetInstallMkl" After="CostFinalize"><![CDATA[(INSTALLMKL = "1" AND &MKL=3) AND NOT Installed AND NOT REMOVE]]></Custom>
+			<Custom Action="InstallMkl" After="InstallFiles"><![CDATA[(INSTALLMKL = "1" AND &MKL=3) AND NOT Installed AND NOT REMOVE]]></Custom>
+			<Custom Action="Xcopy_Msvcr_Cmd" After="InstallMkl">NOT Installed</Custom>
+		</InstallExecuteSequence>
+
+		<UI>
+			<ProgressText Action="InstallMkl">!(loc.ProgressInstallMkl)</ProgressText>
+			<Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="SetVcrt140"><![CDATA[NOT VCRT14_PRODUCTCODE AND NOT Installed]]></Publish>
+			<Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="LaunchVcrt140"><![CDATA[NOT VCRT14_PRODUCTCODE AND NOT Installed]]></Publish>
+		</UI>
+
+		<UIRef Id="SetupUI" />
+		<WixVariable Id="WixUILicenseRtf" Value="ROpenEula.rtf" />
+
+		<PropertyRef Id="WIX_DIR_PERSONAL"/>
+		<Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+		<Property Id="MSIUSEREALADMINDETECTION" Value="1" />
+		<Property Id="INSTALLFOLDER">
+			<RegistrySearch Id="APPLICATIONFOLDER_REGSEARCH" Key="SOFTWARE\Microsoft\MRO-$(var.MroVersion)" Root="HKLM" Type="directory" Name="Path" />
+		</Property>
+		<Property Id="VCRT14_PRODUCTCODE">
+			<ProductSearch Minimum="14.0.24215.0" UpgradeCode="{36F68A90-239C-34DF-B58C-64B30153CE35}" />
+		</Property>
+	</Product>
+
+	<Fragment>
+		<DirectoryRef Id="ApplicationProgramsFolder">
+			<Component Id="ApplicationShortcuts" Guid="*">
+				<Shortcut
+					Id="ApplicationStartMenuShortcut"
+					Name="!(loc.ShortcutRguiName)"
+					Icon="Rgui.exe"
+					IconIndex="0"
+					Target="[INSTALLFOLDER]\bin\x64\rgui.exe"
+					WorkingDirectory="WIX_DIR_PERSONAL">
+					<Icon Id="Rgui.exe" SourceFile="$(var.MroDir)\bin\x64\Rgui.exe"/>
+				</Shortcut>
+				<RemoveFolder
+					Id="ApplicationProgramsFolder"
+					On="uninstall"/>
+				<RegistryValue
+					Root="HKCU"
+					Key="SOFTWARE\Microsoft\MRO-$(var.MroVersion)"
+					Name="installed"
+					Type="integer"
+					Value="1"
+					KeyPath="yes"/>
+			</Component>
+		</DirectoryRef>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFiles64Folder">
+				<Directory Id="Microsoft" Name ="Microsoft">
+					<Directory Id="INSTALLFOLDER" Name="MRO-$(var.MroVersion)">
+						<Directory Id="Setup" Name="Setup">
+							<Component Id="cmp3FDEFA8D589D485392D184FBD96BE213" Guid="{47DCDEF1-051F-476E-8916-D985D429220C}">
+								<File Id="fil28544AFE8D1545E0B43C166D91802F13" KeyPath="yes" Source="$(var.OutputPath)\RSetup.exe" Name="RSetup.exe" />
+							</Component>
+							<Component Id="cmpBF88542AC1324EF7A126693216259EF6" Guid="{996BCD0C-F22C-4CBE-B516-2C28AF471910}">
+								<File Id="fil0601C4E0691144DAAA5F66BF3B53CCE9" KeyPath="yes" Source="$(var.PackagesRoot)\VCRT.14.0.24215\VCRT_14.0.24215.0_1033.exe" Name="VCRT_14.0.24215.0_1033.exe"/>
+							</Component>
+							<Component Id="MklCab" Guid="{4e602c01-c40e-4a9a-9c51-d244f3443abe}">
+								<File Id="MklCab" KeyPath="yes" Source="$(var.CodeRoot)\target\Cabs\MKL\MKL_$(var.MklVersion)_1033.cab" Name="MKL_$(var.MklVersion)_1033.cab"/>
+							</Component>
+						</Directory>
+						<Directory Id="ProgramMenuFolder">
+							<Directory Id="ApplicationProgramsFolder" Name="Microsoft R Open"/>
+						</Directory>
+						<Component Id="RegistryEntries" Guid="*">
+							<RegistryKey Root="HKLM" Key="SOFTWARE\R-core\R">
+								<RegistryValue Type="string" Name="InstallPath" Value="[INSTALLFOLDER]"/>
+								<RegistryValue Type="string" Name="Current Version" Value="$(var.MroVersion)"/>
+							</RegistryKey>
+							<RegistryKey Root="HKLM" Key="SOFTWARE\R-core\R64">
+								<RegistryValue Type="string" Name="InstallPath" Value="[INSTALLFOLDER]"/>
+								<RegistryValue Type="string" Name="Current Version" Value="$(var.MroVersion)"/>
+							</RegistryKey>
+							<RegistryKey Root="HKLM" Key="SOFTWARE\R-core\R64\$(var.MroVersion) Microsoft R Open">
+								<RegistryValue Type="string" Name="InstallPath" Value="[INSTALLFOLDER]"/>
+							</RegistryKey>
+							<RegistryKey Root="HKLM" Key="SOFTWARE\R-core\R\$(var.MroVersion)">
+								<RegistryValue Type="string" Name="InstallPath" Value="[INSTALLFOLDER]"/>
+							</RegistryKey>
+							<RegistryKey Root="HKLM" Key="SOFTWARE\R-core\R\$(var.MroVersion) Microsoft R Open">
+								<RegistryValue Type="string" Name="InstallPath" Value="[INSTALLFOLDER]"/>
+							</RegistryKey>
+							<RegistryKey Root="HKLM" Key="SOFTWARE\R-core\R\R64">
+								<RegistryValue Type="string" Name="InstallPath" Value="[INSTALLFOLDER]"/>
+								<RegistryValue Type="string" Name="Current Version" Value="$(var.MroVersion)"/>
+							</RegistryKey>
+							<RegistryKey Root="HKLM" Key="SOFTWARE\R-core\R\R64\$(var.MroVersion)">
+								<RegistryValue Type="string" Name="InstallPath" Value="[INSTALLFOLDER]"/>
+							</RegistryKey>
+							<RegistryKey Root="HKCR" Key=".RData">
+								<RegistryValue Type="string" Value="RWorkspace"/>
+							</RegistryKey>
+							<RegistryKey Root="HKCR" Key="RWorkspace">
+								<RegistryValue Type="string" Value="R Workspace"/>
+							</RegistryKey>
+							<RegistryKey Root="HKCR" Key="RWorkspace\DefaultIcon">
+								<RegistryValue Type="string" Value="[INSTALLFOLDER]\\bin\\x64\\RGui.exe,0"/>
+							</RegistryKey>
+							<RegistryKey Root="HKCR" Key="RWorkspace\shell\open\command">
+								<RegistryValue Type="string" Value="\&quot;[INSTALLFOLDER]\\bin\\x64\\RGui.exe=\&quot; \&quot;%1\&quot;"/>
+							</RegistryKey>
+						</Component>
+						<Component Id="CleanupMainFolder" Guid="*">
+              <RegistryKey Root="HKLM" Key="SOFTWARE\Microsoft\MRO-$(var.MroVersion)" ForceCreateOnInstall="yes">
+                <RegistryValue Name="Path" Type="string" Value="[INSTALLFOLDER]" KeyPath="yes">
+                  <Permission User="Everyone" GenericAll="yes" />
+                </RegistryValue>
+                <RegistryValue Name="ProductCode" Value="[ProductCode]" Type="string">
+                  <Permission User="Everyone" GenericAll="yes" />
+                </RegistryValue>
+              </RegistryKey>
+							<util:RemoveFolderEx On="uninstall" Property="INSTALLFOLDER" />
+						</Component>
+					</Directory>
+				</Directory>
+			</Directory>
+		</Directory>
+
+		<CustomAction
+			Id="SetInstallMkl"
+			Property="InstallMkl"
+            Value='"[INSTALLFOLDER]Setup\RSetup.exe" /install /component Mkl /version $(var.MklVersion) /language 1033 /cachedir "[INSTALLFOLDER]/Setup" /destdir "[INSTALLFOLDER]"'
+            Execute="immediate" />
+		<CustomAction
+			Id="InstallMkl"
+			BinaryKey="WixCA"
+			DllEntry="CAQuietExec"
+			Execute="deferred"
+			Return="check"
+            Impersonate="no" />
+
+		<CustomAction
+			Id="Xcopy_Msvcr_Cmd"
+			BinaryKey="WixCA"
+			DllEntry="CAQuietExec"
+			Execute="deferred"
+			Return="ignore"
+			Impersonate="no" />
+
+		<CustomAction Id="SetVcrt140" Property="WixShellExecTarget" Value="[INSTALLFOLDER]Setup\VCRT_14.0.24215.0_1033.exe" />
+		<CustomAction Id="LaunchVcrt140" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
+	</Fragment>
+
+</Wix>
