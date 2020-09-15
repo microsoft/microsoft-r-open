@@ -1,2 +1,0 @@
-C:\Users\richcala\Source\Repos\setup-MRO\target\Release\ROpen\en-us\ROpen.msi
-C:\Users\richcala\Source\Repos\setup-MRO\target\Release\ROpen\en-us\ROpen.wixpdb

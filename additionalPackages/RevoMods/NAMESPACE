@@ -1,6 +1,0 @@
-export("revoTry")
-export("xpred.rpart")
-S3method("xpred.rpart", "default")
-S3method("xpred.rpart", "rxDTree")
-
-

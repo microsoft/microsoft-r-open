@@ -1,5 +1,0 @@
-#!/bin/bash
-
-# remove if empty, leave if not empty
-rmdir "${RPM_INSTALL_PREFIX}/microsoft/ropen" 2>/dev/null
-exit 0

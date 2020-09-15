@@ -1,3 +1,0 @@
-".onUnload" <- function(libpath) {
-	stopImplicitCluster()
-}
