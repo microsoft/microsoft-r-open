@@ -1,6 +1,6 @@
 % File src/library/base/man/iconv.Rd
 % Part of the R package, https://www.R-project.org
-% Copyright 1995-2017 R Core Team
+% Copyright 1995-2019 R Core Team
 % Distributed under GPL 2 or later
 
 \name{iconv}
@@ -27,7 +27,8 @@ iconvlist()
   \item{sub}{character string.  If not \code{NA} it is used to replace
     any non-convertible bytes in the input.  (This would normally be a
     single character, but can be more.)  If \code{"byte"}, the indication is
-    \code{"<xx>"} with the hex code of the byte.}
+    \code{"<xx>"} with the hex code of the byte.  If \code{"Unicode"}
+    and converting from UTF-8, the Unicode point in the form \code{"<U+xxxx>"}.}
   \item{mark}{logical, for expert use.  Should encodings be marked?}
   \item{toRaw}{logical.  Should a list of raw vectors be returned rather
     than a character vector?}
@@ -65,6 +66,9 @@ iconvlist()
   Note that implementations of \code{iconv} typically do not do much
   validity checking and will often mis-convert inputs which are invalid
   in encoding \code{from}.
+
+  If \code{sub = "Unicode"} is used for a non-UTF-8 input it is the same
+  as \code{sub = "byte"}.
 }
 
 \section{Implementation Details}{
@@ -79,7 +83,7 @@ iconvlist()
   results, and for \samp{win_iconv} currently a \sQuote{best fit}
   strategy is used except for \code{to = "ASCII"}).
 
-  Most commercial Unixes contain an implemetation of \code{iconv} but
+  Most commercial Unixes contain an implementation of \code{iconv} but
   none we have encountered have supported the encoding names we need:
   the \dQuote{R Installation and Administration Manual} recommends
   installing GNU \samp{libiconv} on Solaris and AIX, for example.
@@ -92,10 +96,10 @@ iconvlist()
   Note that you cannot rely on invalid inputs being detected, especially
   for \code{to = "ASCII"} where some implementations allow 8-bit
   characters and pass them through unchanged or with transliteration.
-  
+
   Some of the implementations have interesting extra encodings: for
   example GNU \samp{libiconv} allows \code{to = "C99"} to use
-  \code{\\uxxx} escapes for non-ASCII characters.
+  \samp{\\uxxxx} escapes for non-ASCII characters.
 }
 
 \section{Byte Order Marks}{
@@ -118,7 +122,7 @@ iconvlist()
   \code{x} in other \code{from} encodings: they may be discarded,
   returned as character \code{U+FEFF} or regarded as invalid.
 }
-  
+
 \value{
   If \code{toRaw = FALSE} (the default), the value is a character vector
   of the same length and the same attributes as \code{x} (after
@@ -140,7 +144,7 @@ iconvlist()
   The only reasonably portable name for the ISO 8859-15 encoding,
   commonly known as \sQuote{Latin 9}, is \code{"latin-9"}: some
   platforms support \code{"latin9"} but GNU \samp{libiconv} does not.
-  
+
   Encoding names \code{"utf8"}, \code{"mac"} and \code{"macroman"} are
   not portable.  \code{"utf8"} is converted to \code{"UTF-8"} for
   \code{from} and \code{to} by \code{iconv}, but not
@@ -174,6 +178,7 @@ iconv(x, "latin1", "ASCII")          #   NA
 iconv(x, "latin1", "ASCII", "?")     # "fa?ile"
 iconv(x, "latin1", "ASCII", "")      # "faile"
 iconv(x, "latin1", "ASCII", "byte")  # "fa<e7>ile"
+iconv(xx, "UTF-8", "ASCII", "Unicode") # "fa<U+00E7>ile"
 
 ## Extracts from old R help files (they are nowadays in UTF-8)
 x <- c("Ekstr\xf8m", "J\xf6reskog", "bi\xdfchen Z\xfcrcher")

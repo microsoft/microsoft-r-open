@@ -2094,7 +2094,7 @@ getInlineInfo <- function(name, cntxt, guardOK = FALSE) {
                 info$package <- packFrameName(frame)
                 info$guard <- TRUE
                 info
-            }                
+            }
             else NULL
         }
     }
@@ -3222,10 +3222,13 @@ cmpPrim2 <- function(e, cb, op, cntxt) {
         cmpBuiltin(e, cb, cntxt)
     }
     else {
+        needInc <- checkNeedsInc(e[[3]], cntxt)
         ncntxt <- make.nonTailCallContext(cntxt)
         cmp(e[[2]], cb, ncntxt);
+        if (needInc) cb$putcode(INCLNK.OP)
         ncntxt <- make.argContext(cntxt)
         cmp(e[[3]], cb, ncntxt)
+        if (needInc) cb$putcode(DECLNK.OP)
         ci <- cb$putconst(e)
         cb$putcode(op, ci)
         if (cntxt$tailcall)
@@ -3234,6 +3237,25 @@ cmpPrim2 <- function(e, cb, op, cntxt) {
     }
 }
 @ %def cmpPrim2
+
+The [[INCLNK]] and [[DECLNK]] instructions are used to protect
+evaluated arguents on the stack from modifications during evaluation
+of subsequent arguments. These instructions can be omitted if the
+subsequent argument evaluations cannot modify values on the stack.
+With changes to stack protection this is mechanism is no longer
+needed, so the check just returns [[FALSE]].
+<<[[checkNeedsInc]] function>>=
+checkNeedsInc <- function(e, cntxt)
+    return(FALSE)
+@ %def checkNeedsInc
+<<old [[checkNeedsInc]] function>>=
+checkNeedsInc <- function(e, cntxt) {
+    type <- typeof(e)
+    if (type %in% c("language", "bytecode", "promise"))
+        TRUE
+    else FALSE ## symbols and constants
+}
+@ %def checkNeedsInc
 
 Calls to the power function [[^]] and the functions [[exp]] and
 [[sqrt]] can be compiled using [[cmpPrim1]] and [[cmpPrim2]] as well:
@@ -3266,8 +3288,11 @@ setInlineHandler("log", function(e, cb, cntxt) {
         if (length(e) == 2)
             cb$putcode(LOG.OP, ci)
         else {
+            needInc <- checkNeedsInc(e[[3]], cntxt)
+            if (needInc) cb$putcode(INCLNK.OP)
             ncntxt <- make.argContext(cntxt)
             cmp(e[[3]], cb, ncntxt)
+            if (needInc) cb$putcode(DECLNK.OP)
             cb$putcode(LOGBASE.OP, ci)
         }
         if (cntxt$tailcall)
@@ -4323,8 +4348,10 @@ Complex assignment expressions are compiled by [[cmpComplexAssign]].
 <<[[cmpComplexAssign]] function>>=
 cmpComplexAssign <- function(symbol, lhs, value, superAssign, cb, cntxt) {
     <<select complex assignment instructions>>
+    <<protect the stack during a non-top-level complex assignment>>
     <<compile the right hand side value expression>>
     <<compile the left hand side call>>
+    <<unprotect the stack after a not-top-level complex assignment>>
     <<for tail calls return the value invisibly>>
     TRUE;
 }
@@ -4364,10 +4391,11 @@ variable and in the case of standard assignment assign it in the local
 frame if it is not assigned there already. They also prepare the stack
 for the assignment process.  The stack invariant maintained by the
 assignment process is that the current right hand side value is on the
-top, followed by the evaluated left hand side values and the original
-right hand side value. Thus the start instruction leaves the right
-hand side value, the value of the left hand side variable, and again
-the right hand side value on the top of the stack.
+top, followed by the evaluated left hand side values, the binding
+cell, and the original right hand side value. Thus the start
+instruction leaves the right hand side value on the top, then the
+value of the left hand side variable, the binding cell, and again the
+right hand side value on the stack.
 
 The end instruction finds the final right hand side value followed by
 the original right hand side value on the top of the stack.  The final
@@ -4450,6 +4478,15 @@ its call; all others will use [[*vtmp*]].  Each replacement function
 call compiled by [[cmpSetterCall]] will remove the top two elements
 from the stack and then push the new right hand side value on the
 stack.  [[cmpSetterCall]] is described in Section \ref{subsec:setter}.
+
+For non-top-level complex assignments values on the stack need to be
+protected from mutation during the assignment.
+<<protect the stack during a non-top-level complex assignment>>=
+if (! cntxt$toplevel) cb$putcode(INCLNKSTK.OP)
+@
+<<unprotect the stack after a not-top-level complex assignment>>=
+if (! cntxt$toplevel) cb$putcode(DECLNKSTK.OP)
+@
 
 
 \subsection{Compiling setter calls}
@@ -5072,7 +5109,7 @@ the list of compiled expressions by calling the [[.Internal]] function
 [[save.to.file]].
 <<[[cmpfile]] function>>=
 cmpfile <- function(infile, outfile, ascii = FALSE, env = .GlobalEnv,
-                    verbose = FALSE, options = NULL) {
+                    verbose = FALSE, options = NULL, version = NULL) {
     if (! is.environment(env) || ! identical(env, topenv(env)))
         stop("'env' must be a top level environment")
     <<create [[outfile]] if argument is missing>>
@@ -5107,7 +5144,7 @@ cmpfile <- function(infile, outfile, ascii = FALSE, env = .GlobalEnv,
                                        loc = list(expr = e, srcref = sref))
         }
         cat(gettextf("saving to file \"%s\" ... ", outfile))
-        .Internal(save.to.file(cforms, outfile, ascii))
+        .Internal(save.to.file(cforms, outfile, ascii, version))
         cat(gettext("done"), "\n", sep = "")
     }
     else warning("empty input file; no output written");
@@ -5406,8 +5443,7 @@ cmpSubsetDispatch <- function(start.op, dflt.op, e, cb, cntxt) {
         cmp(oe, cb, ncntxt)
         cb$putcode(start.op, ci, label)
         indices <- e[-c(1, 2)]
-        for (i in seq_along(indices))
-            cmp(indices[[i]], cb, ncntxt, TRUE)
+        cmpIndices(indices, cb, ncntxt)
         if (dflt.op$rank) cb$putcode(dflt.op$code, ci, length(indices))
         else cb$putcode(dflt.op$code, ci)
         cb$putlabel(label)
@@ -5416,6 +5452,33 @@ cmpSubsetDispatch <- function(start.op, dflt.op, e, cb, cntxt) {
     }
 }
 @ %def cmpSubsetDispatch
+
+Index expressions are compiled by
+<<[[cmpIndices]] function>>=
+cmpIndices <- function(indices, cb, cntxt) {
+    n <- length(indices)
+    needInc <- FALSE
+    for (i in seq_along(indices))
+        if (i > 1 && checkNeedsInc(indices[[i]], cntxt)) {
+            needInc <- TRUE
+            break
+        }            
+    for (i in seq_along(indices)) {
+        cmp(indices[[i]], cb, cntxt, TRUE)
+        if (needInc && i < n) cb$putcode(INCLNK.OP)
+    }
+    if (needInc) {
+        if (n == 2) cb$putcode(DECLNK.OP)
+        else if (n > 2) cb$putcode(DECLNK_N.OP, n - 1)
+    }
+}
+@ %def cmpIndices
+This adds instructions to increment and later decrement link counts on
+previously computed values to prevent later computations from
+modifying earlier ones. Eventually it should be possible to eliminate
+some of these increment/decrement instructions in an optimization
+phase.
+
 The subsetting handlers fall back to using [[cmpDispatch]] if there
 are any named arguments or if an error would need to be signaled (we
 could issue a compiler warning at this point as well). If all
@@ -5467,8 +5530,7 @@ cmpSubassignDispatch <- function(start.op, dflt.op, afun, place, call, cb,
         label <- cb$makelabel()
         cb$putcode(start.op, ci, label)
         indices <- place[-c(1, 2)]
-        for (i in seq_along(indices))
-            cmp(indices[[i]], cb, cntxt, TRUE)
+        cmpIndices(indices, cb, cntxt)
         if (dflt.op$rank) cb$putcode(dflt.op$code, ci, length(indices))
         else cb$putcode(dflt.op$code, ci)
         cb$putlabel(label)
@@ -5528,8 +5590,7 @@ cmpSubsetGetterDispatch <- function(start.op, dflt.op, call, cb, cntxt) {
         cb$putcode(DUP2ND.OP)
         cb$putcode(start.op, ci, end.label)
         indices <- call[-c(1, 2)]
-        for (i in seq_along(indices))
-            cmp(indices[[i]], cb, cntxt, TRUE)
+        cmpIndices(indices, cb, cntxt)
         if (dflt.op$rank)
             cb$putcode(dflt.op$code, ci, length(indices))
         else
@@ -6074,6 +6135,11 @@ COLON.OP <- 120
 SEQALONG.OP <- 121
 SEQLEN.OP <- 122
 BASEGUARD.OP <- 123
+INCLNK.OP <- 124
+DECLNK.OP <- 125
+DECLNK_N.OP <- 126
+INCLNKSTK.OP <- 127
+DECLNKSTK.OP <- 128
 @ 
 
 \subsection{Instruction argument counts and names}
@@ -6202,7 +6268,12 @@ DOTCALL.OP = 2,
 COLON.OP = 1,
 SEQALONG.OP = 1,
 SEQLEN.OP = 1,
-BASEGUARD.OP = 2
+BASEGUARD.OP = 2,
+INCLNK.OP = 0,
+DECLNK.OP = 0,
+DECLNK_N.OP = 1,
+INCLNKSTK.OP = 0,
+DECLNKSTK.OP = 0
 )
 @ 
 
@@ -6527,6 +6598,8 @@ Opcodes.names <- names(Opcodes.argc)
 
 <<[[cmpPrim1]] function>>
 
+<<[[checkNeedsInc]] function>>
+
 <<[[cmpPrim2]] function>>
 
 <<inline handlers for [[+]] and [[-]]>>
@@ -6752,6 +6825,8 @@ Opcodes.names <- names(Opcodes.argc)
 ##
 ## Improved subset and subassign handling
 ##
+
+<<[[cmpIndices]] function>>
 
 <<[[cmpSubsetDispatch]] function>>
 

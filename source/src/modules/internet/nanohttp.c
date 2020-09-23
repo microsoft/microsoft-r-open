@@ -1,6 +1,6 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
- *  Copyright (C) 2001-2017  The R Core Team.
+ *  Copyright (C) 2001-2019  The R Core Team.
  *  Copyright (C) 1998-2012  Daniel Veillard.
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -58,6 +58,7 @@
 extern void R_ProcessEvents(void);
 
 #ifdef Win32
+#define FD_SETSIZE 1024
 #include <io.h>
 #include <winsock2.h>
 #ifndef EWOULDBLOCK
@@ -98,6 +99,8 @@ extern void R_FlushConsole(void);
 # include <sys/socket.h>
 # include <netinet/in.h>
 #endif
+
+extern struct hostent *R_gethostbyname(const char *name);
 
 #ifdef HAVE_FCNTL_H
 #include <fcntl.h>
@@ -1115,7 +1118,7 @@ RxmlNanoHTTPConnectHost(const char *host, int port)
 	res_init();
     _res.options |= RES_USE_INET6;
 #endif
-    h=gethostbyname(host);
+    h=R_gethostbyname(host);
     if (h==NULL)
     {
 	RxmlMessage(2, _("unable to resolve '%s'"), host);
@@ -1340,13 +1343,13 @@ RxmlNanoHTTPMethod(const char *URL, const char *method, const char *input,
 	redirURL = NULL;
     }
 
-    if ((ctxt->protocol == NULL) || (strcmp(ctxt->protocol, "http"))) {
+    if ((ctxt == NULL) || (ctxt->protocol == NULL) || (strcmp(ctxt->protocol, "http"))) {
 	RxmlMessage(0, "Not a valid HTTP URI");
         RxmlNanoHTTPFreeCtxt(ctxt);
 	if (redirURL != NULL) xmlFree(redirURL);
         return(NULL);
     }
-    if (ctxt->hostname == NULL) {
+    if ((ctxt == NULL) || (ctxt->hostname == NULL)) {
 	RxmlMessage(0, "Failed to identify host in URI");
         RxmlNanoHTTPFreeCtxt(ctxt);
         return(NULL);

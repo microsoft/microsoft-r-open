@@ -1,7 +1,7 @@
 #  File src/library/parallel/R/unix/mclapply.R
 #  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2018 The R Core Team
+#  Copyright (C) 1995-2019 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -97,13 +97,19 @@ mclapply <- function(X, FUN, ..., mc.preschedule = TRUE, mc.set.seed = TRUE,
                 jobid <- jobid[-unused]
                 ava   <- ava[, -unused, drop = FALSE]
             }
+	    ## NOTE: we have to wrap the result in list() since readChild()
+	    ## doesn't serialize raw vectors so if the result is a raw
+	    ## it won't be serialized and we can't tell (see #17779)
+	    ## This also allows us to distinguish try() in user code vs
+	    ## our own (eventually)
             jobs <- lapply(jobid,
-                           function(i) mcparallel(FUN(X[[i]], ...),
+                           function(i) mcparallel(list(FUN(X[[i]], ...)),
                                                   mc.set.seed = mc.set.seed,
                                                   silent = mc.silent,
                                                   mc.affinity = affinity.list[[i]]))
             jobsp <- processID(jobs)
             has.errors <- 0L
+            delivered.result <- 0L
             while (!all(fin)) {
                 s <- selectChildren(jobs[!is.na(jobsp)], -1)
                 if (is.null(s)) break   # no children -> no hope (should not happen)
@@ -116,9 +122,12 @@ mclapply <- function(X, FUN, ..., mc.preschedule = TRUE, mc.set.seed = TRUE,
                             child.res <- unserialize(r)
                             if (inherits(child.res, "try-error"))
                                 has.errors <- has.errors + 1L
+			    ## unwrap the result
+			    if (is.list(child.res)) child.res <- child.res[[1]]
                             ## we can't just assign it since a NULL
                             ## assignment would remove it from the list
                             if (!is.null(child.res)) res[[ci]] <- child.res
+                            delivered.result <- delivered.result + 1L
                         } else {
                             fin[ci] <- TRUE
                             ## the job has finished, so we must not run
@@ -130,7 +139,7 @@ mclapply <- function(X, FUN, ..., mc.preschedule = TRUE, mc.set.seed = TRUE,
                                 nexti <- which.max(ava[, ji])
                                 if(!is.na(nexti)) {
                                     jobid[ji] <- nexti
-                                    jobs[[ji]] <- mcparallel(FUN(X[[nexti]], ...),
+                                    jobs[[ji]] <- mcparallel(list(FUN(X[[nexti]], ...)),
                                                              mc.set.seed = mc.set.seed,
                                                              silent = mc.silent,
                                                              mc.affinity = affinity.list[[nexti]])
@@ -141,6 +150,13 @@ mclapply <- function(X, FUN, ..., mc.preschedule = TRUE, mc.set.seed = TRUE,
                         }
                     }
             }
+            nores <- length(X) - delivered.result
+            if (nores > 0)
+                warning(sprintf(ngettext(nores,
+                                         "%d parallel function call did not deliver a result",
+                                         "%d parallel function calls did not deliver results"),
+                                nores),
+                        domain = NA)
         }
         if (has.errors)
             warning(gettextf("%d function calls resulted in an error",
@@ -210,11 +226,18 @@ mclapply <- function(X, FUN, ..., mc.preschedule = TRUE, mc.set.seed = TRUE,
             ## assignment would remove it from the list
             if (!is.null(this)) res[sindex[[i]]] <- this
     }
+    nores <- cores - sum(dr)
+    if (nores > 0)
+        warning(sprintf(ngettext(nores,
+                                 "scheduled core %s did not deliver a result, all values of the job will be affected",
+                                 "scheduled cores %s did not deliver results, all values of the jobs will be affected"),
+                        paste(which(dr == FALSE), collapse = ", ")),
+                domain = NA)
     if (length(has.errors)) {
         if (length(has.errors) == cores)
             warning("all scheduled cores encountered errors in user code")
         else
-            warning(sprintf(ngettext(has.errors,
+            warning(sprintf(ngettext(length(has.errors),
                                      "scheduled core %s encountered error in user code, all values of the job will be affected",
                                      "scheduled cores %s encountered errors in user code, all values of the jobs will be affected"),
                             paste(has.errors, collapse = ", ")),

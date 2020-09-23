@@ -1,6 +1,6 @@
 
-R version 3.5.3 RC (2019-03-03 r76193) -- "Great Truth"
-Copyright (C) 2019 The R Foundation for Statistical Computing
+R version 4.0.1 Patched (2020-06-08 r78667) -- "See Things Now"
+Copyright (C) 2020 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -26,6 +26,7 @@ Type 'q()' to quit R.
 > ##
 > 
 > ## When tryCatch()ing all seeds in 0:10000, the following 346 failed (Lnx 64b, R 3.5.0):
+> suppressWarnings(RNGversion("3.5.0"))
 > failingSeeds <- c(
 +     16, 42, 51, 63, 79,        108, 143, 171, 208, 215,
 +     230, 236, 254, 323, 327,   332, 333, 374, 386, 387,
@@ -320,6 +321,6 @@ f(df1 = 10, df2 = 2, ncp = 3) PASSED
 > 
 > 
 > cat('Time elapsed: ', proc.time() - .proctime00,'\n')
-Time elapsed:  1.448 0.03 1.483 0 0 
+Time elapsed:  1.502 0.041 1.549 0 0 
 > 
 > 

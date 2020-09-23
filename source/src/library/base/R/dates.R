@@ -70,7 +70,13 @@ as.Date.character <- function(x, format,
 
 as.Date.numeric <- function(x, origin, ...)
 {
-    if(missing(origin)) stop("'origin' must be supplied")
+    if(missing(origin)) {
+        if(!length(x))
+            return(.Date(numeric()))
+        if(!any(is.finite(x)))
+            return(.Date(x))
+        stop("'origin' must be supplied")
+    }
     as.Date(origin, ...) + x
 }
 
@@ -78,11 +84,13 @@ as.Date.default <- function(x, ...)
 {
     if(inherits(x, "Date"))
 	x
+    else if(is.null(x))
+        .Date(numeric())
     else if(is.logical(x) && all(is.na(x)))
 	.Date(as.numeric(x))
     else
 	stop(gettextf("do not know how to convert '%s' to class %s",
-		      deparse(substitute(x)),
+		      deparse1(substitute(x)),
 		      dQuote("Date")),
 	     domain = NA)
 }
@@ -94,7 +102,7 @@ as.Date.default <- function(x, ...)
 ##         x <- (x - 3653) # origin 1960-01-01
 ##         return(structure(x, class = "Date"))
 ##     } else stop(gettextf("'%s' is not a \"date\" object",
-##                          deparse(substitute(x)) ))
+##                          deparse1(substitute(x)) ))
 ## }
 
 ## ## Moved to package chron
@@ -107,7 +115,7 @@ as.Date.default <- function(x, ...)
 ##             x  <- x + as.numeric(as.Date(paste(z[3L], z[1L], z[2L], sep="/")))
 ##         return(structure(x, class = "Date"))
 ##     } else stop(gettextf("'%s' is not a \"dates\" object",
-##                          deparse(substitute(x)) ))
+##                          deparse1(substitute(x)) ))
 ## }
 
 format.Date <- function(x, ...)
@@ -233,7 +241,8 @@ as.list.Date <- function(x, ...)
     lapply(unclass(x), .Date, oldClass(x))
 
 c.Date <- function(..., recursive = FALSE)
-    .Date(c(unlist(lapply(list(...), unclass))))# recursive=recursive << FIXME?
+    .Date(c(unlist(lapply(list(...),
+                          function(e) unclass(as.Date(e))))))
 
 mean.Date <- function (x, ...)
     .Date(mean(unclass(x), ...))
@@ -474,7 +483,5 @@ xtfrm.Date <- function(x) as.numeric(x)
 
 ## Added in 3.5.0.
 
-.Date <- function(xx, cl = "Date") {
-    class(xx) <- cl
-    xx
-}
+.Date <- function(xx, cl = "Date") `class<-`(xx, cl)
+

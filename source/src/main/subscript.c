@@ -167,15 +167,12 @@ get1index(SEXP s, SEXP names, R_xlen_t len, int pok, int pos, SEXP call)
    pok : is "partial ok" ?
 	 if pok is -1, warn if partial matching occurs, but allow.
 */
-    int  warn_pok = 0;
     const char *ss, *cur_name;
-    R_xlen_t indx;
     const void *vmax;
 
-    if (pok == -1) {
+    int warn_pok = (pok == -1);
+    if (warn_pok)
 	pok = 1;
-	warn_pok = 1;
-    }
 
     if (pos < 0 && length(s) != 1) {
 	if (length(s) > 1) {
@@ -183,12 +180,11 @@ get1index(SEXP s, SEXP names, R_xlen_t len, int pok, int pos, SEXP call)
 	} else {
 	    ECALL3(call, _("attempt to select less than one element in %s"), "get1index");
 	}
-    } else
-	if(pos >= length(s)) {
-	    ECALL(call, _("internal error in use of recursive indexing"));
-	}
+    } else if(pos >= length(s)) {
+	ECALL(call, _("internal error in use of recursive indexing"));
+    }
     if(pos < 0) pos = 0;
-    indx = -1;
+    R_xlen_t indx = -1;
     switch (TYPEOF(s)) {
     case LGLSXP:
     case INTSXP:
@@ -203,13 +199,20 @@ get1index(SEXP s, SEXP names, R_xlen_t len, int pok, int pos, SEXP call)
 	double dblind = REAL_ELT(s, pos);
 	if(!ISNAN(dblind)) {
 	    /* see comment above integerOneIndex */
-	    if (dblind > 0) indx = (R_xlen_t)(dblind - 1);
-	    else if (dblind == 0 || len < 2) {
-		ECALL3(call, _("attempt to select less than one element in %s"), "get1index <real>");
-	    } else if (len == 2 && dblind > -3)
+	    if (dblind > 0) {
+		if(R_FINITE(dblind)) indx = (R_xlen_t)(dblind - 1);
+	    } else if (dblind == 0 || len < 2) {
+		ECALL3(call,
+		       _((dblind < 0) ? "invalid negative subscript in %s"
+			 : "attempt to select less than one element in %s"),
+		       "get1index <real>");
+	    } else if (len == 2 && dblind > -3) // dblind = -2 or -1 {why exception ?}
 		indx = (R_xlen_t)(2 + dblind);
 	    else {
-		ECALL3(call, _("attempt to select more than one element in %s"), "get1index <real>");
+		ECALL3(call,
+		       _((dblind < 0) ? "invalid negative subscript in %s"
+			 : "attempt to select more than one element in %s"),
+		       "get1index <real>");
 	    }
 	}
 	break;
@@ -809,7 +812,7 @@ static SEXP
 stringSubscript(SEXP s, R_xlen_t ns, R_xlen_t nx, SEXP names,
 		R_xlen_t *stretch, SEXP call)
 {
-    SEXP indx, indexnames;
+    SEXP indx, indexnames = R_NilValue;
     R_xlen_t i, j, nnames, extra, sub;
     int canstretch = *stretch > 0;
     /* product may overflow, so check factors as well. */
@@ -817,7 +820,6 @@ stringSubscript(SEXP s, R_xlen_t ns, R_xlen_t nx, SEXP names,
 
     PROTECT(s);
     PROTECT(names);
-    PROTECT(indexnames = allocVector(VECSXP, ns));
     nnames = nx;
     extra = nnames;
 
@@ -838,7 +840,6 @@ stringSubscript(SEXP s, R_xlen_t ns, R_xlen_t nx, SEXP names,
 	for (i = 0; i < ns; i++)
 	    if(STRING_ELT(s, i) == NA_STRING || !CHAR(STRING_ELT(s, i))[0])
 		pindx[i] = 0;
-	for (i = 0; i < ns; i++) SET_VECTOR_ELT(indexnames, i, R_NilValue);
     } else {
 	PROTECT(indx = allocVector(INTSXP, ns));
 	int *pindx = INTEGER(indx);
@@ -849,7 +850,6 @@ stringSubscript(SEXP s, R_xlen_t ns, R_xlen_t nx, SEXP names,
 		    SEXP names_j = STRING_ELT(names, j);
 		    if (NonNullStringMatch(STRING_ELT(s, i), names_j)) {
 			sub = j + 1;
-			SET_VECTOR_ELT(indexnames, i, R_NilValue);
 			break;
 		    }
 		}
@@ -859,15 +859,21 @@ stringSubscript(SEXP s, R_xlen_t ns, R_xlen_t nx, SEXP names,
     }
 
     int *pindx = INTEGER(indx);
+    SEXP sindx = NULL;
     for (i = 0; i < ns; i++) {
 	sub = pindx[i];
 	if (sub == 0) {
-	    for (j = 0 ; j < i ; j++)
-		if (NonNullStringMatch(STRING_ELT(s, i), STRING_ELT(s, j))) {
-		    sub = pindx[j];
-		    SET_VECTOR_ELT(indexnames, i, STRING_ELT(s, j));
-		    break;
-		}
+	    if (sindx == NULL) {
+		sindx = PROTECT(match(s, s, 0));
+		indexnames = PROTECT(allocVector(VECSXP, ns));
+		for (int z = 0; z < ns; z++)
+		    SET_VECTOR_ELT(indexnames, z, R_NilValue);
+	    }
+	    int j = INTEGER(sindx)[i] - 1;
+	    if(STRING_ELT(s, i) != NA_STRING && CHAR(STRING_ELT(s, i))[0]) {
+		sub = pindx[j];
+		SET_VECTOR_ELT(indexnames, i, STRING_ELT(s, j));
+	    }
 	}
 	if (sub == 0) {
 	    if (!canstretch) {
@@ -883,9 +889,12 @@ stringSubscript(SEXP s, R_xlen_t ns, R_xlen_t nx, SEXP names,
        subscript vector. */
     if (extra != nnames)
 	setAttrib(indx, R_UseNamesSymbol, indexnames);
+    if (sindx != NULL) {
+	UNPROTECT(2);
+    }
     if (canstretch)
 	*stretch = extra;
-    UNPROTECT(4);
+    UNPROTECT(3);
     return indx;
 }
 

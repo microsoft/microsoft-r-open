@@ -1,7 +1,7 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
  *  Copyright (C) 1995, 1996  Robert Gentleman and Ross Ihaka
- *  Copyright (C) 1997--2018  The R Core Team
+ *  Copyright (C) 1997--2020  The R Core Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 #include <R_ext/Print.h>
 #include <ctype.h>		/* for isspace */
 #include <float.h>		/* for DBL_MAX */
+#include <R_ext/Itermacros.h> /* for ITERATE_BY_REGION */
 
 #undef COMPILING_R
 
@@ -48,8 +49,15 @@ static void R_wfixslash(wchar_t *s);
 
 extern "C" {
 #endif
+
+#if defined FC_LEN_T
+# include <stddef.h>
+void F77_SYMBOL(rwarnc)(char *msg, int *nchar, FC_LEN_T msg_len);
+void NORET F77_SYMBOL(rexitc)(char *msg, int *nchar, FC_LEN_T msg_len);
+#else
 void F77_SYMBOL(rwarnc)(char *msg, int *nchar);
 void NORET F77_SYMBOL(rexitc)(char *msg, int *nchar);
+#endif
 
 #ifdef __cplusplus
 }
@@ -59,7 +67,7 @@ void NORET F77_SYMBOL(rexitc)(char *msg, int *nchar);
 
 /* Many small functions are included from ../include/Rinlinedfuns.h */
 
-int nrows(SEXP s)
+int nrows(SEXP s) // ~== NROW(.)  in R
 {
     SEXP t;
     if (isVector(s) || isList(s)) {
@@ -75,7 +83,7 @@ int nrows(SEXP s)
 }
 
 
-int ncols(SEXP s)
+int ncols(SEXP s) // ~== NCOL(.)  in R
 {
     SEXP t;
     if (isVector(s) || isList(s)) {
@@ -365,7 +373,7 @@ static const char UCS2ENC[] = "UCS-2LE";
 /* Note: this does not terminate out, as all current uses are to look
  * at 'out' a wchar at a time, and sometimes just one char.
  */
-size_t mbcsToUcs2(const char *in, ucs2_t *out, int nout, int enc)
+size_t mbcsToUcs2(const char *in, R_ucs2_t *out, int nout, int enc)
 {
     void   *cd = NULL ;
     const char *i_buf;
@@ -381,7 +389,7 @@ size_t mbcsToUcs2(const char *in, ucs2_t *out, int nout, int enc)
     i_buf = (char *)in;
     i_len = strlen(in); /* not including terminator */
     o_buf = (char *)out;
-    o_len = ((size_t) nout) * sizeof(ucs2_t);
+    o_len = ((size_t) nout) * sizeof(R_ucs2_t);
     status = Riconv(cd, &i_buf, (size_t *)&i_len, &o_buf, (size_t *)&o_len);
     int serrno = errno;
     Riconv_close(cd);
@@ -537,7 +545,8 @@ void attribute_hidden setIVector(int * vec, int len, int val)
 }
 
 
-/* unused in R, in Utils.h, apparently used in Rcpp  */
+/* unused in R, in Utils.h, may have been used in Rcpp at some point,
+      but not any more (as per Nov. 2018)  */
 void attribute_hidden setRVector(double * vec, int len, double val)
 {
     for (int i = 0; i < len; i++) vec[i] = val;
@@ -774,7 +783,7 @@ SEXP attribute_hidden do_setwd(SEXP call, SEXP op, SEXP args, SEXP rho)
 #else
     {
 	const char *path
-	    = R_ExpandFileName(translateChar(STRING_ELT(s, 0)));
+	    = R_ExpandFileName(translateCharFP(STRING_ELT(s, 0)));
     if(chdir(path) < 0)
 	error(_("cannot change working directory"));
     }
@@ -835,7 +844,7 @@ SEXP attribute_hidden do_basename(SEXP call, SEXP op, SEXP args, SEXP rho)
 	if (STRING_ELT(s, i) == NA_STRING)
 	    SET_STRING_ELT(ans, i, NA_STRING);
 	else {
-	    pp = R_ExpandFileName(translateChar(STRING_ELT(s, i)));
+	    pp = R_ExpandFileName(translateCharFP(STRING_ELT(s, i)));
 	    if (strlen(pp) > PATH_MAX - 1)
 		error(_("path too long"));
 	    strcpy (buf, pp);
@@ -918,7 +927,7 @@ SEXP attribute_hidden do_dirname(SEXP call, SEXP op, SEXP args, SEXP rho)
 	if (STRING_ELT(s, i) == NA_STRING)
 	    SET_STRING_ELT(ans, i, NA_STRING);
 	else {
-	    pp = R_ExpandFileName(translateChar(STRING_ELT(s, i)));
+	    pp = R_ExpandFileName(translateCharFP(STRING_ELT(s, i)));
 	    if (strlen(pp) > PATH_MAX - 1)
 		error(_("path too long"));
 	    size_t ll = strlen(pp);
@@ -950,7 +959,7 @@ extern char *realpath(const char *path, char *resolved_path);
 
 SEXP attribute_hidden do_normalizepath(SEXP call, SEXP op, SEXP args, SEXP rho)
 {
-    SEXP ans, paths = CAR(args);
+    SEXP ans, paths = CAR(args), elp;
     int i, n = LENGTH(paths);
     const char *path;
     char abspath[PATH_MAX+1];
@@ -965,25 +974,47 @@ SEXP attribute_hidden do_normalizepath(SEXP call, SEXP op, SEXP args, SEXP rho)
 #ifdef HAVE_REALPATH
     PROTECT(ans = allocVector(STRSXP, n));
     for (i = 0; i < n; i++) {
-	path = translateChar(STRING_ELT(paths, i));
-	char *res = realpath(path, abspath);
-	if (res)
-	    SET_STRING_ELT(ans, i, mkChar(abspath));
-	else {
-	    SET_STRING_ELT(ans, i, STRING_ELT(paths, i));
-	    /* and report the problem */
+	elp = STRING_ELT(paths, i);
+	if (elp == NA_STRING) {
+	    SET_STRING_ELT(ans, i, NA_STRING);
 	    if (mustWork == 1)
-		error("path[%d]=\"%s\": %s", i+1, path, strerror(errno));
+		error("path[%d]=NA", i+1);
 	    else if (mustWork == NA_LOGICAL)
-		warning("path[%d]=\"%s\": %s", i+1, path, strerror(errno));
+		warning("path[%d]=NA", i+1);
+	    continue;
 	}
+	path = translateCharFP2(elp);
+	if (path) {
+	    char *res = realpath(path, abspath);
+	    if (res)
+		SET_STRING_ELT(ans, i, mkChar(abspath));
+	    else {
+		SET_STRING_ELT(ans, i, elp);
+		/* and report the problem */
+		if (mustWork == 1)
+		    error("path[%d]=\"%s\": %s", i+1, path, strerror(errno));
+		else if (mustWork == NA_LOGICAL)
+		    warning("path[%d]=\"%s\": %s", i+1, path, strerror(errno));
+	    }
+	}
+	else if (mustWork == 1) error("fatal translation error");
+	else SET_STRING_ELT(ans, i, elp);
     }
 #else
     Rboolean OK;
     warning("this platform does not have realpath so the results may not be canonical");
     PROTECT(ans = allocVector(STRSXP, n));
     for (i = 0; i < n; i++) {
-	path = translateChar(STRING_ELT(paths, i));
+	elp = STRING_ELT(paths, i);
+	if (elp == NA_STRING) {
+	    SET_STRING_ELT(ans, i, NA_STRING);
+	    if (mustWork == 1)
+		error("path[%d]=NA", i+1);
+	    else if (mustWork == NA_LOGICAL)
+		warning("path[%d]=NA", i+1);
+	    continue;
+	}
+	path = translateCharFP(elp);
 	OK = strlen(path) <= PATH_MAX;
 	if (OK) {
 	    if (path[0] == '/') strncpy(abspath, path, PATH_MAX);
@@ -997,7 +1028,7 @@ SEXP attribute_hidden do_normalizepath(SEXP call, SEXP op, SEXP args, SEXP rho)
 	if (OK) OK = (access(abspath, 0 /* F_OK */) == 0);
 	if (OK) SET_STRING_ELT(ans, i, mkChar(abspath));
 	else {
-	    SET_STRING_ELT(ans, i, STRING_ELT(paths, i));
+	    SET_STRING_ELT(ans, i, elp);
 	    /* and report the problem */
 	    if (mustWork == 1)
 		error("path[%d]=\"%s\": %s", i+1, path, strerror(errno));
@@ -1038,6 +1069,13 @@ const char *getTZinfo(void)
 
 #endif // not Win32
 
+
+#ifdef Win32
+static void encode_cleanup(void *data)
+{
+    WinUTF8out = TRUE;
+}
+#endif
 
 /* encodeString(x, w, quote, justify) */
 SEXP attribute_hidden do_encodeString(SEXP call, SEXP op, SEXP args, SEXP rho)
@@ -1083,6 +1121,20 @@ SEXP attribute_hidden do_encodeString(SEXP call, SEXP op, SEXP args, SEXP rho)
 	if(quote) w +=2; /* for surrounding quotes */
     }
     PROTECT(ans = duplicate(x));
+#ifdef Win32
+    RCNTXT cntxt;
+    Rboolean havecontext = FALSE;
+    /* do_encodeString is not printing, but returning a string, it therefore
+       must not produce Rgui escapes (do_encodeString may get called as part
+       of print dispatch with WinUTF8out being already set to TRUE). */
+    if (WinUTF8out) {
+	begincontext(&cntxt, CTXT_CCODE, R_NilValue, R_BaseEnv, R_BaseEnv,
+		     R_NilValue, R_NilValue);
+	cntxt.cend = &encode_cleanup;
+	havecontext = TRUE;
+	WinUTF8out = FALSE;
+    }
+#endif
     for(i = 0; i < len; i++) {
 	s = STRING_ELT(x, i);
 	if(na || s != NA_STRING) {
@@ -1097,6 +1149,12 @@ SEXP attribute_hidden do_encodeString(SEXP call, SEXP op, SEXP args, SEXP rho)
 	    }
 	}
     }
+#ifdef Win32
+    if (havecontext) {
+	encode_cleanup(NULL);
+	endcontext(&cntxt);
+    }
+#endif
     UNPROTECT(1);
     return ans;
 }
@@ -1191,8 +1249,8 @@ int attribute_hidden utf8clen(char c)
     return 1 + utf8_table4[c & 0x3f];
 }
 
-static Rwchar_t
-utf16toucs(wchar_t high, wchar_t low) 
+static R_wchar_t
+utf16toucs(wchar_t high, wchar_t low)
 {
     return 0x10000 + ((int) (high & 0x3FF) << 10 ) + (int) (low & 0x3FF);
 }
@@ -1204,13 +1262,13 @@ utf8toutf16low(const char *s)
     return (unsigned int) LOW_SURROGATE_START | ((s[2] & 0x0F) << 6) | (s[3] & 0x3F);
 }
 
-Rwchar_t attribute_hidden
+R_wchar_t attribute_hidden
 utf8toucs32(wchar_t high, const char *s)
 {
     return utf16toucs(high, utf8toutf16low(s));
 }
 
-/* These return the result in wchar_t.  If wchar_t is 16 bit (e.g. UTF-16LE on Windows
+/* These return the result in wchar_t.  If wchar_t is 16 bit (e.g. UTF-16LE on Windows)
    only the high surrogate is returned; call utf8toutf16low next. */
 size_t attribute_hidden
 utf8toucs(wchar_t *wc, const char *s)
@@ -1244,7 +1302,7 @@ utf8toucs(wchar_t *wc, const char *s)
 	    if(byte == 0xFFFE || byte == 0xFFFF) return (size_t)-1;
 	    return 3;
 	} else return (size_t)-1;
-    
+
     } else if (byte < 0xf8) {
 	if(strlen(s) < 4) return (size_t)-2;
 	if (((s[1] & 0xC0) == 0x80) && ((s[2] & 0xC0) == 0x80) && ((s[3] & 0xC0) == 0x80)) {
@@ -1297,16 +1355,19 @@ utf8towcs(wchar_t *wc, const char *s, size_t n)
 	    res ++;
 	    if (res >= n) break;
 	    if (IS_HIGH_SURROGATE(*p)) {
-	    	*(++p) = utf8toutf16low(t);
-	    	res ++;
-	    	if (res >= n) break;
+		*(++p) = utf8toutf16low(t);
+		res ++;
+		if (res >= n) break;
 	    }
 	}
     else
-	for(t = s; ; res++, t += m) {
+	for(t = s; ; t += m) {
 	    m  = (ssize_t) utf8toucs(&local, t);
 	    if (m < 0) error(_("invalid input '%s' in 'utf8towcs'"), s);
 	    if (m == 0) break;
+	    res ++;
+	    if (IS_HIGH_SURROGATE(local))
+		res++;
 	}
     return (size_t) res;
 }
@@ -1318,7 +1379,7 @@ static const unsigned int utf8_table2[] = { 0, 0xc0, 0xe0, 0xf0, 0xf8, 0xfc};
 
 /* s is NULL, or it contains at least n bytes.  Just write a a terminator if it's not big enough. */
 
-static size_t Rwcrtomb32(char *s, Rwchar_t cvalue, size_t n)
+static size_t Rwcrtomb32(char *s, R_wchar_t cvalue, size_t n)
 {
     register size_t i, j;
     if (!n) return 0;
@@ -1328,18 +1389,18 @@ static size_t Rwcrtomb32(char *s, Rwchar_t cvalue, size_t n)
 	if (cvalue <= utf8_table1[i]) break;
     if (i >= n - 1) return 0;  /* need space for terminal null */
     if (s) {
-    	s += i;
-    	for (j = i; j > 0; j--) {
+	s += i;
+	for (j = i; j > 0; j--) {
 	    *s-- = (char) (0x80 | (cvalue & 0x3f));
 	    cvalue >>= 6;
-        }
-    	*s = (char) (utf8_table2[i] | cvalue);
+	}
+	*s = (char) (utf8_table2[i] | cvalue);
     }
     return i + 1;
 }
 
 /* on input, wc is a string encoded in UTF-16 or UCS-2 or UCS-4.
-   s can be a buffer of size n>=0 chars, or NULL.  If n=0 or s=NULL, nothing is written. 
+   s can be a buffer of size n>=0 chars, or NULL.  If n=0 or s=NULL, nothing is written.
    The return value is the number of chars including the terminating null.  If the
    buffer is not big enough, the result is truncated but still null-terminated */
 attribute_hidden // but used in windlgs
@@ -1350,13 +1411,13 @@ size_t wcstoutf8(char *s, const wchar_t *wc, size_t n)
     const wchar_t *p;
     if (!n) return 0;
     for(p = wc, t = s; ; p++) {
-    	if (IS_SURROGATE_PAIR(*p, *(p+1))) {
-    	    Rwchar_t cvalue =  ((*p & 0x3FF) << 10) + (*(p+1) & 0x3FF) + 0x010000;
+	if (IS_SURROGATE_PAIR(*p, *(p+1))) {
+	    R_wchar_t cvalue =  ((*p & 0x3FF) << 10) + (*(p+1) & 0x3FF) + 0x010000;
 	    m = Rwcrtomb32(t, cvalue, n - res);
 	    p++;
-    	} else 
-    	    m = Rwcrtomb32(t, (Rwchar_t)(*p), n - res);
-    	if (!m) break;
+	} else
+	    m = Rwcrtomb32(t, (R_wchar_t)(*p), n - res);
+	if (!m) break;
 	res += m;
 	if (t)
 	    t += m;
@@ -1397,6 +1458,33 @@ size_t Mbrtowc(wchar_t *wc, const char *s, size_t n, mbstate_t *ps)
 	error(_("invalid multibyte string at '%s'"), err);
     }
     return used;
+}
+
+/* Truncate a string in place (in native encoding) so that it only contains
+   valid multi-byte characters. Has no effect in non-mbcs locales. */
+attribute_hidden
+char* mbcsTruncateToValid(char *s)
+{
+    if (!mbcslocale)
+	return s;
+
+    mbstate_t mb_st;
+    size_t slen = strlen(s);
+    size_t goodlen = 0;
+
+    mbs_init(&mb_st);
+    while(goodlen < slen) {
+	size_t res;
+	res = mbrtowc(NULL, s + goodlen, slen - goodlen, &mb_st);
+	if (res == (size_t) -1 || res == (size_t) -2) {
+	    /* strip off all remaining characters */
+	    for(;goodlen < slen; goodlen++)
+		s[goodlen] = '\0';
+	    return s;
+	}
+	goodlen += res;
+    }
+    return s;
 }
 
 attribute_hidden
@@ -1492,8 +1580,8 @@ void R_fixslash(char *s)
 	}
     } else
 	for (; *p; p++) if (*p == '\\') *p = '/';
-	/* preserve network shares */
-	if(s[0] == '/' && s[1] == '/') s[0] = s[1] = '\\';
+    /* preserve network shares */
+    if(s[0] == '/' && s[1] == '/') s[0] = s[1] = '\\';
 }
 
 void R_UTF8fixslash(char *s)
@@ -1531,7 +1619,11 @@ void R_fixbackslash(char *s)
 }
 #endif
 
+#if defined FC_LEN_T
+void NORET F77_SYMBOL(rexitc)(char *msg, int *nchar, FC_LEN_T msg_len)
+#else
 void NORET F77_SYMBOL(rexitc)(char *msg, int *nchar)
+#endif
 {
     int nc = *nchar;
     char buf[256];
@@ -1544,7 +1636,11 @@ void NORET F77_SYMBOL(rexitc)(char *msg, int *nchar)
     error("%s", buf);
 }
 
+#if defined FC_LEN_T
+void F77_SYMBOL(rwarnc)(char *msg, int *nchar, FC_LEN_T msg_len)
+#else
 void F77_SYMBOL(rwarnc)(char *msg, int *nchar)
+#endif
 {
     int nc = *nchar;
     char buf[256];
@@ -1584,6 +1680,9 @@ char *acopy_string(const char *in)
 http://unicode.org/Public/MAPPINGS/VENDORS/ADOBE/symbol.txt
 */
 
+/* Conversion table that DOES use Private Usage Area
+ * (should work better with specialised "symbol" fonts)
+ */
 static int s2u[224] = {
     0x0020, 0x0021, 0x2200, 0x0023, 0x2203, 0x0025, 0x0026, 0x220D,
     0x0028, 0x0029, 0x2217, 0x002B, 0x002C, 0x2212, 0x002E, 0x002F,
@@ -1615,14 +1714,62 @@ static int s2u[224] = {
     0xF8F8, 0xF8F9, 0xF8FA, 0xF8FB, 0xF8FC, 0xF8FD, 0xF8FE, 0x0020
 };
 
-void *Rf_AdobeSymbol2utf8(char *work, const char *c0, size_t nwork)
+/* Conversion table that does NOT use Private Usage Area (0xF8*)
+ * (should work better with fonts that have good Unicode coverage)
+ *
+ * NOTE that ...
+ *   23D0 VERTICAL LINE EXTENTION is used for VERTICAL ARROW EXTENDER
+ *   23AF HORIZONTAL LINE EXTENSION is used for HORIZONTAL ARROW EXTENDER
+ * ... neither of which may be very good AND ...
+ *   23AF HORIZONTAL LINE EXTENSION is also used for RADICAL EXTENDER
+ * ... and that is unlikely to be right for BOTH this use AND
+ * HORIZONTAL ARROW EXTENDER (if either)
+ */
+static int s2unicode[224] = {
+    0x0020, 0x0021, 0x2200, 0x0023, 0x2203, 0x0025, 0x0026, 0x220D,
+    0x0028, 0x0029, 0x2217, 0x002B, 0x002C, 0x2212, 0x002E, 0x002F,
+    0x0030, 0x0031, 0x0032, 0x0033, 0x0034, 0x0035, 0x0036, 0x0037,
+    0x0038, 0x0039, 0x003A, 0x003B, 0x003C, 0x003D, 0x003E, 0x003F,
+    0x2245, 0x0391, 0x0392, 0x03A7, 0x0394, 0x0395, 0x03A6, 0x0393,
+    0x0397, 0x0399, 0x03D1, 0x039A, 0x039B, 0x039C, 0x039D, 0x039F,
+    0x03A0, 0x0398, 0x03A1, 0x03A3, 0x03A4, 0x03A5, 0x03C2, 0x03A9,
+    0x039E, 0x03A8, 0x0396, 0x005B, 0x2234, 0x005D, 0x22A5, 0x005F,
+    0x23AF, 0x03B1, 0x03B2, 0x03C7, 0x03B4, 0x03B5, 0x03C6, 0x03B3,
+    0x03B7, 0x03B9, 0x03D5, 0x03BA, 0x03BB, 0x03BC, 0x03BD, 0x03BF,
+    0x03C0, 0x03B8, 0x03C1, 0x03C3, 0x03C4, 0x03C5, 0x03D6, 0x03C9,
+    0x03BE, 0x03C8, 0x03B6, 0x007B, 0x007C, 0x007D, 0x223C, 0x0020,
+    0x0020, 0x0020, 0x0020, 0x0020, 0x0020, 0x0020, 0x0020, 0x0020,
+    0x0020, 0x0020, 0x0020, 0x0020, 0x0020, 0x0020, 0x0020, 0x0020,
+    0x0020, 0x0020, 0x0020, 0x0020, 0x0020, 0x0020, 0x0020, 0x0020,
+    0x0020, 0x0020, 0x0020, 0x0020, 0x0020, 0x0020, 0x0020, 0x0020,
+    0x20AC, 0x03D2, 0x2032, 0x2264, 0x2044, 0x221E, 0x0192, 0x2663,
+    0x2666, 0x2665, 0x2660, 0x2194, 0x2190, 0x2191, 0x2192, 0x2193,
+    0x00B0, 0x00B1, 0x2033, 0x2265, 0x00D7, 0x221D, 0x2202, 0x2022,
+    0x00F7, 0x2260, 0x2261, 0x2248, 0x2026, 0x23D0, 0x23AF, 0x21B5,
+    0x2135, 0x2111, 0x211C, 0x2118, 0x2297, 0x2295, 0x2205, 0x2229,
+    0x222A, 0x2283, 0x2287, 0x2284, 0x2282, 0x2286, 0x2208, 0x2209,
+    0x2220, 0x2207, 0x00AE, 0x00A9, 0x2122, 0x220F, 0x221A, 0x22C5,
+    0x00AC, 0x2227, 0x2228, 0x21D4, 0x21D0, 0x21D1, 0x21D2, 0x21D3,
+    0x25CA, 0x2329, 0x00AE, 0x00A9, 0x2122, 0x2211, 0x239B, 0x239C,
+    0x239D, 0x23A1, 0x23A2, 0x23A3, 0x23A7, 0x23A8, 0x23A9, 0x23AA,
+    0x0020, 0x232A, 0x222B, 0x2320, 0x23AE, 0x2321, 0x239E, 0x239F,
+    0x23A0, 0x23A4, 0x23A5, 0x23A6, 0x23AB, 0x23AC, 0x23AD, 0x0020
+};
+
+void *Rf_AdobeSymbol2utf8(char *work, const char *c0, size_t nwork,
+			  Rboolean usePUA)
 {
     const unsigned char *c = (unsigned char *) c0;
     unsigned char *t = (unsigned char *) work;
     while (*c) {
 	if (*c < 32) *t++ = ' ';
 	else {
-	    unsigned int u = (unsigned int) s2u[*c - 32];
+	    unsigned int u;
+	    if (usePUA) {
+		u = (unsigned int) s2u[*c - 32];
+	    } else {
+		u = (unsigned int) s2unicode[*c - 32];
+	    }
 	    if (u < 128) *t++ = (unsigned char) u;
 	    else if (u < 0x800) {
 		*t++ = (unsigned char) (0xc0 | (u >> 6));
@@ -1638,6 +1785,92 @@ void *Rf_AdobeSymbol2utf8(char *work, const char *c0, size_t nwork)
     }
     *t = '\0';
     return (char*) work;
+}
+
+/* Convert UTF8 symbol back to single-byte symbol
+ * ASSUME fontface == 5 and 'str' is UTF8, i.e., we are dealing with
+ * a UTF8 string that has been through Rf_AdobeSymbol2utf8(usePUA=TRUE)
+ * (or through Rf_AdobeSymbol2ucs2() then Rf_ucstoutf8())
+ * i.e., we are dealing with CE_UTF8 string that has come from CE_SYMBOL string.
+*/
+int Rf_utf8toAdobeSymbol(char *out, const char *in) {
+    int i, j, k, used, tmp, nc = 0, found;
+    int *symbolint;
+    const char *s = in;
+    const char *p = in;
+    for ( ; *p; p += utf8clen(*p)) nc++;
+    symbolint = (int *) R_alloc(nc, sizeof(int));
+    for (i = 0, j = 0; i < nc; i++, j++) {
+	/* Convert UTF8 to int */
+	used = mbrtoint(&tmp, s);
+	if (used < 0)
+	    error(_("invalid UTF-8 string"));
+	symbolint[j] = tmp;
+	found = 0;
+	/* Convert int to CE_SYMBOL char */
+	for (k = 0; k < 224; k++) {
+	    if (symbolint[j] == s2u[k]) {
+		out[j] = (char)(k + 32);
+		found = 1;
+	    }
+	    if (found) break;
+	}
+	if (!found)
+	    error(_("Conversion failed"));
+	s += used;
+    }
+    out[nc] = '\0';
+    return nc;
+}
+
+const char* Rf_utf8Toutf8NoPUA(const char *in)
+{
+    int i, j, used, tmp;
+    /* At least enough because assumes each incoming char only one byte */
+    int nChar = 3*(int)strlen(in) + 1;
+    char *result = R_alloc(nChar, sizeof(char));
+    const char *s = in;
+    char *p = result;
+    for (i = 0; i < nChar; i++) {
+	/* Convert UTF8 char to int */
+	used = mbrtoint(&tmp, s);
+	/* Only re-encode if necessary
+	 * This is more efficient AND protects against input that is
+	 * NOT from Rf_AdobeSymbol2utf8(), e.g., plotmath on Windows
+	 * (which is from reEnc(CE_LATIN1, CE_UTF8))
+	 */
+	if (tmp > 0xF600) {
+	    char inChar[4], symbolChar[2], utf8Char[4];
+	    char *q;
+	    for (j = 0; j < used; j++) {
+		inChar[j] = *s++;
+	    }
+	    inChar[used] = '\0';
+	    Rf_utf8toAdobeSymbol(symbolChar, inChar);
+	    Rf_AdobeSymbol2utf8(utf8Char, symbolChar, 4, FALSE);
+	    q = utf8Char;
+	    while (*q) {
+		*p++ = *q++;
+	    }
+	} else {
+	    for (j = 0; j < used; j++) {
+		*p++ = *s++;
+	    }
+	}
+    }
+    *p = '\0';
+    return result;
+}
+
+const char* Rf_utf8ToLatin1AdobeSymbol2utf8(const char *in, Rboolean usePUA)
+{
+  const char *latinStr;
+  char *utf8str;
+  latinStr = reEnc(in, CE_UTF8, CE_LATIN1, 2);
+  int nc = 3*(int)strlen(latinStr) + 1;
+  utf8str = R_alloc(nc, sizeof(char));
+  Rf_AdobeSymbol2utf8(utf8str, latinStr, nc, usePUA);
+  return utf8str;
 }
 
 int attribute_hidden Rf_AdobeSymbol2ucs2(int n)
@@ -1722,9 +1955,9 @@ double R_strtod5(const char *str, char **endptr, char dec,
 	    if (ans != 0.0) { /* PR#15976:  allow big exponents on 0 */
 		expn += expsign * n;
 		if(exph > 0) {
-		    if (expn - exph < -122) {	/* PR#17199:  fac may overflow below if expn - exph is too small.  
-		                                   2^-122 is a bit bigger than 1E-37, so should be fine on all systems */
-		    	for (n = exph, fac = 1.0; n; n >>= 1, p2 *= p2)
+		    if (expn - exph < -122) {	/* PR#17199:  fac may overflow below if expn - exph is too small.
+						   2^-122 is a bit bigger than 1E-37, so should be fine on all systems */
+			for (n = exph, fac = 1.0; n; n >>= 1, p2 *= p2)
 			    if (n & 1) fac *= p2;
 			ans /= fac;
 			p2 = 2.0;
@@ -1947,11 +2180,11 @@ static UCollator *collator = NULL;
 static int collationLocaleSet = 0;
 
 /* called from platform.c */
-void attribute_hidden resetICUcollator(void)
+void attribute_hidden resetICUcollator(Rboolean disable)
 {
     if (collator) ucol_close(collator);
     collator = NULL;
-    collationLocaleSet = 0;
+    collationLocaleSet = disable ? 1 : 0;
 }
 
 static const struct {
@@ -2101,11 +2334,27 @@ int Scollate(SEXP a, SEXP b)
     if (!collationLocaleSet) {
 	int errsv = errno;      /* OSX may set errno in the operations below. */
 	collationLocaleSet = 1;
+
+	/* A lot of code depends on that setting LC_ALL or LC_COLLATE to "C"
+	   via environment variables or Sys.setlocale ensures the "C" collation
+	   order. Originally, R_ICU_LOCALE always took precedence over LC_ALL
+	   and LC_COLLATE variables and over Sys.setlocale (except on Unix when
+	   R_ICU_LOCALE=C). This now adds an exception: when LC_ALL is set to "C"
+	   (or unset and LC_COLLATE is set to "C"), the "C" collation order will
+	   be used. */
+	const char *envl = getenv("LC_ALL");
+	if (!envl || !envl[0])
+	    envl = getenv("LC_COLLATE");
+	int useC = envl && !strcmp(envl, "C");
+
 #ifndef Win32
-	if (strcmp("C", getLocale()) ) {
+	if (!useC && strcmp("C", getLocale()) ) {
 #else
+	/* On Windows, ICU is used for R_ICU_LOCALE=C, on Unix, it is not. */
+	/* FIXME: as ICU does not support C as locale, could we use the Unix
+	   behavior on all systems? */
 	const char *p = getenv("R_ICU_LOCALE");
-	if(p && p[0]) {
+	if(p && p[0] && (!useC || !strcmp(p, "C"))) {
 #endif
 	    UErrorCode status = U_ZERO_ERROR;
 	    uloc_setDefault(getLocale(), &status);
@@ -2119,6 +2368,7 @@ int Scollate(SEXP a, SEXP b)
 	}
 	errno = errsv;
     }
+    // translation may use escapes, but that is OK here
     if (collator == NULL)
 	return collationLocaleSet == 2 ?
 	    strcmp(translateChar(a), translateChar(b)) :
@@ -2149,7 +2399,7 @@ SEXP attribute_hidden do_ICUget(SEXP call, SEXP op, SEXP args, SEXP rho)
     return mkString("ICU not in use");
 }
 
-void attribute_hidden resetICUcollator(void) {}
+void attribute_hidden resetICUcollator(Rboolean disable) {}
 
 # ifdef Win32
 
@@ -2359,6 +2609,7 @@ SEXP attribute_hidden do_pretty(SEXP call, SEXP op, SEXP args, SEXP rho)
     if (eps == NA_INTEGER || eps < 0 || eps > 2)
 	error(_("'eps.correct' must be 0, 1, or 2"));
     R_pretty(&l, &u, &n, min_n, shrink, REAL(hi), eps, 1);
+    //------ (returns 'unit' which we do not need)
     PROTECT(ans = allocVector(VECSXP, 3));
     SET_VECTOR_ELT(ans, 0, ScalarReal(l));
     SET_VECTOR_ELT(ans, 1, ScalarReal(u));
@@ -2378,7 +2629,7 @@ SEXP attribute_hidden do_pretty(SEXP call, SEXP op, SEXP args, SEXP rho)
 */
 
 static void
-str_signif(void *x, R_xlen_t n, const char *type, int width, int digits,
+str_signif_sexp(SEXP x, const char *type, int width, int digits,
 	   const char *format, const char *flag, char **result);
 
 SEXP attribute_hidden do_formatC(SEXP call, SEXP op, SEXP args, SEXP rho)
@@ -2400,13 +2651,7 @@ SEXP attribute_hidden do_formatC(SEXP call, SEXP op, SEXP args, SEXP rho)
 	memset(cptr[i], ' ', ix);
 	cptr[i][ix] = 0;
     }
-    void *px = NULL /* -Wall */;
-    switch(TYPEOF(x)) {
-    case INTSXP: px = INTEGER(x); break;
-    case REALSXP: px = REAL(x); break;
-    default: error("unsupported type ");
-    }
-    str_signif(px, n, type, width, digits, fmt, flag, cptr);
+    str_signif_sexp(x, type, width, digits, fmt, flag, cptr);
     SEXP ans = PROTECT(allocVector(STRSXP, n));
     for (R_xlen_t i = 0; i < n; i++) SET_STRING_ELT(ans, i, mkChar(cptr[i]));
     UNPROTECT(2);
@@ -2462,6 +2707,13 @@ SEXP attribute_hidden do_formatC(SEXP call, SEXP op, SEXP args, SEXP rho)
  *		e.g., "0" pads leading zeros; "-" does left adjustment
  *		the other possible flags are  "+", " ", and "#".
  *	  New (Feb.98): if flag has more than one character, all are passed..
+ *
+ *  Gabe Becker (2019-05-21): Added str_signif_sexp which wraps
+ *  original DATAPTR based str_signif to support ALTREPs.
+ *
+ *     Any future calls to str_signif on SEXP data should be via
+ *     str_signif_sexp to ensure ALTREP support.
+ *
  */
 
 /* <UTF8> char here is either ASCII or handled as a whole */
@@ -2591,4 +2843,33 @@ void str_signif(void *x, R_xlen_t n, const char *type, int width, int digits,
 	    error("'type' must be \"real\" for this format");
     }
     vmaxset(vmax);
+}
+
+
+/* wrap original DATAPTR based str_signif in ITERATE_BY_REGION calls to
+   support ALTREPs
+
+   We still accept type because it is part of the defined API and only defaults
+   to matching the SEXP type.
+*/
+static
+void str_signif_sexp(SEXP x, const char *type, int width, int digits,
+		     const char *format, const char *flag, char **result)
+{
+    /* result + idx is the overall position of the chunk we're populating */
+    if(TYPEOF(x) == INTSXP) {
+	ITERATE_BY_REGION(x, px, idx, nb, int, INTEGER,
+			  {
+			      str_signif((void *) px, nb, type, width, digits,
+					 format, flag, result + idx);
+			  });
+    } else if (TYPEOF(x) == REALSXP) {
+	ITERATE_BY_REGION(x, px, idx, nb, double, REAL,
+			  {
+			      str_signif((void *) px, nb, type, width, digits,
+					 format, flag, result + idx);
+			  });
+    } else {
+	error("unsupported type ");
+    }
 }

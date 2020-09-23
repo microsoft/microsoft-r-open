@@ -7,15 +7,15 @@
     
     <MlmVersion Condition="'$(MlmVersion)' == '' ">9.4.7.0</MlmVersion>
     <MklVersion Condition="'$(MklVersion)' == '' ">2019.2.0.0</MklVersion>
-    <MroVersion Condition="'$(MroVersion)' == '' ">3.5.3.0</MroVersion>
-    <SroVersion Condition="'$(SroVersion)' == '' ">3.5.3.0</SroVersion>
+    <MroVersion Condition="'$(MroVersion)' == '' ">4.0.2.0</MroVersion>
+    <SroVersion Condition="'$(SroVersion)' == '' ">4.0.2.0</SroVersion>
     <SrsVersion Condition="'$(SrsVersion)' == '' ">9.4.7.0</SrsVersion>
     <SpoVersion Condition="'$(SpoVersion)' == '' ">9.4.7.0</SpoVersion>
     <SpsVersion Condition="'$(SpsVersion)' == '' ">9.4.7.0</SpsVersion>
     
-    <MroPkgsVersion Condition="'$(MroPkgsVersion)' == '' ">3.5.3.0</MroPkgsVersion>
+    <MroPkgsVersion Condition="'$(MroPkgsVersion)' == '' ">4.0.2.0</MroPkgsVersion>
 
-    <MroShortVersion Condition="'$(MroShortVersion)' == '' ">3.5.3</MroShortVersion>
+    <MroShortVersion Condition="'$(MroShortVersion)' == '' ">4.0.2</MroShortVersion>
     <SrsShortVersion Condition="'$(SrsShortVersion)' == '' ">9.4.7</SrsShortVersion>
 
     <OutputBase Condition="'$(OutputBase)' == ''">$(CodeRoot)\target\$(Configuration)</OutputBase>

@@ -142,7 +142,8 @@ simpleLoess <- function(y, x, weights, span = 0.75, degree = 2L,
     surf.stat <- paste(surface, statistics, sep = "/")
     do.rob <- (iterations > 1L) # will do robustness iter.
     if(!do.rob && iterTrace) {
-	warning("iterTrace = ", iterTrace," not obeyed as iterations = ", iterations)
+	warning(sprintf(gettext("iterTrace = %d is not obeyed since iterations = %d"),
+                        iterTrace, iterations))
 	iterTrace <- FALSE
     }
     no.st <- (statistics == "none")
@@ -466,8 +467,8 @@ scatter.smooth <-
 	     ylim = range(y, pred$y, na.rm = TRUE),
              evaluation = 50, ..., lpars = list())
 {
-    xlabel <- if (!missing(x)) deparse(substitute(x))
-    ylabel <- if (!missing(y)) deparse(substitute(y))
+    xlabel <- if (!missing(x)) deparse1(substitute(x))
+    ylabel <- if (!missing(y)) deparse1(substitute(y))
     xy <- xy.coords(x, y, xlabel, ylabel)
     x <- xy$x
     y <- xy$y

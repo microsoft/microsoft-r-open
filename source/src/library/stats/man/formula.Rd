@@ -1,6 +1,6 @@
 % File src/library/stats/man/formula.Rd
 % Part of the R package, https://www.R-project.org
-% Copyright 1995-2013 R Core Team
+% Copyright 1995-2019 R Core Team
 % Distributed under GPL 2 or later
 
 \name{formula}
@@ -9,6 +9,7 @@
 \alias{formula.formula}
 \alias{formula.terms}
 \alias{formula.data.frame}
+\alias{DF2formula}
 \alias{as.formula}
 \alias{print.formula}
 \alias{[.formula}
@@ -16,6 +17,7 @@
 \title{Model Formulae}
 \usage{
 formula(x, \dots)
+DF2formula(x, env = parent.frame())
 as.formula(object, env = parent.frame())
 
 \method{print}{formula}(x, showEnv = !identical(e, .GlobalEnv), \dots)
@@ -29,7 +31,7 @@ as.formula(object, env = parent.frame())
   \code{"formula"}.
 }
 \arguments{
-  \item{x, object}{\R object.}
+  \item{x, object}{\R object, for \code{DF2formula()} a \code{\link{data.frame}}.}
   \item{\dots}{further arguments passed to or from other methods.}
   \item{env}{the environment to associate with the result, if not
     already a formula.}
@@ -105,10 +107,32 @@ as.formula(object, env = parent.frame())
   component, then a \code{formula} parameter of the call (and evaluates
   its value) and finally a \code{"formula"} attribute.
 
-  There is a \code{formula} method for data frames.  If there is only
+  There is a \code{formula} method for data frames.  When there's
+  \code{"terms"} attribute with a formula, e.g., for a
+  \code{\link{model.frame}()}, that formula is returned.  If you'd like the
+  previous (\R \eqn{\le}{<=} 3.5.x) behavior, use the auxiliary
+  \code{DF2formula()} which does not consider a \code{"terms"} attribute.
+  Otherwise, if
+  there is only
   one column this forms the RHS with an empty LHS.  For more columns,
   the first column is the LHS of the formula and the remaining columns
   separated by \code{+} form the RHS.
+}
+\note{
+  In \R versions up to 3.6.0, \code{\link{character}} \code{x} of length
+  more than one were parsed as separate lines of \R code and the first
+  complete expression was evaluated into a formula when possible.  This
+  silently truncates such vectors of characters inefficiently and to some
+  extent inconsistently as this behaviour had been undocumented.  For this
+  reason, such use has been deprecated.  If you must work via character
+  \code{x}, do use a string, i.e., a character vector of length one.
+
+  E.g., \code{eval(call("~", quote(foo + bar)))} has been an order of magnitude
+  more efficient % 20 times faster
+  than \code{formula(c("~", "foo + bar"))}.
+
+  Further, character \dQuote{expressions} needing an \code{\link{eval}()}
+  to return a formula are now deprecated.
 }
 \section{Environments}{
   A formula object has an associated environment, and

@@ -13,7 +13,7 @@
 	<String Id="MklInstallDlgLearnMoreLinkText">Intel MKL</String>
 	<String Id="MklLicenseDlgTitle">{\WixUI_Font_Title}MKL Licensing Information</String>
 	<String Id="MklLicenseDlgLicenseAcceptedCheckBox">I accept the MKL license terms</String>
-	<String Id="ShortcutRguiName">Microsoft R Open 3.5.3</String>
+	<String Id="ShortcutRguiName">Microsoft R Open 4.0.2</String>
 	<String Id="ExitDialogDescription">Click the Finish button to exit the Setup Wizard and install any additional required software.</String>
 	<String Id="InvalidNetFramework">This application requires .NET Framework 4.5. Please install the .NET Framework then run this installer again.</String>
 </WixLocalization>

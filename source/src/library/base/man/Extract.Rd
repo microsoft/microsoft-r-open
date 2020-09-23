@@ -1,6 +1,6 @@
 % File src/library/base/man/Extract.Rd
 % Part of the R package, https://www.R-project.org
-% Copyright 1995-2016 R Core Team
+% Copyright 1995-2020 R Core Team
 % Copyright 2002-2012 The R Foundation
 % Distributed under GPL 2 or later
 
@@ -149,6 +149,9 @@ x$name <- value
   The most common form of indexing a \eqn{k}-dimensional array is to
   specify \eqn{k} indices to \code{[}.  As for vector indexing, the
   indices can be numeric, logical, character, empty or even factor.
+  And again, indexing by factors is equivalent to indexing by the
+  numeric codes, see \sQuote{Atomic vectors} above.
+
   An empty index (a comma separated blank) indicates that all entries in
   that dimension are selected.
   The argument \code{drop} applies to this form of indexing.
@@ -203,9 +206,8 @@ x$name <- value
 
   When \code{$<-} is applied to a \code{NULL} \code{x}, it first coerces
   \code{x} to \code{list()}.  This is what also happens with \code{[[<-}
-  if the replacement value \code{value} is of length greater than one:
-  if \code{value} has length 1 or 0, \code{x} is first coerced to a
-  zero-length vector of the type of \code{value}.
+  where in \R versions less than 4.y.z, a length one value resulted in a
+  length one (atomic) \emph{vector}.
 }
 
 \section{Environments}{

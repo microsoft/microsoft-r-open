@@ -64,7 +64,7 @@ DEBUG = YES
 # actual defaults are blank for both of these.
 #BINPREF = c:/Rtools/mingw_64/bin/
 # prefix for 64-bit:
-BINPREF64 = $(VENDOR_DIR)/rtools-3.5/mingw_64/bin/
+BINPREF64 = $(VENDOR_DIR)/rtools/mingw64/bin/
 #BINPREF64 = C:/Rtools/gcc-4.6.3/bin/
 #BINPREF64 = i686-w64-mingw32-
 
@@ -96,7 +96,7 @@ WIN = 64
 # set to use ICU
 USE_ICU = YES
 # path to parent of ICU headers
-ICU_PATH = $(LOCAL_SOFT)
+ICU_PATH = $(VENDOR_DIR)/icu
 ICU_LIBS = -lsicuin -lsicuuc -lsicudt -lstdc++
 
 # set to use libcurl
@@ -114,21 +114,21 @@ CURL_LIBS = -lcurl -lrtmp -lssl -lssh2 -lcrypto -lgdi32 -lcrypt32 -lz -lws2_32 -
 # and set CAIRO_HOME to the parent of the win32/win64 directories
 #
 # If CAIRO_HOME is not set the devices are not built.
-CAIRO_HOME = $(VENDOR_DIR)/cairo
+CAIRO_HOME = $(VENDOR_DIR)/cairo/src
 
-# set this to YES to build static HTML help
+# set this to YES to build static HTML help 
 BUILD_HTML = NO
 
 # unset this if you are *not* using MiKTeX
 MIKTEX = TRUE
 # Recent MiKTEX does not provide texi2dvi and needs something like
-TEXI2DVI = TEXINDEX=$(VENDOR_DIR)/rtools-3.5/bin/texindex.exe texify
+TEXI2DVI = TEXINDEX=$(VENDOR_DIR)/rtools/usr/bin/texindex.exe texify
 
 # for texinfo >= 5.1. If the texinfo files are installed at /packages/texinfo,
 # TEXI2ANY = /path/to/perl -I/packages/texinfo /packages/texinfo/texi2any
 # if you do not have texinfo (default),
 # TEXI2ANY = missing
-TEXI2ANY = $(VENDOR_DIR)/strawberryperl/perl/bin/perl -I$(VENDOR_DIR)/texinfo-5.2/tp $(VENDOR_DIR)/texinfo-5.2/tp/texi2any.pl
+TEXI2ANY = $(VENDOR_DIR)/strawberryperl/perl/bin/perl -I$(VENDOR_DIR)/texinfo/tp $(VENDOR_DIR)/texinfo/tp/texi2any.pl
 # additional optimization flags (use -mtune=native for a private build)
 # EOPTS = -mtune=core2
 
@@ -144,7 +144,7 @@ TEXI2ANY = $(VENDOR_DIR)/strawberryperl/perl/bin/perl -I$(VENDOR_DIR)/texinfo-5.
 ISDIR = C:/Program Files (x86)/Inno Setup 5
 
 # optional location where qpdf was installed (in $(QPDF)/bin). Spaces allowed.
-QPDF = $(VENDOR_DIR)/qpdf-5.1.3
+QPDF = $(VENDOR_DIR)/qpdf/qpdf-9.1.1
 
 # home of 32-bit files for combined installer on 64-bit build
 # HOME32 =

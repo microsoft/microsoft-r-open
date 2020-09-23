@@ -23,7 +23,7 @@
   }
 }
 \details{
-  The Hair \eqn{\times}{x} Eye table comes rom a survey of students at
+  The Hair \eqn{\times}{x} Eye table comes from a survey of students at
   the University of Delaware reported by Snee (1974).  The split by
   \code{Sex} was added by Friendly (1992a) for didactic purposes.
 
@@ -49,7 +49,7 @@
   Graphical methods for categorical data.
   \emph{SAS User Group International Conference Proceedings}, \bold{17},
   190--200.
-  \url{http://www.math.yorku.ca/SCS/sugi/sugi17-paper.html}
+  \url{http://datavis.ca/papers/sugi/sugi17.pdf}
 
   Friendly, M. (1992b).
   Mosaic displays for loglinear models.

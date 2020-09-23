@@ -62,8 +62,6 @@
  ProfileEvent
  RExitContext
  R_BCNodeStackBase
- R_BCNodeStackEnd
- R_BCNodeStackTop
  R_BrowseLevel
  R_BrowseLines
  R_BrowserLastCommand
@@ -96,6 +94,7 @@
  R_GetMaxNSize
  R_GetMaxVSize
  R_GetTraceback
+ R_GetTracebackParsed
  R_GetVarLocSymbol
  R_GetVarLocValue
  R_HandlerStack
@@ -368,7 +367,8 @@
  Rf_mat2indsub
  Rf_matchArg
  Rf_matchArgExact
- Rf_matchArgs
+ Rf_matchArgs_NR
+ Rf_matchArgs_RC
  Rf_matchPar
  Rf_mbtoucs
  Rf_mkCLOSXP

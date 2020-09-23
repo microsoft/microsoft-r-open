@@ -1,7 +1,7 @@
 #  File src/library/utils/R/zzz.R
 #  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2018 The R Core Team
+#  Copyright (C) 1995-2019 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -26,20 +26,19 @@
 	     help.search.types = c("vignette", "demo", "help"),
              citation.bibtex.max = 1L, internet.info = 2L,
 	     pkgType = if(.Platform$pkgType != "source") "both" else "source",
-	     str = list(strict.width = "no", digits.d = 3L, vec.len = 4L),
+	     str = strOptions(), # -> ./str.R
 	     demo.ask = "default", example.ask = "default",
 	     HTTPUserAgent = defaultUserAgent(),
 	     menu.graphics = TRUE, mailer = "mailto")
     if (.Platform$pkgType != "source")
-        op.utils[["install.packages.compile.from.source"]] =
+        op.utils[["install.packages.compile.from.source"]] <-
             Sys.getenv("R_COMPILE_AND_INSTALL_PACKAGES", "interactive")
 
     extra <-
         if(.Platform$OS.type == "windows") {
             list(unzip = "internal",
                  editor = if(length(grep("Rgui", commandArgs(), TRUE))) "internal" else "notepad",
-                 repos = c(CRAN = "@CRAN@",
-                           CRANextra = "http://www.stats.ox.ac.uk/pub/RWin"),
+                 repos = c(CRAN = "@CRAN@"),
                  askYesNo = if (.Platform$GUI == "Rgui") askYesNoWinDialog
                  )
         } else
@@ -49,4 +48,7 @@
     op.utils <- c(op.utils, extra)
     toset <- !(names(op.utils) %in% names(.Options))
     if(any(toset)) options(op.utils[toset])
+
+    ns <- environment(sys.function()) # the namespace
+    assign("osVersion", .osVersion(), envir = ns)
 }

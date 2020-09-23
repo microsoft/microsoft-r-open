@@ -103,7 +103,7 @@ write.dcf(x, file = "", append = FALSE, useBytes = FALSE,
 }
 
 \references{
-  \url{https://www.debian.org/doc/debian-policy/index.html#document-ch-controlfields}.
+  \url{https://www.debian.org/doc/debian-policy/ch-controlfields.html}.
 
   Note that \R does not require encoding in UTF-8, which is a recent
   Debian requirement.  Nor does it use the Debian-specific sub-format
@@ -126,7 +126,7 @@ x <- read.dcf(file = system.file("DESCRIPTION", package = "splines"),
 write.dcf(x)
 
 ## An online DCF file with multiple records
-con <- url("http://cran.r-project.org/src/contrib/PACKAGES")
+con <- url("https://cran.r-project.org/src/contrib/PACKAGES")
 y <- read.dcf(con, all = TRUE)
 close(con)
 utils::str(y)

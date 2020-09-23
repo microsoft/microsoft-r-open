@@ -24,7 +24,8 @@ image.default <- function (x = seq(0, 1, length.out = nrow(z)),
 		   zlim = range(z[is.finite(z)]),
 		   xlim = range(x),
 		   ylim = range(y),
-		   col = heat.colors(12), add = FALSE,
+		   col = hcl.colors(12, "YlOrRd", rev = TRUE),
+                   add = FALSE,
 		   xaxs = "i", yaxs = "i", xlab, ylab,
                    breaks, oldstyle = FALSE,
                    useRaster, ...)
@@ -43,16 +44,16 @@ image.default <- function (x = seq(0, 1, length.out = nrow(z)),
 	    if (missing(ylab)) ylab <- ""
 	} else stop("no 'z' matrix specified")
     } else if (is.list(x)) {
-	xn <- deparse(substitute(x))
+	xn <- deparse1(substitute(x))
 	if (missing(xlab)) xlab <- paste0(xn, "$x")
 	if (missing(ylab)) ylab <- paste0(xn, "$y")
 	y <- x$y
 	x <- x$x
     } else {
 	if (missing(xlab))
-	    xlab <- if (missing(x)) "" else deparse(substitute(x))
+	    xlab <- if (missing(x)) "" else deparse1(substitute(x))
 	if (missing(ylab))
-	    ylab <- if (missing(y)) "" else deparse(substitute(y))
+	    ylab <- if (missing(y)) "" else deparse1(substitute(y))
     }
     if (any(!is.finite(x)) || any(!is.finite(y)))
         stop("'x' and 'y' values must be finite and non-missing")

@@ -1,0 +1,531 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: rpart 4.1-7\n"
+"Report-Msgid-Bugs-To: bugs@r-project.org\n"
+"POT-Creation-Date: 2014-03-18 13:59\n"
+"PO-Revision-Date: \n"
+"Last-Translator: Łukasz Daniel <lukasz.daniel@gmail.com>\n"
+"Language-Team: Łukasz Daniel <lukasz.daniel@gmail.com>\n"
+"Language: pl_PL\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"na-Revision-Date: 2012-05-29 07:55+0100\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
+"|| n%100>=20) ? 1 : 2);\n"
+"X-Poedit-SourceCharset: iso-8859-1\n"
+"X-Generator: Poedit 1.6.4\n"
+"X-Poedit-Bookmarks: -1,6,-1,-1,-1,-1,-1,-1,-1,-1\n"
+
+# rpart/R/formatg.R: 6
+# stop("'x' must be a numeric vector")
+msgid "'x' must be a numeric vector"
+msgstr "'x' musi być wektorem liczbowym"
+
+# rpart/R/text.rpart.R: 11
+# stop("Not a legitimate \"rpart\" object")
+# rpart/R/rsq.rpart.R: 7
+# stop("Not a legitimate \"rpart\" object")
+msgid "Not a legitimate \"rpart\" object"
+msgstr "argument nie jest obiektem klasy \"rpart\""
+
+# rpart/R/meanvar.rpart.R: 7
+# stop("Plot is not useful for classification or poisson trees")
+msgid "Plot not useful for classification or poisson trees"
+msgstr "Wykres jest nieprzydatny dla drzew klasyfikacyjnych lub poissonowskich"
+
+# rpart/R/plot.rpart.R: 5
+# stop("fit is not a tree, just a root")
+# rpart/R/text.rpart.R: 12
+# stop("fit is not a tree, just a root")
+msgid "fit is not a tree, just a root"
+msgstr "dopasowanie nie jest drzewem tylko korzeniem"
+
+# rpart/R/plotcp.R: 11
+# stop("'cptable' component does not contain cross-validation results")
+msgid "'cptable' does not contain cross-validation results"
+msgstr "komponent 'cptable' nie zawiera wyników krzyżowej walidacji"
+
+# rpart/R/pred.rpart.R: 15
+# stop("Tree has variables not found in new data")
+msgid "Tree has variables not found in new data"
+msgstr "Drzewo posiada zmienne nie znalezione w nowych danych"
+
+# rpart/R/predict.rpart.R: 31
+# stop("type 'class' is only appropriate for classification")
+msgid "type 'class' is only appropriate for classification"
+msgstr "typ 'class' jest odpowiedni jedynie dla klasyfikacji"
+
+# rpart/R/predict.rpart.R: 37
+# stop("Invalid prediction for \"rpart\" object")
+msgid "Invalid prediction for \"rpart\" object"
+msgstr "Niepoprawna predykcja dla obiektu klasy \"rpart\""
+
+msgid "'x' must be an \"rpart\" object"
+msgstr "argument 'x' musi być obiektem klasy \"rpart\""
+
+# rpart/R/residuals.rpart.R: 12
+# stop("Invalid type of residual")
+msgid "Invalid type of residual"
+msgstr "Niepoprawny typ reszty"
+
+# rpart/R/roc.rpart.R: 5
+# stop("'object' argument is not an object of class \"rpart\" or endpoint is not a 2 level-factor")
+msgid "Not legitimate \"rpart\" tree and endpoint not a 2 level-factor"
+msgstr ""
+"argument 'object' nie jest obiektem klasy \"rpart\" lub punkt końcowy nie "
+"jest czynnikiem dwupoziomowym"
+
+# rpart/R/rpart.R: 15
+# stop("a 'formula' argument is required")
+msgid "a 'formula' argument is required"
+msgstr "argument 'formula' jest wymagany"
+
+# rpart/R/rpart.R: 24
+# stop("Trees cannot handle interaction terms")
+msgid "Trees cannot handle interaction terms"
+msgstr "Drzewa nie mogą obsłużyć członów oddziaływania"
+
+# rpart/R/rpart.R: 28
+# stop("negative weights not allowed")
+msgid "negative weights not allowed"
+msgstr "ujemne wagi nie są dozwolone"
+
+# rpart/R/rpart.R: 59
+# stop("Invalid method")
+msgid "Invalid method"
+msgstr "Niepoprawna metoda"
+
+# rpart/R/rpart.R: 96
+# stop(gettextf("Argument %s not matched", names(extraArgs)[indx == 0L]), domain = "R-rpart")
+msgid "Argument %s not matched"
+msgstr "Argument %s nie został dopasowany"
+
+# rpart/R/xpred.rpart.R: 81
+# stop("Wrong length for 'xval'")
+# rpart/R/xpred.rpart.R: 82
+# stop("Wrong length for 'xval'")
+# rpart/R/rpart.R: 121
+# stop("Wrong length for 'xval'")
+# rpart/R/rpart.R: 122
+# stop("Wrong length for 'xval'")
+msgid "Wrong length for 'xval'"
+msgstr "Niepoprawna długość dla 'xval'"
+
+# rpart/R/rpart.R: 131
+# stop("Cost vector is the wrong length")
+msgid "Cost vector is the wrong length"
+msgstr "Wektor kosztów ma niepoprawną długość"
+
+# rpart/R/rpart.R: 132
+# stop("Cost vector must be positive")
+msgid "Cost vector must be positive"
+msgstr "Wektor kosztów musi być dodatni"
+
+# rpart/R/rpart.R: 251
+# stop("Initialization routine is missing the 'summary' function")
+msgid "Initialization routine is missing the 'summary' function"
+msgstr "Brak procedury inicjalizacji w funkcji 'summary'"
+
+# rpart/R/snip.rpart.mouse.R: 9
+# stop("no information available on parameters from previous call to plot()")
+# rpart/R/rpartco.R: 7
+# stop("no information available on parameters from previous call to plot()")
+msgid "no information available on parameters from previous call to plot()"
+msgstr ""
+"brak dostępnej informacji na temat parametrów z poprzedniego wywołania "
+"'plot()'"
+
+# rpart/R/rpart.class.R: 3
+# stop("No offset allowed in classification models")
+msgid "No offset allowed in classification models"
+msgstr "Brak dozwolonego przesunięcia w modelach klasyfikacyjnych"
+
+# rpart/R/rpart.class.R: 14
+# stop("The parms list must have names")
+msgid "The parms list must have names"
+msgstr "Lista parametrów musi mieć nazwy"
+
+# rpart/R/rpart.exp.R: 116
+# stop(gettextf("'parms' component not matched: %s", names(parms)[indx == 0L]), domain = "R-rpart")
+# rpart/R/rpart.class.R: 17
+# stop(gettextf("'parms' component not matched: %s", names(parms)[temp == 0L]), domain = "R-rpart")
+# rpart/R/rpart.poisson.R: 21
+# stop(gettextf("'parms' component not matched: %s", names(parms)[indx == 0L]), domain = "R-rpart")
+msgid "'parms' component not matched: %s"
+msgstr "komponent 'parms' nie został dopasowany: %s"
+
+# rpart/R/rpart.class.R: 23
+# stop("Priors must sum to 1")
+msgid "Priors must sum to 1"
+msgstr "Prawdopodobieństwa a priori muszą sumować się do 1"
+
+# rpart/R/rpart.class.R: 24
+# stop("Priors must be >= 0")
+msgid "Priors must be >= 0"
+msgstr "Prawdopodobieństwa a priori muszą być >= 0"
+
+# rpart/R/rpart.class.R: 25
+# stop("Wrong length for priors")
+msgid "Wrong length for priors"
+msgstr "Niepoprawna długość dla prawdopodobieństw a priori"
+
+# rpart/R/rpart.class.R: 32
+# stop("Wrong length for loss matrix")
+msgid "Wrong length for loss matrix"
+msgstr "Niepoprawna długość macierzy strat"
+
+# rpart/R/rpart.class.R: 35
+# stop("Loss matrix must have zero on diagonals")
+msgid "Loss matrix must have zero on diagonals"
+msgstr "Macierz strat musi mieć zera na diagonali"
+
+# rpart/R/rpart.class.R: 37
+# stop("Loss matrix cannot have negative elements")
+msgid "Loss matrix cannot have negative elements"
+msgstr "Macierz strat nie może mieć ujemnych elementów"
+
+# rpart/R/rpart.class.R: 39
+# stop("Loss matrix has a row of zeros")
+msgid "Loss matrix has a row of zeros"
+msgstr "Macierz strat ma wiersz zer"
+
+# rpart/R/rpart.class.R: 45
+# stop("Invalid splitting rule")
+msgid "Invalid splitting rule"
+msgstr "Niepoprawna reguła rozdzielająca"
+
+# rpart/R/rpart.class.R: 49
+# stop("Parameter argument must be a list")
+msgid "Parameter argument must be a list"
+msgstr "Argument parametru musi być listą"
+
+# rpart/R/rpart.control.R: 8
+# warning("The value of 'maxcompete' supplied is < 0; the value 0 was used instead")
+msgid "The value of 'maxcompete' supplied is < 0; the value 0 was used instead"
+msgstr "Wartość dostarczonego 'maxcompete' <0; zamiast niej użyto 0"
+
+# rpart/R/rpart.control.R: 12
+# warning("The value of 'xval' supplied is < 0; the value 0 was used instead")
+msgid "The value of 'xval' supplied is < 0; the value 0 was used instead"
+msgstr "Dostarczona wartość 'xval' <0; zamiast niej użyto 0"
+
+# rpart/R/rpart.control.R: 15
+# stop("Maximum depth is 30")
+msgid "Maximum depth is 30"
+msgstr "Maksymalna głębokość wynosi 30"
+
+# rpart/R/rpart.control.R: 16
+# stop("Maximum depth must be at least 1")
+msgid "Maximum depth must be at least 1"
+msgstr "Maksymalna głębokość musi być równa przynajmniej 1"
+
+# rpart/R/rpart.control.R: 23
+# warning("The value of 'surrogatestyle' supplied was out of range, the default value of 0 is used instead.")
+msgid ""
+"The value of 'usesurrogate' supplied was out of range, the default value of "
+"2 is used instead."
+msgstr ""
+"Dostarczona wartość 'usesurrogate' była poza zakesem, użyto zamiast niej "
+"domyślnej wartości 2."
+
+# rpart/R/rpart.control.R: 23
+# warning("The value of 'surrogatestyle' supplied was out of range, the default value of 0 is used instead.")
+msgid ""
+"The value of 'surrogatestyle' supplied was out of range, the default value "
+"of 0 is used instead."
+msgstr ""
+"Dostarczona wartość 'usesurrogate' była poza zakesem, użyto zamiast niej "
+"domyślnej wartości 0."
+
+# rpart/R/rpart.exp.R: 15
+# stop("'y' argument must be an object of class \"survival\" - use the 'Surv()' function")
+msgid "Response must be a 'survival' object - use the 'Surv()' function"
+msgstr "argument 'y' musi być obiektem \"survival\"- użyj funkcji 'Surv()'"
+
+# rpart/R/rpart.exp.R: 21
+# stop("Observation time must be > 0")
+# rpart/R/rpart.poisson.R: 11
+# stop("Observation time must be > 0")
+msgid "Observation time must be > 0"
+msgstr "Czas obserwacji musi być > 0"
+
+# rpart/R/rpart.exp.R: 22
+# stop("No deaths in data set")
+msgid "No deaths in data set"
+msgstr "Brak śmierci w zbiorze danych"
+
+# rpart/R/rpart.exp.R: 112
+# stop("You must input a named list for parms")
+# rpart/R/rpart.poisson.R: 17
+# stop("You must input a named list for parms")
+msgid "You must input a named list for parms"
+msgstr "Musisz wprowadzić nazwaną listę do parametrów"
+
+# rpart/R/rpart.exp.R: 121
+# stop("Invalid error method for Poisson")
+# rpart/R/rpart.poisson.R: 26
+# stop("Invalid error method for Poisson")
+msgid "Invalid error method for Poisson"
+msgstr "Niepoprawna metoda błędu dla Poissona"
+
+# rpart/R/rpart.exp.R: 126
+# stop("Invalid shrinkage value")
+# rpart/R/rpart.poisson.R: 32
+# stop("Invalid shrinkage value")
+msgid "Invalid shrinkage value"
+msgstr "Niepoprawna wartość zawężenia"
+
+# rpart/R/rpart.poisson.R: 5
+# stop("response must be a 2 column matrix or a vector")
+msgid "response must be a 2 column matrix or a vector"
+msgstr "Zmienna zależna musi być 2-kolumnową macierzą lub wektorem"
+
+# rpart/R/rpart.poisson.R: 12
+# stop("Number of events must be >= 0")
+msgid "Number of events must be >= 0"
+msgstr "Liczba zdarzeń musi być >= 0"
+
+# rpart/R/rpartcallback.R: 7
+# stop("User written methods must have 3 functions")
+msgid "User written methods must have 3 functions"
+msgstr "Metody użytkownika muszą mieć 3 funkcje"
+
+# rpart/R/rpartcallback.R: 13
+# stop("User written method does not contain an 'eval' function")
+msgid "User written method does not contain an 'init' function"
+msgstr "Metoda użytkownika nie zawiera funkcji 'init()'"
+
+# rpart/R/rpartcallback.R: 11
+# stop("User written method does not contain a 'split' function")
+msgid "User written method does not contain a 'split' function"
+msgstr "Metoda użytkownika nie zawiera funkcji 'split()'"
+
+# rpart/R/rpartcallback.R: 13
+# stop("User written method does not contain an 'eval' function")
+msgid "User written method does not contain an 'eval' function"
+msgstr "Metoda użytkownika nie zawiera funkcji 'eval()'"
+
+# rpart/R/rpartcallback.R: 36
+# stop("User 'eval' function returned invalid label")
+# rpart/R/rpartcallback.R: 65
+# stop("User 'eval' function returned invalid label")
+msgid "User 'eval' function returned invalid label"
+msgstr "Funkcja użytkownika 'eval' zwróciła niepoprawną etykietę"
+
+# rpart/R/rpartcallback.R: 38
+# stop("User 'eval' function returned invalid deviance")
+# rpart/R/rpartcallback.R: 67
+# stop("User 'eval' function returned invalid deviance")
+msgid "User 'eval' function returned invalid deviance"
+msgstr "Funkcja użytkownika 'eval' zwróciła niepoprawne odchylenie"
+
+# rpart/R/rpartcallback.R: 49
+# stop("Invalid return from categorical 'split' function")
+# rpart/R/rpartcallback.R: 79
+# stop("Invalid return from categorical 'split' function")
+msgid "Invalid return from categorical 'split' function"
+msgstr "Niepoprawny wynik z kategorycznej funkcji 'split'"
+
+# rpart/R/rpartcallback.R: 54
+# stop("User 'split' function returned invalid goodness")
+# rpart/R/rpartcallback.R: 85
+# stop("User 'split' function returned invalid goodness")
+msgid "User 'split' function returned invalid goodness"
+msgstr "Funkcja użytkownika 'split' zwróciła niepoprawną dobroć"
+
+# rpart/R/rpartcallback.R: 56
+# stop("User 'split' function returned invalid direction")
+# rpart/R/rpartcallback.R: 87
+# stop("User 'split' function returned invalid direction")
+msgid "User 'split' function returned invalid direction"
+msgstr "Funkcja użytkownika 'split' zwróciła niepoprawny kierunek"
+
+# rpart/R/rsq.rpart.R: 17
+# warning("may not be applicable for this method")
+msgid "may not be applicable for this method"
+msgstr "może nie mieć zastosowania dla tego modelu"
+
+# rpart/R/snip.rpart.R: 6
+# stop("Not an \"rpart\" object")
+msgid "Not an \"rpart\" object"
+msgstr "argument 'x' nie jest obiektem klasy \"rpart\""
+
+# rpart/R/snip.rpart.R: 20
+# warning(gettextf("Nodes %s are not in this tree", toss[toss.idx == 0L]),
+#                 domain = "R-rpart")
+msgid "Nodes %s are not in this tree"
+msgstr "Węzły %s nie są w tym drzewie"
+
+# rpart/R/text.rpart.R: 15
+# warning("argument 'label' is no longer used")
+msgid "argument 'label' is no longer used"
+msgstr "argument 'label' jest aktualnie nieużyty"
+
+# rpart/R/xpred.rpart.R: 7
+# stop("Invalid fit object")
+msgid "Invalid fit object"
+msgstr "niepoprawny obiekt dopasowania"
+
+# rpart/R/zzz.R: 25
+# warning(sprintf(gettext("supplied nodes %s are not in this tree", domain = "R-rpart"), paste(bad, collapse = ", ")), domain = NA)
+msgid "supplied nodes %s are not in this tree"
+msgstr "dostarczone węzły %s nie są w tym drzewie"
+
+# rpart/R/zzz.R: 28
+# warning(sprintf(gettext("supplied nodes %s are leaves", domain = "R-rpart"), paste(good[leaves], collapse = ", ")), domain = NA)
+msgid "supplied nodes %s are leaves"
+msgstr "dostarczone węzły %s są liśćmi"
+
+# rpart/R/labels.rpart.R: 66
+# warning("more than 52 levels in a predicting factor, truncated for printout", domain = "R-rpart")
+#~ msgid "more than 52 levels in a predicting factor, truncated for printout"
+#~ msgstr ""
+#~ "więcej niż 52 poziomów w czynniku przewidującym, przycięto na potrzeby "
+#~ "wyświetlenia"
+
+# rpart/man/meanvar.rpart.Rd: 15
+# gettext("ave(y)")
+# rpart/R/meanvar.rpart.R: 1
+# gettext("ave(y)")
+#~ msgid "ave(y)"
+#~ msgstr "średnie(y)"
+
+#~ msgid "ave(deviance)"
+#~ msgstr "średnie(odchylenie)"
+
+# rpart/R/plot.rpart.R: 4
+# stop("'x' argument is not an object of class \"rpart\"")
+# rpart/R/plotcp.R: 7
+# stop("'x' argument is not an object of class \"rpart\"")
+# rpart/R/print.rpart.R: 4
+# stop("'x' argument is not an object of class \"rpart\"")
+#~ msgid "'%s' argument is not an object of class %s"
+#~ msgstr "argument '%s' nie jest obiektem klasy %s"
+
+# rpart/R/path.rpart.R: 18
+# gettext("node number: ", domain = "R-rpart")
+# rpart/R/path.rpart.R: 28
+# gettext("node number: ", domain = "R-rpart")
+#~ msgid "node number:"
+#~ msgstr "numer węzła:"
+
+# rpart/R/plotcp.R: 21
+# gettext("X-val Relative Error", domain = "R-rpart")
+#~ msgid "X-val Relative Error"
+#~ msgstr "Błąd względny wartości X"
+
+# rpart/R/plotcp.R: 29
+# gettext("size of tree", domain = "R-rpart")
+#~ msgid "size of tree"
+#~ msgstr "rozmiar drzewa"
+
+# rpart/R/plotcp.R: 33
+# gettext("number of splits", domain = "R-rpart")
+#~ msgid "number of splits"
+#~ msgstr "liczba rozgałęzień"
+
+# rpart/R/post.rpart.R: 22
+# gettextf("Endpoint = %s", paste(temp, collapse = " "), domain = "R-rpart")
+#~ msgid "Endpoint = %s"
+#~ msgstr "Koniec = %s"
+
+#~ msgid "Regression tree:"
+#~ msgstr "Drzewo regresyjne:"
+
+#~ msgid "Classification tree:"
+#~ msgstr "Drzewo klasyfikacyjne:"
+
+#~ msgid "Rates regression tree:"
+#~ msgstr "Drzewo regresyjne szybkości:"
+
+#~ msgid "Survival regression tree:"
+#~ msgstr "Drzewo regresyjne przeżycia:"
+
+# rpart/R/printcp.R: 21
+# gettext("Variables actually used in tree construction:\n", domain = "R-rpart")
+#~ msgid "Variables actually used in tree construction:"
+#~ msgstr "Zmienne uzyte w konstrukcji drzewa:"
+
+# rpart/R/printcp.R: 27
+# gettext("Root node error: ", domain = "R-rpart")
+#~ msgid "Root node error:"
+#~ msgstr "Błąd głównego węzła:"
+
+# rpart/R/roc.rpart.R: 62
+# gettext("Sensitivity", domain = "R-rpart")
+# rpart/R/roc.rpart.R: 66
+# gettext("Sensitivity", domain = "R-rpart")
+#~ msgid "Sensitivity"
+#~ msgstr "Czułość"
+
+#~ msgid "1-Specificity"
+#~ msgstr "1-Specyficzność"
+
+#~ msgid "Specificity"
+#~ msgstr "Specyficzność"
+
+# rpart/R/rpart.anova.R: 6
+# gettextf("  mean=%s, MSE=%s", formatg(yval, digits), formatg(dev/wt, digits), domain = "R-rpart")
+#~ msgid "mean=%s, MSE=%s"
+#~ msgstr "średnia=%s, błąd standardowy  średniej=%s"
+
+# rpart/R/rpart.branch.R: 10
+# stop("no information available on parameters from previous call to 'plot()'")
+#~ msgid ""
+#~ "no information available on parameters from previous call to 'plot()'"
+#~ msgstr ""
+#~ "brak dostępnej informacji na temat parametrów z poprzedniego wywołania "
+#~ "'plot()'"
+
+# rpart/R/rpart.control.R: 19
+# warning("The value of 'usesurrogate' supplied was out of range, the default value of 2 is used instead.")
+#~ msgid ""
+#~ "The value of '%s' supplied was out of range, the default value of %d is "
+#~ "used instead"
+#~ msgstr ""
+#~ "Dostarczona wartość '%s' była poza zakesem, użyto zamiast niej domyślnej "
+#~ "wartości %d"
+
+# rpart/R/rpartcallback.R: 9
+# stop("User written method does not contain an 'init' function")
+#~ msgid "User written method does not contain an %s function"
+#~ msgstr "Metoda użytkownika nie zawiera funkcji '%s'"
+
+#~ msgid "Variable importance"
+#~ msgstr "Istotność zmiennej"
+
+# rpart/R/meanvar.rpart.R: 5
+# stop("'tree' argument is not an object of class \"rpart\"")
+# rpart/R/path.rpart.R: 6
+# stop("'tree' argument is not an object of class \"rpart\"")
+#~ msgid "'tree' argument is not an object of class \"rpart\""
+#~ msgstr "argument 'tree' nie jest obiektem klasy \"rpart\""
+
+# rpart/R/summary.rpart.R: 4
+# stop("'object' argument is not an object of class \"rpart\"")
+# rpart/R/predict.rpart.R: 5
+# stop("'object' argument is not an object of class \"rpart\"")
+#~ msgid "'object' argument is not an object of class \"rpart\""
+#~ msgstr "argument 'object' nie jest obiektem klasy \"rpart\""
+
+# rpart/R/printcp.R: 4
+# stop ("'x' argument must be an object of class \"rpart\"")
+#~ msgid "'x' argument must be an object of class \"rpart\""
+#~ msgstr "argument 'x' nie jest obiektem klasy \"rpart\""
+
+# rpart/R/residuals.rpart.R: 5
+# stop("'object' argument is not an object of classe \"rpart\"")
+#~ msgid "'object' argument is not an object of classe \"rpart\""
+#~ msgstr "argument 'object' nie jest obiektem klasy \"rpart\""
+
+#, fuzzy
+#~ msgid "x does not appear to be an \"rpart\" object"
+#~ msgstr "'x' nie wygląda na obiekt 'rpart'"
+
+#~ msgid "'x' not converted"
+#~ msgstr "'x' nie został przekształcony"
+
+#, fuzzy
+#~ msgid "'fit' must be an \"rpart\" object"
+#~ msgstr "'x' musi być obiektem \"rpart\""

@@ -103,29 +103,25 @@ show(foo)
 ## show() method for this class.  A better solution would be desirable.
 print(foo, digits = 4)
 
-setClassUnion("integer or NULL", members = c("integer","NULL"))
-setClass("c1", representation(x = "integer", code = "integer or NULL"))
+cn <- "integer or NULL"
+setClassUnion(cn, members = c("integer", "NULL"))
+setClass("c1", representation(x = "integer", code = cn))
+stopifnot(exprs = {
+    cn %in% extends(getClass("NULL"))
+    cn %in% extends(getClass(".NULL"))
+    cn %in% extends(getClass("integer"))
+})
 nc <- new("c1", x = 1:2)
 str(nc)# gave ^ANULL^A in 2.0.0
 ##
 
-
-library(stats4)
 showMethods("coerce", classes=c("matrix", "numeric"))
 ## {gave wrong result for a while in R 2.4.0}
 
-## the following showMethods() output tends to generate errors in the tests
-## whenever the contents of the packages change. Searching in the
-## diff's can easily mask real problems.  If there is a point
-## to the printout, e.g., to verify that certain methods exist,
-## hasMethod() would be a useful replacement
-
-## showMethods(where = "package:stats4")
-## showMethods("show")
-## showMethods("show")
-## showMethods("plot") # (ANY,ANY) and (profile.mle, missing)
-## showMethods(classes="mle")
-## showMethods(classes="matrix")
+## Most for "mle" in stats4:
+for(f in c("coef", "confint", "logLik", "plot", "profile",
+	   "show", "summary", "update", "vcov"))
+    if(!hasMethods(f)) stop("no S4 methods found for ", f)
 
 
 ##--- "[" fiasco before R 2.2.0 :
@@ -404,7 +400,7 @@ stopifnot(unlist(lapply(ggm, function(g) !is.null(getGeneric(g, where = em)))),
 	  )
 ## the last failed in R 2.7.0 : was not showing  "show"
 
-if(require("Matrix")) {
+if(require("Matrix", lib.loc = .Library)) {
     D5. <- Diagonal(x = 5:1)
     D5N <- D5.; D5N[5,5] <- NA
     stopifnot(isGeneric("dim", where=as.environment("package:Matrix")),
@@ -607,13 +603,16 @@ if( identical(f, L$A) )
 
 
 ## prototypes for virtual classes:  NULL if legal, otherwise 1st member
-## OptionalPosixct above includes NULL
-stopifnot(is.null(getClass("OptionalPOSIXct")@prototype))
 ## "IntOrChar" had invalid NULL prototype < 2.15.0
 setClassUnion("IntOrChar", c("integer", "character"))
-stopifnot(is.integer(getClass("IntOrChar")@prototype))
-## produced an error < 2.15.0
-stopifnot(identical(isGeneric("&&"), FALSE))
+stopifnot(exprs = {
+    ## OptionalPosixct above includes NULL
+    is.null   (getClass("OptionalPOSIXct")@prototype)
+    is.integer(getClass("IntOrChar")      @prototype) ## produced an error < 2.15.0
+    "IntOrChar" %in% extends(getClass("character"))
+    "IntOrChar" %in% extends(getClass("integer"))
+    identical(isGeneric("&&"), FALSE)
+})
 
 
 ## mapply() on S4 objects with a "non-primitive" length() method
@@ -849,6 +848,8 @@ setClass("myInteger", contains=c("integer", "VIRTUAL"))
 setClass("mySubInteger", contains="myInteger")
 new("mySubInteger", 1L)
 ## caused infinite recursion in R 3.3.0
+new("mySubInteger")
+## failed due to lack of prototype in R 3.6.0
 
 detach("package:methods", force=TRUE)
 methods::setClass("test1", methods::representation(date="POSIXct"))
@@ -966,7 +967,7 @@ if(require("Matrix")) withAutoprint({
 })
 
 
-## Automatic coerce method creation: 
+## Automatic coerce method creation:
 setClass("A", slots = c(foo = "numeric"))
 setClass("Ap", contains = "A", slots = c(p = "character"))
 cd <- getClassDef("Ap")
@@ -974,3 +975,39 @@ body(cd@contains[["A"]]@coerce)[[2]] ## >>   value <- new("A")
 ## was ... <-  new(structure("A", package = ".GlobalEnv"))
 ## for a few days in R-devel (Nov.2017)
 
+
+## Error messages occurring during method selection are forwarded
+f <- function(x) x
+setGeneric("f")
+setMethod("f", signature("NULL"), function(x) NULL)
+err <- tryCatch(f(stop("this is mentioned")), error = identity)
+stopifnot(identical(err$message, "error in evaluating the argument 'x' in selecting a method for function 'f': this is mentioned"))
+
+
+## canCoerce(obj, .)  when length(class(obj)) > 1 :
+setOldClass("foo")
+setAs("foo", "A", function(from) new("A", foo=from))
+o3 <- structure(1:7, class = c("foo", "bar"))
+stopifnot( canCoerce(o3, "A") )
+## failed in R <= 3.6.1
+
+if(require("Matrix")) withAutoprint({
+    (sci <- names(getClass("integer")@contains))
+    # These 2 classes have *nothing* to do with Matrix:
+    setClass("MyClass")
+    setClassUnion("NumOrMyClass", c("numeric", "MyClass"))
+    (nsci <- names(getClass("integer")@contains))
+    ## failed in R <= 3.6.2
+    stopifnot(sci %in% nsci)
+
+    setClassUnion('dMatrixOrMatrix', members = c('dMatrix', 'matrix'))
+    ## failed in R <= 3.6.2
+    stopifnot("dMatrixOrMatrix" %in% names(getClass("dgCMatrix")@contains))
+
+    invisible(lapply(c("NumOrMyClass", "MyClass", "dMatrixOrMatrix"),
+                     removeClass))
+})
+
+setClass("foo", slots = c(y = "numeric"))
+setClass("bar", contains = "foo")
+body(getClass("bar")@contains[[1]]@coerce)[[2]]

@@ -1,7 +1,7 @@
 /*
  *  Mathlib : A C Library of Special Functions
+ *  Copyright (C) 2000-2018 The R Core Team
  *  Copyright (C) 1998 Ross Ihaka
- *  Copyright (C) 2000-2012 The R Core Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ double lgammafn_sign(double x, int *sgn)
 	*sgn = -1;
 
     if (x <= 0 && x == trunc(x)) { /* Negative integer argument */
-	ML_ERROR(ME_RANGE, "lgamma");
+	// No warning: this is the best answer; was  ML_WARNING(ME_RANGE, "lgamma");
 	return ML_POSINF;/* +Inf, since lgamma(x) = log|gamma(x)| */
     }
 
@@ -84,7 +84,7 @@ double lgammafn_sign(double x, int *sgn)
       ELSE  y = |x| > 10 ---------------------- */
 
     if (y > xmax) {
-	ML_ERROR(ME_RANGE, "lgamma");
+	// No warning: +Inf is the best answer
 	return ML_POSINF;
     }
 
@@ -104,7 +104,7 @@ double lgammafn_sign(double x, int *sgn)
     if (sinpiy == 0) { /* Negative integer argument ===
 			  Now UNNECESSARY: caught above */
 	MATHLIB_WARNING(" ** should NEVER happen! *** [lgamma.c: Neg.int, y=%g]\n",y);
-	ML_ERR_return_NAN;
+	ML_WARN_return_NAN;
     }
 
     ans = M_LN_SQRT_PId2 + (x - 0.5) * log(y) - x - log(sinpiy) - lgammacor(y);
@@ -114,7 +114,7 @@ double lgammafn_sign(double x, int *sgn)
 	/* The answer is less than half precision because
 	 * the argument is too near a negative integer. */
 
-	ML_ERROR(ME_PRECISION, "lgamma");
+	ML_WARNING(ME_PRECISION, "lgamma");
     }
 
     return ans;

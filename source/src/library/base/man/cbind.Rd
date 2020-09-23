@@ -1,6 +1,6 @@
 % File src/library/base/man/cbind.Rd
 % Part of the R package, https://www.R-project.org
-% Copyright 1995-2016 R Core Team
+% Copyright 1995-2019 R Core Team
 % Distributed under GPL 2 or later
 
 \name{cbind}
@@ -21,7 +21,7 @@
 cbind(\dots, deparse.level = 1)
 rbind(\dots, deparse.level = 1)
 \method{rbind}{data.frame}(\dots, deparse.level = 1, make.row.names = TRUE,
-      stringsAsFactors = default.stringsAsFactors())
+      stringsAsFactors = default.stringsAsFactors(), factor.exclude = TRUE)
 }
 \arguments{
   \item{\dots}{(generalized) vectors or matrices.  These can be given as named
@@ -41,6 +41,11 @@ rbind(\dots, deparse.level = 1)
   \item{stringsAsFactors}{logical, passed to \code{\link{as.data.frame}};
     only has an effect when the \code{\dots} arguments contain a
     (non-\code{data.frame}) \code{\link{character}}.}
+  \item{factor.exclude}{if the data frames contain factors, the default
+    \code{TRUE} ensures that \code{NA} levels of factors are kept, see
+    \PR{17562} and the \sQuote{Data frame methods}.  In \R versions up
+    to 3.6.x, \code{factor.exclude = NA} has been implicitly hardcoded
+    (\R <= 3.6.0) or the default (\R = 3.6.x, x >= 1).}
 }
 \details{
   The functions \code{cbind} and \code{rbind} are S3 generic, with
@@ -99,10 +104,18 @@ rbind(\dots, deparse.level = 1)
   It then takes the classes of the columns from the
   first data frame, and matches columns by name (rather than by
   position).  Factors have their levels expanded as necessary (in the
-  order of the levels of the levelsets of the factors encountered) and
+  order of the levels of the level sets of the factors encountered) and
   the result is an ordered factor if and only if all the components were
   ordered factors.  (The last point differs from S-PLUS.)  Old-style
   categories (integer vectors with levels) are promoted to factors.
+
+  Note that for result column \code{j}, \code{\link{factor}(., exclude = X(j))}
+  is applied, where \preformatted{  X(j) := if(isTRUE(factor.exclude)) {
+             if(!NA.lev[j]) NA # else NULL
+          } else factor.exclude}
+
+  where \code{NA.lev[j]} is true iff any contributing data frame has had a
+  \code{\link{factor}} in column \code{j} with an explicit \code{NA} level.
 }
 \value{
   For the default method, a matrix combining the \code{\dots} arguments
@@ -139,20 +152,23 @@ rbind(\dots, deparse.level = 1)
   \enumerate{
     \item For each argument we get the list of possible class
     memberships from the class attribute.
-
+    
     \item We inspect each class in turn to see if there is an
     applicable method.
 
-    \item If we find an applicable method we make sure that it is
-     identical to any method determined for prior arguments.
-     If it is identical, we proceed, otherwise we immediately
-     drop through to the default code.
-   }
-   If you want to combine other objects with data frames, it may be
-   necessary to coerce them to data frames first.  (Note that this
-   algorithm can result in calling the data frame method if all the
-   arguments are either data frames or vectors, and this will result in
-   the coercion of character vectors to factors.)
+    \item If we find a method, we use it.  Otherwise, if there was an S4
+    object among the arguments, we try S4 dispatch; otherwise, we use
+    the default code.
+  }
+
+  (Before \R 4.0.0, an applicable method found was used only if
+  identical to any method determined for prior arguments.)
+
+  If you want to combine other objects with data frames, it may be
+  necessary to coerce them to data frames first.  (Note that this
+  algorithm can result in calling the data frame method if all the
+  arguments are either data frames or vectors, and this will result in
+  the coercion of character vectors to factors.)
 }
 \references{
   Becker, R. A., Chambers, J. M. and Wilks, A. R. (1988)

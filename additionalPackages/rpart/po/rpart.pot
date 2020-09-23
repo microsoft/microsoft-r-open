@@ -1,0 +1,66 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: rpart 4.1-8\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-01-16 07:53+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: poisson.c:34
+msgid "Invalid time point"
+msgstr ""
+
+#: poisson.c:38
+msgid "Invalid event count"
+msgstr ""
+
+#: poisson.c:68
+msgid "Invalid error rule"
+msgstr ""
+
+#: rpart.c:91 xpred.c:89
+msgid "Invalid value for 'method'"
+msgstr ""
+
+#: rpart.c:193
+msgid "unknown error"
+msgstr ""
+
+#: rpart_callback.c:46
+msgid "'yback' not found"
+msgstr ""
+
+#: rpart_callback.c:50
+msgid "'wback' not found"
+msgstr ""
+
+#: rpart_callback.c:54
+msgid "'xback' not found"
+msgstr ""
+
+#: rpart_callback.c:58
+msgid "'nback' not found"
+msgstr ""
+
+#: rpart_callback.c:104
+msgid "return value not a vector"
+msgstr ""
+
+#: rpart_callback.c:106
+msgid "returned value is the wrong length"
+msgstr ""
+
+#: rpart_callback.c:138
+msgid "the expression expr1 did not return a vector!"
+msgstr ""

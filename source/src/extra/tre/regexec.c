@@ -10,6 +10,10 @@
 #include <config.h>
 #endif /* HAVE_CONFIG_H */
 
+/* https://github.com/laurikari/tre/issues/37
+ * disables TRE_USE_ALLOCA, but R does not use that
+ */
+
 #ifdef TRE_USE_ALLOCA
 /* AIX requires this to be the first thing in the file.	 */
 #ifndef __GNUC__
@@ -162,10 +166,15 @@ tre_match(const tre_tnfa_t *tnfa, const void *string, size_t len,
       if (type == STR_USER)
 	{
 	  const tre_str_source *source = string;
-	  if (source->rewind == NULL || source->compare == NULL)
+	  if (source->rewind == NULL || source->compare == NULL) {
 	    /* The backtracking matcher requires rewind and compare
 	       capabilities from the input stream. */
+#ifndef TRE_USE_ALLOCA
+	    if (tags)
+		xfree(tags);
+#endif /* !TRE_USE_ALLOCA */
 	    return REG_BADPAT;
+	  }
 	}
       status = tre_tnfa_run_backtrack(tnfa, string, (int)len, type,
 				      tags, eflags, &eo);

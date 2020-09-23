@@ -1,2 +1,0 @@
-C:\Users\richcala\Source\Repos\setup-MRO\target\Release\ROpenSetup.exe
-C:\Users\richcala\Source\Repos\setup-MRO\target\Release\ROpenSetup.wixpdb

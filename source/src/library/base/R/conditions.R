@@ -69,7 +69,7 @@ tryCatch <- function(expr, ..., finally) {
     classes <- names(handlers)
     parentenv <- parent.frame()
     if (length(classes) != length(handlers))
-        stop("bad handler specification")
+        stop("condition handlers must be specified with a condition class")
     tryCatchList(expr, classes, parentenv, handlers)
 }
 
@@ -78,17 +78,16 @@ withCallingHandlers <- function(expr, ...) {
     classes <- names(handlers)
     parentenv <- parent.frame()
     if (length(classes) != length(handlers))
-        stop("bad handler specification")
+        stop("condition handlers must be specified with a condition class")
     .Internal(.addCondHands(classes, handlers, parentenv, NULL, TRUE))
     expr
 }
 
-suppressWarnings <- function(expr) {
-    ops <- options(warn = -1) ## FIXME: temporary hack until R_tryEval
-    on.exit(options(ops))     ## calls are removed from methods code
+suppressWarnings <- function(expr, classes = "warning") {
     withCallingHandlers(expr,
-                        warning=function(w)
-                            invokeRestart("muffleWarning"))
+                        warning = function(w)
+                            if (inherits(w, classes))
+                                tryInvokeRestart("muffleWarning"))
 }
 
 
@@ -110,6 +109,14 @@ simpleWarning <- function(message, call = NULL) {
     class <- c("simpleWarning", "warning", "condition")
     structure(list(message=as.character(message), call = call), class=class)
 }
+
+errorCondition <- function(message, ..., class = NULL, call = NULL)
+    structure(list(message = as.character(message), call = call, ...),
+              class = c(class, "error", "condition"))
+
+warningCondition <- function(message, ..., class = NULL, call = NULL)
+    structure(list(message = as.character(message), call = call, ...),
+              class = c(class, "warning", "condition"))
 
 conditionMessage <- function(c) UseMethod("conditionMessage")
 conditionCall <- function(c) UseMethod("conditionCall")
@@ -205,6 +212,16 @@ invokeRestart <- function(r, ...) {
         r <- res
     }
     .Internal(.invokeRestart(r, list(...)))
+}
+
+tryInvokeRestart <- function(r, ...) {
+    if (!isRestart(r))
+        r <- findRestart(r)
+
+    if (is.null(r))
+        invisible(NULL)
+    else
+        .Internal(.invokeRestart(r, list(...)))
 }
 
 invokeRestartInteractively <- function(r) {
@@ -351,3 +368,68 @@ allowInterrupts <- function(expr) {
     else
         expr
 }
+
+## local() is not yet available when this is evaluated so we use a
+## throw-away closure instead
+## **** We may want to reserve the bottom slot for what is now the default
+## **** handler to allow the code in error.c to be simplified
+globalCallingHandlers <-
+    (function() {
+        gh <- list()
+        function(...) {
+            handlers <- list(...)
+            if (length(handlers) == 0)
+                gh
+            else {
+                ## Unwrap list of handlers passed as single argument
+                if (length(handlers) == 1 && is.list(handlers[[1]]))
+                    handlers <- handlers[[1]]
+
+                if (identical(handlers, list(NULL))) {
+                    out <- gh
+                    gh <<- list()
+                } else {
+                    classes <- names(handlers)
+                    if (length(classes) != length(handlers))
+                        stop("condition handlers must be specified with a condition class")
+                    if (! all(vapply(handlers, is.function, logical(1))))
+                        stop("condition handlers must be functions")
+                    out <- NULL
+                    gh <<- c(handlers, gh)
+                }
+
+                ## Remove duplicate handlers within class. We do it here so
+                ## duplicates in `...` inputs are also removed. This
+                ## preserves the ordering of handlers. We keep only the
+                ## first duplicate on the stack, so that registering a
+                ## handler again has the effect of pushing it on top of the
+                ## stack.
+                classes <- names(gh)
+                for (class in unique(classes)) {
+                    idx <- which(class == classes)
+
+                    ## Ideally we'd just use `duplicated()` on the list
+                    ## of handlers. Since that doesn't take into
+                    ## account the closure environments, we first
+                    ## convert the functions to lists.
+                    funAsList <- function(x) {
+                        out <- list(formals(x), body(x), environment(x))
+                        attributes(out) <- attributes(x)
+                        out
+                    }
+                    classHandlers <- lapply(gh[idx], funAsList)
+                    dups <- duplicated(classHandlers)
+
+                    if (any(dups)) {
+                        message(sprintf("pushing duplicate `%s` handler on top of the stack", class))
+                        gh <<- gh[-idx[dups]]
+                    }
+                }
+
+                ## Update the handler stack of the top-level context
+                .Internal(.addGlobHands(names(gh), gh, .GlobalEnv, NULL, TRUE))
+
+                invisible(out)
+            }
+        }
+    })()

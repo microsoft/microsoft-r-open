@@ -1,7 +1,7 @@
 #  File src/library/stats/R/power.R
 #  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2017 The R Core Team
+#  Copyright (C) 1995-2019 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -39,13 +39,13 @@ power.t.test <-
     p.body <-
         if (strict && tside == 2) # count rejections in opposite tail
             quote({
-                nu <- (n - 1) * tsample
+                nu <- pmax(1e-7, n - 1) * tsample
                 qu <- qt(sig.level/tside, nu, lower.tail = FALSE)
                 pt( qu, nu, ncp = sqrt(n/tsample) * delta/sd, lower.tail = FALSE) +
                 pt(-qu, nu, ncp = sqrt(n/tsample) * delta/sd, lower.tail = TRUE)
             })
         else ## normal case:
-            quote({nu <- (n - 1) * tsample
+            quote({nu <- pmax(1e-7, n - 1) * tsample
                    pt(qt(sig.level/tside, nu, lower.tail = FALSE),
                       nu, ncp = sqrt(n/tsample) * delta/sd, lower.tail = FALSE)})
 
@@ -125,12 +125,12 @@ power.prop.test <-
     else if (is.null(p1)) {
 	p1 <- uniroot(function(p1) eval(p.body) - power,
 		      c(0,p2), tol=tol, extendInt = "yes")$root
-        if(p1 < 0) warning("No p1 in in [0, p2] can be found to achieve the desired power")
+        if(p1 < 0) warning("No p1 in [0, p2] can be found to achieve the desired power")
     }
     else if (is.null(p2)) {
 	p2 <- uniroot(function(p2) eval(p.body) - power,
 		      c(p1,1), tol=tol, extendInt = "yes")$root
-        if(p2 > 1) warning("No p2 in in [p1, 1] can be found to achieve the desired power")
+        if(p2 > 1) warning("No p2 in [p1, 1] can be found to achieve the desired power")
     }
     else if (is.null(sig.level)) {
 	sig.level <- uniroot(function(sig.level) eval(p.body) - power,

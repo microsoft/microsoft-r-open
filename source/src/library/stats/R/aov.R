@@ -1,7 +1,7 @@
 #  File src/library/stats/R/aov.R
 #  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2017 The R Core Team
+#  Copyright (C) 1995-2020 The R Core Team
 #  Copyright (C) 1998 B. D. Ripley
 #
 #  This program is free software; you can redistribute it and/or modify
@@ -48,7 +48,7 @@ aov <- function(formula, data = NULL, projections = FALSE, qr = TRUE,
     } else {
 	if(pmatch("weights", names(Call), 0L))
             stop("weights are not supported in a multistratum aov() fit")
-        deparseb <- function(expr) deparse(expr, width.cutoff = 500L, backtick = TRUE)
+        deparseb <- function(expr) deparse1(expr, backtick = TRUE)
         ##  Helmert contrasts can be helpful: do we want to force them?
         ##  this version does for the Error model.
         opcons <- options("contrasts")
@@ -214,7 +214,7 @@ function(x, intercept = FALSE, tol = sqrt(.Machine$double.eps), ...)
         ssp <- apply(zapsmall(ss), 2L, format)
         tmp <- t(cbind(ssp, format(df)))
         if(ncol(effects) > 1L) {
-            rn <- colnames(x$coeffficients)
+            rn <- colnames(x$coefficients)
             if(is.null(rn)) rn <- paste("resp", seq(ncol(effects)))
         } else rn <- "Sum of Squares"
         dimnames(tmp) <- list(c(rn, "Deg. of Freedom"), nmeffect)
@@ -433,8 +433,9 @@ alias.lm <- function(object, complete = TRUE, partial = FALSE,
         }
         x[!z] <- ""
         collabs <- colnames(x)
-        collabs <- if(length(collabs)) abbreviate(sub("\\.", "", collabs), 3L)
-        else 1L:ncol(x)
+        collabs <- if(length(collabs))
+                       abbreviate(sub(".", "", collabs, fixed=TRUE), 3L)
+                   else 1L:ncol(x)
         colnames(x) <- collabs
         class(x) <- "mtable"
         x

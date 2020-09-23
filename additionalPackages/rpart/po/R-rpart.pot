@@ -1,0 +1,200 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: rpart 4.1-8\n"
+"POT-Creation-Date: 2015-01-16 07:53\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+
+msgid "'x' must be a numeric vector"
+msgstr ""
+
+msgid "Not a legitimate \"rpart\" object"
+msgstr ""
+
+msgid "Plot not useful for classification or poisson trees"
+msgstr ""
+
+msgid "fit is not a tree, just a root"
+msgstr ""
+
+msgid "'cptable' does not contain cross-validation results"
+msgstr ""
+
+msgid "Tree has variables not found in new data"
+msgstr ""
+
+msgid "type 'class' is only appropriate for classification"
+msgstr ""
+
+msgid "Invalid prediction for \"rpart\" object"
+msgstr ""
+
+msgid "'x' must be an \"rpart\" object"
+msgstr ""
+
+msgid "Invalid type of residual"
+msgstr ""
+
+msgid "Not legitimate \"rpart\" tree and endpoint not a 2 level-factor"
+msgstr ""
+
+msgid "a 'formula' argument is required"
+msgstr ""
+
+msgid "Trees cannot handle interaction terms"
+msgstr ""
+
+msgid "negative weights not allowed"
+msgstr ""
+
+msgid "Invalid method"
+msgstr ""
+
+msgid "Argument %s not matched"
+msgstr ""
+
+msgid "Wrong length for 'xval'"
+msgstr ""
+
+msgid "Cost vector is the wrong length"
+msgstr ""
+
+msgid "Cost vector must be positive"
+msgstr ""
+
+msgid "Initialization routine is missing the 'summary' function"
+msgstr ""
+
+msgid "no information available on parameters from previous call to plot()"
+msgstr ""
+
+msgid "No offset allowed in classification models"
+msgstr ""
+
+msgid "The parms list must have names"
+msgstr ""
+
+msgid "'parms' component not matched: %s"
+msgstr ""
+
+msgid "Priors must sum to 1"
+msgstr ""
+
+msgid "Priors must be >= 0"
+msgstr ""
+
+msgid "Wrong length for priors"
+msgstr ""
+
+msgid "Wrong length for loss matrix"
+msgstr ""
+
+msgid "Loss matrix must have zero on diagonals"
+msgstr ""
+
+msgid "Loss matrix cannot have negative elements"
+msgstr ""
+
+msgid "Loss matrix has a row of zeros"
+msgstr ""
+
+msgid "Invalid splitting rule"
+msgstr ""
+
+msgid "Parameter argument must be a list"
+msgstr ""
+
+msgid "The value of 'maxcompete' supplied is < 0; the value 0 was used instead"
+msgstr ""
+
+msgid "The value of 'xval' supplied is < 0; the value 0 was used instead"
+msgstr ""
+
+msgid "Maximum depth is 30"
+msgstr ""
+
+msgid "Maximum depth must be at least 1"
+msgstr ""
+
+msgid "The value of 'usesurrogate' supplied was out of range, the default value of 2 is used instead."
+msgstr ""
+
+msgid "The value of 'surrogatestyle' supplied was out of range, the default value of 0 is used instead."
+msgstr ""
+
+msgid "Response must be a 'survival' object - use the 'Surv()' function"
+msgstr ""
+
+msgid "Observation time must be > 0"
+msgstr ""
+
+msgid "No deaths in data set"
+msgstr ""
+
+msgid "You must input a named list for parms"
+msgstr ""
+
+msgid "Invalid error method for Poisson"
+msgstr ""
+
+msgid "Invalid shrinkage value"
+msgstr ""
+
+msgid "response must be a 2 column matrix or a vector"
+msgstr ""
+
+msgid "Number of events must be >= 0"
+msgstr ""
+
+msgid "User written methods must have 3 functions"
+msgstr ""
+
+msgid "User written method does not contain an 'init' function"
+msgstr ""
+
+msgid "User written method does not contain a 'split' function"
+msgstr ""
+
+msgid "User written method does not contain an 'eval' function"
+msgstr ""
+
+msgid "User 'eval' function returned invalid label"
+msgstr ""
+
+msgid "User 'eval' function returned invalid deviance"
+msgstr ""
+
+msgid "Invalid return from categorical 'split' function"
+msgstr ""
+
+msgid "User 'split' function returned invalid goodness"
+msgstr ""
+
+msgid "User 'split' function returned invalid direction"
+msgstr ""
+
+msgid "may not be applicable for this method"
+msgstr ""
+
+msgid "Not an \"rpart\" object"
+msgstr ""
+
+msgid "Nodes %s are not in this tree"
+msgstr ""
+
+msgid "argument 'label' is no longer used"
+msgstr ""
+
+msgid "Invalid fit object"
+msgstr ""
+
+msgid "supplied nodes %s are not in this tree"
+msgstr ""
+
+msgid "supplied nodes %s are leaves"
+msgstr ""

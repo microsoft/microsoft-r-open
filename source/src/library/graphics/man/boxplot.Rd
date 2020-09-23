@@ -1,6 +1,6 @@
 % File src/library/graphics/man/boxplot.Rd
 % Part of the R package, https://www.R-project.org
-% Copyright 1995-2018 R Core Team
+% Copyright 1995-2019 R Core Team
 % Distributed under GPL 2 or later
 
 \name{boxplot}
@@ -15,18 +15,22 @@
 boxplot(x, \dots)
 
 \method{boxplot}{formula}(formula, data = NULL, \dots, subset, na.action = NULL,
+        xlab = mklab(y_var = horizontal),
+        ylab = mklab(y_var =!horizontal),
+        add = FALSE, ann = !add, horizontal = FALSE,
         drop = FALSE, sep = ".", lex.order = FALSE)
 
 \method{boxplot}{default}(x, \dots, range = 1.5, width = NULL, varwidth = FALSE,
         notch = FALSE, outline = TRUE, names, plot = TRUE,
-        border = par("fg"), col = NULL, log = "",
+        border = par("fg"), col = "lightgray", log = "",
         pars = list(boxwex = 0.8, staplewex = 0.5, outwex = 0.5),
-        horizontal = FALSE, add = FALSE, at = NULL)
+         ann = !add, horizontal = FALSE, add = FALSE, at = NULL)
 }
 \arguments{
   \item{formula}{a formula, such as \code{y ~ grp}, where \code{y} is a
     numeric vector of data values to be split into groups according to
-    the grouping variable \code{grp} (usually a factor).}
+    the grouping variable \code{grp} (usually a factor).  Note that
+    \code{~ g1 + g2} is equivalent to \code{g1:g2}.}
   \item{data}{a data.frame (or list) from which the variables in
     \code{formula} should be taken.}
   \item{subset}{an optional vector specifying a subset of observations
@@ -34,6 +38,10 @@ boxplot(x, \dots)
   \item{na.action}{a function which indicates what should happen
     when the data contain \code{NA}s.  The default is to ignore missing
     values in either the response or the group.}
+  \item{xlab, ylab}{x- and y-axis annotation, since \R 3.6.0 with a
+    non-empty default.  Can be suppressed by \code{ann=FALSE}.}
+  \item{ann}{\code{\link{logical}} indicating if axes should be annotated (by
+    \code{xlab} and \code{ylab}).}
   \item{drop, sep, lex.order}{passed to \code{\link{split.default}}, see there.}
   \item{x}{for specifying data from which the boxplots are to be
     produced. Either a numeric vector, or a single list containing such
@@ -116,7 +124,7 @@ boxplot(x, \dots)
     whisker, the lower hinge, the median, the upper hinge and the
     extreme of the upper whisker for one group/plot.  If all the inputs
     have the same class attribute, so will this component.}
-  \item{n}{a vector with the number of observations in each group.}
+  \item{n}{a vector with the number of (non-\code{\link{NA}}) observations in each group.}
   \item{conf}{a matrix where each column contains the lower and upper
     extremes of the notch.}
   \item{out}{the values of any data points which lie beyond the
@@ -149,16 +157,18 @@ boxplot(x, \dots)
 \examples{
 ## boxplot on a formula:
 boxplot(count ~ spray, data = InsectSprays, col = "lightgray")
-# *add* notches (somewhat funny here):
+# *add* notches (somewhat funny here <--> warning "notches .. outside hinges"):
 boxplot(count ~ spray, data = InsectSprays,
         notch = TRUE, add = TRUE, col = "blue")
 
-boxplot(decrease ~ treatment, data = OrchardSprays,
-        log = "y", col = "bisque")
+boxplot(decrease ~ treatment, data = OrchardSprays, col = "bisque",
+        log = "y")
+## horizontal=TRUE, switching  y <--> x :
+boxplot(decrease ~ treatment, data = OrchardSprays, col = "bisque",
+        log = "x", horizontal=TRUE)
 
 rb <- boxplot(decrease ~ treatment, data = OrchardSprays, col = "bisque")
 title("Comparing boxplot()s and non-robust mean +/- SD")
-
 mn.t <- tapply(OrchardSprays$decrease, OrchardSprays$treatment, mean)
 sd.t <- tapply(OrchardSprays$decrease, OrchardSprays$treatment, sd)
 xi <- 0.3 + seq(rb$n)

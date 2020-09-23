@@ -1,6 +1,6 @@
 % File src/library/utils/man/news.Rd
 % Part of the R package, https://www.R-project.org
-% Copyright 1995-2015 R Core Team
+% Copyright 1995-2020 R Core Team
 % Distributed under GPL 2 or later
 
 \name{news}
@@ -20,7 +20,7 @@ news(query, package = "R", lib.loc = NULL, format = NULL,
 \arguments{
   \item{query}{an expression for selecting news entries}
   \item{package}{a character string giving the name of an installed
-    add-on package, or \code{"R"}.}
+    add-on package, or \code{"R"} or \code{"R-3"} or \code{"R-2"}}.
   \item{lib.loc}{a character vector of directory names of R libraries,
     or \code{NULL}.  The default value of \code{NULL} corresponds to all
     libraries currently known.}
@@ -37,15 +37,18 @@ news(query, package = "R", lib.loc = NULL, format = NULL,
 \value{
   A data frame inheriting from class \code{"news_db"}, with
   \code{\link{attributes}} \code{"package"} (and \code{"subset"} if the
-    \code{query} lead to proper subsetting).
+  \code{query} lead to proper subsetting).
 }
 \details{
   If \code{package} is \code{"R"} (default), a news db is built with the
-  news since the 3.0.0 release of R (corresponding to R's top-level
-  \file{NEWS} file).  Otherwise, if the given add-on package can be
-  found in the given libraries, it is attempted to read its news in
-  structured form from files \file{inst/NEWS.Rd}, \file{NEWS} or
-  \file{inst/NEWS} (in that order).
+  news since the 4.0.0 release of \R (corresponding to \R's top-level
+  \file{NEWS} file). For \code{"R-3"} or \code{"R-2"}. news for \R 3.x.y
+  or \R 2.x.y respectively.  Otherwise, if the given add-on package can
+  be found in the given libraries, it is attempted to read its news in
+  structured form from files \file{inst/NEWS.Rd}, \file{NEWS.md} (since
+  \R version 3.6.0, needs packages \CRANpkg{commonmark} and
+  \CRANpkg{xml2} to be available), \file{NEWS} or \file{inst/NEWS} (in
+  that order).
 
   File \file{inst/NEWS.Rd} should be an Rd file given the entries as Rd
   \verb{\itemize} lists, grouped according to version using
@@ -57,6 +60,14 @@ news(query, package = "R", lib.loc = NULL, format = NULL,
   \verb{\subsection} elements named as the categories.
   At the very end of \verb{\section{..}}, the date may also be specified
   as \verb{(\%Y-\%m-\%d, <note>)}, i.e., including parentheses.
+
+  File \file{NEWS.md} should contain the news in Markdown (following the
+  CommonMark (\url{https://commonmark.org/}) specification), with the
+  primary heading level giving the version number after a prefix
+  followed by a space, and optionally followed by a space and a
+  parenthesized ISO 8601 format date.  Where available, secondary
+  heading are taken to indicate categories.  To accommodate for common
+  practice, news entries are only split down to the category level.
 
   The plain text \file{NEWS} files in add-on packages use a variety of
   different formats; the default news reader should be capable to
@@ -83,8 +94,9 @@ news(query, package = "R", lib.loc = NULL, format = NULL,
   Package \pkg{tools} provides an (internal) utility function
   \code{news2Rd} to convert plain text \file{NEWS} files to Rd.  For
   \file{NEWS} files in a format which can successfully be handled by the
-  default reader, package maintainers can use \code{tools:::news2Rd(dir,
-    "NEWS.Rd")}, possibly with additional argument \code{codify = TRUE},
+  default reader, package maintainers can use
+  \code{tools:::news2Rd(dir, "NEWS.Rd")},
+  possibly with additional argument \code{codify = TRUE},
   with \code{dir} a character string specifying the path to a package's
   root directory.  Upon success, the \file{NEWS.Rd} file can further be
   improved and then be moved to the \file{inst} subdirectory of the
@@ -116,21 +128,33 @@ db <- news()
   vv <- capture.output(print(db, doBrowse=FALSE))  # without an error
   stopifnot(is.character(vv), length(vv) >= 3) # was wrong (for weeks during devel.)
 }
-## Bug fixes with PR number in 3.0.1.
-db3 <- news(Version == "3.0.1" & grepl("^BUG", Category) & grepl("PR#", Text),
+## Bug fixes with PR number in 4.0.0.
+db4 <- news(Version == "4.0.0" & grepl("^BUG", Category) & grepl("PR#", Text),
             db = db)
-\dontshow{stopifnot( !any(attr(db3,"bad")) && nrow(db3) == 12 )}
+nrow(db4)
+%% Maybe reinstate after release when number is stable
+%% \dontrun{stopifnot( !any(attr(db4,"bad")) && nrow(db4) == 19 )}
+
+## print db4 to show in an HTML browser.
 
 ## News from a date range ('Matrix' is there in a regular R installation):
-if(length(iM <- find.package("Matrix", quiet=TRUE)) && nzchar(iM)) {
+if(length(iM <- find.package("Matrix", quiet = TRUE)) && nzchar(iM)) {
    dM <- news(package="Matrix")
    stopifnot(identical(dM, news(db=dM)))
    dM2014 <- news("2014-01-01" <= Date & Date <= "2014-12-31", db = dM)
    stopifnot(paste0("1.1-", 2:4) \%in\% dM2014[,"Version"])
 }
-\donttest{% <- is not sensibly diff-ed against previous versions
+
 ## Which categories have been in use? % R-core maybe should standardize a bit more
 sort(table(db[, "Category"]), decreasing = TRUE)
-## Entries with version >= 3.0.0 (including "3.0.0 patched"):
-table(news(Version >= "3.0.0", db = db)$Version)
-}}
+## Entries with version >= 4.0.0
+table(news(Version >= "4.0.0", db = db)$Version)
+
+\donttest{
+## do the same for R 3.x.y, more slowly
+db3 <- news(package = "R-3")
+sort(table(db3[, "Category"]), decreasing = TRUE)
+## Entries with version >= 3.6.0
+table(news(Version >= "3.6.0", db = db3)$Version)
+}
+}

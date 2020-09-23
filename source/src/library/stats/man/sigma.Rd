@@ -5,7 +5,7 @@
 \alias{sigma.mlm}
 \description{
   Extract the estimated standard deviation of the errors, the
-  \dQuote{residual standard deviation} (misnomed also
+  \dQuote{residual standard deviation} (misnamed also
   \dQuote{residual standard error}, e.g., in
   \code{\link{summary.lm}()}'s output, from a fitted model).
 
@@ -31,10 +31,12 @@ sigma(object, ...)
  The \pkg{stats} package provides the S3 generic and a default method.
  The latter is correct typically for (asymptotically / approximately)
  generalized gaussian (\dQuote{least squares}) problems, since it is
- defined as \preformatted{%
+ defined as
+ \preformatted{
    sigma.default <- function (object, use.fallback = TRUE, ...)
-                      sqrt( deviance(object, ...) / (NN - PP) )
- } where \code{NN <- \link{nobs}(object, use.fallback = use.fallback)}
+       sqrt( deviance(object, ...) / (NN - PP) )
+ }
+ where \code{NN <- \link{nobs}(object, use.fallback = use.fallback)}
  and \code{PP <- sum(!is.na(\link{coef}(object)))} -- where in older \R
  versions this was \code{length(coef(object))} which is too large in
  case of undetermined coefficients, e.g., for rank deficient model fits.

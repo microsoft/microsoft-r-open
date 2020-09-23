@@ -1,7 +1,7 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
+ *  Copyright (C) 1998-2020   The R Core Team.
  *  Copyright (C) 1995, 1996  Robert Gentleman and Ross Ihaka
- *  Copyright (C) 1998-2017   The R Core Team.
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -55,6 +55,8 @@
  *	"verbose"
  *	"keep.source"
  *	"keep.source.pkgs"
+ *	"keep.parse.data"
+ *	"keep.parse.data.pkgs"
  *	"browserNLdisabled"
 
  *	"de.cellwidth"		../unix/X11/ & ../gnuwin32/dataentry.c
@@ -63,6 +65,8 @@
  *	"paper.size"		./devPS.c
 
  *	"timeout"		./connections.c
+
+ *      "deparse.max.lines"     ./deparse.c (& PrintCall() in ./eval.c, ./main.c
 
  *	"check.bounds"
  *	"error"
@@ -84,6 +88,9 @@
  * "object.size"
  * "reference", "show"
  * "scrap"
+
+ * R_NilValue is not a valid value for any option, but is used to signal a
+ * missing option by FindTaggedItem/GetOption and higher-level functions.
  */
 
 
@@ -97,8 +104,11 @@ static SEXP Options(void)
 static SEXP FindTaggedItem(SEXP lst, SEXP tag)
 {
     for ( ; lst != R_NilValue ; lst = CDR(lst)) {
-	if (TAG(lst) == tag)
+	if (TAG(lst) == tag) {
+	    if (CAR(lst) == R_NilValue)
+		error("option %s has NULL value", CHAR(PRINTNAME(tag)));
 	    return lst;
+	}
     }
     return R_NilValue;
 }
@@ -127,26 +137,40 @@ SEXP GetOption1(SEXP tag)
     return CAR(opt);
 }
 
-int GetOptionWidth(void)
+int FixupWidth(SEXP width, warn_type warn)
 {
-    int w;
-    w = asInteger(GetOption1(install("width")));
-    if (w < R_MIN_WIDTH_OPT || w > R_MAX_WIDTH_OPT) {
-	warning(_("invalid printing width, used 80"));
-	return 80;
+    int w = asInteger(width);
+    if (w == NA_INTEGER || w < R_MIN_WIDTH_OPT || w > R_MAX_WIDTH_OPT) {
+	switch(warn) {
+	case iWARN: warning(_("invalid printing width %d, used 80"), w);
+	case iSILENT:
+	    return 80; // for SILENT and WARN
+	case iERROR: error(_("invalid printing width"));
+	}
     }
     return w;
 }
-
-int GetOptionDigits(void)
+int GetOptionWidth(void)
 {
-    int d;
-    d = asInteger(GetOption1(install("digits")));
-    if (d < R_MIN_DIGITS_OPT || d > R_MAX_DIGITS_OPT) {
-	warning(_("invalid printing digits, used 7"));
-	return 7;
+    return FixupWidth(GetOption1(install("width")), iWARN);
+}
+
+int FixupDigits(SEXP digits, warn_type warn)
+{
+    int d = asInteger(digits);
+    if (d == NA_INTEGER || d < R_MIN_DIGITS_OPT || d > R_MAX_DIGITS_OPT) {
+	switch(warn) {
+	case iWARN: warning(_("invalid printing digits %d, used 7"), d);
+	case iSILENT:
+	    return 7; // for SILENT and WARN
+	case iERROR: error(_("invalid printing digits %d"), d);
+	}
     }
     return d;
+}
+int GetOptionDigits(void)
+{
+    return FixupDigits(GetOption1(install("digits")), iWARN);
 }
 
 attribute_hidden
@@ -247,10 +271,11 @@ void attribute_hidden InitOptions(void)
     SEXP val, v;
     char *p;
 
+    /* options set here should be included into mandatory[] in do_options */
 #ifdef HAVE_RL_COMPLETION_MATCHES
-    PROTECT(v = val = allocList(21));
+    PROTECT(v = val = allocList(23));
 #else
-    PROTECT(v = val = allocList(20));
+    PROTECT(v = val = allocList(22));
 #endif
 
     SET_TAG(v, install("prompt"));
@@ -278,7 +303,7 @@ void attribute_hidden InitOptions(void)
     v = CDR(v);
 
     SET_TAG(v, install("echo"));
-    SETCAR(v, ScalarLogical(!R_Slave));
+    SETCAR(v, ScalarLogical(!R_NoEcho));
     v = CDR(v);
 
     SET_TAG(v, install("verbose"));
@@ -292,12 +317,21 @@ void attribute_hidden InitOptions(void)
     p = getenv("R_KEEP_PKG_SOURCE");
     R_KeepSource = (p && (strcmp(p, "yes") == 0)) ? 1 : 0;
 
-    SET_TAG(v, install("keep.source")); /* overridden in common.R */
+    SET_TAG(v, install("keep.source")); /* overridden in Common.R */
     SETCAR(v, ScalarLogical(R_KeepSource));
     v = CDR(v);
 
     SET_TAG(v, install("keep.source.pkgs"));
     SETCAR(v, ScalarLogical(R_KeepSource));
+    v = CDR(v);
+
+    SET_TAG(v, install("keep.parse.data"));
+    SETCAR(v, ScalarLogical(TRUE));
+    v = CDR(v);
+
+    p = getenv("R_KEEP_PKG_PARSE_DATA");
+    SET_TAG(v, install("keep.parse.data.pkgs"));
+    SETCAR(v, ScalarLogical((p && (strcmp(p, "yes") == 0)) ? TRUE : FALSE));
     v = CDR(v);
 
     SET_TAG(v, install("warning.length"));
@@ -334,9 +368,9 @@ void attribute_hidden InitOptions(void)
     v = CDR(v);
 
     SET_TAG(v, install("PCRE_study"));
-    if (R_PCRE_study == -1) 
+    if (R_PCRE_study == -1)
 	SETCAR(v, ScalarLogical(TRUE));
-    else if (R_PCRE_study == -2) 
+    else if (R_PCRE_study == -2)
 	SETCAR(v, ScalarLogical(FALSE));
     else
 	SETCAR(v, ScalarInteger(R_PCRE_study));
@@ -350,6 +384,7 @@ void attribute_hidden InitOptions(void)
     R_PCRE_limit_recursion = NA_LOGICAL;
     SETCAR(v, ScalarLogical(R_PCRE_limit_recursion));
     v = CDR(v);
+    /* options set here should be included into mandatory[] in do_options */
 
 #ifdef HAVE_RL_COMPLETION_MATCHES
     /* value from Rf_initialize_R */
@@ -372,6 +407,8 @@ SEXP attribute_hidden do_getOption(SEXP call, SEXP op, SEXP args, SEXP rho)
     return duplicate(GetOption1(installTrChar(STRING_ELT(x, 0))));
 }
 
+
+static Rboolean warned_on_strings_as_fact = FALSE; // -> once-per-session warning
 
 /* This needs to manage R_Visible */
 SEXP attribute_hidden do_options(SEXP call, SEXP op, SEXP args, SEXP rho)
@@ -452,7 +489,7 @@ SEXP attribute_hidden do_options(SEXP call, SEXP op, SEXP args, SEXP rho)
 	UNIMPLEMENTED_TYPE("options", args);
     }
 
-    R_Visible = FALSE;
+    Rboolean visible = FALSE;
     for (int i = 0 ; i < n ; i++) { /* i-th argument */
 	SEXP argi = R_NilValue, namei = R_NilValue;
 	switch (TYPEOF(args)) {
@@ -471,11 +508,32 @@ SEXP attribute_hidden do_options(SEXP call, SEXP op, SEXP args, SEXP rho)
 
 	if (*CHAR(namei)) { /* name = value  ---> assignment */
 	    SEXP tag = installTrChar(namei);
-	    if (streql(CHAR(namei), "width")) {
+	    SET_STRING_ELT(names, i, namei);
+
+	    if (argi == R_NilValue) {
+		/* Handle option removal separately to simplify value checking
+		   for known options below; mandatory means not allowed to be
+		   removed once set, but not all have to be set at startup. */
+		const char *mandatory[] = {"prompt", "continue", "expressions",
+		  "width", "deparse.cutoff", "digits", "echo", "verbose",
+		  "check.bounds", "keep.source", "keep.source.pkgs",
+		  "keep.parse.data", "keep.parse.data.pkgs", "warning.length",
+		  "nwarnings", "OutDec", "browserNLdisabled", "CBoundsCheck",
+		  "matprod", "PCRE_study", "PCRE_use_JIT",
+		  "PCRE_limit_recursion", "rl_word_breaks",
+		  /* ^^^ from InitOptions ^^^ */
+		  "warn", "max.print", "show.error.messages",
+		  /* ^^^ from Common.R ^^^ */
+		  NULL};
+		for(int j = 0; mandatory[j] != NULL; j++)
+		    if (streql(CHAR(namei), mandatory[j]))
+			error(_("option '%s' cannot be deleted"), CHAR(namei));
+		SET_VECTOR_ELT(value, i, SetOption(tag, R_NilValue));
+	    } else if (streql(CHAR(namei), "width")) {
 		int k = asInteger(argi);
 		if (k < R_MIN_WIDTH_OPT || k > R_MAX_WIDTH_OPT)
-		    error(_("invalid 'width' parameter, allowed %d...%d"),
-			  R_MIN_WIDTH_OPT, R_MAX_WIDTH_OPT);
+		    error(_("invalid '%s' parameter, allowed %d...%d"),
+			  CHAR(namei), R_MIN_WIDTH_OPT, R_MAX_WIDTH_OPT);
 		SET_VECTOR_ELT(value, i, SetOption(tag, ScalarInteger(k)));
 	    }
 	    else if (streql(CHAR(namei), "deparse.cutoff")) {
@@ -485,14 +543,14 @@ SEXP attribute_hidden do_options(SEXP call, SEXP op, SEXP args, SEXP rho)
 	    else if (streql(CHAR(namei), "digits")) {
 		int k = asInteger(argi);
 		if (k < R_MIN_DIGITS_OPT || k > R_MAX_DIGITS_OPT)
-		    error(_("invalid 'digits' parameter, allowed %d...%d"),
-			  R_MIN_DIGITS_OPT, R_MAX_DIGITS_OPT);
+		    error(_("invalid '%s' parameter, allowed %d...%d"),
+			  CHAR(namei), R_MIN_DIGITS_OPT, R_MAX_DIGITS_OPT);
 		SET_VECTOR_ELT(value, i, SetOption(tag, ScalarInteger(k)));
 	    }
 	    else if (streql(CHAR(namei), "expressions")) {
 		int k = asInteger(argi);
 		if (k < R_MIN_EXPRESSIONS_OPT || k > R_MAX_EXPRESSIONS_OPT)
-		    error(_("'expressions' parameter invalid, allowed %d...%d"),
+		    error(_("invalid '%s' parameter, allowed %d...%d"), CHAR(namei),
 			  R_MIN_EXPRESSIONS_OPT, R_MAX_EXPRESSIONS_OPT);
 		R_Expressions = R_Expressions_keep = k;
 		SET_VECTOR_ELT(value, i, SetOption(tag, ScalarInteger(k)));
@@ -541,7 +599,26 @@ SEXP attribute_hidden do_options(SEXP call, SEXP op, SEXP args, SEXP rho)
 	    else if (streql(CHAR(namei), "warn")) {
 		if (!isNumeric(argi) || LENGTH(argi) != 1)
 		    error(_("invalid value for '%s'"), CHAR(namei));
-		SET_VECTOR_ELT(value, i, SetOption(tag, argi));
+		int k;
+		// k = asInteger(argi) wld give both error + warning
+		if(TYPEOF(argi) == REALSXP) {
+		    int w;
+		    k = IntegerFromReal(REAL_ELT(argi, 0), &w);
+		} else {
+		    k = asInteger(argi);
+		}
+		if (k == NA_INTEGER)
+		    error(_("invalid value for '%s'"), CHAR(namei));
+#ifdef _NOT_YET_
+		char *p = getenv("R_WARN_BOUNDS_OPT");
+		if ((p && (strcmp(p, "yes") == 0)) && (k < -1 || k > 2)) {
+		    int k_n = (k < 0) ? -1 : 2;
+		    REprintf(_("value for '%s' outside of -1:2 is set to %d\n"),
+			     CHAR(namei), k_n);
+		    k = k_n;
+		}
+#endif
+		SET_VECTOR_ELT(value, i, SetOption(tag, ScalarInteger(k)));
 	    }
 	    else if (streql(CHAR(namei), "warning.length")) {
 		int k = asInteger(argi);
@@ -588,7 +665,7 @@ SEXP attribute_hidden do_options(SEXP call, SEXP op, SEXP args, SEXP rho)
 		/* Should be quicker than checking options(echo)
 		   every time R prompts for input:
 		   */
-		R_Slave = !k;
+		R_NoEcho = !k;
 		SET_VECTOR_ELT(value, i, SetOption(tag, ScalarLogical(k)));
 	    }
 	    else if (streql(CHAR(namei), "OutDec")) {
@@ -703,34 +780,52 @@ SEXP attribute_hidden do_options(SEXP call, SEXP op, SEXP args, SEXP rho)
 		if (TYPEOF(argi) == LGLSXP) {
 		    int k = asLogical(argi) > 0;
 		    R_PCRE_study = k ? -1 : -2;
-		    SET_VECTOR_ELT(value, i, 
+		    SET_VECTOR_ELT(value, i,
 				   SetOption(tag, ScalarLogical(k)));
 		} else {
 		    R_PCRE_study = asInteger(argi);
 		    if (R_PCRE_study < 0) {
 			R_PCRE_study = -2;
-			SET_VECTOR_ELT(value, i, 
+			SET_VECTOR_ELT(value, i,
 				       SetOption(tag, ScalarLogical(-2)));
 		    } else
-			SET_VECTOR_ELT(value, i, 
+			SET_VECTOR_ELT(value, i,
 				       SetOption(tag, ScalarInteger(R_PCRE_study)));
 		}
+#ifdef HAVE_PCRE2
+		if (R_PCRE_study != -2)
+		    warning(_("'PCRE_study' has no effect with PCRE2"));
+#endif
 	    }
 	    else if (streql(CHAR(namei), "PCRE_use_JIT")) {
 		int use_JIT = asLogical(argi);
 		R_PCRE_use_JIT = (use_JIT > 0); // NA_LOGICAL is < 0
-		SET_VECTOR_ELT(value, i, 
+		SET_VECTOR_ELT(value, i,
 			       SetOption(tag, ScalarLogical(R_PCRE_use_JIT)));
 	    }
 	    else if (streql(CHAR(namei), "PCRE_limit_recursion")) {
 		R_PCRE_limit_recursion = asLogical(argi);
-		SET_VECTOR_ELT(value, i, 
+		SET_VECTOR_ELT(value, i,
 			       SetOption(tag, ScalarLogical(R_PCRE_limit_recursion)));
+		/* could warn for PCRE2 >= 10.30, but the value is ignored also when
+		   JIT is used  */
+	    }
+	    else if (streql(CHAR(namei), "stringsAsFactors")) {
+		int strings_as_fact;
+		if (TYPEOF(argi) != LGLSXP || LENGTH(argi) != 1 ||
+		    (strings_as_fact = asLogical(argi)) == NA_LOGICAL)
+		    error(_("invalid value for '%s'"), CHAR(namei));
+		if(strings_as_fact && !warned_on_strings_as_fact) {
+		    warned_on_strings_as_fact = TRUE;
+		    warning(_("'%s' is deprecated and will be disabled"),
+			    "options(stringsAsFactors = TRUE)");
+		}
+		SET_VECTOR_ELT(value, i,
+			       SetOption(tag, ScalarLogical(strings_as_fact)));
 	    }
 	    else {
 		SET_VECTOR_ELT(value, i, SetOption(tag, duplicate(argi)));
 	    }
-	    SET_STRING_ELT(names, i, namei);
 	}
 	else { /* querying arg */
 	    const char *tag;
@@ -743,10 +838,11 @@ SEXP attribute_hidden do_options(SEXP call, SEXP op, SEXP args, SEXP rho)
 
 	    SET_VECTOR_ELT(value, i, duplicate(CAR(FindTaggedItem(options, install(tag)))));
 	    SET_STRING_ELT(names, i, STRING_ELT(argi, 0));
-	    R_Visible = TRUE;
+	    visible = TRUE;
 	}
     } /* for() */
     setAttrib(value, R_NamesSymbol, names);
     UNPROTECT(2);
+    R_Visible = visible;
     return value;
 }

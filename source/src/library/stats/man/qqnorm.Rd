@@ -14,8 +14,9 @@ qqnorm(y, \dots)
 qqline(y, datax = FALSE, distribution = qnorm,
        probs = c(0.25, 0.75), qtype = 7, \dots)
 
-qqplot(x, y, plot.it = TRUE, xlab = deparse(substitute(x)),
-       ylab = deparse(substitute(y)), \dots)
+qqplot(x, y, plot.it = TRUE,
+       xlab = deparse1(substitute(x)),
+       ylab = deparse1(substitute(y)), \dots)
 }
 \alias{qqnorm}
 \alias{qqnorm.default}
@@ -79,8 +80,11 @@ y <- rchisq(500, df = 3)
 qqplot(qchisq(ppoints(500), df = 3), y,
        main = expression("Q-Q plot for" ~~ {chi^2}[nu == 3]))
 qqline(y, distribution = function(p) qchisq(p, df = 3),
-       prob = c(0.1, 0.6), col = 2)
+       probs = c(0.1, 0.6), col = 2)
 mtext("qqline(*, dist = qchisq(., df=3), prob = c(0.1, 0.6))")
+## (Note that the above uses ppoints() with a = 1/2, giving the
+## probability points for quantile type 5: so theoretically, using
+## qqline(qtype = 5) might be preferable.) 
 }
 \keyword{hplot}
 \keyword{distribution}

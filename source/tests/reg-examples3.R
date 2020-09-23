@@ -123,7 +123,9 @@ with(muscle, table(Strip)) # 2, 3 or 4 obs per strip
 
 musc.1 <- nls(Length ~ cbind(1, exp(-Conc/th)), muscle,
               start = list(th = 1), algorithm = "plinear")
+## IGNORE_RDIFF_BEGIN
 summary(musc.1)
+## IGNORE_RDIFF_END
 
 ## Then we use nls' indexing feature for parameters in non-linear
 ## models to use the conventional algorithm to fit a model in which
@@ -134,7 +136,9 @@ summary(musc.1)
 b <- coef(musc.1)
 musc.2 <- nls(Length ~ a[Strip] + b[Strip]*exp(-Conc/th), muscle,
               start = list(a = rep(b[2], 21), b = rep(b[3], 21), th = b[1]))
+## IGNORE_RDIFF_BEGIN
 summary(musc.2)
+## IGNORE_RDIFF_END
 options(od)
 
 # princomp.Rd
@@ -181,8 +185,11 @@ library(tools)
 ## there are few dependencies in a vanilla R installation:
 ## lattice may not be installed
 ## Avoid possibly large list from R_HOME/site-library, which --vanilla includes.
-dependsOnPkgs("lattice", lib.loc = .Library)
+stopifnot(identical(
+    sort(dependsOnPkgs("lattice", lib.loc = .Library)),
+    c("Matrix", "mgcv", "nlme", "survival")))
 
-## This may not be installed
+## Vignettes may not yet be installed
 gridEx <- system.file("doc", "grid.Rnw", package = "grid")
-vignetteDepends(gridEx)
+if(nzchar(gridEx)) # was installed
+    stopifnot(identical(vignetteInfo(gridEx)$depends, "lattice"))

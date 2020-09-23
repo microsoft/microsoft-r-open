@@ -83,7 +83,7 @@ axis.POSIXct <- function(side, x, at, format, labels = TRUE, ...)
     axis(side, at = z, labels = labels, ...)
 }
 
-hist.POSIXt <- function(x, breaks, ..., xlab = deparse(substitute(x)),
+hist.POSIXt <- function(x, breaks, ..., xlab = deparse1(substitute(x)),
                         plot = TRUE, freq = FALSE,
                         start.on.monday = TRUE, format, right = TRUE)
 {
@@ -190,7 +190,9 @@ hist.POSIXt <- function(x, breaks, ..., xlab = deparse(substitute(x)),
 	    if(axes) {
 		axis(2, ...)
 		if(xaxt != "n") {
-		    if(num.br) breaks <- c.POSIXct(res$breaks)
+		    if(num.br)
+                        breaks <- as.POSIXct(res$breaks,
+                                             origin = "1970-01-01")
 		    axis.POSIXct(1, at = breaks,  format = format, ...)
 					# '...' : e.g. cex.axis
 		}
@@ -218,7 +220,7 @@ axis.Date <- function(side, x, at, format, labels = TRUE, ...)
     if (d < 7) # days of a week
         if(missing(format)) format <- "%a"
     if(d < 100) { # month and day
-        z <- structure(pretty(z), class="Date")
+        z <- .Date(pretty(z))
         if(missing(format)) format <- "%b %d"
     } else if(d < 1.1*365) { # months
         zz <- as.POSIXlt(z)
@@ -249,7 +251,7 @@ axis.Date <- function(side, x, at, format, labels = TRUE, ...)
 }
 
 
-hist.Date <- function(x, breaks, ..., xlab = deparse(substitute(x)),
+hist.Date <- function(x, breaks, ..., xlab = deparse1(substitute(x)),
                       plot = TRUE, freq = FALSE,
                       start.on.monday = TRUE, format, right = TRUE)
 {
@@ -342,7 +344,9 @@ hist.Date <- function(x, breaks, ..., xlab = deparse(substitute(x)),
                  labels = labels, ...)
             if(axes && xaxt != "n") {
                 axis(2, ...)
-                if(num.br) breaks <- c.Date(res$breaks)
+                if(num.br)
+                    breaks <- as.Date(res$breaks,
+                                      origin = "1970-01-01")
                 axis.Date(1, at = breaks,  format = format, ...)
             }
         }

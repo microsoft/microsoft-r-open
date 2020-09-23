@@ -1,6 +1,6 @@
 
-R version 3.5.3 RC (2019-03-03 r76193) -- "Great Truth"
-Copyright (C) 2019 The R Foundation for Statistical Computing
+R version 4.0.1 Patched (2020-06-08 r78667) -- "See Things Now"
+Copyright (C) 2020 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -921,10 +921,12 @@ Error in nchar(x, "w") : invalid multibyte string, element 10
 +     M+M # works the first time
 +     M+M # was error   "object '.Generic' not found"
 +     ##
-+     stopifnot(
-+         identical(pmin(2,M), pmin(2, as.matrix(M))),
-+         identical(as.matrix(pmax(M, 7)), pmax(as.matrix(M), 7))
-+     )
++     as.Matrix <- function(x) `dimnames<-`(as.matrix(x), list(NULL,NULL))
++     stopifnot(exprs = {
++         identical(pmin(2,M), pmin(2, as.matrix(M)))
++         identical(as.matrix(pmax(M, 7)),
++                   pmax(as.Matrix(M), 7))
++     })
 +     rm(M)
 +     detach("package:Matrix", unload=TRUE)
 + }##{Matrix}

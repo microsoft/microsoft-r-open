@@ -1,0 +1,74 @@
+# Translation of rpart.pot to French
+# Copyright (C) 2005 The R Foundation
+# This file is distributed under the same license as the rpart R package.
+# Philippe Grosjean <phgrosjean@sciviews.org>, 2005.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: rpart 3.1-24\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-03-20 07:25+0000\n"
+"PO-Revision-Date: 2014-03-18 11:12+0100\n"
+"Last-Translator: Philippe Grosjean <phgrosjean@sciviews.org>\n"
+"Language-Team: French <R-core@r-project.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 1.6.4\n"
+
+#: poisson.c:34
+msgid "Invalid time point"
+msgstr "Point temporel incorrect"
+
+#: poisson.c:38
+msgid "Invalid event count"
+msgstr "Dénombrement d'événements incorrect"
+
+#: poisson.c:68
+msgid "Invalid error rule"
+msgstr "Règle d'erreur incorrecte"
+
+#: rpart.c:91 xpred.c:89
+msgid "Invalid value for 'method'"
+msgstr "valeur incorrecte pour 'method'"
+
+#: rpart.c:193
+msgid "unknown error"
+msgstr "erreur indéterminée"
+
+#: rpart_callback.c:46
+msgid "'yback' not found"
+msgstr "'yback' non trouvé"
+
+#: rpart_callback.c:50
+msgid "'wback' not found"
+msgstr "'wback' non trouvé"
+
+#: rpart_callback.c:54
+msgid "'xback' not found"
+msgstr "'xback' non trouvé"
+
+#: rpart_callback.c:58
+msgid "'nback' not found"
+msgstr "'nback' non trouvé"
+
+#: rpart_callback.c:104
+msgid "return value not a vector"
+msgstr "la valeur renvoyée n'est pas un vecteur"
+
+#: rpart_callback.c:106
+msgid "returned value is the wrong length"
+msgstr "la valeur renvoyée n'a pas la bonne longueur"
+
+#: rpart_callback.c:138
+msgid "the expression expr1 did not return a vector!"
+msgstr "l'expression 'expr1' n'a pas renvoyé un vecteur!"
+
+#~ msgid "Out of memory"
+#~ msgstr "Mémoire saturée"
+
+#~ msgid "the expression expr1 returned a list of %d elements, %d required"
+#~ msgstr ""
+#~ "l'expression 'expr1' a renvoyé une liste de %d éléments, %d sont requis"

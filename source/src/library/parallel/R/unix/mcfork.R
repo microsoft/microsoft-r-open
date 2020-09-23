@@ -1,7 +1,7 @@
 #  File src/library/parallel/R/unix/mcfork.R
 #  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2017 The R Core Team
+#  Copyright (C) 1995-2018 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ selectChildren <- function(children = NULL, timeout = 0)
     .Call(C_mc_select_children, as.double(timeout), as.integer(children))
 }
 
-## not used
+## used by mccollect
 rmChild <- function(child)
 {
     if (inherits(child, "process")) child <- processID(child)
@@ -84,10 +84,10 @@ mckill <- function(process, signal = 2L)
 }
 
 ## used by mcparallel, mclapply
-sendMaster <- function(what)
+sendMaster <- function(what, raw.asis=TRUE)
 {
     # This is talking to the same machine, so no point in using xdr.
-    if (!is.raw(what)) what <- serialize(what, NULL, xdr = FALSE)
+    if (!raw.asis || !is.raw(what)) what <- serialize(what, NULL, xdr = FALSE)
     .Call(C_mc_send_master, what)
 }
 
@@ -115,7 +115,7 @@ sendChildStdin <- function(child, what)
 ## used by mcparallel, mclapply, newForkNode
 mcexit <- function(exit.code = 0L, send = NULL)
 {
-    if (!is.null(send)) try(sendMaster(send), silent = TRUE)
+    if (!is.null(send)) try(sendMaster(send, FALSE), silent = TRUE)
     .Call(C_mc_exit, as.integer(exit.code))
 }
 

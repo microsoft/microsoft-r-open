@@ -1,7 +1,7 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
  *  Copyright (C) 1995  Robert Gentleman and Ross Ihaka
- *  Copyright (C) 1997--2014  The R Core Team
+ *  Copyright (C) 1997--2018  The R Core Team
  *  Copyright (C) 2003	      The R Foundation
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -519,6 +519,30 @@ SEXP attribute_hidden do_isloaded(SEXP call, SEXP op, SEXP args, SEXP env)
 typedef SEXP (*R_ExternalRoutine)(SEXP);
 typedef SEXP (*R_ExternalRoutine2)(SEXP, SEXP, SEXP, SEXP);
 
+static SEXP check_retval(SEXP call, SEXP val)
+{
+    static int inited = FALSE;
+    static int check = FALSE;
+
+    if (! inited) {
+	inited = TRUE;
+	const char *p = getenv("_R_CHECK_DOTCODE_RETVAL_");
+	if (p != NULL && StringTrue(p))
+	    check = TRUE;
+    }
+
+    if (check) {
+	if (val < (SEXP) 16)
+	    errorcall(call, "WEIRD RETURN VALUE: %p", val);
+    }
+    else if (val == NULL) {
+	warningcall(call, "converting NULL pointer to R NULL");
+	val = R_NilValue;
+    }
+
+    return val;
+}
+    
 SEXP attribute_hidden do_External(SEXP call, SEXP op, SEXP args, SEXP env)
 {
     DL_FUNC ofun = NULL;
@@ -540,6 +564,10 @@ SEXP attribute_hidden do_External(SEXP call, SEXP op, SEXP args, SEXP env)
 		      nargs, symbol.symbol.external->numArgs, buf);
     }
 
+    /* args is escaping into user C code and might get captured, so
+       make sure it is reference counting. */
+    R_args_enable_refcnt(args);
+
     if (PRIMVAL(op) == 1) {
 	R_ExternalRoutine2 fun = (R_ExternalRoutine2) ofun;
 	retval = fun(call, op, args, env);
@@ -548,7 +576,7 @@ SEXP attribute_hidden do_External(SEXP call, SEXP op, SEXP args, SEXP env)
 	retval = fun(args);
     }
     vmaxset(vmax);
-    return retval;
+    return check_retval(call, retval);
 }
 
 #ifdef __cplusplus
@@ -1215,7 +1243,7 @@ SEXP attribute_hidden R_doDotCall(DL_FUNC ofun, int nargs, SEXP *cargs,
     default:
 	errorcall(call, _("too many arguments, sorry"));
     }
-    return retval;
+    return check_retval(call, retval);
 }
 
 /* .Call(name, <args>) */
@@ -1320,10 +1348,13 @@ SEXP attribute_hidden do_Externalgr(SEXP call, SEXP op, SEXP args, SEXP env)
     if (GErecording(call, dd)) { // which is record && call != R_NilValue
 	if (!GEcheckState(dd))
 	    errorcall(call, _("invalid graphics state"));
+	/* args is escaping, so make sure it is reference counting. */
+	/* should alread be handled in do_External, but be safe ... */
+	R_args_enable_refcnt(args);
 	GErecordGraphicOperation(op, args, dd);
     }
     UNPROTECT(1);
-    return retval;
+    return check_retval(call, retval);
 }
 
 SEXP attribute_hidden do_dotcallgr(SEXP call, SEXP op, SEXP args, SEXP env)
@@ -1337,10 +1368,12 @@ SEXP attribute_hidden do_dotcallgr(SEXP call, SEXP op, SEXP args, SEXP env)
     if (GErecording(call, dd)) {
 	if (!GEcheckState(dd))
 	    errorcall(call, _("invalid graphics state"));
+	/* args is escaping, so make sure it is reference counting. */
+	R_args_enable_refcnt(args);
 	GErecordGraphicOperation(op, args, dd);
     }
     UNPROTECT(1);
-    return retval;
+    return check_retval(call, retval);
 }
 
 static SEXP
@@ -1649,7 +1682,9 @@ SEXP attribute_hidden do_dotCode(SEXP call, SEXP op, SEXP args, SEXP env)
 	    if (Fort) {
 		const char *ss = translateChar(STRING_ELT(s, 0));
 		if (n > 1)
-		    warning(_("only first string in char vector used in .Fortran"));
+		    warning("only the first string in a char vector used in .Fortran");
+		else
+		    warning("passing a char vector to .Fortran is not portable");
 		char *fptr = (char*) R_alloc(max(255, strlen(ss)) + 1, sizeof(char));
 		strcpy(fptr, ss);
 		cargs[na] =  (void*) fptr;
@@ -2405,7 +2440,7 @@ SEXP attribute_hidden do_dotCode(SEXP call, SEXP op, SEXP args, SEXP env)
 	case REALSXP:
 	case SINGLESXP:
 	    if (copy) {
-		s = allocVector(REALSXP, n);
+		PROTECT(s = allocVector(REALSXP, n));
 		if (type == SINGLESXP || asLogical(getAttrib(arg, CSingSymbol)) == 1) {
 		    float *sptr = (float*) p;
 		    for(R_xlen_t i = 0 ; i < n ; i++)
@@ -2426,6 +2461,7 @@ SEXP attribute_hidden do_dotCode(SEXP call, SEXP op, SEXP args, SEXP env)
 				  Fort ? ".Fortran" : ".C",
 				  symName, type2char(type), na+1);
 		}
+		UNPROTECT(1); /* s */
 	    } else {
 		if (type == SINGLESXP || asLogical(getAttrib(arg, CSingSymbol)) == 1) {
 		    s = allocVector(REALSXP, n);

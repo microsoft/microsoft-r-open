@@ -1,6 +1,6 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
- *  Copyright (C) 2001-2017   The R Core Team.
+ *  Copyright (C) 2001-2020   The R Core Team.
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -35,7 +35,8 @@ static R_InternetRoutines routines, *ptr = &routines;
 /*
 SEXP Rdownload(SEXP args);
 Rconnection R_newurl(char *description, char *mode);
-Rconnection R_newsock(char *host, int port, int server, char *mode, int timeout);
+Rconnection R_newsock(char *host, int port, int server, int serverfd, char *mode, int timeout);
+Rconnection R_newservsock(int port);
 
 
 Next 6 are for use by libxml, only
@@ -90,11 +91,11 @@ SEXP Rdownload(SEXP args)
 }
 
 Rconnection attribute_hidden 
-R_newurl(const char *description, const char * const mode, int type)
+R_newurl(const char *description, const char * const mode, SEXP headers, int type)
 {
     if(!initialized) internet_Init();
     if(initialized > 0)
-	return (*ptr->newurl)(description, mode, type);
+	return (*ptr->newurl)(description, mode, headers, type);
     else {
 	error(_("internet routines cannot be loaded"));
 	return (Rconnection)0;
@@ -102,23 +103,35 @@ R_newurl(const char *description, const char * const mode, int type)
 }
 
 Rconnection attribute_hidden
-R_newsock(const char *host, int port, int server, const char * const mode,
-	  int timeout)
+R_newsock(const char *host, int port, int server, int serverfd,
+          const char * const mode, int timeout)
 {
     if(!initialized) internet_Init();
     if(initialized > 0)
-	return (*ptr->newsock)(host, port, server, mode, timeout);
+	return (*ptr->newsock)(host, port, server, serverfd, mode, timeout);
     else {
 	error(_("internet routines cannot be loaded"));
 	return (Rconnection)0;
     }
 }
 
+Rconnection attribute_hidden R_newservsock(int port)
+{
+    if(!initialized) internet_Init();
+    if(initialized > 0)
+	return (*ptr->newservsock)(port);
+    else {
+	error(_("internet routines cannot be loaded"));
+	return (Rconnection)0;
+    }
+}
+
+
 void *R_HTTPOpen(const char *url)
 {
     if(!initialized) internet_Init();
     if(initialized > 0)
-	return (*ptr->HTTPOpen)(url, NULL, 0);
+	return (*ptr->HTTPOpen)(url, NULL, NULL, 0);
     else {
 	error(_("internet routines cannot be loaded"));
 	return NULL;
@@ -201,7 +214,7 @@ SEXP Rsockconnect(SEXP sport, SEXP shost)
     if (length(sport) != 1) error("invalid 'socket' argument");
     int port = asInteger(sport);
     char *host[1];
-    host[0] = (char *) translateChar(STRING_ELT(shost, 0));
+    host[0] = (char *) translateCharFP(STRING_ELT(shost, 0));
     if(!initialized) internet_Init();
     if(initialized > 0)
 	(*ptr->sockconnect)(&port, host);
@@ -213,8 +226,13 @@ SEXP Rsockconnect(SEXP sport, SEXP shost)
 SEXP Rsockread(SEXP ssock, SEXP smaxlen)
 {
     if (length(ssock) != 1) error("invalid 'socket' argument");
-    int sock = asInteger(ssock), maxlen = asInteger(smaxlen);
-    char buf[maxlen+1], *abuf[1];
+    int sock = asInteger(ssock);
+    int maxlen = asInteger(smaxlen);
+    if (maxlen < 0) /* also catches NA_INTEGER */
+	error(_("maxlen must be non-negative"));
+    SEXP rbuf = allocVector(RAWSXP, maxlen + 1);
+    PROTECT(rbuf);
+    char *buf = (char *) RAW(rbuf), *abuf[1];
     abuf[0] = buf;
     if(!initialized) internet_Init();
     if(initialized > 0)
@@ -225,7 +243,7 @@ SEXP Rsockread(SEXP ssock, SEXP smaxlen)
 	error("Error reading data in Rsockread");
     SEXP ans = PROTECT(allocVector(STRSXP, 1));
     SET_STRING_ELT(ans, 0, mkCharLen(buf, maxlen));
-    UNPROTECT(1);
+    UNPROTECT(2); /* rbuf, ans */
     return ans;
 		       
 }
@@ -278,7 +296,7 @@ SEXP Rsockwrite(SEXP ssock, SEXP sstring)
 {
     if (length(ssock) != 1) error("invalid 'socket' argument");
     int sock = asInteger(ssock), start = 0, end, len;
-    char *buf = (char *) translateChar(STRING_ELT(sstring, 0)), *abuf[1];
+    char *buf = (char *) translateCharFP(STRING_ELT(sstring, 0)), *abuf[1];
     end = len = (int) strlen(buf);
     abuf[0] = buf;
     if(!initialized) internet_Init();
@@ -340,11 +358,11 @@ SEXP attribute_hidden do_curlDownload(SEXP call, SEXP op, SEXP args, SEXP rho)
 }
 
 Rconnection attribute_hidden
-R_newCurlUrl(const char *description, const char * const mode, int type)
+R_newCurlUrl(const char *description, const char * const mode, SEXP headers, int type)
 {
     if(!initialized) internet_Init();
     if(initialized > 0)
-	return (*ptr->newcurlurl)(description, mode, type);
+	return (*ptr->newcurlurl)(description, mode, headers, type);
     else {
 	error(_("internet routines cannot be loaded"));
 	return (Rconnection)0;

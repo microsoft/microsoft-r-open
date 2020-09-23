@@ -1,0 +1,10 @@
+Package: MicrosoftR
+Version: 4.0.2
+Date: 2020-07-16
+Title: Microsoft R umbrella package
+Author: Microsoft Corporation
+Maintainer: Microsoft Corporation <mrspack@microsoft.com>
+SystemRequirements: R (>= 3.0.0)
+Description: Umbrella package with licenses and notices for all Microsoft R packages
+License: file LICENSE
+Copyright: Microsoft Corporation

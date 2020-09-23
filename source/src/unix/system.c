@@ -1,7 +1,7 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
  *  Copyright (C) 1995, 1996  Robert Gentleman and Ross Ihaka
- *  Copyright (C) 1997--2017  The R Core Team
+ *  Copyright (C) 1997--2020  The R Core Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@
 #endif
 
 #ifdef HAVE_UNISTD_H
-# include <unistd.h>		/* isatty() */
+# include <unistd.h>
 #endif
 
 #include <errno.h>
@@ -159,6 +159,9 @@ static char* unescape_arg(char *p, char* avp) {
 	if(*q == '~' && *(q+1) == '+' && *(q+2) == '~') {
 	    q += 2;
 	    *p++ = ' ';
+	} else if(*q == '~' && *(q+1) == 'n' && *(q+2) == '~') {
+	    q += 2;
+	    *p++ = '\n';
 	} else *p++ = *q;
     }
     return p;
@@ -192,12 +195,8 @@ int Rf_initialize_R(int ac, char **av)
     */
     struct rlimit rlim;
 
-    {
-	uintptr_t ii = dummy_ii();
-	/* 1 is downwards */
-
-	R_CStackDir = ((uintptr_t)&i > ii) ? 1 : -1;
-    }
+    R_CStackDir = C_STACK_DIRECTION;
+    
 
     if(getrlimit(RLIMIT_STACK, &rlim) == 0) {
 	/* 'unlimited' is represented by RLIM_INFINITY, which is a
@@ -478,7 +477,7 @@ int Rf_initialize_R(int ac, char **av)
 	R_Interactive = useaqua;
     else
 #endif
-	R_Interactive = R_Interactive && (force_interactive || isatty(0));
+	R_Interactive = R_Interactive && (force_interactive || R_isatty(0));
 
 #ifdef HAVE_AQUA
     /* for Aqua and non-dumb terminal use callbacks instead of connections
@@ -540,8 +539,8 @@ int R_EditFiles(int nfile, const char **file, const char **title,
 
 	if (ptr_R_EditFile) ptr_R_EditFile((char *) file[0]);
 	else {
-	    /* Quote path if necessary */
-	    if (editor[0] != '"' && Rf_strchr(editor, ' '))
+	    /* Quote path if not quoted */
+	    if (editor[0] != '"')
 		snprintf(buf, 1024, "\"%s\" \"%s\"", editor, file[0]);
 	    else
 		snprintf(buf, 1024, "%s \"%s\"", editor, file[0]);

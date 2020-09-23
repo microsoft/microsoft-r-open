@@ -1,7 +1,7 @@
 #  File src/library/stats/R/ar.R
 #  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1999-2017 The R Core Team
+#  Copyright (C) 1999-2019 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 ar <-
     function (x, aic = TRUE, order.max = NULL,
               method = c("yule-walker","burg", "ols", "mle", "yw"),
-              na.action = na.fail, series = deparse(substitute(x)), ...)
+              na.action = na.fail, series = deparse1(substitute(x)), ...)
 {
     res <- switch(match.arg(method),
                   yw =,
@@ -43,7 +43,7 @@ ar.yw.default <-
     function (x, aic = TRUE, order.max = NULL, na.action = na.fail,
               demean = TRUE, series = NULL, ...)
 {
-    if(is.null(series)) series <- deparse(substitute(x))
+    if(is.null(series)) series <- deparse1(substitute(x))
     ists <- is.ts(x)
     x <- na.action(as.ts(x))
     if(ists) xtsp <- tsp(x)
@@ -197,7 +197,7 @@ predict.ar <- function(object, newdata, n.ahead = 1L, se.fit = TRUE, ...)
 {
     if (n.ahead < 1L) stop("'n.ahead' must be at least 1")
     if(missing(newdata)) {
-        newdata <- eval.parent(parse(text=object$series))
+        newdata <- eval.parent(str2lang(object$series))
         if (!is.null(nas <- object$call$na.action))
             newdata <- eval.parent(call(nas, newdata))
     }
@@ -259,7 +259,7 @@ predict.ar <- function(object, newdata, n.ahead = 1L, se.fit = TRUE, ...)
 ar.mle <- function (x, aic = TRUE, order.max = NULL, na.action = na.fail,
                     demean = TRUE, series = NULL, ...)
 {
-    if(is.null(series)) series <- deparse(substitute(x))
+    if(is.null(series)) series <- deparse1(substitute(x))
     ists <- is.ts(x)
     if (!is.null(dim(x)))
         stop("MLE only implemented for univariate series")
@@ -335,7 +335,7 @@ ar.mle <- function (x, aic = TRUE, order.max = NULL, na.action = na.fail,
 ar.ols <- function (x, aic = TRUE, order.max = NULL, na.action = na.fail,
                     demean = TRUE, intercept = demean, series = NULL, ...)
 {
-    if(is.null(series)) series <- deparse(substitute(x))
+    if(is.null(series)) series <- deparse1(substitute(x))
     rescale <- TRUE
     ists <- is.ts(x)
     x <- na.action(as.ts(x))
@@ -382,6 +382,7 @@ ar.ols <- function (x, aic = TRUE, order.max = NULL, na.action = na.fail,
 	    } else {
 		if(m) y[, (nser+1L):ncol(y)] else matrix(0, nrow(y), 0)
 	    }
+        ## FIXME: use [t]crossprod();  and instead of solve(XX), use solve(qr(X)) !!
         Y <- t(y[, iser])
         N <- ncol(Y)
         XX <- t(X)%*%X
@@ -445,6 +446,8 @@ ar.ols <- function (x, aic = TRUE, order.max = NULL, na.action = na.fail,
         dimnames(ses) <- dimnames(ar) <- list(seq_len(m), snames, snames)
         dimnames(var.pred) <- list(snames, snames)
         names(sem) <- colnames(E) <- snames
+    } else {
+        var.pred <- drop(var.pred)
     }
     if(ists) {
         attr(E, "tsp") <- xtsp
@@ -466,7 +469,7 @@ ar.ols <- function (x, aic = TRUE, order.max = NULL, na.action = na.fail,
                 n.used = n.used, n.obs = n.used, order.max = order.max,
                 partialacf = NULL, resid = E, method = "Unconstrained LS",
                 series = series, frequency = xfreq, call = match.call(),
-                asy.se.coef = list(x.mean = sem, ar=drop(ses)))
+                asy.se.coef = list(x.mean = sem, ar = drop(ses)))
     class(res) <- "ar"
     res
 }
@@ -475,7 +478,7 @@ ar.yw.mts <-
 function (x, aic = TRUE, order.max = NULL, na.action = na.fail,
     demean = TRUE, series = NULL, var.method = 1L, ...)
 {
-    if (is.null(series)) series <- deparse(substitute(x))
+    if (is.null(series)) series <- deparse1(substitute(x))
     if (ists <- is.ts(x)) xtsp <- tsp(x)
     x <- na.action(as.ts(x))
     if(any(is.na(x) != is.na(x[,1]))) stop("NAs in 'x' must be the same row-wise")
@@ -542,7 +545,7 @@ ar.burg.default <-
     function (x, aic = TRUE, order.max = NULL, na.action = na.fail,
                    demean = TRUE, series = NULL, var.method = 1L, ...)
 {
-    if(is.null(series)) series <- deparse(substitute(x))
+    if(is.null(series)) series <- deparse1(substitute(x))
     if (ists <- is.ts(x)) xtsp <- tsp(x)
     x <- na.action(as.ts(x))
     if(anyNA(x)) stop("NAs in 'x'")
@@ -596,7 +599,7 @@ function (x, aic = TRUE, order.max = NULL, na.action = na.fail,
           demean = TRUE, series = NULL, var.method = 1L, ...)
 {
     if (is.null(series))
-        series <- deparse(substitute(x))
+        series <- deparse1(substitute(x))
     if (ists <- is.ts(x))
         xtsp <- tsp(x)
     x <- na.action(as.ts(x))

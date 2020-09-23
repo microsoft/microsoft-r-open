@@ -1,6 +1,6 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
- *  Copyright (C) 1997-2013   The R Core Team
+ *  Copyright (C) 1997-2020   The R Core Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 
 #include <Defn.h>
 #include <R_ext/RStartup.h>
+#include <R_ext/RS.h> // for Calloc
 
 
 /* Remove and process common command-line arguments
@@ -47,19 +48,23 @@
    These are populated via the routine R_set_command_line_arguments().
 */
 static int    NumCommandLineArgs = 0;
-static char **CommandLineArgs = NULL;
+static char **CommandLineArgs = NULL; // this does not get freed
 
 
 void
 R_set_command_line_arguments(int argc, char **argv)
 {
-    int i;
-
+    // nothing here is ever freed.
     NumCommandLineArgs = argc;
     CommandLineArgs = (char**) calloc((size_t) argc, sizeof(char*));
+    if(CommandLineArgs == NULL)
+	R_Suicide("allocation failure in R_set_command_line_arguments");
 
-    for(i = 0; i < argc; i++)
+    for(int i = 0; i < argc; i++) {
 	CommandLineArgs[i] = strdup(argv[i]);
+	if(CommandLineArgs[i] == NULL)
+	    R_Suicide("allocation failure in R_set_command_line_arguments");
+    }
 }
 
 
@@ -148,10 +153,11 @@ R_common_command_line(int *pac, char **argv, Rstart Rp)
 	    else if (!strcmp(*av, "--verbose")) {
 		Rp->R_Verbose = TRUE;
 	    }
-	    else if (!strcmp(*av, "--slave") ||
+	    else if (!strcmp(*av, "--no-echo") ||
+		     !strcmp(*av, "--slave") || // "deprecated" from R 4.0.0 (spring 2020)
 		     !strcmp(*av, "-s")) {
 		Rp->R_Quiet = TRUE;
-		Rp->R_Slave = TRUE;
+		Rp->R_NoEcho = TRUE;
 		Rp->SaveAction = SA_NOSAVE;
 	    }
 	    else if (!strcmp(*av, "--no-site-file")) {

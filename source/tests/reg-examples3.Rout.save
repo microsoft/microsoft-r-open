@@ -1,6 +1,6 @@
 
-R version 3.5.3 RC (2019-03-03 r76193) -- "Great Truth"
-Copyright (C) 2019 The R Foundation for Statistical Computing
+R version 4.0.1 Patched (2020-06-08 r78667) -- "See Things Now"
+Copyright (C) 2020 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -48,7 +48,6 @@ spontaneous     7.285     0.1373     3.651    14.536
 induced         4.092     0.2444     2.018     8.298
 
 Concordance= 0.776  (se = 0.044 )
-Rsquare= 0.193   (max possible= 0.519 )
 Likelihood ratio test= 53.15  on 2 df,   p=3e-12
 Wald test            = 31.84  on 2 df,   p=1e-07
 Score (logrank) test = 48.44  on 2 df,   p=3e-11
@@ -339,6 +338,7 @@ S21
 > 
 > musc.1 <- nls(Length ~ cbind(1, exp(-Conc/th)), muscle,
 +               start = list(th = 1), algorithm = "plinear")
+> ## IGNORE_RDIFF_BEGIN
 > summary(musc.1)
 
 Formula: Length ~ cbind(1, exp(-Conc/th))
@@ -356,6 +356,7 @@ Residual standard error: 4.67 on 57 degrees of freedom
 Number of iterations to convergence: 5 
 Achieved convergence tolerance: 9.32e-07
 
+> ## IGNORE_RDIFF_END
 > 
 > ## Then we use nls' indexing feature for parameters in non-linear
 > ## models to use the conventional algorithm to fit a model in which
@@ -366,6 +367,7 @@ Achieved convergence tolerance: 9.32e-07
 > b <- coef(musc.1)
 > musc.2 <- nls(Length ~ a[Strip] + b[Strip]*exp(-Conc/th), muscle,
 +               start = list(a = rep(b[2], 21), b = rep(b[3], 21), th = b[1]))
+> ## IGNORE_RDIFF_BEGIN
 > summary(musc.2)
 
 Formula: Length ~ a[Strip] + b[Strip] * exp(-Conc/th)
@@ -423,6 +425,7 @@ Residual standard error: 1.11 on 17 degrees of freedom
 Number of iterations to convergence: 8 
 Achieved convergence tolerance: 2.17e-06
 
+> ## IGNORE_RDIFF_END
 > options(od)
 > 
 > # princomp.Rd
@@ -471,38 +474,38 @@ Type 1 2 3 4 5 6 7 8 9
 4 x 9 sparse Matrix of class "dgCMatrix"
     Subj
 Type 1 2 3 4 5 6 7 8 9
-  T1 . 1 . 1 . 1 . 1 .
-  T2 1 . . . . . 1 . 1
-  T3 . . . . 1 . . . .
-  T4 1 . . . . . 1 . .
-25 x 5 sparse Matrix of class "dgCMatrix"
+  T1 . 1 . . . 1 . . .
+  T2 . . . . . . . 1 1
+  T3 . . 1 1 1 . 1 1 .
+  T4 . 1 . . . . . . .
+25 x 4 sparse Matrix of class "dgCMatrix"
      outer
-inner A B C D E
-    a 2 . . . .
-    b . . 1 . .
-    c . 6 . . .
-    d . . . 5 .
-    e . . . 3 .
-    f 1 . . . .
-    g . 9 . . .
-    h . . 3 . .
-    i . . . . 5
-    j . . . 1 .
-    k 3 . . . .
-    l . 2 . . .
-    m 6 . . . .
-    n . . 1 . .
-    o 2 . . . .
-    p . . 2 . .
-    q . 5 . . .
-    r . . . . 6
-    s . . 4 . .
-    t . . . 7 .
-    u . 4 . . .
-    v . . . 7 .
-    w . . . 7 .
-    x . . . . 6
-    y . . . . 2
+inner A B C E
+    a . . . 3
+    b . . . 6
+    c . . 5 .
+    d . 1 . .
+    e . . 3 .
+    f . . 5 .
+    g . . 3 .
+    h 6 . . .
+    i 8 . . .
+    j . 1 . .
+    k . . . 6
+    l . 2 . .
+    m . . . 7
+    n . . 3 .
+    o . 3 . .
+    p . 3 . .
+    q . . . 7
+    r . . . 2
+    s . 6 . .
+    t . . . 5
+    u 4 . . .
+    v . . 3 .
+    w . 3 . .
+    x . . 3 .
+    y 2 . . .
 > 
 > ## From utils
 > example(packageDescription)
@@ -578,34 +581,12 @@ pckgDs>
 > ## there are few dependencies in a vanilla R installation:
 > ## lattice may not be installed
 > ## Avoid possibly large list from R_HOME/site-library, which --vanilla includes.
-> dependsOnPkgs("lattice", lib.loc = .Library)
-[1] "Matrix"   "nlme"     "mgcv"     "survival"
+> stopifnot(identical(
++     sort(dependsOnPkgs("lattice", lib.loc = .Library)),
++     c("Matrix", "mgcv", "nlme", "survival")))
 > 
-> ## This may not be installed
+> ## Vignettes may not yet be installed
 > gridEx <- system.file("doc", "grid.Rnw", package = "grid")
-> vignetteDepends(gridEx)
-$Depends
-[1] "lattice"
-
-$Installed
-[1] "lattice"
-
-$Found
-list()
-
-$NotFound
-character(0)
-
-$R
-[1] "R (>= 3.0.0)"
-
-attr(,"class")
-[1] "DependsList"
-Warning messages:
-1: 'getDepList' is deprecated.
-Use 'dependsOnPkgs() or package_dependencies()' instead.
-See help("Deprecated") 
-2: 'package.dependencies' is deprecated.
-Use 'package_dependencies' instead.
-See help("Deprecated") 
+> if(nzchar(gridEx)) # was installed
++     stopifnot(identical(vignetteInfo(gridEx)$depends, "lattice"))
 > 

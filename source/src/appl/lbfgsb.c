@@ -1,6 +1,6 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
- *  Copyright (C) 2000-2015 The R Core Team
+ *  Copyright (C) 2000-2020 The R Core Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -871,14 +871,12 @@ L777:
 /*	  Store T in the upper triangular of the array wt; */
 /*	  Cholesky factorize T to J*J' with */
 /*	     J' stored in the upper triangular of wt. */
-    formt(m, &wt[wt_offset], &sy[sy_offset], &ss[ss_offset], &col, &theta, &
-	    info);
+    formt(m, &wt[wt_offset], &sy[sy_offset], &ss[ss_offset], &col, &theta,
+	  &info);
     if (info != 0) {
-/*	    nonpositive definiteness in Cholesky factorization; */
-/*	    refresh the lbfgs memory and restart the iteration. */
 	if (iprint >= 0)
 	    Rprintf("%s\n%s\n",
-		    "Nonpositive definiteness in Cholesky factorization in formk;",
+		    "Nonpositive definiteness in Cholesky factorization in formt();",
 		    "   refresh the lbfgs memory and restart the iteration.");
 	info = 0;
 	col = 0;
@@ -3558,9 +3556,9 @@ static void prn3lb(int n, double *x, double *f, char *task, int iprint,
 	case -2: Rprintf("Matrix in 2st Cholesky factorization in formk is not Pos. Def."); break;
 	case -3: Rprintf("Matrix in the Cholesky factorization in formt is not Pos. Def."); break;
 	case -4: Rprintf("Derivative >= 0, backtracking line search impossible."); break;
-	case -5: Rprintf("l(%d) > u(%d).  No feasible solution", k, k); break;
+	case -5: Rprintf("Warning:  more than 10 function and gradient evaluations\n   in the last line search\n"); break;
 	case -6: Rprintf("Input nbd(%d) is invalid", k); break;
-	case -7: Rprintf("Warning:  more than 10 function and gradient evaluations\n   in the last line search\n"); break;
+	case -7: Rprintf("l(%d) > u(%d).  No feasible solution", k, k); break;
 	case -8: Rprintf("The triangular system is singular."); break;
 	case -9: Rprintf("%s\n%s\n", "Line search cannot locate an adequate point after 20 function", "and gradient evaluations"); break;
 	default: break;

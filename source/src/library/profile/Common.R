@@ -35,7 +35,14 @@ options(show.error.messages = TRUE)
 options(scipen = 0)
 options(max.print = 99999)# max. #{entries} in internal printMatrix()
 options(add.smooth = TRUE)# currently only used in 'plot.lm'
-options(stringsAsFactors = TRUE)
+
+if(isFALSE(as.logical(Sys.getenv("_R_OPTIONS_STRINGS_AS_FACTORS_",
+                                 "FALSE")))) {
+    options(stringsAsFactors = FALSE)
+} else {
+    options(stringsAsFactors = TRUE)
+}
+
 if(!interactive() && is.null(getOption("showErrorCalls")))
     options(showErrorCalls = TRUE)
 
@@ -94,3 +101,8 @@ if(nzchar(Sys.getenv("R_BATCH"))) {
     ## A system has been reported without Sys.unsetenv, so try this
     try(Sys.setenv(R_BATCH=""))
 }
+
+local({
+    if(nzchar(rv <- Sys.getenv("_R_RNG_VERSION_")))
+        suppressWarnings(RNGversion(rv))
+})

@@ -1,6 +1,6 @@
 % File src/library/stats/man/influence.measures.Rd
 % Part of the R package, https://www.R-project.org
-% Copyright 1995-2018 R Core Team
+% Copyright 1995-2020 R Core Team
 % Distributed under GPL 2 or later
 
 \name{influence.measures}
@@ -36,7 +36,7 @@
 \alias{cooks.distance.lm}
 \alias{cooks.distance.glm}
 \usage{
-influence.measures(model)
+influence.measures(model, infl = influence(model))
 
 rstandard(model, \dots)
 \method{rstandard}{lm}(model, infl = lm.influence(model, do.coef = FALSE),
@@ -116,6 +116,10 @@ hat(x, intercept = TRUE)
   respectively. (These re-normalize the residuals to have unit variance,
   using an overall and leave-one-out measure of the error variance
   respectively.)
+
+  Note that for \emph{multivariate} \code{lm()} models (of class
+  \code{"mlm"}), these functions return 3d arrays instead of matrices,
+  or matrices instead of vectors.
 
   Values for generalized linear models are approximations, as described
   in Williams (1987) (except that Cook's distances are scaled as
@@ -200,7 +204,7 @@ plot(lm.SR, which = 5) # an enhanced version of that via plot(<lm>)
 ## The 'infl' argument is not needed, but avoids recomputation:
 rs <- rstandard(lm.SR)
 iflSR <- influence(lm.SR)
-identical(rs, rstandard(lm.SR, infl = iflSR))
+all.equal(rs, rstandard(lm.SR, infl = iflSR), tol = 1e-10)
 ## to "see" the larger values:
 1000 * round(dfbetas(lm.SR, infl = iflSR), 3)
 cat("PRESS :"); (PRESS <- sum( rstandard(lm.SR, type = "predictive")^2 ))

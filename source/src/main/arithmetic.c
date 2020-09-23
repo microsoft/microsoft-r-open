@@ -1,8 +1,8 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
+ *  Copyright (C) 1998--2020 The R Core Team.
+ *  Copyright (C) 2003--2019 The R Foundation
  *  Copyright (C) 1995--1997 Robert Gentleman and Ross Ihaka
- *  Copyright (C) 1998--2018 The R Core Team.
- *  Copyright (C) 2003--2016 The R Foundation
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
 #include <config.h>
 #endif
 
+// LDBL_EPSILON
+#include <float.h>
 
 /* interval at which to check interrupts, a guess */
 #define NINTERRUPT 10000000
@@ -174,27 +176,50 @@ void attribute_hidden InitArithmetic()
 #endif
 }
 
-/* Keep these two in step */
-/* FIXME: consider using
-    tmp = (LDOUBLE)x1 - floor(q) * (LDOUBLE)x2;
- */
+
+#if HAVE_LONG_DOUBLE && (SIZEOF_LONG_DOUBLE > SIZEOF_DOUBLE)
+# ifdef __powerpc__
+ // PowerPC 64 (when gcc has -mlong-double-128) fails constant folding with LDOUBLE
+ // Debian Bug#946836 shows it is needed also for 32-bit ppc, not just __PPC64__
+#  define q_1_eps (1 / LDBL_EPSILON)
+# else
+static LDOUBLE q_1_eps = 1 / LDBL_EPSILON;
+# endif
+#else
+static double  q_1_eps = 1 / DBL_EPSILON;
+#endif
+
+/* Keep myfmod() and myfloor() in step */
 static double myfmod(double x1, double x2)
 {
     if (x2 == 0.0) return R_NaN;
-    double q = x1 / x2, tmp = x1 - floor(q) * x2;
-    if(R_FINITE(q) && (fabs(q) > 1/R_AccuracyInfo.eps))
+    if(fabs(x2) > q_1_eps && R_FINITE(x1) && fabs(x1) <= fabs(x2)) {
+	return
+	    (fabs(x1) == fabs(x2)) ? 0 :
+	    ((x1 < 0 && x2 > 0) ||
+	     (x2 < 0 && x1 > 0))
+	     ? x1+x2  // differing signs
+	     : x1   ; // "same" signs (incl. 0)
+    }
+    double q = x1 / x2;
+    if(R_FINITE(q) && (fabs(q) > q_1_eps))
 	warning(_("probable complete loss of accuracy in modulus"));
-    q = floor(tmp/x2);
-    return tmp - q * x2;
+    LDOUBLE tmp = (LDOUBLE)x1 - floor(q) * (LDOUBLE)x2;
+    return (double) (tmp - floorl(tmp/x2) * x2);
 }
 
 static double myfloor(double x1, double x2)
 {
-    double q = x1 / x2, tmp;
-
-    if (x2 == 0.0) return q;
-    tmp = x1 - floor(q) * x2;
-    return floor(q) + floor(tmp/x2);
+    double q = x1 / x2;
+    if (x2 == 0.0 || fabs(q) > q_1_eps || !R_FINITE(q))
+	return q;
+    if(fabs(q) < 1)
+	return (q < 0) ? -1
+	    : ((x1 < 0 && x2 > 0) ||
+	       (x1 > 0 && x2 < 0) // differing signs
+	       ? -1 : 0);
+    LDOUBLE tmp = (LDOUBLE)x1 - floor(q) * (LDOUBLE)x2;
+    return (double) (floor(q) + floorl(tmp/x2));
 }
 
 double R_pow(double x, double y) /* = x ^ y */
@@ -1255,6 +1280,7 @@ SEXP attribute_hidden do_math1(SEXP call, SEXP op, SEXP args, SEXP env)
     case 10: return MATH1(exp);
     case 11: return MATH1(expm1);
     case 12: return MATH1(log1p);
+
     case 20: return MATH1(cos);
     case 21: return MATH1(sin);
     case 22: return MATH1(tan);
@@ -1276,7 +1302,7 @@ SEXP attribute_hidden do_math1(SEXP call, SEXP op, SEXP args, SEXP env)
     case 43: return MATH1(trigamma);
 	/* case 44: return MATH1(tetragamma);
 	   case 45: return MATH1(pentagamma);
-	   removed in 2.0.0
+	   removed in 2.0.0 -- rather use Math2's psigamma()
 
 	   case 46: return MATH1(Rf_gamma_cody); removed in 2.8.0
 	*/
@@ -1300,7 +1326,7 @@ SEXP attribute_hidden do_trunc(SEXP call, SEXP op, SEXP args, SEXP env)
     SEXP s;
     if (DispatchGroup("Math", call, op, args, env, &s))
 	return s;
-    checkArity(op, args); /* but is -1 in names.c */
+    // checkArity(op, args); /* is -1 in names.c */
     check1arg(args, call, "x");
     if (isComplex(CAR(args)))
 	errorcall(call, _("unimplemented complex function"));
@@ -1609,25 +1635,28 @@ SEXP attribute_hidden do_Math2(SEXP call, SEXP op, SEXP args, SEXP env)
 
     if (length(args) >= 2 &&
 	isSymbol(CADR(args)) && R_isMissing(CADR(args), env)) {
-	double digits = 0;
-	if(PRIMVAL(op) == 10004) digits = 6.0; // for signif()
+	double digits = 0.; // round()
+	if(PRIMVAL(op) == 10004) // signif()
+	    digits = 6.;
 	PROTECT(args = list2(CAR(args), ScalarReal(digits))); nprotect++;
     }
 
     PROTECT(args = evalListKeepMissing(args, env));
+    R_args_enable_refcnt(args);
     PROTECT(call2 = lang2(CAR(call), R_NilValue));
     SETCDR(call2, args);
 
     n = length(args);
     if (n != 1 && n != 2)
 	error(ngettext("%d argument passed to '%s' which requires 1 or 2 arguments",
-		       "%d arguments passed to '%s'which requires 1 or 2 arguments", n),
+		       "%d arguments passed to '%s' which requires 1 or 2 arguments", n),
 	      n, PRIMNAME(op));
 
     if (! DispatchGroup("Math", call2, op, args, env, &res)) {
 	if(n == 1) {
-	    double digits = 0.0;
-	    if(PRIMVAL(op) == 10004) digits = 6.0;
+	    double digits = 0.; // round()
+	    if(PRIMVAL(op) == 10004) // signif()
+		digits = 6.;
 	    SETCDR(args, CONS(ScalarReal(digits), R_NilValue));
 	} else {
 	    /* If named, do argument matching by name */
@@ -1635,7 +1664,7 @@ SEXP attribute_hidden do_Math2(SEXP call, SEXP op, SEXP args, SEXP env)
 		if (do_Math2_formals == NULL)
 		    do_Math2_formals = allocFormalsList2(install("x"),
 							 install("digits"));
-		PROTECT(args = matchArgs(do_Math2_formals, args, call));
+		PROTECT(args = matchArgs_NR(do_Math2_formals, args, call));
 		nprotect++;
 	    }
 	    if (length(CADR(args)) == 0)
@@ -1647,7 +1676,7 @@ SEXP attribute_hidden do_Math2(SEXP call, SEXP op, SEXP args, SEXP env)
     return res;
 }
 
-/* log{2,10} are builtins */
+/* log{2,10}() builtins : */
 SEXP attribute_hidden do_log1arg(SEXP call, SEXP op, SEXP args, SEXP env)
 {
     SEXP res, call2, args2, tmp = R_NilValue /* -Wall */;
@@ -1749,7 +1778,7 @@ SEXP attribute_hidden do_log_builtin(SEXP call, SEXP op, SEXP args, SEXP env)
 	/* match argument names if supplied */
 	/* will signal an error unless there are one or two arguments */
 	/* after the match, length(args) will be 2 */
-	PROTECT(args = matchArgs(do_log_formals, args, call));
+	PROTECT(args = matchArgs_NR(do_log_formals, args, call));
 
 	if(CAR(args) == R_MissingArg)
 	    error(_("argument \"%s\" is missing, with no default"), "x");

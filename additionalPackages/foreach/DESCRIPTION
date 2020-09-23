@@ -1,0 +1,20 @@
+Package: foreach
+Type: Package
+Title: Provides Foreach Looping Construct for R
+Version: 1.5.1
+Authors@R: c(person("Rich", "Calaway", role="cre", email="richcala@microsoft.com"),
+             person("Microsoft", role=c("aut", "cph")),
+			 person("Steve", "Weston", role="aut"))
+Description: Support for the foreach looping construct.  Foreach is an
+        idiom that allows for iterating over elements in a collection,
+        without the use of an explicit loop counter.  This package in
+        particular is intended to be used for its return value, rather
+        than for its side effects.  In that sense, it is similar to the
+        standard lapply function, but doesn't require the evaluation
+        of a function.  Using foreach without side effects also
+        facilitates executing the loop in parallel.
+Depends: R (>= 2.5.0) 
+Imports: codetools, utils, iterators
+Suggests: randomForest, future
+Enhances: compiler, doMC, RUnit, doParallel
+License: Apache License (== 2.0)

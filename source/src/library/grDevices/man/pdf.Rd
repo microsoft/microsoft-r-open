@@ -1,6 +1,6 @@
 % File src/library/grDevices/man/pdf.Rd
 % Part of the R package, https://www.R-project.org
-% Copyright 1995-2016 R Core Team
+% Copyright 1995-2019 R Core Team
 % Distributed under GPL 2 or later
 
 \name{pdf}
@@ -20,7 +20,7 @@ pdf(file = if(onefile) "Rplots.pdf" else "Rplot\%03d.pdf",
     useDingbats, useKerning, fillOddEven, compress)
 }
 \arguments{
-  \item{file}{a character string giving the name of the file.
+  \item{file}{a character string giving the file path.
     If it is of the form \code{"|cmd"}, the output is piped to the
     command given by \command{cmd}.  If it is \code{NULL},
     then no external file is created (effectively, no drawing occurs),
@@ -30,7 +30,9 @@ pdf(file = if(onefile) "Rplots.pdf" else "Rplot\%03d.pdf",
     as \code{"Rplot\%03d.pdf"} (the default in that case).
     (See \code{\link{postscript}} for further details.)
 
-    Tilde expansion (see \code{\link{path.expand}}) is done.
+    Tilde expansion (see \code{\link{path.expand}}) is done. An input with
+    a marked encoding is converted to the native encoding or an error is
+    given.
   }
   \item{width, height}{the width and height of the graphics region in
     inches.  The default values are \code{7}.}
@@ -77,15 +79,14 @@ pdf(file = if(onefile) "Rplots.pdf" else "Rplot\%03d.pdf",
     \code{"grey"}) and \code{"cmyk"}.  Defaults to \code{"srgb"}.  See section
     \sQuote{Color models}.}
   \item{useDingbats}{logical.  Should small circles be rendered
-    \emph{via} the Dingbats font?  Defaults to \code{TRUE}, which produces
-    smaller and better output.  Setting this to \code{FALSE} can work
-    around font display problems in broken PDF viewers: although this
+    \emph{via} the Dingbats font?  Defaults to \code{FALSE}.
+    If \code{TRUE}, this can produce smaller and better output, but
+    there can font display problems in broken PDF viewers: although this
     font is one of the 14 guaranteed to be available in all PDF viewers,
     that guarantee is not always honoured.
-#ifdef unix
-    See the \sQuote{Note} for a possible fix for some viewers.
-#endif
-    }
+
+    For Unix-alikes (including macOS) see the \sQuote{Note} for a
+    possible fix for some viewers.}
   \item{useKerning}{logical.  Should kerning corrections be included in
     setting text and calculating string widths?  Defaults to \code{TRUE}.}
   \item{fillOddEven}{logical controlling the polygon fill mode:  see
@@ -127,14 +128,12 @@ pdf(file = if(onefile) "Rplots.pdf" else "Rplot\%03d.pdf",
   software (e.g., Ghostscript) may be required to embed the fonts so
   that the PDF can be included in other documents (e.g., LaTeX): see
   \code{\link{embedFonts}}.  The URW-based families described for
-  \code{\link{postscript}} can be used with viewers
-#ifdef unix
-  set up to use URW fonts, which is usual with those based on
-  \code{xpdf} or Ghostscript.
-#endif
-#ifdef windows
-  such as GSView which utilise URW fonts.
-#endif
+  \code{\link{postscript}} can be used with viewers, platform dependently:
+  \describe{
+    \item{on Unix-alikes}{viewers set up to use URW fonts, which is
+      usual with those based on \code{xpdf} or Ghostscript.}
+    \item{on Windows}{viewers such as GSView which utilise URW fonts.}
+  }
   Since \code{\link{embedFonts}} makes use of Ghostscript, it should be
   able to embed the URW-based families for use with other viewers.
 
@@ -204,8 +203,8 @@ pdf(file = if(onefile) "Rplots.pdf" else "Rplot\%03d.pdf",
     \item The default font family is Helvetica.
     \item Line widths are as a multiple of 1/96 inch, with a minimum
     of 0.01 enforced.
-    \item Circles of any radius are allowed.  Unless \code{useDingbats =
-      FALSE}, opaque circles of less than 10 big points radius are
+    \item Circles of any radius are allowed.  If \code{useDingbats =
+      TRUE}, opaque circles of less than 10 big points radius are
     rendered using char 108 in the Dingbats font: all semi-transparent
     and larger circles using a \enc{Bézier}{Bezier} curve for each
     quadrant.
@@ -245,8 +244,10 @@ pdf(file = if(onefile) "Rplots.pdf" else "Rplot\%03d.pdf",
   be needed for the full use of encodings other than Latin-1 (although
   they may be offered for download as needed).
 
-#ifdef unix
-  On some systems the default plotting character \code{pch = 1} was
+  \describe{
+    \item{On some Unix-alike systems:}{
+      If \code{useDingbats = TRUE},
+      the default plotting character \code{pch = 1} was
   displayed in some PDF viewers incorrectly as a \code{"q"}
   character.  (These seem to be viewers based on the \samp{poppler} PDF
   rendering library).  This may be due to incorrect or incomplete mapping
@@ -264,18 +265,19 @@ pdf(file = if(onefile) "Rplots.pdf" else "Rplot\%03d.pdf",
   Some further workarounds for problems with symbol fonts on
   viewers using \sQuote{fontconfig} are given in the \sQuote{Cairo Fonts}
   section of the help for \code{\link{X11}}.
-#endif
-#ifdef windows
+ }
+ \item{On Windows:}{
   The TeXworks PDF viewer was one of those which has been seen to fail to
   display Dingbats (used by e.g.\sspace{}\code{pch = 1}) correctly.
   Whereas on other platforms the problems seen were incorrect output, on
   Windows points were silently omitted: however recent versions seem to
   manage to display Dingbats.
-#endif
+ }
+}%end{describe}
 
-  There is a different font bug in the \command{pdf.js} viewer included
-  in Firefox 19 and later: that maps Dingbats to the Symbol font and so
-  displays symbols such \code{pch = 1} as lambda.
+  There was a different font bug in the \command{pdf.js} viewer included
+  in Firefox: that mapped Dingbats to the Symbol font and so displayed
+  symbols such \code{pch = 1} as lambda.
 }
 
 \seealso{
@@ -284,14 +286,8 @@ pdf(file = if(onefile) "Rplots.pdf" else "Rplot\%03d.pdf",
   \code{\link{Devices}},
   \code{\link{postscript}}.
 
-#ifdef unix
   \code{\link{cairo_pdf}} and (on macOS only) \code{\link{quartz}}
   for other devices that can produce PDF.
-#endif
-#ifdef windows
-  \code{\link{cairo_pdf}} and (on macOS only) \code{quartz}
-  for other devices that can produce PDF.
-#endif
 
   More details of font families and encodings and especially handling
   text in a non-Latin-1 encoding and embedding fonts can be found in

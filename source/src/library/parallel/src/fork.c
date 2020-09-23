@@ -1,7 +1,7 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
  *  (C) Copyright 2008-2011 Simon Urbanek
- *      Copyright 2011-2018 R Core Team.
+ *      Copyright 2011-2019 R Core Team.
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -47,25 +47,37 @@
 #include <Rinterface.h> /* for R_Interactive */
 #include <R_ext/eventloop.h> /* for R_SelectEx */
 
-/* NOTE: the logging is not safe to use in signal handler because printf is
-   not async-signal-safe */
-#ifndef FILE_LOG
-/* use printf instead of Rprintf for debugging to avoid forked console interactions */
-#define Dprintf printf
-#else
-/* logging into a file */
-#include <stdarg.h>
-void Dprintf(char *format, ...) {
-    va_list (args);
-    va_start (args, format);
-    FILE *f = fopen("mc_debug.txt", "a");
-    if (f) {
+#ifdef MC_DEBUG
+  /* NOTE: the logging is not safe to use in signal handler because printf is
+     not async-signal-safe */
+# ifndef FILE_LOG
+    /* use printf instead of Rprintf for debugging to avoid forked console interactions */
+    /* #   define Dprintf printf */
+    void Dprintf(char *format, ...) {
+      static double t0 = 0;
+      if (t0 == 0)
+        t0 = currentTime();
+      va_list (args);
+      va_start (args, format);
+      printf("%.8f %d: ", currentTime() - t0, getpid());
+      vprintf(format, args);
+      va_end (args);
+    }
+# else
+    /* logging into a file */
+#   include <stdarg.h>
+    void Dprintf(char *format, ...) {
+      va_list (args);
+      va_start (args, format);
+      FILE *f = fopen("mc_debug.txt", "a");
+      if (f) {
 	fprintf(f, "%d> ", getpid());
 	vfprintf(f, format, args);
 	fclose(f);
+      }
+      va_end (args);
     }
-    va_end (args);
-}
+# endif
 #endif
 
 /* A child is created in mc_fork as detached (sEstranged=TRUE, has sifd
@@ -81,7 +93,7 @@ void Dprintf(char *format, ...) {
    can never become attached.
 
    An attached child is visible to R user code and always has file descriptors
-   sifd and pifd open and >= 0). It becomes detached via readChild() when it
+   sifd and pifd open and >= 0. It becomes detached via readChild() when it
    returns an integer (signalling to user that the child is finishing or has
    failed). An attached child is never waited for in the signal handler as
    user R code is allowed to invoke operations on the child, such as kill - if
@@ -164,9 +176,31 @@ static void restore_sigchld(sigset_t *oldset)
 static void close_fds_child_ci(child_info_t *ci)
 {
     /* note the check and close is not atomic */
-    if (ci->pfd > 0) { close(ci->pfd); ci->pfd = -1; }
-    if (ci->sifd > 0) { close(ci->sifd); ci->sifd = -1; }
+    if (ci->pfd >= 0) { close(ci->pfd); ci->pfd = -1; }
+    if (ci->sifd >= 0) { close(ci->sifd); ci->sifd = -1; }
 }
+
+/* is the file descriptor used in child entries? */
+static int fd_used_by_children(int fd) {
+    if (fd == -1)
+	return 0;
+    child_info_t *ci = children;
+    while (ci) {
+	if (ci->pfd == fd || ci->sifd == fd)
+	    return 1;
+	ci = ci->next;
+    }
+    return 0;
+}
+
+static void close_non_child_fd(int fd)
+{
+    if (fd_used_by_children(fd))
+	/* should not happen */
+	error("cannot close internal file descriptor");
+    close(fd);
+}
+
 
 /* must only be called on attached child */
 static void kill_and_detach_child_ci(child_info_t *ci, int sig)
@@ -256,7 +290,7 @@ static void compact_children() {
 	    if (ci->ppid != ppid) {
 		close_fds_child_ci(ci);
 #ifdef MC_DEBUG
-		Dprintf("removing child %d from the listi as it is not ours\n", ci->pid);
+		Dprintf("removing child %d from the list as it is not ours\n", ci->pid);
 #endif
 	    }
 #ifdef MC_DEBUG
@@ -288,6 +322,8 @@ SEXP mc_prepare_cleanup()
     ci->waitedfor = 1;
     ci->detached = 1;
     ci->pid = -1; /* a cleanup mark */
+    ci->pfd = -1;
+    ci->sifd = -1; /* set fds to -1 to simplify close */
     ci->ppid = getpid();
     ci->next = children;
     children = ci;
@@ -361,7 +397,7 @@ SEXP mc_cleanup(SEXP sKill, SEXP sDetach, SEXP sShutdown)
 	    /* only kills if not waited for */
 	    kill_detached_child_ci(ci, sig);
 	if (!ci->detached && detach) {
-	    /* With sKill ==  FALSE (mclapply mc.cleanup=FALSE), send
+	    /* With sKill == FALSE (mclapply mc.cleanup=FALSE), send
 	       SIGUSR1 to just detach the child. Detaching also closes the file
 	       descriptors which contributes to termination probably even more,
 	       as it is not likely that the child will be finished and just
@@ -493,7 +529,7 @@ SEXP mc_fork(SEXP sEstranged)
 	    error(_("unable to create a pipe"));
 	}
 #ifdef MC_DEBUG
-	Dprintf("parent[%d] created pipes: comm (%d->%d), sir (%d->%d)\n",
+	Dprintf("parent[%d] created pipes: comm (C%d->M%d), sir (M%d->C%d)\n",
 		getpid(), pipefd[1], pipefd[0], sipfd[1], sipfd[0]);
 #endif
     }
@@ -514,6 +550,14 @@ SEXP mc_fork(SEXP sEstranged)
 	}
 	error(_("unable to fork, possible reason: %s"), strerror(errno));
     }
+#ifdef MC_DEBUG
+    /* not worth checking always */
+    if (fd_used_by_children(pipefd[0]) || fd_used_by_children(pipefd[1]) ||
+        fd_used_by_children(sipfd[0]) || fd_used_by_children(sipfd[1]))
+
+	/* should not happen */
+	error("detected re-use of valid pipe ends\n");
+#endif
     res_i[0] = (int) pid;
     if (pid == 0) { /* child */
 	R_isForkedChild = 1;
@@ -530,7 +574,8 @@ SEXP mc_fork(SEXP sEstranged)
 	if (estranged)
 	    res_i[1] = res_i[2] = NA_INTEGER;
 	else {
-	    close(pipefd[0]); /* close read end */
+	    close(pipefd[0]); /* close read end of the data pipe */
+	    close(sipfd[1]); /* close write end of the child-stdin pipe */
 	    master_fd = res_i[1] = pipefd[1];
 	    res_i[2] = NA_INTEGER;
 	    /* re-map stdin */
@@ -547,7 +592,8 @@ SEXP mc_fork(SEXP sEstranged)
 	    signal(SIGUSR1, child_sig_handler);
 	}
 #ifdef MC_DEBUG
-	Dprintf("child process %d started\n", getpid());
+	Dprintf("child process %d started, master_fd=%d\n", getpid(),
+	        master_fd);
 #endif
     } else { /* master process */
 	child_info_t *ci;
@@ -572,11 +618,11 @@ SEXP mc_fork(SEXP sEstranged)
 
 	    /* register the new child and its pipes */
 	    ci->pfd = pipefd[0];
-	    ci->sifd= sipfd[1];
+	    ci->sifd = sipfd[1];
 	}
 
     #ifdef MC_DEBUG
-	    Dprintf("parent registers new child %d\n", pid);
+	Dprintf("parent registers new child %d\n", pid);
     #endif
 	ci->next = children;
 	children = ci;
@@ -592,9 +638,9 @@ SEXP mc_close_stdout(SEXP toNULL)
 	if (fd != -1) {
 	    dup2(fd, STDOUT_FILENO);
 	    close(fd);
-	} else close(STDOUT_FILENO);
+	} else close_non_child_fd(STDOUT_FILENO);
     } else
-	close(STDOUT_FILENO);
+	close_non_child_fd(STDOUT_FILENO);
     return R_NilValue;
 }
 
@@ -606,9 +652,9 @@ SEXP mc_close_stderr(SEXP toNULL)
 	if (fd != -1) {
 	    dup2(fd, STDERR_FILENO);
 	    close(fd);
-	} else close(STDERR_FILENO);
+	} else close_non_child_fd(STDERR_FILENO);
     } else
-	close(STDERR_FILENO);
+	close_non_child_fd(STDERR_FILENO);
     return R_NilValue;
 }
 
@@ -619,7 +665,7 @@ SEXP mc_close_fds(SEXP sFDS)
     if (TYPEOF(sFDS) != INTSXP) error("descriptors must be integers");
     fds = LENGTH(sFDS);
     fd = INTEGER(sFDS);
-    while (i < fds) close(fd[i++]);
+    while (i < fds) close_non_child_fd(fd[i++]);
     return ScalarLogical(1);
 }
 
@@ -635,8 +681,13 @@ static ssize_t readrep(int fildes, void *buf, size_t nbyte)
 	if (r == -1) {
 	    if (errno == EINTR)
 		continue;
-	    else
+	    else {
+#ifdef MC_DEBUG
+	        Dprintf("process %d: error %s reading from fd %d\n",
+		        getpid(), strerror(errno), fildes);
+#endif
 		return -1;
+	    }
 	}
 	if (r == 0) /* EOF */
 	    return rbyte;
@@ -658,13 +709,22 @@ static ssize_t writerep(int fildes, const void *buf, size_t nbyte)
 	if (w == -1) {
 	    if (errno == EINTR)
 		continue;
-	    else
+	    else {
+#ifdef MC_DEBUG
+	        Dprintf("process %d: error %s writing to fd %d\n",
+		        getpid(), strerror(errno), fildes);
+#endif
 		return -1;
+	    }
 	}
 	if (w == 0) {
 	    /* possibly sending EOF on some systems via nbyte == 0,
 	       or an old indication that non-blocking read of not
 	       even a single more byte is possible */
+#ifdef MC_DEBUG
+	    Dprintf("process %d: write() returned 0 writing to fd %d\n",
+	           getpid(), fildes);
+#endif
 	    return wbyte;
 	}
 	wbyte += w;
@@ -761,7 +821,7 @@ SEXP mc_select_children(SEXP sTimeout, SEXP sWhich)
     FD_ZERO(&fs);
     while (ci) {
 	if (!ci->detached && ci->ppid == ppid) {
-	    /* attached children have ci->pfd > 0 */
+	    /* attached children have ci->pfd >= 0 */
 	    if (which) { /* check for the FD only if it's on the list */
 		unsigned int k = 0;
 		while (k < wlen) {
@@ -876,7 +936,7 @@ SEXP mc_select_children(SEXP sTimeout, SEXP sWhich)
     if (sr < 1) return ScalarLogical(TRUE); /* TRUE on timeout */
     ci = children;
 #ifdef MC_DEBUG
-    Dprintf(" - read select %d children: ", sr);
+    Dprintf(" - read select %d children: \n", sr);
 #endif
     res = allocVector(INTSXP, sr);
     res_i = INTEGER(res);
@@ -884,14 +944,11 @@ SEXP mc_select_children(SEXP sTimeout, SEXP sWhich)
 	if (!ci->detached && ci->ppid == ppid && FD_ISSET(ci->pfd, &fs)) {
 	    (res_i++)[0] = ci->pid;
 #ifdef MC_DEBUG
-	    Dprintf("%d ", ci->pid);
+	    Dprintf("    %d \n", ci->pid);
 #endif
 	}
 	ci = ci->next;
     }
-#ifdef MC_DEBUG
-    Dprintf("\n");
-#endif
     return res;
 }
 
@@ -909,7 +966,7 @@ static SEXP read_child_ci(child_info_t *ci)
     Dprintf("read_child_ci(%d) - read length returned %lld\n", pid, (long long)n);
 #endif
     if (n != sizeof(len) || len == 0) {
-	/* child is exiting (len==0), or error */
+	/* child is exiting (n==0), or error */
 	terminate_and_detach_child_ci(ci);
 	return ScalarInteger(pid);
     } else {
@@ -980,7 +1037,7 @@ SEXP mc_read_children(SEXP sTimeout)
     while (ci) {
 	if (!ci->detached && ci->ppid == ppid) {
 	    if (ci->pfd > maxfd) maxfd = ci->pfd;
-	    if (ci->pfd > 0) FD_SET(ci->pfd, &fs);
+	    if (ci->pfd >= 0) FD_SET(ci->pfd, &fs);
 	}
 	ci = ci -> next;
     }
@@ -1000,7 +1057,7 @@ SEXP mc_read_children(SEXP sTimeout)
     ci = children;
     while (ci) {
 	if (!ci->detached && ci->ppid == ppid) {
-	    if (ci->pfd > 0 && FD_ISSET(ci->pfd, &fs)) break;
+	    if (ci->pfd >= 0 && FD_ISSET(ci->pfd, &fs)) break;
 	}
 	ci = ci -> next;
     }
@@ -1013,7 +1070,6 @@ SEXP mc_read_children(SEXP sTimeout)
     else return read_child_ci(ci);
 }
 
-/* not used */
 SEXP mc_rm_child(SEXP sPid) 
 {
     int pid = asInteger(sPid);
@@ -1088,21 +1144,34 @@ SEXP mc_kill(SEXP sPid, SEXP sSig)
     return ScalarLogical(1);
 }
 
+extern int R_ignore_SIGPIPE; /* defined in src/main/main.c on unix */
+
 SEXP NORET mc_exit(SEXP sRes)
 {
     int res = asInteger(sRes);
 #ifdef MC_DEBUG
-    Dprintf("child %d: 'mcexit' called\n", getpid());
+    Dprintf("child %d: 'mcexit(%d)' called, master_fd=%d\n", getpid(),
+            res, master_fd);
 #endif
     if (is_master) error(_("'mcexit' can only be used in a child process"));
     if (master_fd != -1) { /* send 0 to signify that we're leaving */
 	size_t len = 0;
+	/* If rmChild() was called, the master may already have closed its end
+	   of the pipe, so the write may fail with EPIPE; disable the default
+	   R SIGPIPE handler to avoid a runtime error in that case, and ignore
+	   EPIPE. This may hide also real errors, but they should be detected
+	   via other means (results not delivered). Alternatively, we could
+	   rewrite mccollect(wait=FALSE) to wait for jobs that delivered
+	   results to also finish, and avoid using rmChild(). */
+	R_ignore_SIGPIPE = 1;
 	/* assign result for Fedora security settings */
 	ssize_t n = writerep(master_fd, &len, sizeof(len));
 	/* make sure the pipe is closed before we enter any waiting */
 	close(master_fd);
+	R_ignore_SIGPIPE = 0;
 	master_fd = -1;
-	if (n < 0) error(_("write error, closing pipe to the master"));
+	if (n < 0 && errno != EPIPE)
+	    error(_("write error, closing pipe to the master"));
     }
     if (!child_can_exit) {
 #ifdef MC_DEBUG
@@ -1113,7 +1182,7 @@ SEXP NORET mc_exit(SEXP sRes)
     }
 		
 #ifdef MC_DEBUG
-    Dprintf("child %d: exiting\n", getpid());
+    Dprintf("child %d: exiting with exit status %d\n", getpid(), res);
 #endif
     _exit(res);
     error(_("'mcexit' failed"));

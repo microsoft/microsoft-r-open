@@ -1,6 +1,6 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
- *  Copyright (C) 2000--2013  The R Core Team
+ *  Copyright (C) 2000--2020  The R Core Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #endif
 #define NO_NLS
 #include <Defn.h>
+#include <R_ext/RS.h> // for Calloc
 
 #include "tcltk.h" /* declarations of our `public' interface */
 #include <stdlib.h>
@@ -32,6 +33,8 @@
 #else
 #define _(String) (String)
 #endif
+
+Tcl_Interp *RTcl_interp;
 
 static void RTcl_dec_refcount(SEXP R_tclobj)
 {
@@ -232,11 +235,12 @@ SEXP dotTclObjv(SEXP args)
 	const char *s;
 	char *tmp;
 	if (!isNull(nm) && strlen(s = translateChar(STRING_ELT(nm, i)))){
-	    tmp = calloc(strlen(s)+2, sizeof(char));
+	    //  tmp = calloc(strlen(s)+2, sizeof(char));
+	    tmp = Calloc(strlen(s)+2, char);
 	    *tmp = '-';
 	    strcpy(tmp+1, s);
 	    objv[objc++] = Tcl_NewStringObj(tmp, -1);
-	    free(tmp);
+	    Free(tmp);
 	}
 	if (!isNull(t = VECTOR_ELT(avec, i)))
 	    objv[objc++] = (Tcl_Obj *) R_ExternalPtrAddr(t);
@@ -275,10 +279,15 @@ SEXP RTcl_ObjFromVar(SEXP args)
     Tcl_Obj *tclobj;
     const void *vmax = vmaxget();
 
+    if(!isValidString(CADR(args)))
+	error(_("invalid argument"));
     tclobj = Tcl_GetVar2Ex(RTcl_interp,
                            translateChar(STRING_ELT(CADR(args), 0)),
                            NULL,
                            0);
+    if (tclobj == NULL)
+	/* the variable may have been deleted using "unset" */
+	error(_("no such variable"));
     SEXP res = makeRTclObject(tclobj);
     vmaxset(vmax);
     return res;
@@ -287,6 +296,8 @@ SEXP RTcl_ObjFromVar(SEXP args)
 SEXP RTcl_AssignObjToVar(SEXP args)
 {
     const void *vmax = vmaxget();
+    if(!isValidString(CADR(args)))
+	error(_("invalid argument"));
     Tcl_SetVar2Ex(RTcl_interp,
 		  translateChar(STRING_ELT(CADR(args), 0)),
 		  NULL,
@@ -305,6 +316,8 @@ SEXP RTcl_StringFromObj(SEXP args)
     Tcl_DString s_ds;
     Tcl_Obj *obj;
 
+    if (TYPEOF(CADR(args)) != EXTPTRSXP)
+	error(_("invalid argument"));
     obj = (Tcl_Obj *) R_ExternalPtrAddr(CADR(args));
     if (!obj) error(_("invalid tclObj -- perhaps saved from another session?"));
     Tcl_DStringInit(&s_ds);
@@ -323,6 +336,8 @@ SEXP RTcl_ObjAsCharVector(SEXP args)
     int ret, i;
     SEXP ans;
 
+    if (TYPEOF(CADR(args)) != EXTPTRSXP)
+	error(_("invalid argument"));
     obj = (Tcl_Obj *) R_ExternalPtrAddr(CADR(args));
     if (!obj) error(_("invalid tclObj -- perhaps saved from another session?"));
     ret = Tcl_ListObjGetElements(RTcl_interp, obj, &count, &elem);
@@ -396,6 +411,8 @@ SEXP RTcl_ObjAsDoubleVector(SEXP args)
     double x;
     SEXP ans;
 
+    if (TYPEOF(CADR(args)) != EXTPTRSXP)
+	error(_("invalid argument"));
     obj = (Tcl_Obj *) R_ExternalPtrAddr(CADR(args));
     if (!obj) error(_("invalid tclObj -- perhaps saved from another session?"));
 
@@ -459,6 +476,8 @@ SEXP RTcl_ObjAsIntVector(SEXP args)
     int x;
     SEXP ans;
 
+    if (TYPEOF(CADR(args)) != EXTPTRSXP)
+	error(_("invalid argument"));
     obj = (Tcl_Obj *) R_ExternalPtrAddr(CADR(args));
     if (!obj) error(_("invalid tclObj -- perhaps saved from another session?"));
 
@@ -511,6 +530,8 @@ SEXP RTcl_ObjAsRawVector(SEXP args)
     unsigned char *ret;
     SEXP ans, el;
 
+    if (TYPEOF(CADR(args)) != EXTPTRSXP)
+	error(_("invalid argument"));
     obj = (Tcl_Obj *) R_ExternalPtrAddr(CADR(args));
     if (!obj) error(_("invalid tclObj -- perhaps saved from another session?"));
     ret = Tcl_GetByteArrayFromObj(obj, &nb);
@@ -690,23 +711,25 @@ void tcltk_init(int *TkUp)
 */
 #if !defined(Win32) && !defined(HAVE_AQUA)
     char *p= getenv("DISPLAY");
-    if(p && p[0])  /* exclude DISPLAY = "" */
+    if(!getenv("R_DONT_USE_TK")) {
+	if(p && p[0])  /* exclude DISPLAY = "" */
 #endif
-    {
-	code = Tk_Init(RTcl_interp);  /* Load Tk into interpreter */
-	if (code != TCL_OK) {
-	    warning(Tcl_GetStringResult(RTcl_interp));
-	} else {
-	    Tcl_StaticPackage(RTcl_interp, "Tk", Tk_Init, Tk_SafeInit);
-
-	    code = Tcl_Eval(RTcl_interp, "wm withdraw .");  /* Hide window */
-	    if (code != TCL_OK) error(Tcl_GetStringResult(RTcl_interp));
-	    *TkUp = 1;
+	{
+	    code = Tk_Init(RTcl_interp);  /* Load Tk into interpreter */
+	    if (code != TCL_OK) {
+		warning(Tcl_GetStringResult(RTcl_interp));
+	    } else {
+		Tcl_StaticPackage(RTcl_interp, "Tk", Tk_Init, Tk_SafeInit);
+		
+		code = Tcl_Eval(RTcl_interp, "wm withdraw .");  /* Hide window */
+		if (code != TCL_OK) error(Tcl_GetStringResult(RTcl_interp));
+		*TkUp = 1;
+	    }
 	}
-    }
 #if !defined(Win32) && !defined(HAVE_AQUA)
-    else
-	warningcall(R_NilValue, _("no DISPLAY variable so Tk is not available"));
+	else
+	    warningcall(R_NilValue, _("no DISPLAY variable so Tk is not available"));
+    }
 #endif
 
     Tcl_CreateCommand(RTcl_interp,

@@ -1,6 +1,6 @@
 % File src/library/stats/man/plot.lm.Rd
 % Part of the R package, https://www.R-project.org
-% Copyright 1995-2018 R Core Team
+% Copyright 1995-2019 R Core Team
 % Distributed under GPL 2 or later
 
 \name{plot.lm}
@@ -8,18 +8,21 @@
 % \alias{plot.mlm} %which is .NotYetImplemented()
 \title{Plot Diagnostics for an lm Object}
 \usage{
-\method{plot}{lm}(x, which = c(1:3, 5), %% was which = 1:4
+\method{plot}{lm}(x, which = c(1,2,3,5), %% was which = 1:4
      caption = list("Residuals vs Fitted", "Normal Q-Q",
        "Scale-Location", "Cook's distance",
        "Residuals vs Leverage",
        expression("Cook's dist vs Leverage  " * h[ii] / (1 - h[ii]))),
-     panel = if(add.smooth) panel.smooth else points,
+     panel = if(add.smooth) function(x, y, ...)
+              panel.smooth(x, y, iter=iter.smooth, ...) else points,
      sub.caption = NULL, main = "",
      ask = prod(par("mfcol")) < length(which) && dev.interactive(),
      \dots,
      id.n = 3, labels.id = names(residuals(x)), cex.id = 0.75,
      qqline = TRUE, cook.levels = c(0.5, 1.0),
-     add.smooth = getOption("add.smooth"), label.pos = c(4,2),
+     add.smooth = getOption("add.smooth"),
+     iter.smooth = if(isGlm) 0 else 3,
+     label.pos = c(4,2),
      cex.caption = 1, cex.oma.main = 1.25)
 }
 \arguments{
@@ -56,6 +59,12 @@
   \item{cook.levels}{levels of Cook's distance at which to draw contours.}
   \item{add.smooth}{logical indicating if a smoother should be added to
     most plots; see also \code{panel} above.}
+  \item{iter.smooth}{the number of robustness iterations, the argument
+    \code{iter} in \code{\link{panel.smooth}()}; the default uses no such
+    iterations for \code{\link{glm}} fits which is
+    particularly desirable for the (predominant) case of binary
+    observations, but also for other models where the response
+    distribution can be highly skewed.}
   \item{label.pos}{positioning of labels, for the left half and right
     half of the graph respectively, for plots 1-3.}
   \item{cex.caption}{controls the size of \code{caption}.}
@@ -103,6 +112,11 @@
   standardized residuals (\code{\link{rstandard}(.)}) that are equal in
   magnitude are lines through the origin.  The contour lines are
   labelled with the magnitudes.
+
+  Notice that some plots may not make much sense for the \code{glm}
+  case; e.g., the normal Q-Q plot only makes sense if the distribution
+  is approximately normal.
+    
 }
 \references{
   Belsley, D. A., Kuh, E. and Welsch, R. E. (1980).

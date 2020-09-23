@@ -1,6 +1,6 @@
 
-R version 3.5.3 RC (2019-03-03 r76193) -- "Great Truth"
-Copyright (C) 2019 The R Foundation for Statistical Computing
+R version 4.0.1 Patched (2020-06-08 r78667) -- "See Things Now"
+Copyright (C) 2020 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -20,16 +20,16 @@ Type 'q()' to quit R.
 > ####  Part 2
 > ####  ======  Recommended packages allowed  .. output tests *sloppily*
 > 
-> source(file.path(Sys.getenv("SRCDIR"), "eval-fns.R"), echo = TRUE)
+> srcdir <- file.path(Sys.getenv("SRCDIR"), "eval-fns.R")
+> source(if(file.exists(srcdir)) srcdir else "./eval-fns.R", echo = TRUE)
 
 > pd0 <- function(expr, backtick = TRUE, ...) parse(text = deparse(expr, 
 +     backtick = backtick, ...))
 
-> id_epd <- function(expr, control = c("all", "digits17"), 
-+     ...) eval(pd0(expr, control = control, ...))
+> id_epd <- function(expr, control = "all", ...) eval(pd0(expr, 
++     control = control, ...))
 
-> dPut <- function(x, control = c("all", "digits17")) dput(x, 
-+     control = control)
+> dPut <- function(x, control = "all") dput(x, control = control)
 
 > hasReal <- function(x) {
 +     if (is.double(x) || is.complex(x)) 
@@ -46,13 +46,47 @@ Type 'q()' to quit R.
 
 > check_EPD <- function(obj, show = !hasReal(obj), oNam = deparse(substitute(obj)), 
 +     control = c("keepInteger", "showAttributes", "keepNA"), not .... [TRUNCATED] 
->                                         #---------
+
+> runEPD_checks <- function(env = .GlobalEnv) {
++     stopifnot(is.environment(env))
++     for (nm in ls(envir = env)) {
++         cat(nm, ": ", sep = .... [TRUNCATED] 
+> rm("srcdir")
 > 
 > if(require("Matrix")) withAutoprint({ cat("Trying some Matrix objects, too\n")
 +     D5. <- Diagonal(x = 5:1)
 +     D5N <- D5.; D5N[5,5] <- NA
-+     example(Matrix)
-+     ## a subset from  example(sparseMatrix) :
++     ## a subset/version of example(Matrix) : --------------------------------
++ 
++     (Z32 <- Matrix(0, 3, 2))              # 3 by 2 matrix of zeros -> sparse
++     (z32 <- Matrix(0, 3, 2, sparse=FALSE))# -> 'dense'
++ 
++     ## 4 cases - 3 different results :
++     ## TODO (Z22  <- Matrix(0, 2, 2))              # diagonal from Matrix 1.3.* on
++     (Z22. <- Matrix(0, 2, 2, sparse=FALSE))# (ditto)
++     (Z22s <- Matrix(0, 2, 2,               doDiag=FALSE))# -> sparse symm. "dsCMatrix"
++     (Z22d <- Matrix(0, 2, 2, sparse=FALSE, doDiag=FALSE))# -> dense  symm. "dsyMatrix"
++ 
++     ## logical ones:
++     (L4  <- Matrix(diag(4) >  0)) # -> "ldiMatrix" with diag = "U"
++     ## TODO (L4. <- Matrix(diag(4) >  0, sparse=TRUE)) #  ditto, from Matrix 1.3.* on
++     (L4d <- Matrix(diag(4) >= 0)) # -> "lsyMatrix" (of all 'TRUE')
++     ## triangular
++     l3 <- upper.tri(matrix(,3,3))
++     (M <- Matrix(l3))               # "ltCMatrix"
++     (Nl3 <- Matrix(! l3))           # "ltrMatrix"
++     (l3s <- as(l3, "CsparseMatrix"))# "lgCMatrix"
++ 
++     (I3 <- Matrix(diag(3)))# identity, i.e., unit "diagonalMatrix"
++ 
++     (ad <- cbind(a=c(2,1), b=1:2))# symmetric *apart* from dimnames
++     (As <- Matrix(ad, dimnames = list(NULL,NULL)))# -> symmetric
++     forceSymmetric(ad) # also symmetric, w/ symm. dimnames
++     stopifnot(is(As, "symmetricMatrix"),
++               is(Matrix(0, 3,3), "sparseMatrix"),
++               is(Matrix(FALSE, 1,1), "sparseMatrix"))
++ 
++     ## a subset from  example(sparseMatrix) : -------------------------------
 +     i <- c(1,3:8); j <- c(2,9,6:10); x <- 7 * (1:7)
 +     A <- sparseMatrix(i, j, x = x)
 +     sA <- sparseMatrix(i, j, x = x, symmetric = TRUE)
@@ -85,141 +119,88 @@ Trying some Matrix objects, too
 > D5. <- Diagonal(x = 5:1)
 > D5N <- D5.
 > D5N[5, 5] <- NA
-> example(Matrix)
-
-Matrix> Matrix(0, 3, 2)             # 3 by 2 matrix of zeros -> sparse
+> (Z32 <- Matrix(0, 3, 2))
 3 x 2 sparse Matrix of class "dgCMatrix"
         
 [1,] . .
 [2,] . .
 [3,] . .
-
-Matrix> Matrix(0, 3, 2, sparse=FALSE)# -> 'dense'
+> (z32 <- Matrix(0, 3, 2, sparse = FALSE))
 3 x 2 Matrix of class "dgeMatrix"
      [,1] [,2]
 [1,]    0    0
 [2,]    0    0
 [3,]    0    0
-
-Matrix> Matrix(0, 2, 2, sparse=FALSE)# diagonal !
+> (Z22. <- Matrix(0, 2, 2, sparse = FALSE))
 2 x 2 diagonal matrix of class "ddiMatrix"
      [,1] [,2]
 [1,]    0    .
 [2,]    .    0
-
-Matrix> Matrix(0, 2, 2, sparse=FALSE, doDiag=FALSE)# -> dense
+> (Z22s <- Matrix(0, 2, 2, doDiag = FALSE))
+2 x 2 sparse Matrix of class "dsCMatrix"
+        
+[1,] . .
+[2,] . .
+> (Z22d <- Matrix(0, 2, 2, sparse = FALSE, doDiag = FALSE))
 2 x 2 Matrix of class "dsyMatrix"
      [,1] [,2]
 [1,]    0    0
 [2,]    0    0
-
-Matrix> Matrix(1:6, 3, 2)           # a 3 by 2 matrix (+ integer warning)
-3 x 2 Matrix of class "dgeMatrix"
-     [,1] [,2]
-[1,]    1    4
-[2,]    2    5
-[3,]    3    6
-
-Matrix> Matrix(1:6 + 1, nrow=3)
-3 x 2 Matrix of class "dgeMatrix"
-     [,1] [,2]
-[1,]    2    5
-[2,]    3    6
-[3,]    4    7
-
-Matrix> ## logical ones:
-Matrix> Matrix(diag(4) >  0)# -> "ldiMatrix" with diag = "U"
+> (L4 <- Matrix(diag(4) > 0))
 4 x 4 diagonal matrix of class "ldiMatrix"
      [,1] [,2] [,3] [,4]
 [1,] TRUE    .    .    .
 [2,]    . TRUE    .    .
 [3,]    .    . TRUE    .
 [4,]    .    .    . TRUE
-
-Matrix> Matrix(diag(4) >  0, sparse=TRUE)# -> sparse...
-4 x 4 sparse Matrix of class "lsCMatrix"
-            
-[1,] | . . .
-[2,] . | . .
-[3,] . . | .
-[4,] . . . |
-
-Matrix> Matrix(diag(4) >= 0)# -> "lsyMatrix" (of all 'TRUE')
+> (L4d <- Matrix(diag(4) >= 0))
 4 x 4 Matrix of class "lsyMatrix"
      [,1] [,2] [,3] [,4]
 [1,] TRUE TRUE TRUE TRUE
 [2,] TRUE TRUE TRUE TRUE
 [3,] TRUE TRUE TRUE TRUE
 [4,] TRUE TRUE TRUE TRUE
-
-Matrix> ## triangular
-Matrix> l3 <- upper.tri(matrix(,3,3))
-
-Matrix> (M <- Matrix(l3))  # -> "ltCMatrix"
+> l3 <- upper.tri(matrix(, 3, 3))
+> (M <- Matrix(l3))
 3 x 3 sparse Matrix of class "ltCMatrix"
           
 [1,] . | |
 [2,] . . |
 [3,] . . .
-
-Matrix> Matrix(! l3)# -> "ltrMatrix"
+> (Nl3 <- Matrix(!l3))
 3 x 3 Matrix of class "ltrMatrix"
      [,1]  [,2]  [,3] 
 [1,]  TRUE     .     .
 [2,]  TRUE  TRUE     .
 [3,]  TRUE  TRUE  TRUE
-
-Matrix> as(l3, "CsparseMatrix")
+> (l3s <- as(l3, "CsparseMatrix"))
 3 x 3 sparse Matrix of class "lgCMatrix"
           
 [1,] . | |
 [2,] . . |
 [3,] . . .
-
-Matrix> Matrix(1:9, nrow=3,
-Matrix+        dimnames = list(c("a", "b", "c"), c("A", "B", "C")))
-3 x 3 Matrix of class "dgeMatrix"
-  A B C
-a 1 4 7
-b 2 5 8
-c 3 6 9
-
-Matrix> (I3 <- Matrix(diag(3)))# identity, i.e., unit "diagonalMatrix"
+> (I3 <- Matrix(diag(3)))
 3 x 3 diagonal matrix of class "ddiMatrix"
      [,1] [,2] [,3]
 [1,]    1    .    .
 [2,]    .    1    .
 [3,]    .    .    1
-
-Matrix> str(I3) # note the empty 'x' slot
-Formal class 'ddiMatrix' [package "Matrix"] with 4 slots
-  ..@ diag    : chr "U"
-  ..@ Dim     : int [1:2] 3 3
-  ..@ Dimnames:List of 2
-  .. ..$ : NULL
-  .. ..$ : NULL
-  ..@ x       : num(0) 
-
-Matrix> (A <- cbind(a=c(2,1), b=1:2))# symmetric *apart* from dimnames
+> (ad <- cbind(a = c(2, 1), b = 1:2))
      a b
 [1,] 2 1
 [2,] 1 2
-
-Matrix> Matrix(A)                    # hence 'dgeMatrix'
-2 x 2 Matrix of class "dgeMatrix"
-     a b
-[1,] 2 1
-[2,] 1 2
-
-Matrix> (As <- Matrix(A, dimnames = list(NULL,NULL)))# -> symmetric
+> (As <- Matrix(ad, dimnames = list(NULL, NULL)))
 2 x 2 Matrix of class "dsyMatrix"
      [,1] [,2]
 [1,]    2    1
 [2,]    1    2
-
-Matrix> stopifnot(is(As, "symmetricMatrix"),
-Matrix+           is(Matrix(0, 3,3), "sparseMatrix"),
-Matrix+           is(Matrix(FALSE, 1,1), "sparseMatrix"))
+> forceSymmetric(ad)
+2 x 2 Matrix of class "dsyMatrix"
+  a b
+a 2 1
+b 1 2
+> stopifnot(is(As, "symmetricMatrix"), is(Matrix(0, 3, 3), "sparseMatrix"), 
++     is(Matrix(FALSE, 1, 1), "sparseMatrix"))
 > i <- c(1, 3:8)
 > j <- c(2, 9, 6:10)
 > x <- 7 * (1:7)
@@ -230,7 +211,7 @@ Matrix+           is(Matrix(FALSE, 1,1), "sparseMatrix"))
 +     20))
 > set.seed(1)
 > (perm <- sample(1:7))
-[1] 2 3 6 4 1 7 5
+[1] 1 4 7 2 5 3 6
 > A1 <- sparseMatrix(i[perm], j[perm], x = x[perm])
 > args <- data.frame(i = c(i, 1), j = c(j, 2), x = c(x, 2))
 > Aa <- do.call(sparseMatrix, args)
@@ -246,19 +227,7 @@ Matrix+           is(Matrix(FALSE, 1,1), "sparseMatrix"))
 > sy <- sparseMatrix(i = c(2, 4, 3:5), j = c(4, 7:5, 5), x = 1:5, dims = c(7, 
 +     7), symmetric = TRUE)
 > 
-> 
-> ## Check deparse <--> parse  consistency for *all* objects:
-> for(nm in ls(env=.GlobalEnv)) {
-+     cat(nm,": ", sep="")
-+     ## if(!any(nm == "mf")) ## 'mf' [bug in deparse(mf, control="all") now fixed]
-+         check_EPD(obj = (x <- .GlobalEnv[[nm]]), oNam=nm)
-+     if(is.function(x) && !inherits(x, "classGeneratorFunction")) {
-+         ## FIXME? classGeneratorFunction, e.g., mForm don't "work" yet
-+         cat("checking body(.):\n"   ); check_EPD(   body(x))
-+         cat("checking formals(.):\n"); check_EPD(formals(x))
-+     }
-+     cat("--=--=--=--=--\n")
-+ }
+> runEPD_checks() # Action!
 A: new("dgCMatrix", i = c(0L, 3L, 4L, 5L, 2L, 6L, 7L), p = c(0L, 
 0L, 1L, 1L, 1L, 1L, 2L, 3L, 4L, 6L, 7L), Dim = c(8L, 10L), Dimnames = list(
     NULL, NULL), x = c(7, 21, 28, 35, 14, 42, 49), factors = list())
@@ -301,9 +270,44 @@ I3: new("ddiMatrix", diag = "U", Dim = c(3L, 3L), Dimnames = list(
     NULL, NULL), x = numeric(0))
  --> checking list(*): Ok
 --=--=--=--=--
+L4: new("ldiMatrix", diag = "U", Dim = c(4L, 4L), Dimnames = list(
+    NULL, NULL), x = logical(0))
+ --> checking list(*): Ok
+--=--=--=--=--
+L4d: new("lsyMatrix", x = c(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, 
+TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE), Dim = c(4L, 
+4L), Dimnames = list(NULL, NULL), uplo = "U", factors = list())
+ --> checking list(*): Ok
+--=--=--=--=--
 M: new("ltCMatrix", i = c(0L, 0L, 1L), p = c(0L, 0L, 1L, 3L), Dim = c(3L, 
 3L), Dimnames = list(NULL, NULL), x = c(TRUE, TRUE, TRUE), uplo = "U", 
     diag = "N")
+ --> checking list(*): Ok
+--=--=--=--=--
+Nl3: new("ltrMatrix", x = c(TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, 
+FALSE, TRUE), Dim = c(3L, 3L), Dimnames = list(NULL, NULL), uplo = "L", 
+    diag = "N")
+ --> checking list(*): Ok
+--=--=--=--=--
+Z22.: new("ddiMatrix", diag = "N", Dim = c(2L, 2L), Dimnames = list(
+    NULL, NULL), x = c(0, 0))
+ --> checking list(*): Ok
+--=--=--=--=--
+Z22d: new("dsyMatrix", x = c(0, 0, 0, 0), Dim = c(2L, 2L), Dimnames = list(
+    NULL, NULL), uplo = "U", factors = list())
+ --> checking list(*): Ok
+--=--=--=--=--
+Z22s: new("dsCMatrix", i = integer(0), p = c(0L, 0L, 0L), Dim = c(2L, 
+2L), Dimnames = list(NULL, NULL), x = numeric(0), uplo = "U", 
+    factors = list())
+ --> checking list(*): Ok
+--=--=--=--=--
+Z32: new("dgCMatrix", i = integer(0), p = c(0L, 0L, 0L), Dim = 3:2, 
+    Dimnames = list(NULL, NULL), x = numeric(0), factors = list())
+ --> checking list(*): Ok
+--=--=--=--=--
+ad: structure(c(2, 1, 1, 2), .Dim = c(2L, 2L), .Dimnames = list(NULL, 
+    c("a", "b")))
  --> checking list(*): Ok
 --=--=--=--=--
 args: structure(list(i = c(1, 3, 4, 5, 6, 7, 8, 1), j = c(2, 9, 6, 
@@ -340,7 +344,8 @@ check_EPD: function (obj, show = !hasReal(obj), oNam = deparse(substitute(obj)),
                 paste("but", ae.txt), "\n")
         }
         if (!isTRUE(ae)) 
-            stop("Not equal: ", ae.txt, " giving\n", ae)
+            stop("Not equal: ", ae.txt, paste(c(" giving", head(ae, 
+                2), if (length(ae) > 2) "...."), collapse = "\n  "))
     }
     if (!is.language(obj)) {
         ob2. <- eval(obj)
@@ -381,7 +386,8 @@ quote({
                 paste("but", ae.txt), "\n")
         }
         if (!isTRUE(ae)) 
-            stop("Not equal: ", ae.txt, " giving\n", ae)
+            stop("Not equal: ", ae.txt, paste(c(" giving", head(ae, 
+                2), if (length(ae) > 2) "...."), collapse = "\n  "))
     }
     if (!is.language(obj)) {
         ob2. <- eval(obj)
@@ -401,14 +407,14 @@ as.pairlist(alist(obj = , show = quote(!hasReal(obj)), oNam = quote(deparse(subs
     "t2", "ydata")), eq.tol = quote(if (noLdbl) 2 * .Machine$double.eps else 0)))
 __ not parse()able __: hasMissObj(.) is true 
 --=--=--=--=--
-dPut: function (x, control = c("all", "digits17")) 
+dPut: function (x, control = "all") 
 dput(x, control = control)
  --> checking list(*): Ok
 checking body(.):
 quote(dput(x, control = control))
  --> checking list(*): Ok
 checking formals(.):
-as.pairlist(alist(x = , control = quote(c("all", "digits17"))))
+as.pairlist(alist(x = , control = "all"))
 __ not parse()able __: hasMissObj(.) is true 
 --=--=--=--=--
 dn: list(c("A", "B", "C"), c("a", "b", "c", "d", "e"))
@@ -483,14 +489,14 @@ __ not parse()able __: hasMissObj(.) is true
 i: c(1, 3, 4, 5, 6, 7, 8)
  --> checking list(*): Ok
 --=--=--=--=--
-id_epd: function (expr, control = c("all", "digits17"), ...) 
+id_epd: function (expr, control = "all", ...) 
 eval(pd0(expr, control = control, ...))
  --> checking list(*): Ok
 checking body(.):
 quote(eval(pd0(expr, control = control, ...)))
  --> checking list(*): Ok
 checking formals(.):
-as.pairlist(alist(expr = , control = quote(c("all", "digits17")), ... = ))
+as.pairlist(alist(expr = , control = "all", ... = ))
 __ not parse()able __: hasMissObj(.) is true 
 --=--=--=--=--
 isMissObj: function (obj) 
@@ -508,6 +514,10 @@ j: c(2, 9, 6, 7, 8, 9, 10)
 --=--=--=--=--
 l3: structure(c(FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, TRUE, TRUE, 
 FALSE), .Dim = c(3L, 3L))
+ --> checking list(*): Ok
+--=--=--=--=--
+l3s: new("lgCMatrix", i = c(0L, 0L, 1L), p = c(0L, 0L, 1L, 3L), Dim = c(3L, 
+3L), Dimnames = list(NULL, NULL), x = c(TRUE, TRUE, TRUE), factors = list())
  --> checking list(*): Ok
 --=--=--=--=--
 m: new("dgCMatrix", i = c(2L, 0L, 1L, 2L, 0L, 1L), p = c(0L, 1L, 
@@ -534,7 +544,49 @@ checking formals(.):
 as.pairlist(alist(expr = , backtick = TRUE, ... = ))
 __ not parse()able __: hasMissObj(.) is true 
 --=--=--=--=--
-perm: c(2L, 3L, 6L, 4L, 1L, 7L, 5L)
+perm: c(1L, 4L, 7L, 2L, 5L, 3L, 6L)
+ --> checking list(*): Ok
+--=--=--=--=--
+runEPD_checks: function (env = .GlobalEnv) 
+{
+    stopifnot(is.environment(env))
+    for (nm in ls(envir = env)) {
+        cat(nm, ": ", sep = "")
+        x <- env[[nm]]
+        check_EPD(x, oNam = nm)
+        if (is.function(x) && !inherits(x, "classGeneratorFunction")) {
+            cat("checking body(.):\n")
+            check_EPD(if (is.language(bx <- body(x))) 
+                removeSource(bx)
+            else bx)
+            cat("checking formals(.):\n")
+            check_EPD(formals(x))
+        }
+        cat("--=--=--=--=--\n")
+    }
+}
+ --> checking list(*): Ok
+checking body(.):
+quote({
+    stopifnot(is.environment(env))
+    for (nm in ls(envir = env)) {
+        cat(nm, ": ", sep = "")
+        x <- env[[nm]]
+        check_EPD(x, oNam = nm)
+        if (is.function(x) && !inherits(x, "classGeneratorFunction")) {
+            cat("checking body(.):\n")
+            check_EPD(if (is.language(bx <- body(x))) 
+                removeSource(bx)
+            else bx)
+            cat("checking formals(.):\n")
+            check_EPD(formals(x))
+        }
+        cat("--=--=--=--=--\n")
+    }
+})
+ --> checking list(*): Ok
+checking formals(.):
+pairlist(env = quote(.GlobalEnv))
  --> checking list(*): Ok
 --=--=--=--=--
 sA: new("dsCMatrix", i = c(0L, 3L, 4L, 5L, 2L, 6L, 7L), p = c(0L, 
@@ -554,18 +606,18 @@ tA: new("dtCMatrix", i = c(0L, 3L, 4L, 5L, 2L, 6L, 7L), p = c(0L,
     diag = "N")
  --> checking list(*): Ok
 --=--=--=--=--
-x: new("dtCMatrix", i = c(0L, 3L, 4L, 5L, 2L, 6L, 7L), p = c(0L, 
-0L, 1L, 1L, 1L, 1L, 2L, 3L, 4L, 6L, 7L), Dim = c(10L, 10L), Dimnames = list(
-    NULL, NULL), x = c(7, 21, 28, 35, 14, 42, 49), uplo = "U", 
-    diag = "N")
+x: c(7, 14, 21, 28, 35, 42, 49)
  --> checking list(*): Ok
 --=--=--=--=--
+z32: new("dgeMatrix", x = c(0, 0, 0, 0, 0, 0), Dim = 3:2, Dimnames = list(
+    NULL, NULL), factors = list())
+ --> checking list(*): Ok
+--=--=--=--=--
+> 
 > summary(warnings())
 Length  Class   Mode 
      0   NULL   NULL 
-> 
-> 
 > ## at the very end
 > cat('Time elapsed: ', proc.time(), "\n")
-Time elapsed:  1.358 0.096 1.474 0 0 
+Time elapsed:  1.471 0.115 1.607 0.001 0.006 
 > 

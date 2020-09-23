@@ -1,6 +1,6 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
- *  Copyright (C) 1998--2018  The R Core Team
+ *  Copyright (C) 1998--2020  The R Core Team
  *  Copyright (C) 1995, 1996  Robert Gentleman and Ross Ihaka
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -729,8 +729,8 @@ static double
 	ucslen = mbcsToUcs2((char *)str, NULL, 0, enc);
 	if (ucslen != (size_t)-1) {
 	    /* We convert the characters but not the terminator here */
-	    R_CheckStack2(ucslen * sizeof(ucs2_t));
-	    ucs2_t ucs2s[ucslen];
+	    R_CheckStack2(ucslen * sizeof(R_ucs2_t));
+	    R_ucs2_t ucs2s[ucslen];
 	    status = (int) mbcsToUcs2((char *)str, ucs2s, (int) ucslen, enc);
 	    if (status >= 0)
 		for(i = 0 ; i < ucslen ; i++) {
@@ -885,7 +885,7 @@ PostScriptCIDMetricInfo(int c, double *ascent, double *descent, double *width)
 	else {
 	    /* convert to UCS-2 to use wcwidth. */
 	    char str[2]={0,0};
-	    ucs2_t out;
+	    R_ucs2_t out;
 	    str[0] = (char) c;
 	    if(mbcsToUcs2(str, &out, 1, CE_NATIVE) == (size_t)-1)
 		error(_("invalid character sent to 'PostScriptCIDMetricInfo' in a single-byte locale"));
@@ -1270,7 +1270,8 @@ findEncoding(const char *encpath, encodinglist deviceEncodings, Rboolean isPDF)
      */
     if (!strcmp(encpath, "default")) {
 	found = 1;
-	encoding = deviceEncodings->encoding;
+	// called from PDFDeviceDriver with null deviceEncodings as last resort
+	if (deviceEncodings) encoding = deviceEncodings->encoding;
     } else {
 	while (enclist && !found) {
 	    found = !strcmp(encpath, enclist->encoding->encpath);
@@ -1425,10 +1426,16 @@ findLoadedFont(const char *name, const char *encoding, Rboolean isPDF)
 	    if (encoding) {
 		char encconvname[50];
 		const char *encname = getFontEncoding(name, fontdbname);
-		seticonvName(encoding, encconvname);
-		if (!strcmp(encname, "default") &&
-		    strcmp(fontlist->family->encoding->convname,
-			   encconvname)) {
+		// encname could be NULL
+		if(encname) {
+		    seticonvName(encoding, encconvname);
+		    if (!strcmp(encname, "default") &&
+			strcmp(fontlist->family->encoding->convname,
+			       encconvname)) {
+			font = NULL;
+			found = 0;
+		    }
+		} else {
 		    font = NULL;
 		    found = 0;
 		}
@@ -1639,7 +1646,7 @@ fontMetricsFileName(const char *family, int faceIndex,
 
 static const char *getFontType(const char *family, const char *fontdbname)
 {
-    const char *result = "";
+    const char *result = NULL;
     SEXP font = getFont(family, fontdbname);
     if (!isNull(font)) {
         result = CHAR(STRING_ELT(getAttrib(font, R_ClassSymbol), 0));
@@ -1662,9 +1669,13 @@ static Rboolean isType1Font(const char *family, const char *fontdbname,
 	    return TRUE;
 	else
 	    return FALSE;
-    } else
-	return !strcmp(getFontType(family, fontdbname),
-		       "Type1Font");
+    } else {
+        const char *fontType = getFontType(family, fontdbname);
+        if (fontType) 
+            return !strcmp(fontType, "Type1Font");
+        else
+            return FALSE;
+    }
 }
 
 static Rboolean isCIDFont(const char *family, const char *fontdbname,
@@ -1681,9 +1692,13 @@ static Rboolean isCIDFont(const char *family, const char *fontdbname,
 	    return TRUE;
 	else
 	    return FALSE;
-    } else
-	return !strcmp(getFontType(family, fontdbname),
-		       "CIDFont");
+    } else {
+        const char *fontType = getFontType(family, fontdbname);
+        if (fontType) 
+            return !strcmp(fontType, "CIDFont");
+        else
+            return FALSE;
+    }
 }
 
 /*
@@ -4403,7 +4418,7 @@ static void PS_Text0(double x, double y, const char *str, int enc,
 	if (ucslen != (size_t)-1) {
 	    void *cd;
 	    const char  *i_buf; char *o_buf;
-	    size_t nb, i_len,  o_len, buflen = ucslen * sizeof(ucs2_t);
+	    size_t nb, i_len,  o_len, buflen = ucslen * sizeof(R_ucs2_t);
 	    size_t status;
 
 	    cd = (void*) Riconv_open(cidfont->encoding,
@@ -5873,6 +5888,9 @@ PDFDeviceDriver(pDevDesc dd, const char *file, const char *paper,
 
     pd->versionMajor = versionMajor;
     pd->versionMinor = versionMinor;
+    /* Precaution: should be initialized in PDF_newpage, but package
+       PerformanceAnalytics manages to call PDF_Clip without.  */
+    pd->inText = FALSE;
 
     /* This is checked at the start of every page.  We typically have
        three objects per page plus one or two for each raster image, 
@@ -7915,7 +7933,7 @@ static void PDF_Text0(double x, double y, const char *str, int enc,
 	if (ucslen != (size_t)-1) {
 	    void *cd;
 	    const char *i_buf; char *o_buf;
-	    size_t i, nb, i_len,  o_len, buflen = ucslen*sizeof(ucs2_t);
+	    size_t i, nb, i_len,  o_len, buflen = ucslen*sizeof(R_ucs2_t);
 	    size_t status;
 
 	    cd = (void*)Riconv_open(cidfont->encoding,
@@ -8246,7 +8264,7 @@ SEXP PostScript(SEXP args)
 
     vmax = vmaxget();
     args = CDR(args); /* skip entry point name */
-    file = translateChar(asChar(CAR(args)));  args = CDR(args);
+    file = translateCharFP(asChar(CAR(args)));  args = CDR(args);
     paper = CHAR(asChar(CAR(args))); args = CDR(args);
 
     /* 'family' can be either one string or a 5-vector of afmpaths. */
@@ -8335,7 +8353,7 @@ SEXP XFig(SEXP args)
 
     vmax = vmaxget();
     args = CDR(args); /* skip entry point name */
-    file = translateChar(asChar(CAR(args)));  args = CDR(args);
+    file = translateCharFP(asChar(CAR(args)));  args = CDR(args);
     paper = CHAR(asChar(CAR(args))); args = CDR(args);
     family = CHAR(asChar(CAR(args)));  args = CDR(args);
     bg = CHAR(asChar(CAR(args)));    args = CDR(args);
@@ -8412,7 +8430,7 @@ SEXP PDF(SEXP args)
     if (isNull(CAR(args)))
         file = NULL;
     else
-        file = translateChar(asChar(CAR(args)));  
+        file = translateCharFP(asChar(CAR(args)));  
     args = CDR(args);
     paper = CHAR(asChar(CAR(args))); args = CDR(args);
     fam = CAR(args); args = CDR(args);

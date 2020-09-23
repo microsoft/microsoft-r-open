@@ -1,6 +1,6 @@
 % File src/library/utils/man/data.Rd
 % Part of the R package, https://www.R-project.org
-% Copyright 1995-2019 R Core Team
+% Copyright 1995-2020 R Core Team
 % Distributed under GPL 2 or later
 
 \name{data}
@@ -12,7 +12,8 @@
 }
 \usage{
 data(\dots, list = character(), package = NULL, lib.loc = NULL,
-     verbose = getOption("verbose"), envir = .GlobalEnv)
+     verbose = getOption("verbose"), envir = .GlobalEnv,
+     overwrite = TRUE)
 }
 \arguments{
   \item{\dots}{literal character strings or names.}
@@ -31,6 +32,8 @@ data(\dots, list = character(), package = NULL, lib.loc = NULL,
   \item{verbose}{a logical.  If \code{TRUE}, additional diagnostics are
     printed.}
   \item{envir}{the \link{environment} where the data should be loaded.}
+  \item{overwrite}{logical: should existing objects of the same name in
+    \env{envir} be replaced?}
 }
 \details{
   Currently, four formats of data files are supported:
@@ -111,7 +114,7 @@ data(\dots, list = character(), package = NULL, lib.loc = NULL,
   named \code{\var{foo}} (nor to create one object), although it much
   reduces confusion if this convention is followed (and it is enforced
   if datasets are lazy-loaded).
-  
+
   \code{data()} was originally intended to allow users to load datasets
   from packages for use in their examples, and as such it loaded the
   datasets into the workspace \code{\link{.GlobalEnv}}.  This avoided
@@ -149,10 +152,16 @@ data(\dots, list = character(), package = NULL, lib.loc = NULL,
   One can take advantage of the search order and the fact that a
   \file{.R} file will change directory.  If raw data are stored in
   \file{mydata.txt} then one can set up \file{mydata.R} to read
-  \file{mydata.txt} and pre-process it, e.g., using \code{transform}.
+  \file{mydata.txt} and pre-process it, e.g., using \code{\link{transform}()}.
   For instance one can convert numeric vectors to factors with the
   appropriate labels.  Thus, the \file{.R} file can effectively contain
   a metadata specification for the plaintext formats.
+
+  In older versions of \R, up to 3.6.x, both \code{package = "base"} and
+  \code{package = "stats"} were using \code{package = "datasets"}, (with a
+  warning), as before 2004, (most of) the datasets in \pkg{datasets} were
+  either in \pkg{base} or \pkg{stats}.  For these packages, the result
+  is now empty as they contain no data sets.
 }
 \section{Warning}{
   This function creates objects in the \code{envir} environment (by

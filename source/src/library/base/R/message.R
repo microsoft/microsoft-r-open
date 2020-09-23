@@ -22,10 +22,11 @@ function(message, call = NULL)
               class = c("simpleMessage", "message", "condition"))
 
 suppressMessages <-
-function(expr)
+function(expr, classes = "message")
     withCallingHandlers(expr,
                         message = function(c)
-                        invokeRestart("muffleMessage"))
+                            if (inherits(c, classes))
+                                tryInvokeRestart("muffleMessage"))
 
 message <-
 function(..., domain = NULL, appendLF = TRUE)
@@ -69,12 +70,12 @@ function(..., domain = NULL, appendLF = TRUE)
 
 .packageStartupMessage <- function (message, call = NULL)
     structure(list(message = message, call = call),
-              class = c("packageStartupMessage", "condition", "message",
-              "simpleMessage"))
+              class = c("packageStartupMessage",
+                        "simpleMessage", "message", "condition"))
 
 suppressPackageStartupMessages <- function (expr)
     withCallingHandlers(expr, packageStartupMessage=function(c)
-                        invokeRestart("muffleMessage"))
+                        tryInvokeRestart("muffleMessage"))
 
 packageStartupMessage <- function(..., domain = NULL, appendLF = TRUE)
 {

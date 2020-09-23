@@ -3,7 +3,7 @@
   "productStrings": {
     "marketingPrefix": "Microsoft",
     "marketingPostfix": "R Open",
-    "marketingVersion": "3.5.3",
+    "marketingVersion": "4.0.2",
     "marketingDescriptionPrimary": "Microsoft R Open is the enhanced distribution of R from Microsoft Corporation. It is a complete open source platform for statistical analysis and data science.",
     "marketingDescriptionSecondary": "You can get more information about Microsoft R Open at",
     "marketingUrl": "https://aka.ms/microsoft-r-open-docs",

@@ -1,0 +1,427 @@
+2019 Apr 10     4.1-15  Update saved results because of changes to R random number generators
+2018 Jul 31     4.1-14  Change post.rpart.Rd example so as to not write outside tempdir()
+                        Changed name of solder to solder.balance and added in solder from the 
+                        survival package (larger than solder.balance).  Now data matches between 
+                        packages.
+	                Modified vignettes slightly
+
+2018 Jan 08	4.1-12	Merge ChangeLog files
+
+2017 Mar 12	4.1-11	Include directly-needed headers, update o/p for R
+3.4.0.
+
+2015 Jun 29	4.1-10	Tweak imports.
+
+2015 Feb 11	4.1-9	Update Korean translations.
+			Remove some unused assignments.
+
+2014 Mar 28	4.1-8	Update Polish translations.
+
+2014 Mar 24	4.1-7	Update French and German translations.
+	                Fix array-overrun in gini.c (detected by valgrind
+	                checks for adabag).
+
+2014 Mar 07	4.1-6	model.frame() method could fail when the recorded
+			call was rpart::rpart().
+
+2014 Jan 25	4.1-5	Avoid abbreviation in tests/treble.R
+			More comprehensive Description: field.
+
+2013 Dec 10	4.1-4	Change pre-defined structure sizes to mitigate 
+	                false positives from Undefined Behaviour Sanitizer.
+	
+2013 Sep 01	4.1-3	Document TMT change to predict() output.
+
+2013 Aug 15	4.1-2	Replace calls to as.name().
+	                Remove unused and un-exported rpartpl().
+	                Correct plot.rpart.Rd as to where things are stored.
+	                Increase version dependence to >= 2.15.0,
+	                remove conditional paste0 from this package.
+
+2013 Mar 20	4.1-1	Add ko translations, update reference output for 3.0.0.
+
+2012 Nov 29	4.1-0	Remove rpconvert() (converted rpart2 trees).
+	
+			Clean up a lot of the R code.
+	
+			C code reformatted with GNU indent and
+			-i4 -nut -ncdb -d1 -br -ce -il0 -npcs -brs
+			then use whitespace-cleanup in Emacs.
+
+			Call R_CheckUserInterrupts at each phase of
+			cross-validation.
+
+			Ensure that surrogates really are better than the
+			default split (adj > 1e-10), and that at least 2
+			cases of non-zero weight go each way.
+
+			Removed unused file src/s_xpred.c.
+
+2012 Nov 18	4.0-3	Add 'importance' to rpart object and to summary():
+	                from TMT.
+
+	                'minlength' arg for tree() method.
+
+	                Improved handling of weights with zero fit,
+	                including bugfix for ordered factors.
+
+	                free_tree was commented out in rpart.c, and
+	                could crash as the structure was not zeroed.  As a
+	                precaution, pointers which are freed are NULLed.
+
+	                s_xpred.c did not free the first instance of a tree.
+
+	                make_cp_list used calloc but did not free.
+
+	                Spell-check help pages and vignettes.
+
+			Several examples needed par(xpd = TRUE) at
+			default plotting sizes.
+
+2012 Nov 11	4.0-2	Add car90 dataset from TMT.
+
+	                'agree' in choose_surg.c needs to be double
+	                for fractional weights.
+
+	                Not use paste0() so R 2.14.x works.
+
+2012 Oct 26	4.0-1	Merge in updates from TMT: see inst/NEWS.Rd 
+	                and below
+
+	                Use .Call for all C code.
+
+	                Use an environment in the package for 'parms' from
+	                plot.rpart().
+
+	                Force byte-compilation for consistency.
+
+2012 Oct 03	3.1-55	Force use of registered symbols in R >= 3.0.0
+	                Update Polish translations.
+	                Work on message formats.
+	                text(fancy = TRUE) gains a 'bg' argument.
+
+2012 Jun 27	3.1-54	Add Polish tranlations.
+
+2012 Jun 01	3.1-53	rpart, rpart.matrix: allow backticks in formulae.
+	                tests/backtick.R: regession test
+
+2012 Mar 04	3.1-52	src/xval.c: ensure unused code is not compiled in.
+
+2012 Jan 11	3.1-51	Change description of 'margin' in ?plot.rpart
+			as suggested by Bill Venables.
+
+2011 Apr 09	3.1-50	Change licence to GPL-2 | GPL-3
+	                Remove set-but-unused variable in src/xval.c
+
+2011 Mar 06	3.1-49	Update testall.Rout.save for R 2.13.0
+
+2010 Dec 08	3.1-48	Avoid partial match to args, unnecessary as.vector.
+			Update reference output for survival change.
+			Correction to plot.rpart(compress = TRUE) from
+			Stephen Milborrow.
+
+2010 Nov 03	3.1-47	Update rpart-Ex.Rout.save for 2.12.x
+
+2010 Jan 03	3.1-46	Update rpart-Ex.Rout.save
+
+2009 Jul 28	3.1-45	Add rpart-Ex.Rout.save file
+
+2009 May 18	3.1-44	Add German translations
+	
+2009 Mar 09	3.1-43	Spelling in man/snip.rpart.Rd.
+			Spacing issue in tests/testall.Rout.save
+			Remove environments from fit$functions if basic
+	                plotcp() allows 'ylim' to be passed in
+
+2008 Oct 21	3.1-42	Make use of 1L etc, update plot.rpart to use dev.new
+
+2008 Apr 10	3.1-41	Add Russian translations
+
+2008 Mar 28	3.1-40	cosmetics on .Rd files, Date: field in DESCRIPTION
+
+2008 Feb 18	3.1-39	summary.rpart was missing a drop=FALSE.
+
+2007 Oct 03	3.1-38	Remove obsolete \non_function{} notation.
+
+2007 Jul 26	3.1-37	Correct spelling errors in man pages
+			DESCRIPTION: GPL-2 only
+			point to www.r-project.org for GPL-2.
+
+2007 Jun 12	3.1-36	Qualify nchar() where needed
+			Update tests/testall.Rout.save for 2.6.x
+			Add reference to usersplits.R in ?rpart.
+
+2007 Feb 23	3.1-35	Correct 'label' in text.rpart
+	 		C-level formatg is replaced by sprintf.
+
+2006 Dec 24	3.1-34	Spelling corrections
+
+2006 Nov 29	3.1-33	Use control=NULL in deparsed calls
+
+2006 Sep 26	3.1-32	Missing 'drop=FALSE' in rpart, add tests/surv_test.R
+
+2006 Sep 04	3.1-31	Add depends on standard packages.
+
+2006 Jul 05	3.1-30  Update output for R 2.4.0's naprint
+			Expand the LICENCE, and install it
+			Update cu.summary.rda
+
+2006 Apr 13	3.1-29  Update tests output for changes in all.equal
+
+2005 Dec 30	3.1-28	Use registered symbols in .C/.Call
+
+2005 Dec 09	3.1-27	Add French and en@quot translations.
+
+2005 Nov 15	3.1-26	Add back entry-point registration.
+
+2005 Nov 09	3.1-25	Drop obselete test for existence of .checkMFClasses
+
+2005 Oct 17	3.1-24  Add missing drop=FALSE in na.rpart.
+			Clarify predict.rpart.Rd and rpart.object.Rd.
+			Add na.action arg to predict.rpart (instead of
+			using the na.action used during fitting).
+
+2005 Apr 15	3.1-23	Use xpd=NA in example(rpart)
+
+2005 Feb 01	3.1.22	Improve error messages for possible translation.
+
+2004 Nov 17     3.1-21  Change logic for setting params on a device 
+	                in plot.rpart.
+			text.rpart.Rd: Mention use of xpd=TRUE.
+
+2004 Aug 25     3.1-20  Stop attempts to plot a degenerate tree
+
+2004 Aug 03     3.1-18  Conversion for R 2.0.0 & LazyData
+
+2004 Jun 22     3.1-17  Fix possible use of uninitialized `split' in bsplit.c
+			Add drop=FALSE for probs prediction for a single case.
+
+2004 Jun 06     3.1-16  Replace long* by int* in rpartexp2.c
+
+2003 Dec 08     3.1-15  Update NAMESPACE for R 1.9.0
+	                Capitalization issues in DESCRIPTION file
+
+2003 Nov 18     3.1-14  Test newdata types in predict.rpart
+	                Correct documentation for `y' in rpart.Rd
+
+2003 Jul 20     3.1-13  Remove unused vars
+
+2003 Mar 15	3.1-12	Update NAMESPACE file
+			Use post not post.rpart
+
+2003 Mar 03	3.1-11	Reinstate rpart.matrix etc, as ipred used it (even
+			though they were documented as for use in rpart).
+
+2003 Mar 01	3.1-10	Use namespace, REprintf.
+
+2002 Dec 10	3.1-9	Apparent typo in rpartcallback.s spotted by 
+			Torsten Hothorn.
+			formatg uses e+/-0n not 00n under Windows
+
+2002 Jun 20	3.1-8	Remove use of registration fiasco
+
+2002 Jun 05	3.1-7	T -> TRUE in tests
+
+2002 Mar 26	3.1-6	based on rpart3 'release'.
+			Bug fix from TMT for empty classes in training set.
+			Bug fix for prediction from root-only tree.
+			Register .C/.Call entry points.
+			Add PACKAGE= to .C/.Call calls.
+			Replace is.Surv by its definition
+			Don't need FUN1 in text.rpart any more
+
+2002 Jan 14	3.1-5	path.rpart needs descendants(), node.match().
+
+2002 Jan 04	3.1-4	Allow ylim to be passed to plotcp.
+			Add NAOK=TRUE to formatg.
+			Workaround for multiple symbols for MacOS X.
+
+2001 Nov 11	3.1-3	Change to zero-split case in rpart.
+			Fixes from TMT re pruning single-node trees.
+
+2001 Sep 25	3.1-2	Fixes to predict.rpart, residuals.rpart.
+
+2001 Aug 23	3.1-1	Further fixes from TMT, xpred.rpart was not
+			intepreting fit$parms correctly.
+
+2001 Aug 08	3.1-0	Further updates from TMT.
+			More documentation updates and corrections.
+
+2001 Jul 25	3.0-2	Correct documentation for predict.rpart.
+			Remove left-over frame$yprob in residuals.rpart.
+			Use >= vs < in the labels for continuous splits.
+
+2001 Jul 03	3.0-1	Restore use of FUN1 in text.rpart, as NAs are
+			handled differently in R.
+
+2001 May 25	3.0-0	New sources from TMT with user-specified splits.
+			Use format(nsmall=) and naresid/naprint from
+			  R 1.3.0.
+			Change na.rpart to make use of passing down the
+			  terms attribute in R 1.3.0.
+			Explicitly get/set .rpart.parms* in user workspace.
+			
+2001 Mar 31	2.0-3	Add priority: recommended
+			Re-licence under GPL2
+
+2000 Dec 05	2.0-2	Update for R 1.2.0: more careful use of malloc
+
+2000 Aug 12	2.0-1	Update for 2000/02/25 release of rpart, which
+			added case weights
+
+2000 Feb 07	1.1-2	Header file changes for 0.99.0 (especially re error)
+			Escape # in post.part.Rd and text.rpart.Rd
+
+1999 Dec 15	1.1-1	New version which uses weights.
+			Change all occurrences of longs.
+
+1999 May 11     1.0-7   Fix bug in graycode.c, from TMT.
+			All the examples now run correctly.
+
+1999 Apr	1.0-6	Add index of (test) datasets.
+
+1999 Feb 24	1.0-5	Correct rpart.branch.s to get(parms, inherits=TRUE).
+			Add tolerance to tree.depth, needed for the Windows 
+			  version.
+
+1999 Jan 06	1.0-4	Remove model.frame.rp, which was no longer needed
+			  now model.frame.default uses xlevels.
+			Modified rpart.matrix to allow - in model formulae.
+			Examples are now all executable (or commented out).
+
+1998 Jul 24  	1.0-3	Added identify.rpart to work around R's limited
+			  identify.
+			text is now generic in R, so removed from zzz.R.
+			levels is now generic in R, so removed from zzz.R.
+			Manual pages re-converted with Sd2Rd version 0.3-1.
+			predict now uses xlevels to force agreement of
+			  levels of factors in newdata.
+
+1998 Jun 22  	1.0-2	Manual pages converted with Details section
+			snip.rpart implemented.
+
+1998 Jun 16  	1.0-1	Original port
+
+------------------- Former file PORTING -------------------
+src/*.{h,c} long -> int
+
+man/*.Rd  convert *.d by Sd2Rd
+
+Don't implement code using naresid, which R does not have.
+F -> FALSE, T -> TRUE
+
+R/labels.rpart.s	replace call to prlabel by S code.
+R/model.frame.rpart.s 	deparse calls
+R/na.rpart.s		as x has no attributes in R, redesign
+R/plot.rpart.s 		change frame=0 to .GlobalEnv
+R/post.rpart.s		change `title' trickery
+R/print.rpart.s		remove nsmall in call to format
+			attr(x, 'ylevels') not 'ylevel'
+R/rpart.branch.s	get with inherits not frame=0
+R/rpart.matrix.s	adjust for different terms structure
+R/rpart.s		single -> double
+			sys.parent() -> sys.frame(sys.parent())
+R/rpartco.s		remove frame=0 several times
+R/snip.rpart.mouse.s	drop frame=0
+R/summary.rpart.s	remove justify="left" in format
+			remove comma in paste(... ,,collapse ...)
+			attr(x, 'ylevels') not 'ylevel'
+R/text.rpart.s		text.default prints "NA", so remove these
+			remove density=0 in calls to polygon
+R/xpred.rpart.s		single -> double
+			sys.parent() -> sys.frame(sys.parent())
+R/zzz.R			a few missing functions.
+
+
+------------------- Former file ChangeLog.TMT -------------------
+The changes documented since 3/2002, which is the date stated in Brian's 
+version of the Description file.
+
+  In Sept 2012 the current R version and the Mayo version were merged.
+
+14March02: When y was a factor, with no instances of one of the levels in
+the "middle" of the levels list, the program would generate NA due to
+division by 0.  Fairly simple fixes to gini.c and rpart.s.  The bug, and
+a very nicely documented test case, was supplied by Matthew Wiener.
+
+8Aug02: Small bug pointed out by Kai Yu in rundown.c - a missing pair of {},
+which only apply if usesurrogate < 2 and there are lots of missings.  Appears
+that the se of the xval error would be too small.
+
+29Oct02: Error in xpred.rpart.s, for a user split with a response vector >1,
+the "yback" vector was too short.  (Diff the lines creating eframe with those
+of rpart.s, to see the obvious oversight!)  Leads to a core dump.
+
+29Oct02: Fix error in branch.c, which was not watching out for missing
+values in the surrogate variable.  Found due to close reading of the
+C code by Kai Yu.  (I'm impressed!)
+
+12Nov02: Add the "return.all" argument to xpred.rpart, to fit the needs of
+Dan Schaid.  Add the test case xpred.s to test it.
+
+28Nov02: Major changes to how indexing is done.  In the older version, at a 
+lower branch on the tree one would find the following code again and again:
+	for (i=0; i<n; i++) {
+	    if (which[i] = current_node) {
+		 ... all the work ...
+	        }
+If a node only had 20 of n=20,000 observations in it, the code still walked
+through all 20000.  
+   In the new code, the chain of routines is called with the pair
+(n1, n2).  Consequences:
+
+   a. The repeated code fragment is now the much more efficient
+			for (i=n1; i<n2; i++) {
+A trivial test (continuous y, n=20000, 20 xvals, cp=0 to force deep trees)
+gave unix.time values of 107 vs 2526 seconds.  This was a bit of a shock -
+I never assumed that quite so much of the time could be spent in
+inefficient bookkeeping.  With shallower trees I would expect far less
+gain, maybe 2 fold (at n=2000 it was 10 vs 32 seconds).
+   b. In nodesplit.c, extra work has to be done to modify the rp.sort
+array.  See comments in the last block of nodesplit for a full
+explanation.
+   c. Under the new regime, it turns out to be important to NOT sort
+the columns of the x matrix.  As a consequence:
+	1. There is no advantage to calling rpart with as.single(x) to
+	  save memory.  The copy=F arg is a more efficient use of
+	  resources.  (If the S manuals can be believed....)
+        2. Internal variables have been changed to 'double', by redefining
+	  the constant "FLOAT" in rpart.h.
+	3. Since X is not disturbed, it is now safe to use the is_na
+	macro to test it, rather than passing the result of is.na(X) as
+        a separate argument to the C code.  This resulted in further
+	algorithmic time savings in nodesplit.c and branch.c (depending on
+	the number of surrogates that need to be used in splitting).
+   d. Because tree building mixes up the rp.sorts array, we need to save
+an original copy for cross-validation.  So the rewrite is not a total win --
+we use somewhat more memory.  Subsetting out a group of subjects
+turns out to be essentially the same code as was added to nodesplit.
+
+29Nov02: If the primary split sends exactly the same number left and right
+(same total weights actually), there should be no "go with the majority"
+default.  Prior code always would choose left in this case, now chooses
+neither.
+
+29Nov02: The length of the response vector (numresp) added to the output
+structure.  It was needed for xpred.rpart.
+
+2Dec02: Based on concerns of a user (whose email I currently can't find) about
+accuracy with asymmetric loss matrices, I spent the last 2 days creating
+a completely worked example.  Their concerns, unfortunately, were completely
+justified.
+   a. With L=loss asymmetric, the altered priors were computed wrong -- they
+were using L' instead of L!  Upshot -- the tree would not not necessarily
+choose optimal splits for the given loss matrix.  Once chosen, splits were 
+evaluated correctly.  The printed "improvement" values are of course the
+wrong onese as well.  It's interesting that for my little test case, with
+L quite asymmetric, the early splits in the tree are unchanged -- a good split
+still looks good.  Simple fix to gini.c.
+   b. Fixed a minor bug in the Gini criteria -- the printed "improvement"
+values were too large by a constant = (#classes -1).  Since they are only used
+to select the largest value, there was no practical impact.
+
+17Jun05: Fix offset bug -- the line in rpart.s didn't actually get
+the offset, but rather the variable number of the offset.
+ 
+27March05: Finish up the test suite for priors.  Run test suite.  Code is
+ready for distribution.

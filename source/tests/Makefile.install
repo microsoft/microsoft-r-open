@@ -26,7 +26,7 @@ MK = $(MAKE)
 all-basic-tests = BasePackages Specific Reg Internet
 ## Keep in line with Makefile.common.
 ## not Docs Standalone Packages
-all-devel-tests = DateTime IsAs Random Demo Primitive Regexp Internet2 CRANtools Segfault
+all-devel-tests = DateTime IsAs Random Demo Primitive Regexp Internet2 CRANtools Segfault Conditions
 
 
 ## <NOTE>
@@ -37,18 +37,18 @@ test-Internet:
 	@$(ECHO) "  expect some differences"
 	-@$(MAKE) $(test-out-internet) RVAL_IF_DIFF=0
 
-test-Internet2:
-	@$(ECHO) "running more Internet and socket tests"
-	-@$(MK) $(test-out-internet2) RVAL_IF_DIFF=0
+# test-Internet2:
+# 	@$(ECHO) "running more Internet and socket tests"
+# 	-@$(MK) $(test-out-internet2) RVAL_IF_DIFF=0
 ## </NOTE>
 
 test-BasePackages:
 	@$(MKINSTALLDIRS) Packages
-	@$(ECHO) "tools::testInstalledPackages(outDir='Packages', scope='base')" | $(R) --slave
+	@$(ECHO) "tools::testInstalledPackages(outDir='Packages', scope='base')" | $(R) --no-echo
 
 test-Recommended:
 	@$(MKINSTALLDIRS) Packages
-	@$(ECHO) "tools::testInstalledPackages(outDir='Packages', scope='recommended')" | $(R) --slave
+	@$(ECHO) "tools::testInstalledPackages(outDir='Packages', scope='recommended')" | $(R) --no-echo
 
 
 mostlyclean: clean
@@ -60,7 +60,7 @@ clean:
 	-@rm -f testit.txt testit.html testit.tex testit-Ex.R
 	-@rm -f ver10.txt ver10.html ver10.tex ver10-Ex.R
 	-@rm -f ver11.txt ver11.html ver11.tex ver11-Ex.R
-	-@rm -Rf anRpackage myTst* myLib
+	-@rm -Rf anRpackage myTst* myLib myLib_2
 
 clean2: clean
 	-@rm -f $(test-out) $(test-src-auto) .RData

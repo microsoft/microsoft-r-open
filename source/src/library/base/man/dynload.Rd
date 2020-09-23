@@ -60,7 +60,6 @@ is.loaded(symbol, PACKAGE = "", type = "")
     default), \code{"Fortran"}, \code{"Call"} or \code{"External"}.}
 }
 \details{
-  
   The objects \code{dyn.load} loads are called \sQuote{dynamically
     loadable libraries} (abbreviated to \sQuote{DLL}) on all platforms
   except macOS, which uses the term for a different sort
@@ -146,7 +145,9 @@ is.loaded(symbol, PACKAGE = "", type = "")
 
   The function \code{dyn.unload} unlinks the DLL.  Note that unloading a
   DLL and then re-loading a DLL of the same name may or may not work: on
-  Solaris it uses the first version loaded.
+  Solaris it uses the first version loaded. Note also that some DLLs cannot
+  be safely unloaded at all: unloading a DLL which implements C finalizers
+  but does not unregister them on unload causes R to crash.
 
   \code{is.loaded} checks if the symbol name is loaded \emph{and
   searchable} and hence available for use as a character string value
@@ -222,15 +223,15 @@ is.loaded(symbol, PACKAGE = "", type = "")
   only one directory can be inserted in this way.)
 
   Users have been confused by messages like
-\preformatted{
- error: unable to load shared object
- '.../library/rJava/libs/x64/rJava.dll':
- LoadLibrary failure:  The specified module could not be found.
-}
-   The final line is a Windows (not \R) diagnostic: the \sQuote{module}
-   that could not be found is not \file{rJava.dll} but something else
-   Windows is looking for (here most likely Java DLLs): if you are lucky
-   there will be a dialog box with more details.
+  \preformatted{
+    error: unable to load shared object
+    '.../library/rJava/libs/x64/rJava.dll':
+    LoadLibrary failure:  The specified module could not be found.
+  }
+  The final line is a Windows (not \R) diagnostic: the \sQuote{module}
+  that could not be found is not \file{rJava.dll} but something else
+  Windows is looking for (here most likely Java DLLs): if you are lucky
+  there will be a dialog box with more details.
 }
 #endif
 \section{Warning}{

@@ -1,7 +1,7 @@
 #  File src/library/base/R/source.R
 #  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2017 The R Core Team
+#  Copyright (C) 1995-2020 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -46,7 +46,6 @@ function(file, local = FALSE, echo = verbose, print.eval = echo,
     }
 
     if(use_file <- missing(exprs)) {
-
         ofile <- file # for use with chdir = TRUE
         from_file <- FALSE # true, if not stdin() nor from srcref
         srcfile <- NULL
@@ -105,9 +104,9 @@ function(file, local = FALSE, echo = verbose, print.eval = echo,
             lines <- readLines(file, warn = FALSE)
             srcfile <-
                 if (isTRUE(keep.source))
-                    srcfilecopy(deparse(substitute(file)), lines)
+                    srcfilecopy(deparse1(substitute(file), ""), lines)
                 else
-                    deparse(substitute(file))
+                    deparse1(substitute(file), "")
         }
 
         exprs <- if (!from_file) {
@@ -188,7 +187,7 @@ function(file, local = FALSE, echo = verbose, print.eval = echo,
 			    leading <- leading - 1L
 			}
 			dep <- paste0(rep.int(c(prompt.echo, continue.echo),
-					      c(leading, length(dep)-leading)),
+					      pmax(0L, c(leading, length(dep)-leading))),
 				      dep, collapse="\n")
 			nd <- nchar(dep, "c")
 		    } else
@@ -202,7 +201,7 @@ function(file, local = FALSE, echo = verbose, print.eval = echo,
 						control = deparseCtrl),
 					collapse = "\n"), 12L, 1e+06L)
 		    dep <- paste0(prompt.echo,
-				  gsub("\n", paste0("\n", continue.echo), dep))
+				  gsub("\n", paste0("\n", continue.echo), dep, fixed=TRUE))
 		    ## We really do want chars here as \n\t may be embedded.
 		    nd <- nchar(dep, "c") - 1L
 		}
@@ -249,13 +248,16 @@ function(file, local = FALSE, echo = verbose, print.eval = echo,
 sys.source <-
 function(file, envir = baseenv(), chdir = FALSE,
 	 keep.source = getOption("keep.source.pkgs"),
+	 keep.parse.data = getOption("keep.parse.data.pkgs"),
 	 toplevel.env = as.environment(envir))
 {
     if(!(is.character(file) && file.exists(file)))
 	stop(gettextf("'%s' is not an existing file", file))
     keep.source <- as.logical(keep.source)
+    keep.parse.data <- as.logical(keep.parse.data)
     oop <- options(keep.source = keep.source,
-		   topLevelEnvironment = toplevel.env)
+                   keep.parse.data = keep.parse.data,
+                   topLevelEnvironment = toplevel.env)
     on.exit(options(oop))
     if (keep.source) {
     	lines <- readLines(file, warn = FALSE)

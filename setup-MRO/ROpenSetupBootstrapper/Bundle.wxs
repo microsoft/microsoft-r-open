@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:bal ="http://schemas.microsoft.com/wix/BalExtension" xmlns:util ="http://schemas.microsoft.com/wix/UtilExtension">
-	<Bundle Name="Microsoft R Open $(var.MroShortVersion)" Version="$(var.MroShortVersion).$(var.BuildNumber)" Manufacturer="Microsoft" UpgradeCode="D1916AAE-1475-4A40-8A93-91B5A83D9927">
+	<Bundle Name="Microsoft R Open $(var.MroShortVersion)" Version="$(var.MroShortVersion).$(var.BuildNumber)" Manufacturer="Microsoft" UpgradeCode="D9F0EF80-3113-449E-8359-6B067DCFAECE">
     <BootstrapperApplicationRef Id="ManagedBootstrapperApplicationHost">
       <PayloadGroupRef Id ="RSetup"/>
       <PayloadGroupRef Id="RInstaller"/>

@@ -1,6 +1,6 @@
 % File src/library/stats/man/approxfun.Rd
 % Part of the R package, https://www.R-project.org
-% Copyright 1995-2017 R Core Team
+% Copyright 1995-2019 R Core Team
 % Distributed under GPL 2 or later
 
 \name{approxfun}
@@ -13,10 +13,10 @@
 }
 \usage{
 approx   (x, y = NULL, xout, method = "linear", n = 50,
-          yleft, yright, rule = 1, f = 0, ties = mean)
+          yleft, yright, rule = 1, f = 0, ties = mean, na.rm = TRUE)
 
 approxfun(x, y = NULL,       method = "linear",
-          yleft, yright, rule = 1, f = 0, ties = mean)
+          yleft, yright, rule = 1, f = 0, ties = mean, na.rm = TRUE)
 }
 \arguments{
   \item{x, y}{numeric vectors giving the coordinates of the points to be
@@ -49,21 +49,40 @@ approxfun(x, y = NULL,       method = "linear",
     \code{ y0*(1-f)+y1*f} for intermediate values. In this way the result is
     right-continuous for \code{f == 0} and left-continuous for \code{f
     == 1}, even for non-finite \code{y} values.}
-  \item{ties}{handling of tied \code{x} values.  Either a function
-    with a single vector argument returning a single number result or
-    the string \code{"ordered"}; note that the latter is the fastest for
-    large \code{length(x)}.}
+  \item{ties}{handling of tied \code{x} values.  The string
+    \code{"ordered"} or a function (or the name of a function)
+    taking a single vector argument and returning a single number
+    or a \code{\link{list}} of both, e.g.,
+    \code{list("ordered", mean)}, see \sQuote{Details}.}
+  \item{na.rm}{logical specifying how missing values (\code{\link{NA}}'s)
+    should be handled.  Setting \code{na.rm=FALSE} will propagate
+    \code{NA}'s in \code{y} to the interpolated values, also depending on
+    the \code{rule} set.  Note that in this case, \code{NA}'s in \code{x}
+    are invalid, see also the examples.}
 }
 \details{
-  The inputs can contain missing values which are deleted, so at least
+  The inputs can contain missing values which are deleted (if \code{na.rm}
+  is true, i.e., by default), so at least
   two complete \code{(x, y)} pairs are required (for \code{method =
   "linear"}, one otherwise).  If there are duplicated (tied) \code{x}
-  values and \code{ties} is a function it is applied to the \code{y}
-  values for each distinct \code{x} value.
+  values and \code{ties} contains a function it is applied to the \code{y}
+  values for each distinct \code{x} value to produce \code{(x,y)} pairs
+  with unique \code{x}.
   Useful functions in this context include \code{\link{mean}},
-  \code{\link{min}}, and \code{\link{max}}.  If \code{ties = "ordered"}
-  the \code{x} values are assumed to be already ordered.  The first
-  \code{y} value will be used for interpolation to the left and the last
+  \code{\link{min}}, and \code{\link{max}}.
+
+  If \code{ties = "ordered"} the \code{x} values are assumed to be already
+  ordered (and unique) and ties are \emph{not} checked but kept if present.
+  This is the fastest option for large \code{length(x)}.
+
+  If \code{ties} is a \code{\link{list}} of length two, \code{ties[[2]]}
+  must be a function to be applied to ties, see above, but if
+  \code{ties[[1]]} is identical to \code{"ordered"}, the \code{x} values
+  are assumed to be sorted and are only checked for ties.  Consequently,
+  \code{ties = list("ordered", mean)} will be slightly more efficient than
+  the default \code{ties = mean} in such a case.
+
+  The first \code{y} value will be used for interpolation to the left and the last
   one for interpolation to the right.
 }
 \value{
@@ -110,17 +129,67 @@ curve(fc(x), 0, 10, col = "darkblue", add = TRUE)
 plot(approxfun(x, y, rule = 2:1), 0, 11,
      col = "tomato", add = TRUE, lty = 3, lwd = 2)
 
+### Treatment of 'NA's -- are kept if  na.rm=FALSE :
+
+xn <- 1:4
+yn <- c(1,NA,3:4)
+xout <- (1:9)/2
+## Default behavior (na.rm = TRUE): NA's omitted; extrapolation gives NA
+data.frame(approx(xn,yn, xout))
+data.frame(approx(xn,yn, xout, rule = 2))# -> *constant* extrapolation
+## New (2019-2020)  na.rm = FALSE: NA's are "kept"
+data.frame(approx(xn,yn, xout, na.rm=FALSE, rule = 2))
+data.frame(approx(xn,yn, xout, na.rm=FALSE, rule = 2, method="constant"))
+
+## NA's in x[] are not allowed:
+stopifnot(inherits( try( approx(yn,yn, na.rm=FALSE) ), "try-error"))
+
+## Give a nice overview of all possibilities  rule * method * na.rm :
+##             -----------------------------  ====   ======   =====
+## extrapolations "N":= NA;   "C":= Constant :
+rules <- list(N=1, C=2, NC=1:2, CN=2:1)
+methods <- c("constant","linear")
+ry <- sapply(rules, function(R) {
+       sapply(methods, function(M)
+        sapply(setNames(,c(TRUE,FALSE)), function(na.)
+                 approx(xn, yn, xout=xout, method=M, rule=R, na.rm=na.)$y),
+        simplify="array")
+   }, simplify="array")
+names(dimnames(ry)) <- c("x = ", "na.rm", "method", "rule")
+dimnames(ry)[[1]] <- format(xout)
+ftable(aperm(ry, 4:1)) # --> (4 * 2 * 2) x length(xout)  =  16 x 9 matrix
+\dontshow{% functionality and consistency tests:
+stopifnot(exprs = {
+ identical(unname(ry),
+   array(c(NA, 1, 1,   1, 1, 3, 3, 4, NA,      NA, 1,  1, NA, NA, 3, 3, 4, NA,
+           NA, 1, 1.5, 2, 2.5, 3, 3.5, 4, NA,  NA, 1, NA, NA, NA, 3, 3.5, 4, NA,
+            1, 1, 1,   1, 1, 3, 3, 4, 4,        1, 1,  1, NA, NA, 3, 3, 4, 4,
+            1, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4,    1, 1, NA, NA, NA, 3, 3.5, 4, 4,
+           NA, 1, 1,   1, 1, 3, 3, 4, 4,       NA, 1,  1, NA, NA, 3, 3, 4, 4,
+           NA, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4,   NA, 1, NA, NA, NA, 3, 3.5, 4, 4,
+            1, 1, 1,   1, 1, 3, 3, 4, NA,       1, 1,  1, NA, NA, 3, 3, 4, NA,
+            1, 1, 1.5, 2, 2.5, 3, 3.5, 4, NA,   1, 1, NA, NA, NA, 3, 3.5, 4, NA),
+         dim = c(9L, 2L, 2L, 4L)))
+ identical(approxfun(xn,yn, method="constant", rule=2, na.rm=FALSE)(xout),
+            as.vector(ry[,"FALSE", "constant","C"]))
+ identical(approxfun(xn,yn, method="linear", rule=2:1, na.rm=FALSE)(xout),
+            as.vector(ry[,"FALSE", "linear", "CN"]))
+})
+}
+
 ## Show treatment of 'ties' :
 
 x <- c(2,2:4,4,4,5,5,7,7,7)
 y <- c(1:6, 5:4, 3:1)
-approx(x, y, xout = x)$y # warning
+(amy <- approx(x, y, xout = x)$y) # warning, can be avoided by specifying 'ties=':
+op <- options(warn=2) # warnings would be error
+stopifnot(identical(amy, approx(x, y, xout = x, ties=mean)$y))
 (ay <- approx(x, y, xout = x, ties = "ordered")$y)
-stopifnot(ay == c(2,2,3,6,6,6,4,4,1,1,1))
+stopifnot(amy == c(1.5,1.5, 3, 5,5,5, 4.5,4.5, 2,2,2),
+          ay  == c(2, 2,    3, 6,6,6, 4, 4,    1,1,1))
 approx(x, y, xout = x, ties = min)$y
 approx(x, y, xout = x, ties = max)$y
-
-%%-- MM has nice utility plotting -- do in demo ?
-}
+options(op) # revert 'warn'ing level
+}%% MM has nice utility plotting in MISC/approx-ex.R -- do in demo ?
 \keyword{arith}
 \keyword{dplot}

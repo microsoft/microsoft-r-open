@@ -81,27 +81,64 @@ Many volunteers have contributed to the packages used here.  The
 principal authors of the packages mentioned are
 
 @quotation
-@multitable {foreign  xxxx} {A longggggggggggggggggggggggggggggggggg description}
-@item @CRANpkg{DBI} @tab David A. James
-@item @CRANpkg{dataframes2xls} @tab Guido van Steen
-@item @CRANpkg{foreign} @tab Thomas Lumley, Saikat DebRoy, Douglas Bates, Duncan Murdoch and Roger Bivand
-@item @CRANpkg{gdata} @tab Gregory R. Warnes
-@item @CRANpkg{ncdf4} @tab David Pierce
-@item @CRANpkg{rJava} @tab Simon Urbanek
-@item @CRANpkg{RJDBC} @tab Simon Urbanek
-@item @CRANpkg{RMySQL} @tab David James and Saikat DebRoy
-@item @CRANpkg{RNetCDF} @tab Pavel Michna
-@item @CRANpkg{RODBC} @tab Michael Lapsley and Brian Ripley
-@item @CRANpkg{ROracle} @tab David A, James
-@item @CRANpkg{RPostgreSQL} @tab Sameer Kumar Prayaga and Tomoaki Nishiyama
-@item @pkg{RSPerl} @tab Duncan Temple Lang
-@item @pkg{RSPython} @tab Duncan Temple Lang
-@item @CRANpkg{RSQLite} @tab David A, James
-@item @pkg{SJava} @tab John Chambers and Duncan Temple Lang
-@item @CRANpkg{WriteXLS} @tab Marc Schwartz
-@item @CRANpkg{XLConnect} @tab Mirai Solutions GmbH
-@item @CRANpkg{XML} @tab Duncan Temple Lang
-@end multitable
+@table @asis
+@item @CRANpkg{DBI}:
+David A. James
+
+@item @CRANpkg{dataframes2xls}:
+Guido van Steen
+
+@item @CRANpkg{foreign}:
+Thomas Lumley, Saikat DebRoy, Douglas Bates, Duncan Murdoch and Roger Bivand
+
+@item @CRANpkg{gdata}:
+Gregory R. Warnes
+
+@item @CRANpkg{ncdf4}:
+David Pierce
+
+@item @CRANpkg{rJava}:
+Simon Urbanek
+
+@item @CRANpkg{RJDBC}:
+Simon Urbanek
+
+@item @CRANpkg{RMySQL}:
+David James and Saikat DebRoy
+
+@item @CRANpkg{RNetCDF}:
+Pavel Michna
+
+@item @CRANpkg{RODBC}:
+Michael Lapsley and Brian Ripley
+
+@item @CRANpkg{ROracle}:
+David A. James
+
+@item @CRANpkg{RPostgreSQL}:
+Sameer Kumar Prayaga and Tomoaki Nishiyama
+
+@item @pkg{RSPerl}:
+Duncan Temple Lang
+
+@item @pkg{RSPython}:
+Duncan Temple Lang
+
+@item @CRANpkg{RSQLite}:
+David A. James
+
+@item @pkg{SJava}:
+John Chambers and Duncan Temple Lang
+
+@item @CRANpkg{WriteXLS}:
+Marc Schwartz
+
+@item @CRANpkg{XLConnect}:
+Mirai Solutions GmbH
+
+@item @CRANpkg{XML}:
+Duncan Temple Lang
+@end table
 @end quotation
 
 Brian Ripley is the author of the support for connections.
@@ -136,9 +173,9 @@ here.
 There are packages to allow functionality developed in languages such as
 @code{Java}, @code{perl} and @code{python} to be directly integrated
 with @R{} code, making the use of facilities in these languages even
-more appropriate.  (See the @CRANpkg{rJava} package from @acronym{CRAN}
-and the @pkg{SJava}, @pkg{RSPerl} and @pkg{RSPython} packages from the
-Omegahat project, @uref{http://www.omegahat.net}.)
+more appropriate.  (See the @CRANpkg{rJava} package from @acronym{CRAN}.)
+@c and the @pkg{SJava}, @pkg{RSPerl} and @pkg{RSPython} packages from the
+@c Omegahat project, @uref{http://www.omegahat.net}.)
 
 
 @cindex Unix tools
@@ -414,7 +451,7 @@ currently support for export to @code{SAS}, @code{SPSS} and @code{Stata}.
 
 When reading data from text files, it is the responsibility of the user
 to know and to specify the conventions used to create that file,
-e.g. the comment character, whether a header line is present, the value
+e.g.@: the comment character, whether a header line is present, the value
 separator, the representation for missing values (and so on) described
 in @ref{Export to text files}.  A markup language which can be used to
 describe not only content but also the structure of the content can
@@ -776,7 +813,7 @@ covered under @code{read.table}.  The most crucial argument is
 @code{what}, which specifies a list of modes of variables to be read
 from the file.  If the list is named, the names are used for the
 components of the returned list.  Modes can be numeric, character or
-complex, and are usually specified by an example, e.g. @code{0},
+complex, and are usually specified by an example, e.g.@: @code{0},
 @code{""} or @code{0i}.  For example
 
 @example
@@ -1181,7 +1218,7 @@ Traditionally there had been large (and expensive) commercial RDBMSs
 (@uref{http://www.informix.com, Informix}; @uref{https://www.oracle.com,
 Oracle}; @uref{http://www.sybase.com, Sybase};
 @uref{http://www.ibm.com/db2, IBM's DB2};
-@uref{https://www.microsoft.com/SQL/default.mspx, Microsoft @acronym{SQL}
+@uref{https://www.microsoft.com/sql-server/, Microsoft @acronym{SQL}
 Server} on Windows) and academic and small-system databases (such as
 MySQL@footnote{and forks, notably MariaDB.}, PostgreSQL, Microsoft
 Access, @dots{}), the former marked out by much greater emphasis on data
@@ -1346,8 +1383,8 @@ JDBC driver).
 @c The BioConductor project has updated @pkg{RdbiPgSQL} (formerly on
 @c @acronym{CRAN} ca 2000), a first-generation interface to PostgreSQL.
 
-@pkg{PL/R} (@uref{http://www.joeconway.com/plr/,
-@code{http://@/www.joeconway.com/@/plr/}}) is a project to embed R into
+@pkg{PL/R} (@uref{http://joeconway.com/plr,
+@code{http://@/joeconway.com/@/plr}}) is a project to embed R into
 PostgreSQL.
 
 Package @CRANpkg{RMongo} provides an @R{} interface to a Java client for
@@ -1781,7 +1818,8 @@ Borland which has a binary flat-file format that became popular, with
 file extension @file{.dbf}.  It has been adopted for the 'Xbase' family
 of databases, covering dBase, Clipper, FoxPro and their Windows
 equivalents Visual dBase, Visual Objects and Visual FoxPro (see
-@uref{http://www.e-bachmann.dk/docs/xbase.htm}).  A dBase file contains
+@uref{https://www.clicketyclick.dk/databases/xbase/format}).
+A dBase file contains
 a header and then a series of fields and so is most similar to an @R{}
 data frame.  The data itself is stored in text format, and can include
 character, logical and numeric fields, and other types in later versions
@@ -2099,7 +2137,7 @@ including closed and terminal connections, by @code{showConnections(all
 The generic function @code{seek} can be used to read and (on some
 connections) reset the current position for reading or writing.
 Unfortunately it depends on OS facilities which may be unreliable
-(e.g. with text files under Windows).  Function @code{isSeekable}
+(e.g.@: with text files under Windows).  Function @code{isSeekable}
 reports if @code{seek} can change the position on the connection
 given by its argument.
 
@@ -2139,7 +2177,7 @@ memory.
 
 @code{readBin} reads a stream of bytes from the file and interprets them
 as a vector of mode given by @code{what}.  This can be either an object
-of the appropriate mode (e.g. @code{what=integer()}) or a character
+of the appropriate mode (e.g.@: @code{what=integer()}) or a character
 string describing the mode (one of the five given in the previous
 paragraph or @code{"double"} or @code{"int"}).  Argument @code{n}
 specifies the maximum number of vector elements to read from the

@@ -1,6 +1,6 @@
 
-R version 3.5.3 RC (2019-03-03 r76193) -- "Great Truth"
-Copyright (C) 2019 The R Foundation for Statistical Computing
+R version 4.0.1 Patched (2020-06-08 r78667) -- "See Things Now"
+Copyright (C) 2020 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -21,7 +21,7 @@ Type 'q()' to quit R.
 > pdf("reg-tests-2.pdf", encoding = "ISOLatin1.enc")
 > 
 > ## force standard handling for data frames
-> options(stringsAsFactors=TRUE)
+> options(stringsAsFactors=FALSE) # R >= 4.0.0
 > options(useFancyQuotes=FALSE)
 > 
 > ### moved from various .Rd files
@@ -351,12 +351,13 @@ There were 22 warnings (use warnings() to see them)
 > ## data.frame
 > set.seed(123)
 > L3 <- LETTERS[1:3]
-> d <- data.frame(cbind(x=1, y=1:10), fac = sample(L3, 10, replace=TRUE))
+> d <- data.frame(cbind(x=1, y=1:10), fac = sample(L3, 10, replace=TRUE),
++                 stringsAsFactors=TRUE)
 > str(d)
 'data.frame':	10 obs. of  3 variables:
  $ x  : num  1 1 1 1 1 1 1 1 1 1
  $ y  : num  1 2 3 4 5 6 7 8 9 10
- $ fac: Factor w/ 3 levels "A","B","C": 1 3 2 3 3 1 2 3 2 2
+ $ fac: Factor w/ 3 levels "A","B","C": 3 3 3 2 3 2 2 2 3 1
 > (d0  <- d[, FALSE]) # NULL dataframe with 10 rows
 data frame with 0 columns and 10 rows
 > (d.0 <- d[FALSE, ]) # <0 rows> dataframe  (3 cols)
@@ -689,7 +690,7 @@ C: 864000 720000 864000 1008000 1152000
 > authors <- data.frame(
 +     surname = c("Tukey", "Venables", "Tierney", "Ripley", "McNeil"),
 +     nationality = c("US", "Australia", "US", "UK", "Australia"),
-+     deceased = c("yes", rep("no", 4)))
++     deceased = c("yes", rep("no", 4)), stringsAsFactors=TRUE)
 > books <- data.frame(
 +     name = c("Tukey", "Venables", "Tierney",
 +              "Ripley", "Ripley", "McNeil", "R Core"),
@@ -700,7 +701,8 @@ C: 864000 720000 864000 1008000 1152000
 +               "Interactive Data Analysis",
 +               "An Introduction to R"),
 +     other.author = c(NA, "Ripley", NA, NA, NA, NA,
-+                      "Venables & Smith"))
++ 		     "Venables & Smith"),
++ 	   stringsAsFactors=TRUE)
 > b2 <- books; names(b2)[1] <- names(authors)[1]
 > 
 > merge(authors, b2, all.x = TRUE)
@@ -808,7 +810,8 @@ attr(,"scaled:scale")
 > ## end of moved from tabulate.Rd
 > 
 > ## ts
-> # Ensure working arithmetic for `ts' objects :
+> # Ensure working arithmetic for 'ts' objects :
+> z <- ts(matrix(1:900, 100, 3), start = c(1961, 1), frequency = 12)
 > stopifnot(z == z)
 > stopifnot(z-z == 0)
 > 
@@ -1595,46 +1598,46 @@ Eye:Sex   3   11.764 190.64
 +     set.seed(77, type)
 +     runif(100); print(runif(4))
 + }
-[1] "Wichmann-Hill" "Inversion"    
+[1] "Wichmann-Hill" "Inversion"     "Rejection"    
 [1] 0.8308841 0.4640221 0.9460082 0.8764644
 [1] 0.12909876 0.07294851 0.45594560 0.68884911
 [1] 0.4062450 0.7188432 0.6241738 0.2511611
-[1] "Marsaglia-Multicarry" "Inversion"           
+[1] "Marsaglia-Multicarry" "Inversion"            "Rejection"           
 [1] 0.3479705 0.9469351 0.2489207 0.7329251
 [1] 0.5041512 0.3617873 0.1469184 0.3798119
 [1] 0.14388128 0.04196294 0.36214015 0.86053575
-[1] "Super-Duper" "Inversion"  
+[1] "Super-Duper" "Inversion"   "Rejection"  
 [1] 0.2722510 0.9230240 0.3971743 0.8284474
 [1] 0.5706241 0.1806023 0.9633860 0.8434444
 [1] 0.09356585 0.41081124 0.38635627 0.72993396
-[1] "Mersenne-Twister" "Inversion"       
+[1] "Mersenne-Twister" "Inversion"        "Rejection"       
 [1] 0.5999890 0.3328235 0.4886130 0.9544738
 [1] 0.5993679 0.4516818 0.1368254 0.7261788
 [1] 0.09594961 0.31235651 0.81244335 0.72330846
-[1] "Knuth-TAOCP" "Inversion"  
+[1] "Knuth-TAOCP" "Inversion"   "Rejection"  
 [1] 0.9445502 0.3366297 0.6296881 0.5914161
 [1] 0.9213954 0.5468138 0.8817100 0.4442237
 [1] 0.8016962 0.9226080 0.1473484 0.8827707
-[1] "Knuth-TAOCP-2002" "Inversion"       
+[1] "Knuth-TAOCP-2002" "Inversion"        "Rejection"       
 [1] 0.9303634 0.2812239 0.1085806 0.8053228
 [1] 0.2916627 0.9085017 0.7958965 0.1980655
 [1] 0.05247575 0.28290867 0.20930324 0.16794887
 > RNGkind(normal.kind = "Kinderman-Ramage")
 > set.seed(123)
 > RNGkind()
-[1] "Knuth-TAOCP-2002" "Kinderman-Ramage"
+[1] "Knuth-TAOCP-2002" "Kinderman-Ramage" "Rejection"       
 > rnorm(4)
 [1] -1.9699090 -2.2429340  0.5339321  0.2097153
 > RNGkind(normal.kind = "Ahrens-Dieter")
 > set.seed(123)
 > RNGkind()
-[1] "Knuth-TAOCP-2002" "Ahrens-Dieter"   
+[1] "Knuth-TAOCP-2002" "Ahrens-Dieter"    "Rejection"       
 > rnorm(4)
 [1]  0.06267229  0.12421568 -1.86653499 -0.14535921
 > RNGkind(normal.kind = "Box-Muller")
 > set.seed(123)
 > RNGkind()
-[1] "Knuth-TAOCP-2002" "Box-Muller"      
+[1] "Knuth-TAOCP-2002" "Box-Muller"       "Rejection"       
 > rnorm(4)
 [1]  2.26160990  0.59010303  0.30176045 -0.01346139
 > set.seed(123)
@@ -2290,11 +2293,11 @@ par("yaxp") :            2         4         4
 
 Warning messages:
 1: In plot.window(...) :
-  relative range of values =  43 * EPS, is small (axis 2)
+  relative range of values (  43 * EPS) is small (axis 2)
 2: In plot.window(...) :
-  relative range of values =  36 * EPS, is small (axis 2)
+  relative range of values (  36 * EPS) is small (axis 2)
 3: In plot.window(...) :
-  relative range of values =   0 * EPS, is small (axis 2)
+  relative range of values (   0 * EPS) is small (axis 2)
 > par(mfrow = c(1,1))
 > ## The warnings from inside GScale() will differ in their  relrange() ...
 > ## >> do sloppy testing
@@ -2599,17 +2602,19 @@ In `[.data.frame`(women, "height", drop = TRUE) :
 3  3           6           9
 > ## wrong printed names in 1.7.1
 > 
-> ## assigning to NULL
+> ## assigning to NULL --- now consistently behaves as if assigning to list() !
 > a <- NULL
 > a[["a"]] <- 1
 > a
-a 
-1 
+$a
+[1] 1
+
 > a <- NULL
 > a[["a"]] <- "something"
 > a
-          a 
-"something" 
+$a
+[1] "something"
+
 > a <- NULL
 > a[["a"]] <- 1:3
 > a
@@ -2967,7 +2972,7 @@ $residual.scale
 [1] 0.5234843
 
 Warning message:
-In predict.lm(object, newdata, se.fit, scale = residual.scale, type = ifelse(type ==  :
+In predict.lm(object, newdata, se.fit, scale = residual.scale, type = if (type ==  :
   prediction from a rank-deficient fit may be misleading
 > predict(fit, type="terms", se=TRUE)
 $fit
@@ -3088,7 +3093,9 @@ $wt.res
          j 
  0.3675473 
 
-> lm.influence(lm(y ~ 0, data=dat, weights=wt, na.action=na.exclude))
+> print(width = 99,
++ lm.influence(lm(y ~ 0, data=dat, weights=wt, na.action=na.exclude))
++ ) ; stopifnot(getOption("width") == 80)
 $hat
 b d c e f g h i j 
 0 0 0 0 0 0 0 0 0 
@@ -3106,16 +3113,12 @@ i
 j
 
 $sigma
-        b         d         c         e         f         g         h         i 
-0.9366289 0.9366289 0.9366289 0.9366289 0.9366289 0.9366289 0.9366289 0.9366289 
-        j 
-0.9366289 
+        b         d         c         e         f         g         h         i         j 
+0.9366289 0.9366289 0.9366289 0.9366289 0.9366289 0.9366289 0.9366289 0.9366289 0.9366289 
 
 $wt.res
-         b          d          c          e          f          g          h 
- 0.3604547  0.1146812         NA -1.1426753  0.7723744  0.6817419  0.1718693 
-         i          j 
- 2.0840918  0.3675473 
+         b          d          c          e          f          g          h          i          j 
+ 0.3604547  0.1146812         NA -1.1426753  0.7723744  0.6817419  0.1718693  2.0840918  0.3675473 
 
 > lm.influence(lm(y ~ 0 + x3, data=dat, weights=wt, na.action=na.omit))
 $hat
@@ -3247,9 +3250,9 @@ Error in `[.data.frame`(x, 1, c("a", "c")) : undefined columns selected
 > meth2gen <- function(cl)
 +     noquote(sub(paste("\\.",cl,"$",sep=""),"", c(.S3methods(class = cl))))
 > meth2gen("data.frame")
- [1] $             $<-           Math          Ops           Summary      
- [6] [             [<-           [[            [[<-          aggregate    
-[11] anyDuplicated as.data.frame as.list       as.matrix     by           
+ [1] $<-           Math          Ops           Summary       [            
+ [6] [<-           [[            [[<-          aggregate     anyDuplicated
+[11] anyNA         as.data.frame as.list       as.matrix     by           
 [16] cbind         dim           dimnames      dimnames<-    droplevels   
 [21] duplicated    edit          format        formula       head         
 [26] is.na         merge         na.exclude    na.omit       plot         
@@ -4106,6 +4109,8 @@ In readBin(zz, "character", 100) :
 [1] 18
 > readChar(zz, length(xx)) # truncates at embedded nul
 [1] "A test string"
+Warning message:
+In readChar(zz, length(xx)) : truncating string with embedded nuls
 > seek(zz) # make sure current position is reported properly
 [1] 18
 > close(zz)
@@ -4132,13 +4137,13 @@ lm(formula = y ~ x)
 
 Coefficients:
 (Intercept)           x1           x2  
-     0.4359      -0.1376       0.1539  
+    1.88803     -0.15694     -0.09072  
 
 > predict(lm1, newdata = data.frame(x= xt))
           1           2           3           4           5           6 
- 1.83760728  0.93041126  0.17714205  0.19350695  1.13343277  0.84194402 
+ 1.36820341  1.02982433  1.14505218  0.35306615  0.92190094  0.12991492 
           7           8           9          10 
- 0.08867482  0.25896653  0.27533143 -0.47793778 
+ 0.33586416 -0.09323631 -0.15945124  0.22794078 
 Warning message:
 'newdata' had 2 rows but variables found have 10 rows 
 > ## warns as from 2.0.0
@@ -4178,7 +4183,8 @@ Warning message:
 +               3, 6)
 > foo <- tempfile()
 > write.table(Mat, foo, col.names = FALSE, row.names = FALSE)
-> read.table(foo, colClasses = c(NA, NA, "NULL", "character", "Date", "POSIXct"))
+> read.table(foo, colClasses = c(NA, NA, "NULL", "character", "Date", "POSIXct"),
++            stringsAsFactors=TRUE)
   V1 V2 V4         V5                  V6
 1  1  a  A 2004-01-01 2004-01-01 12:00:00
 2  2  b  B 2004-02-01 2004-02-01 12:00:00
@@ -4186,7 +4192,8 @@ Warning message:
 > unlist(sapply(.Last.value, class))
          V1          V2          V4          V5         V61         V62 
   "integer"    "factor" "character"      "Date"   "POSIXct"    "POSIXt" 
-> read.table(foo, colClasses = c("factor",NA,"NULL","factor","Date","POSIXct"))
+> read.table(foo, colClasses = c("factor",NA,"NULL","factor","Date","POSIXct"),
++            stringsAsFactors=TRUE)
   V1 V2 V4         V5                  V6
 1  1  a  A 2004-01-01 2004-01-01 12:00:00
 2  2  b  B 2004-02-01 2004-02-01 12:00:00
@@ -4194,7 +4201,7 @@ Warning message:
 > unlist(sapply(.Last.value, class))
        V1        V2        V4        V5       V61       V62 
  "factor"  "factor"  "factor"    "Date" "POSIXct"  "POSIXt" 
-> read.table(foo, colClasses = c(V4="character"))
+> read.table(foo, colClasses = c(V4="character"), stringsAsFactors=TRUE)
   V1 V2 V3 V4         V5               V6
 1  1  a  1  A 2004-01-01 2004-01-01 12:00
 2  2  b  2  B 2004-02-01 2004-02-01 12:00
@@ -4485,9 +4492,9 @@ Single term deletions
 
 Model:
 y ~ x
-       Df Sum of Sq    RSS    AIC
-<none>              20.191 5.1555
-x       1    1.4798 21.671 4.4993
+       Df Sum of Sq     RSS     AIC
+<none>               9.1728 -9.8358
+x       1    1.6593 10.8321 -8.6766
 > res <-  try(stats:::drop1.default(fit))
 Error in stats:::drop1.default(fit) : 
   number of rows in use has changed: remove missing values?
@@ -4497,9 +4504,9 @@ Single term additions
 
 Model:
 y ~ x
-       Df Sum of Sq    RSS    AIC
-<none>              17.605 3.6005
-x2      1  0.011746 17.593 5.5885
+       Df Sum of Sq    RSS     AIC
+<none>              8.8475 -8.7842
+x2      1  0.030932 8.8166 -6.8473
 Warning message:
 In add1.lm(fit, ~. + x2) : using the 18/19 rows from a combined fit
 > res <-  try(stats:::add1.default(fit, ~ . +x2))
@@ -4838,14 +4845,19 @@ out-of-range values treated as 0 in coercion to raw
 > ## tests of indexing as quoted in Extract.Rd
 > x <- NULL
 > x$foo <- 2
-> x # length-1 vector
+> x # now, a list
 $foo
 [1] 2
 
 > x <- NULL
 > x[[2]] <- pi
-> x # numeric vector
-[1]       NA 3.141593
+> x # now, a list, too
+[[1]]
+NULL
+
+[[2]]
+[1] 3.141593
+
 > x <- NULL
 > x[[1]] <- 1:3
 > x # list
@@ -5082,7 +5094,7 @@ browser())(mpg = c(21, 21, 22.8, 21.4, 18.7, 18.1, 14.3, 24.4,
   ...
 Browse[1]> c
 > 
-> options(error = expression(NULL))
+> op <- c(op, options(error = expression(NULL)))
 > f <- function(...) stop()
 > do.call(f, mtcars)
 Error in (function (...)  : 
@@ -5455,14 +5467,17 @@ character(0)
 +                    counts = c(18,17,15,20,10,20,25,13,12))
 > fit <- glm(counts ~ outcome + treatment, family = poisson,
 +            data = d.AD, weights = c(0, rep(1,8)))
-> residuals(fit, type="working") # first was NA < 2.4.0
-          1           2           3           4           5           6 
--0.31250000  0.15546875 -0.13231383 -0.11111111 -0.20909091  0.34622824 
+> print(residuals(fit, type="working"),
++       width = 37) # first was NA < 2.4.0 //  using new 'width'
+          1           2           3 
+-0.31250000  0.15546875 -0.13231383 
+          4           5           6 
+-0.11111111 -0.20909091  0.34622824 
           7           8           9 
  0.11111111  0.02818182 -0.19226306 
 > ## working residuals were NA for zero-weight cases.
 > fit2 <- glm(counts ~ outcome + treatment, family = poisson,
-+            data = d.AD, weights = c(0, rep(1,8)), y = FALSE)
++             data = d.AD, weights = c(0, rep(1,8)), y = FALSE)
 > for(z in c("response", "working", "deviance", "pearson"))
 +     stopifnot(all.equal(residuals(fit, type=z), residuals(fit2, type=z),
 +                         scale = 1, tolerance = 1e-10))
@@ -5592,15 +5607,15 @@ lm(formula = y1 ~ 1, na.action = "na.exclude")
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--3.2806 -0.9057  0.0500  0.8020  2.5458 
+-3.2359 -0.8766  0.2338  0.9944  2.5905 
 
 Coefficients:
             Estimate Std. Error t value Pr(>|t|)    
-(Intercept)   1.1866     0.1797   6.602  4.4e-08 ***
+(Intercept)   1.1419     0.1966   5.808 6.47e-07 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 1.206 on 44 degrees of freedom
+Residual standard error: 1.319 on 44 degrees of freedom
   (5 observations deleted due to missingness)
 
 
@@ -5611,15 +5626,15 @@ lm(formula = y2 ~ 1, na.action = "na.exclude")
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--4.4712 -0.6591  0.3364  1.0945  3.6686 
+-4.2822 -1.2548  0.4364  1.2185  3.8575 
 
 Coefficients:
             Estimate Std. Error t value Pr(>|t|)    
-(Intercept)   2.8988     0.2586   11.21 1.75e-14 ***
+(Intercept)   2.7098     0.2798   9.685 1.77e-12 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 1.735 on 44 degrees of freedom
+Residual standard error: 1.877 on 44 degrees of freedom
   (5 observations deleted due to missingness)
 
 
@@ -6194,14 +6209,14 @@ Error in cor(X, use = "complete", method = "kendall") :
 > fit <-  lm(ans ~ x + u, data = junk)
 > confint(fit)
                  2.5 %    97.5 %
-(Intercept) -0.4634457 1.6198116
+(Intercept) -0.3224857 2.2194594
 x                   NA        NA
-uY          -2.3607073 0.5854635
+uY          -2.6821240 0.3560815
 > confint.default(fit)
                  2.5 %    97.5 %
-(Intercept) -0.3071384 1.4635043
+(Intercept) -0.1317629 2.0287366
 x                   NA        NA
-uY          -2.1396554 0.3644116
+uY          -2.4541666 0.1281242
 > ## Mismatch gave NA for 'u' in 2.6.1
 > 
 > 
@@ -6348,7 +6363,7 @@ function(given = NULL) {
     if (is.null(given)) callObj$default <- TRUE
     callObj
 }
-<bytecode: 0x2a78050>
+<bytecode: 0x1c4f928>
 > print(foo, useSource = FALSE)
 function (given = NULL) 
 {
@@ -6359,7 +6374,7 @@ function (given = NULL)
         callObj$default <- TRUE
     callObj
 }
-<bytecode: 0x2a78050>
+<bytecode: 0x1c4f928>
 > attr(foo, "srcref") <- NULL
 > foo
 function (given = NULL) 
@@ -6371,15 +6386,20 @@ function (given = NULL)
         callObj$default <- TRUE
     callObj
 }
-<bytecode: 0x2a78050>
+<bytecode: 0x1c4f928>
 > (f <- structure(function(){}, note = "just a note",
 +                 yada = function() "not the same"))
 function(){}
 attr(,"note")
 [1] "just a note"
 attr(,"yada")
-function () 
-"not the same"
+function() "not the same"
+> print(f, useSource = TRUE)
+function(){}
+attr(,"note")
+[1] "just a note"
+attr(,"yada")
+function() "not the same"
 > print(f, useSource = FALSE) # must print attributes
 function () 
 {
@@ -6389,21 +6409,68 @@ attr(,"note")
 attr(,"yada")
 function () 
 "not the same"
-> print.function <- function(x, ...) { str(x,...); invisible(x) }
+> print.function <- function(x, ...) {
++     cat("my print(<function>): "); str(x, give.attr=FALSE); invisible(x) }
 > print.function
-function (x, ...)  
- - attr(*, "srcref")= 'srcref' int [1:8] 1 19 1 63 19 63 1 1
-  ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x293ae58> 
-> f
-function ()  
- - attr(*, "srcref")= 'srcref' int [1:8] 1 17 1 28 17 28 1 1
-  ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x295d2c0> 
- - attr(*, "note")= chr "just a note"
- - attr(*, "yada")=function ()  
-  ..- attr(*, "srcref")= 'srcref' int [1:8] 2 24 2 48 24 48 2 2
-  .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x295d2c0> 
+my print(<function>): function (x, ...)  
+> print(print.function)
+my print(<function>): function (x, ...)  
 > rm(print.function)
-> ## auto-printing and printing differed up to R 2.9.x
+> ## auto-printing and printing differed up to R 2.9.x -- and then *AGAIN* in R 3.6.0
+> 
+> 
+> ## Make sure deparsing does not reset parameters
+> print(list(f, expression(foo), f, quote(foo), f, base::list, f),
++       useSource = FALSE)
+[[1]]
+function () 
+{
+}
+attr(,"note")
+[1] "just a note"
+attr(,"yada")
+function () 
+"not the same"
+
+[[2]]
+expression(foo)
+
+[[3]]
+function () 
+{
+}
+attr(,"note")
+[1] "just a note"
+attr(,"yada")
+function () 
+"not the same"
+
+[[4]]
+foo
+
+[[5]]
+function () 
+{
+}
+attr(,"note")
+[1] "just a note"
+attr(,"yada")
+function () 
+"not the same"
+
+[[6]]
+function (...)  .Primitive("list")
+
+[[7]]
+function () 
+{
+}
+attr(,"note")
+[1] "just a note"
+attr(,"yada")
+function () 
+"not the same"
+
 > 
 > printCoefmat(cbind(0,1))
      [,1] [,2]
@@ -6551,7 +6618,8 @@ Error in complete.cases(list(), list()) :
 > ## error messages from (C-level) evalList
 > tst <- function(y) { stopifnot(is.numeric(y)); y+ 1 }
 > try(tst()) # even nicer since R 3.5.0's change to sequential stopifnot()
-Error in is.numeric(y) : argument "y" is missing, with no default
+Error in stopifnot(is.numeric(y)) : 
+  argument "y" is missing, with no default
 > try(c(1,,2))
 Error in c(1, , 2) : argument 2 is empty
 > ## change in 2.8.0 made these less clear
@@ -6891,9 +6959,10 @@ F-statistic:  4412 on 1 and 6 DF,  p-value: 7.834e-10
 > 
 > library("methods")# (not needed here)
 > assertError <- tools::assertError
-> assertError( getMethod(ls, "bar", fdef=ls), verbose=TRUE)
+> assertErrorV <- function(expr) assertError(expr, verbose=TRUE)
+> assertErrorV( getMethod(ls, "bar", fdef=ls) )
 Asserted error: no generic function found for 'ls'
-> assertError( getMethod(show, "bar"), verbose=TRUE)
+> assertErrorV( getMethod(show, "bar") )
 Asserted error: no method found for function 'show' and signature bar
 > ## R < 2.15.1 gave
 > ##   cannot coerce type 'closure' to vector of type 'character'
@@ -7032,8 +7101,7 @@ x %^% (y %^% z)
 > 
 > ## Anonymous function calls were not deparsed properly
 > substitute(f(x), list(f = function(x) x + 1))
-(function (x) 
-x + 1)(x)
+(function(x) x + 1)(x)
 > substitute(f(x), list(f = quote(function(x) x + 1)))
 (function(x) x + 1)(x)
 > substitute(f(x), list(f = quote(f+g)))
@@ -7048,7 +7116,8 @@ g(y)(x)
 > 
 > 
 > ## PR#15247 : str() on invalid data frame names (where print() works):
-> d <- data.frame(1:3, "B", 4); names(d) <- c("A", "B\xba","C\xabcd")
+> d <- data.frame(1:3, "B", 4, stringsAsFactors=TRUE)
+> names(d) <- c("A", "B\xba","C\xabcd")
 > str(d)
 'data.frame':	3 obs. of  3 variables:
  $ A      : int  1 2 3
@@ -7239,12 +7308,12 @@ elem2 2 12   14
 > 
 > ## When two entries needed to be cut to width, str() mixed up
 > ## the values (reported by Gerrit Eichner)
-> oldopts <- options(width=70, stringsAsFactors=TRUE)
+> oldopts <- options(width=70)
 > n <- 11      # number of rows of data frame
 > M <- 10000   # order of magnitude of numerical values
 > longer.char.string <- "zjtvorkmoydsepnxkabmeondrjaanutjmfxlgzmrbjp"
 > X <- data.frame( A = 1:n * M,
-+                  B = rep( longer.char.string, n))
++                  B = factor(rep(longer.char.string, n)))
 > str( X, strict.width = "cut")
 'data.frame':	11 obs. of  2 variables:
  $ A: num  1e+04 2e+04 3e+04 4e+04 5e+04 6e+04 7e+04 8e+04 9e+04 1e+..
@@ -7435,27 +7504,27 @@ $foo
 > p <- parse(text = raw)
 > getParseData(p)
    line1 col1 line2 col2 id parent          token terminal          text
-31     2    1     4   15 31      0           expr    FALSE              
-3      2    1     2    8  3     31       FUNCTION     TRUE      function
-4      2    9     2    9  4     31            '('     TRUE             (
-5      2   11     2   11  5     31 SYMBOL_FORMALS     TRUE             a
-6      2   15     2   27  6     31        COMMENT     TRUE # parameter 1
-8      3   10     3   10  8     31            ','     TRUE             ,
-10     3   12     3   12 10     31 SYMBOL_FORMALS     TRUE             b
-11     3   13     3   13 11     31     EQ_FORMALS     TRUE             =
+32     2    1     4   15 32      0           expr    FALSE              
+3      2    1     2    8  3     32       FUNCTION     TRUE      function
+4      2    9     2    9  4     32            '('     TRUE             (
+5      2   11     2   11  5     32 SYMBOL_FORMALS     TRUE             a
+6      2   15     2   27  6     32        COMMENT     TRUE # parameter 1
+8      3   10     3   10  8     32            ','     TRUE             ,
+10     3   12     3   12 10     32 SYMBOL_FORMALS     TRUE             b
+11     3   13     3   13 11     32     EQ_FORMALS     TRUE             =
 12     3   14     3   14 12     13      NUM_CONST     TRUE             2
-13     3   14     3   14 13     31           expr    FALSE              
-14     3   16     3   28 14     31        COMMENT     TRUE # parameter 2
-16     4   10     4   10 16     31            ')'     TRUE             )
-28     4   11     4   15 28     31           expr    FALSE              
-18     4   11     4   11 18     28            '{'     TRUE             {
-25     4   12     4   14 25     28           expr    FALSE              
-19     4   12     4   12 19     21         SYMBOL     TRUE             a
-21     4   12     4   12 21     25           expr    FALSE              
-20     4   13     4   13 20     25            '+'     TRUE             +
-22     4   14     4   14 22     24         SYMBOL     TRUE             b
-24     4   14     4   14 24     25           expr    FALSE              
-23     4   15     4   15 23     28            '}'     TRUE             }
+13     3   14     3   14 13     32           expr    FALSE              
+14     3   16     3   28 14     32        COMMENT     TRUE # parameter 2
+16     4   10     4   10 16     32            ')'     TRUE             )
+29     4   11     4   15 29     32           expr    FALSE              
+19     4   11     4   11 19     29            '{'     TRUE             {
+26     4   12     4   14 26     29           expr    FALSE              
+20     4   12     4   12 20     22         SYMBOL     TRUE             a
+22     4   12     4   12 22     26           expr    FALSE              
+21     4   13     4   13 21     26            '+'     TRUE             +
+23     4   14     4   14 23     25         SYMBOL     TRUE             b
+25     4   14     4   14 25     26           expr    FALSE              
+24     4   15     4   15 24     29            '}'     TRUE             }
 > ## Got some parents wrong
 > 
 > 
@@ -7871,21 +7940,16 @@ logical       1
 [1] "NA" "1" 
 > ##
 > ## these should fail
-> sprintf("%d", 1.1)
-Error in sprintf("%d", 1.1) : 
-  invalid format '%d'; use format %f, %e, %g or %a for numeric objects
-> sprintf("%d", c(1.1,1))
-Error in sprintf("%d", c(1.1, 1)) : 
-  invalid format '%d'; use format %f, %e, %g or %a for numeric objects
-> sprintf("%d", c(1,1.1))
-Error in sprintf("%d", c(1, 1.1)) : 
-  invalid format '%d'; use format %f, %e, %g or %a for numeric objects
-> sprintf("%d", NaN)
-Error in sprintf("%d", NaN) : 
-  invalid format '%d'; use format %f, %e, %g or %a for numeric objects
-> sprintf("%d", c(1,NaN))
-Error in sprintf("%d", c(1, NaN)) : 
-  invalid format '%d'; use format %f, %e, %g or %a for numeric objects
+> assertErrorV( sprintf("%d", 1.1) )
+Asserted error: invalid format '%d'; use format %f, %e, %g or %a for numeric objects
+> assertErrorV( sprintf("%d", c(1.1,1)) )
+Asserted error: invalid format '%d'; use format %f, %e, %g or %a for numeric objects
+> assertErrorV( sprintf("%d", c(1,1.1)) )
+Asserted error: invalid format '%d'; use format %f, %e, %g or %a for numeric objects
+> assertErrorV( sprintf("%d", NaN) )
+Asserted error: invalid format '%d'; use format %f, %e, %g or %a for numeric objects
+> assertErrorV( sprintf("%d", c(1,NaN)) )
+Asserted error: invalid format '%d'; use format %f, %e, %g or %a for numeric objects
 > 
 > 
 > ## formatting of named raws:
@@ -7937,10 +8001,10 @@ Kilroy was here! ... and I'm printed as well ...
 > ## without "{ .. }" :
 > stopifnot(exprs = 2 == 2)
 > try(stopifnot(exprs = 1 > 2))
-Error in try(stopifnot(exprs = 1 > 2)) : 1 > 2 is not TRUE
+Error : 1 > 2 is not TRUE
 > ## passing an expression object:
-> stopifnot(exprs = expression(2 == 2, pi < 4))
-> tryCatch(stopifnot(exprs = expression(
+> stopifnot(exprObject = expression(2 == 2, pi < 4))
+> tryCatch(stopifnot(exprObject = expression(
 +                        2 == 2,
 +                        { cat("\n Kilroy again .."); TRUE },
 +                        pi < 4,
@@ -7952,4 +8016,43 @@ Error in try(stopifnot(exprs = 1 > 2)) : 1 > 2 is not TRUE
 Error:  0 == 1 is not TRUE 
 > ## was partly not ok for many weeks in R-devel, early 2018
 > 
+> 
+> ## print.htest() with small 'digits'
+> print(t.test(1:28), digits = 3)
+
+	One Sample t-test
+
+data:  1:28
+t = 9, df = 27, p-value = 6e-10
+alternative hypothesis: true mean is not equal to 0
+95 percent confidence interval:
+ 11.3 17.7
+sample estimates:
+mean of x 
+     14.5 
+
+> ## showed 'df = 30' from signif(*, digits=1) and too many digits for CI, in R <= 3.5.1
+> 
+> 
+> ## str(<d.frame w/ attrib>):
+> treeA <- trees
+> attr(treeA, "someA") <- 1:77
+> str(treeA)
+'data.frame':	31 obs. of  3 variables:
+ $ Girth : num  8.3 8.6 8.8 10.5 10.7 10.8 11 11 11.1 11.2 ...
+ $ Height: num  70 65 63 72 81 83 66 75 80 75 ...
+ $ Volume: num  10.3 10.3 10.2 16.4 18.8 19.7 15.6 18.2 22.6 19.9 ...
+ - attr(*, "someA")= int [1:77] 1 2 3 4 5 6 7 8 9 10 ...
+> ## now shows the *length* of "someA"
+> 
+> 
+> ## summaryRprof() bug PR#15886 :
+> Rprof(tf <- tempfile("Rprof.out"), memory.profiling=TRUE, line.profiling=FALSE)
+> out <- lapply(1:10000, rnorm, n= 512)
+> Rprof(NULL)
+> if(interactive())
++     print(length(readLines(tf))) # ca. 10 .. 20 lines
+> op <- options(warn = 2) # no warnings, even !
+> for (cs in 1:21) s <- summaryRprof(tf, memory="tseries", chunksize=cs)
+> options(op) ## "always" triggered an error (or a warning) in R <= 3.6.3
 > 

@@ -1,6 +1,6 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
- *  Copyright (C) 1995--2018  The R Core Team
+ *  Copyright (C) 1995--2020  The R Core Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -207,7 +207,7 @@ static int defaultSerializeVersion()
 	if (val == 2 || val == 3)
 	    dflt = val;
 	else
-	    dflt = 2; /* the default */
+	    dflt = 3; /* the default */
     }
     return dflt;
 }
@@ -575,6 +575,8 @@ static void OutFormat(R_outpstream_t stream)
     case R_pstream_ascii_format:
     case R_pstream_asciihex_format:
 	stream->OutBytes(stream, "A\n", 2); break;
+	/* on deserialization, asciihex_format is treated exactly the same
+	   way as ascii_format; the distinction is handled inside scanf %lg */
     case R_pstream_binary_format: stream->OutBytes(stream, "B\n", 2); break;
     case R_pstream_xdr_format:    stream->OutBytes(stream, "X\n", 2); break;
     case R_pstream_any_format:
@@ -589,7 +591,7 @@ static void InFormat(R_inpstream_t stream)
     R_pstream_format_t type;
     stream->InBytes(stream, buf, 2);
     switch (buf[0]) {
-    case 'A': type = R_pstream_ascii_format; break;
+    case 'A': type = R_pstream_ascii_format; break; /* also for asciihex */
     case 'B': type = R_pstream_binary_format; break;
     case 'X': type = R_pstream_xdr_format; break;
     case '\n':
@@ -1006,8 +1008,20 @@ static void WriteItem (SEXP s, SEXP ref_table, R_outpstream_t stream)
     SEXP t;
 
     if (R_compile_pkgs && TYPEOF(s) == CLOSXP && TYPEOF(BODY(s)) != BCODESXP &&
-        !R_disable_bytecode) {
+        !R_disable_bytecode &&
+        (!IS_S4_OBJECT(s) || (!inherits(s, "refMethodDef") &&
+                              !inherits(s, "defaultBindingFunction")))) {
 
+	/* Do not compile reference class methods in their generators, because
+	   the byte-code is dropped as soon as the method is installed into a
+	   new environment. This is a performance optimization but it also
+	   prevents byte-compiler warnings about no visible binding for super
+	   assignment to a class field.
+
+	   Do not compile default binding functions, because the byte-code is
+	   dropped as fields are set in constructors (just an optimization).
+	*/
+	    
 	SEXP new_s;
 	R_compile_pkgs = FALSE;
 	PROTECT(new_s = R_cmpfun1(s));
@@ -1057,8 +1071,10 @@ static void WriteItem (SEXP s, SEXP ref_table, R_outpstream_t stream)
 	HashAdd(s, ref_table);
 	if (R_IsPackageEnv(s)) {
 	    SEXP name = R_PackageEnvName(s);
+	    const void *vmax = vmaxget();
 	    warning(_("'%s' may not be available when loading"),
-		    CHAR(STRING_ELT(name, 0)));
+		    translateChar(STRING_ELT(name, 0)));
+	    vmaxset(vmax);
 	    OutInteger(stream, PACKAGESXP);
 	    OutStringVec(stream, name, ref_table);
 	}
@@ -1110,6 +1126,8 @@ static void WriteItem (SEXP s, SEXP ref_table, R_outpstream_t stream)
 		WriteItem(ATTRIB(s), ref_table, stream);
 	    if (TAG(s) != R_NilValue)
 		WriteItem(TAG(s), ref_table, stream);
+	    if (BNDCELL_TAG(s))
+		R_expand_binding_value(s);
 	    WriteItem(CAR(s), ref_table, stream);
 	    /* now do a tail call to WriteItem to handle the CDR */
 	    s = CDR(s);
@@ -1392,8 +1410,10 @@ void R_Serialize(SEXP s, R_outpstream_t stream)
  * Unserialize Code
  */
 
+// used in saveload.c
 attribute_hidden int R_ReadItemDepth = 0, R_InitReadItemDepth;
-static char lastname[8192];
+
+static char lastname[8192] = "<unknown>";
 
 #define INITIAL_REFREAD_TABLE_SIZE 128
 
@@ -1836,11 +1856,13 @@ static SEXP ReadItem (SEXP ref_table, R_inpstream_t stream)
 	SETLEVELS(s, levs);
 	SET_OBJECT(s, objf);
 	R_ReadItemDepth++;
+	Rboolean set_lastname = FALSE;
 	SET_ATTRIB(s, hasattr ? ReadItem(ref_table, stream) : R_NilValue);
 	SET_TAG(s, hastag ? ReadItem(ref_table, stream) : R_NilValue);
 	if (hastag && R_ReadItemDepth == R_InitReadItemDepth + 1 &&
 	    isSymbol(TAG(s))) {
 	    snprintf(lastname, 8192, "%s", CHAR(PRINTNAME(TAG(s))));
+	    set_lastname = TRUE;
 	}
 	if (hastag && R_ReadItemDepth <= 0) {
 	    Rprintf("%*s", 2*(R_ReadItemDepth - R_InitReadItemDepth), "");
@@ -1852,6 +1874,7 @@ static SEXP ReadItem (SEXP ref_table, R_inpstream_t stream)
 	/* For reading closures and promises stored in earlier versions, convert NULL env to baseenv() */
 	if      (type == CLOSXP && CLOENV(s) == R_NilValue) SET_CLOENV(s, R_BaseEnv);
 	else if (type == PROMSXP && PRENV(s) == R_NilValue) SET_PRENV(s, R_BaseEnv);
+	if (set_lastname) strcpy(lastname, "<unknown>");
 	UNPROTECT(1); /* s */
 	return s;
     default:
@@ -1890,7 +1913,7 @@ static SEXP ReadItem (SEXP ref_table, R_inpstream_t stream)
 	    }
 	    break;
 	case CHARSXP:
-	    /* Let us suppose these will still be limited to 2^31 -1 bytes */
+	    /* these are currently limited to 2^31 -1 bytes */
 	    length = InInteger(stream);
 	    if (length == -1)
 		PROTECT(s = NA_STRING);
@@ -2132,11 +2155,9 @@ SEXP R_Unserialize(R_inpstream_t stream)
     case 3:
     {
 	int nelen = InInteger(stream);
-	char nbuf[nelen + 1];
-	InString(stream, nbuf, nelen);
-	nbuf[nelen] = '\0';
-	nelen = nelen < (R_CODESET_MAX + 1) ? nelen : (R_CODESET_MAX + 1);
-	strncpy(stream->native_encoding, nbuf, nelen);
+	if (nelen > R_CODESET_MAX)
+	    error(_("invalid length of encoding name"));
+	InString(stream, stream->native_encoding, nelen);
 	stream->native_encoding[nelen] = '\0';
 	break;
     }
@@ -2225,6 +2246,8 @@ SEXP R_SerializeInfo(R_inpstream_t stream)
     if (version == 3) {
 	SET_STRING_ELT(names, 4, mkChar("native_encoding"));
 	int nelen = InInteger(stream);
+	if (nelen > R_CODESET_MAX)
+	    error(_("invalid length of encoding name"));
 	char nbuf[nelen + 1];
 	InString(stream, nbuf, nelen);
 	nbuf[nelen] = '\0';
@@ -2892,23 +2915,30 @@ static SEXP appendRawToFile(SEXP file, SEXP bytes)
     size_t len, out;
     long pos;  // what ftell gives: won't work for > 2GB files
     SEXP val;
+    const void *vmax;
+    const char *cfile;
 
     if (! IS_PROPER_STRING(file))
 	error(_("not a proper file name"));
+    vmax = vmaxget();
+    cfile = translateCharFP(STRING_ELT(file, 0));
     if (TYPEOF(bytes) != RAWSXP)
 	error(_("not a proper raw vector"));
 #ifdef HAVE_WORKING_FTELL
     /* Windows' ftell returns position 0 with "ab" */
-    if ((fp = R_fopen(CHAR(STRING_ELT(file, 0)), "ab")) == NULL) {
-	error( _("cannot open file '%s': %s"), CHAR(STRING_ELT(file, 0)),
+    if ((fp = R_fopen(cfile, "ab")) == NULL) {
+	error( _("cannot open file '%s': %s"), cfile,
 	       strerror(errno));
     }
 #else
-    if ((fp = R_fopen(CHAR(STRING_ELT(file, 0)), "r+b")) == NULL) {
-	error( _("cannot open file '%s': %s"), CHAR(STRING_ELT(file, 0)),
+    if ((fp = R_fopen(cfile, "r+b")) == NULL) {
+	error( _("cannot open file '%s': %s"), cfile,
 	       strerror(errno));
     }
-    fseek(fp, 0, SEEK_END);
+    if (fseek(fp, 0, SEEK_END) != 0) {
+	fclose(fp);
+	error(_("seek failed on %s"), cfile);
+    }
 #endif
 
     len = LENGTH(bytes);
@@ -2922,6 +2952,8 @@ static SEXP appendRawToFile(SEXP file, SEXP bytes)
     val = allocVector(INTSXP, 2);
     INTEGER(val)[0] = (int) pos;
     INTEGER(val)[1] = (int) len;
+    vmaxset(vmax);
+
     return val;
 }
 
@@ -2938,7 +2970,7 @@ do_lazyLoadDBflush(SEXP call, SEXP op, SEXP args, SEXP env)
     checkArity(op, args);
 
     int i;
-    const char *cfile = CHAR(STRING_ELT(CAR(args), 0));
+    const char *cfile = translateCharFP(STRING_ELT(CAR(args), 0));
 
     /* fprintf(stderr, "flushing file %s", cfile); */
     for (i = 0; i < used; i++)
@@ -2964,10 +2996,13 @@ static SEXP readRawFromFile(SEXP file, SEXP key)
     int offset, len, in, i, icache = -1;
     long filelen;
     SEXP val;
-    const char *cfile = CHAR(STRING_ELT(file, 0));
+    const void *vmax;
+    const char *cfile;
 
     if (! IS_PROPER_STRING(file))
 	error(_("not a proper file name"));
+    vmax = vmaxget();
+    cfile = translateCharFP(STRING_ELT(file, 0));
     if (TYPEOF(key) != INTSXP || LENGTH(key) != 2)
 	error(_("bad offset/length argument"));
 
@@ -2980,6 +3015,7 @@ static SEXP readRawFromFile(SEXP file, SEXP key)
 	if(strcmp(cfile, names[i]) == 0) {icache = i; break;}
     if (icache >= 0) {
 	memcpy(RAW(val), ptr[icache]+offset, len);
+	vmaxset(vmax);
 	return val;
     }
 
@@ -3021,6 +3057,7 @@ static SEXP readRawFromFile(SEXP file, SEXP key)
 		fclose(fp);
 		if (len != in) error(_("read failed on %s"), cfile);
 	    }
+	    vmaxset(vmax);
 	    return val;
 	} else {
 	    if (fseek(fp, offset, SEEK_SET) != 0) {
@@ -3030,6 +3067,7 @@ static SEXP readRawFromFile(SEXP file, SEXP key)
 	    in = (int) fread(RAW(val), 1, len, fp);
 	    fclose(fp);
 	    if (len != in) error(_("read failed on %s"), cfile);
+	    vmaxset(vmax);
 	    return val;
 	}
     }
@@ -3043,6 +3081,7 @@ static SEXP readRawFromFile(SEXP file, SEXP key)
     in = (int) fread(RAW(val), 1, len, fp);
     fclose(fp);
     if (len != in) error(_("read failed on %s"), cfile);
+    vmaxset(vmax);
     return val;
 }
 
@@ -3153,7 +3192,7 @@ do_lazyLoadDBfetch(SEXP call, SEXP op, SEXP args, SEXP env)
     else if (compressed)
 	REPROTECT(val = R_decompress1(val, &err), vpi);
     if (err) error("lazy-load database '%s' is corrupt",
-		   CHAR(STRING_ELT(file, 0)));
+		   translateChar(STRING_ELT(file, 0)));
     val = R_unserialize(val, hook);
     if (TYPEOF(val) == PROMSXP) {
 	REPROTECT(val, vpi);

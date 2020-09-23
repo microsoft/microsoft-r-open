@@ -1,6 +1,6 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
- *  Copyright (C) 1999--2017  The R Core Team
+ *  Copyright (C) 1999--2020  The R Core Team
  *  Copyright (C) 1995, 1996  Robert Gentleman and Ross Ihaka
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -93,19 +93,19 @@ R_size_t R_Decode2Long(char *p, int *ierr)
 	REprintf("R_Decode2Long(): v=%ld\n", v);
     // NOTE: currently, positive *ierr are not differentiated in the callers:
     if(p[0] == 'G') {
-	if((Giga * (double)v) > R_SIZE_T_MAX) { *ierr = 4; return(v); }
+	if((Giga * (double)v) > (double) R_SIZE_T_MAX) { *ierr = 4; return(v); }
 	return (R_size_t) Giga * v;
     }
     else if(p[0] == 'M') {
-	if((Mega * (double)v) > R_SIZE_T_MAX) { *ierr = 1; return(v); }
+	if((Mega * (double)v) > (double) R_SIZE_T_MAX) { *ierr = 1; return(v); }
 	return (R_size_t) Mega * v;
     }
     else if(p[0] == 'K') {
-	if((1024 * (double)v) > R_SIZE_T_MAX) { *ierr = 2; return(v); }
+	if((1024 * (double)v) > (double) R_SIZE_T_MAX) { *ierr = 2; return(v); }
 	return (1024*v);
     }
     else if(p[0] == 'k') {
-	if((1000 * (double)v) > R_SIZE_T_MAX) { *ierr = 3; return(v); }
+	if((1000 * (double)v) > (double) R_SIZE_T_MAX) { *ierr = 3; return(v); }
 	return (1000*v);
     }
     else {
@@ -314,7 +314,9 @@ const char *EncodeReal2(double x, int w, int d, int e)
     return buff;
 }
 
+#ifdef formatComplex_USING_signif
 void z_prec_r(Rcomplex *r, Rcomplex *x, double digits);
+#endif
 
 #define NB3 NB+3
 const char
@@ -336,12 +338,14 @@ const char
 	const char *Im, *tmp;
 	int flagNegIm = 0;
 	Rcomplex y;
+#ifdef formatComplex_USING_signif
 	/* formatComplex rounded, but this does not, and we need to
 	   keep it that way so we don't get strange trailing zeros.
 	   But we do want to avoid printing small exponentials that
 	   are probably garbage.
 	 */
 	z_prec_r(&y, &x, R_print.digits);
+#endif
 	/* EncodeReal has static buffer, so copy */
 	tmp = EncodeReal0(y.r == 0. ? y.r : x.r, wr, dr, er, dec);
 	strcpy(Re, tmp);
@@ -399,7 +403,7 @@ int Rstrwid(const char *str, int slen, cetype_t ienc, int quote)
 	int res;
 	mbstate_t mb_st;
 	wchar_t wc;
-	Rwchar_t k; /* not wint_t as it might be signed */
+	R_wchar_t k; /* not wint_t as it might be signed */
 
 	if(ienc != CE_UTF8)  mbs_init(&mb_st);
 	for (i = 0; i < slen; i++) {
@@ -513,8 +517,8 @@ int Rstrlen(SEXP s, int quote)
    If 'quote' is non-zero the result should be quoted (and internal quotes
    escaped and NA strings handled differently).
 
-   EncodeString is called from EncodeElement, cat() (for labels when
-   filling), to (auto)print character vectors, arrays, names and
+   EncodeString is called from EncodeElement, EncodeChar, cat() (for labels
+   when filling), to (auto)print character vectors, arrays, names and
    CHARSXPs.  It is also called by do_encodeString, but not from
    format().
  */
@@ -539,12 +543,38 @@ const char *EncodeString(SEXP s, int w, int quote, Rprt_adj justify)
 
     if (s == NA_STRING) {
 	p = quote ? CHAR(R_print.na_string) : CHAR(R_print.na_string_noquote);
-	cnt = i = (int)(quote ? strlen(CHAR(R_print.na_string)) :
-			strlen(CHAR(R_print.na_string_noquote)));
+	cnt = (int)(quote ? strlen(CHAR(R_print.na_string)) :
+		strlen(CHAR(R_print.na_string_noquote)));
+	i = (quote ? Rstrlen(R_print.na_string, 0) :
+		Rstrlen(R_print.na_string_noquote, 0));
 	quote = 0;
     } else {
+	if(IS_BYTES(s)) {
+	    ienc = CE_NATIVE;
 #ifdef Win32
-	if(WinUTF8out) {
+	    if (WinUTF8out)
+		ienc = CE_UTF8;
+#endif
+	    p = CHAR(s);
+	    cnt = (int) strlen(p);
+	    const char *q;
+	    char *pp = R_alloc(4*cnt+1, 1), *qq = pp, buf[5];
+	    for (q = p; *q; q++) {
+		unsigned char k = (unsigned char) *q;
+		if (k >= 0x20 && k < 0x80) {
+		    *qq++ = *q;
+		    if (quote && *q == '"') cnt++;
+		} else {
+		    snprintf(buf, 5, "\\x%02x", k);
+		    for(j = 0; j < 4; j++) *qq++ = buf[j];
+		    cnt += 3;
+		}
+	    }
+	    *qq = '\0';
+	    p = pp;
+	    i = cnt;
+#ifdef Win32
+	} else if(WinUTF8out) {
 	    if(ienc == CE_UTF8) {
 		p = CHAR(s);
 		i = Rstrlen(s, quote);
@@ -560,30 +590,9 @@ const char *EncodeString(SEXP s, int w, int quote, Rprt_adj justify)
 		}
 		ienc = CE_UTF8;
 	    }
-	} else
 #endif
-	{
-	    if(IS_BYTES(s)) {
-		ienc = CE_NATIVE;
-		p = CHAR(s);
-		cnt = (int) strlen(p);
-		const char *q;
-		char *pp = R_alloc(4*cnt+1, 1), *qq = pp, buf[5];
-		for (q = p; *q; q++) {
-		    unsigned char k = (unsigned char) *q;
-		    if (k >= 0x20 && k < 0x80) {
-			*qq++ = *q;
-			if (quote && *q == '"') cnt++;
-		    } else {
-			snprintf(buf, 5, "\\x%02x", k);
-			for(j = 0; j < 4; j++) *qq++ = buf[j];
-			cnt += 3;
-		    }
-		}
-		*qq = '\0';
-		p = pp;
-		i = cnt;
-	    } else if (useUTF8 && ienc == CE_UTF8) {
+	} else {
+	    if (useUTF8 && ienc == CE_UTF8) {
 		p = CHAR(s);
 		i = Rstrlen(s, quote);
 		cnt = LENGTH(s);
@@ -611,7 +620,7 @@ const char *EncodeString(SEXP s, int w, int quote, Rprt_adj justify)
 
        +2 allows for quotes, +6 for UTF_8 escapes.
      */
-    if(5.*cnt + 8 > SIZE_MAX)
+    if(5.*cnt + 8 > (double) SIZE_MAX)
 	error(_("too large string (nchar=%d) => 5*nchar + 8 > SIZE_MAX"));
     size_t q_len = 5*(size_t)cnt + 8;
     if(q_len < w) q_len = (size_t) w;
@@ -784,7 +793,7 @@ const char *EncodeElement(SEXP x, int indx, int quote, char cdec)
     return EncodeElement0(x, indx, quote, dec);
 }
 
-const char *EncodeElement0(SEXP x, int indx, int quote, const char *dec)
+const char *EncodeElement0(SEXP x, R_xlen_t indx, int quote, const char *dec)
 {
     int w, d, e, wi, di, ei;
     const char *res;
@@ -944,6 +953,13 @@ void Rvprintf(const char *format, va_list arg)
 
 void REvprintf(const char *format, va_list arg)
 {
+    static char *malloc_buf = NULL;
+
+    if (malloc_buf) {
+	char *tmp = malloc_buf;
+	malloc_buf = NULL;
+	free(tmp);
+    }
     if(R_ErrorCon != 2) {
 	Rconnection con = getConnection_no_err(R_ErrorCon);
 	if(con == NULL) {
@@ -967,10 +983,34 @@ void REvprintf(const char *format, va_list arg)
 	} else vfprintf(R_Consolefile, format, arg);
     } else {
 	char buf[BUFSIZE];
+	Rboolean printed = FALSE;
+	va_list aq;
 
-	vsnprintf(buf, BUFSIZE, format, arg);
+	va_copy(aq, arg);
+	int res = vsnprintf(buf, BUFSIZE, format, aq);
+	va_end(aq);
 	buf[BUFSIZE-1] = '\0';
-	R_WriteConsoleEx(buf, (int) strlen(buf), 1);
+	if (res >= BUFSIZE) {
+	    /* A very long string has been truncated. Try to allocate a large
+	       buffer for it to print it in full. Do not use R_alloc() as this
+	       can be run due to memory allocation error from the R heap.
+	       Do not use contexts and do not throw any errors nor warnings
+	       as this may be run from error handling. */
+	    int size = res + 1;
+	    malloc_buf = (char *)malloc(size * sizeof(char));
+	    if (malloc_buf) {
+		res = vsnprintf(malloc_buf, size, format, arg);
+		if (res == size - 1) {
+		    R_WriteConsoleEx(malloc_buf, res, 1);
+		    printed = TRUE;
+		}
+		char *tmp = malloc_buf;
+		malloc_buf = NULL;
+		free(tmp);
+	    }
+	}
+	if (!printed)
+	    R_WriteConsoleEx(buf, (int) strlen(buf), 1);
     }
 }
 

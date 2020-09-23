@@ -1,7 +1,7 @@
 #  File src/library/utils/R/citation.R
 #  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2018 The R Core Team
+#  Copyright (C) 1995-2019 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ function(given = NULL, family = NULL, middle = NULL,
                  email = email, role = role, comment = comment,
 		 first = first, last = last)
     if(all(vapply(args, is.null, NA)))
-        return(structure(list(), class = "person"))
+        return(.person())
 
     args <- lapply(args, .listify)
     args_length <- lengths(args)
@@ -117,8 +117,8 @@ function(given = NULL, family = NULL, middle = NULL,
         if(length(comment)) {
             ## Be nice and recognize ORCID identifiers given as URLs
             ## but perhaps without an ORCID name.
-            ind <- grepl(paste0("^https?://orcid.org/",
-                                "([[:digit:]]{4}[-]){3}[[:digit:]]{3}[[:alnum:]]$"),
+            ind <- grepl(sprintf("^https?://orcid.org/%s$",
+                                 tools:::.ORCID_iD_regexp),
                          comment)
             if(any(ind)) {
                 if(is.null(names(comment)))
@@ -155,8 +155,14 @@ function(given = NULL, family = NULL, middle = NULL,
     ## </COMMENT>
     ## Yes!
 
-    structure(rval[!vapply(rval, is.null, NA)],
-              class = "person")
+    .person(rval[!vapply(rval, is.null, NA)])
+}
+
+.person <-
+function(x = list())
+{
+    class(x) <- "person"
+    x
 }
 
 .canonicalize_person_role <-
@@ -264,7 +270,7 @@ c.person <-
 function(..., recursive = FALSE)
 {
     args <- list(...)
-    if(!all(sapply(args, inherits, "person")))
+    if(!all(vapply(args, inherits, NA, "person")))
         warning(gettextf("method is only applicable to %s objects",
                          sQuote("person")),
                 domain = NA)
@@ -324,7 +330,7 @@ function(x)
     pattern <- "[[:space:]]?(,|,?[[:space:]]and)[[:space:]]+"
     x <- do.call("c",
                  regmatches(x, gregexpr(pattern, y), invert = TRUE))
-    x <- x[!sapply(x, .is_not_nonempty_text)]
+    x <- x[!vapply(x, .is_not_nonempty_text, NA)]
 
     ## don't expect Jr. to be a person
     jr <- which(!is.na(match(x, c("Jr", "Jr.", "jr", "jr."))))
@@ -389,7 +395,7 @@ personList <-
 function(...)
 {
     z <- list(...)
-    if(!all(sapply(z, inherits, "person")))
+    if(!all(vapply(z, inherits, NA, "person")))
         stop(gettextf("all arguments must be of class %s",
                       dQuote("person")),
              domain = NA)
@@ -507,13 +513,15 @@ function(object, ...)
 .canonicalize_ORCID_identifier <-
 function(x)
 {
-    paste0("https://orcid.org/", sub(".*/", "", x))
+    paste0("https://orcid.org/",
+           sub(tools:::.ORCID_iD_variants_regexp, "\\3", x))
 }
 
 .expand_ORCID_identifier <-
 function(x)
 {
-    if(any(ind <- (names(x) == "ORCID")))
+    if(any(ind <- ((names(x) == "ORCID") &
+                   grepl(tools:::.ORCID_iD_variants_regexp, x))))
         x[ind] <- paste0("<",
                          .canonicalize_ORCID_identifier(x[ind]),
                          ">")
@@ -531,8 +539,8 @@ function(bibtype, textVersion = NULL, header = NULL, footer = NULL, key = NULL,
 
     args <- c(list(...), other)
     if(!length(args))
-        return(structure(list(), class = "bibentry"))
-    if(any(sapply(names(args), .is_not_nonempty_text)))
+        return(.bibentry())
+    if(any(vapply(names(args), .is_not_nonempty_text, NA)))
         stop("all fields have to be named")
 
     ## arrange all arguments in lists of equal length
@@ -574,7 +582,7 @@ function(bibtype, textVersion = NULL, header = NULL, footer = NULL, key = NULL,
 
         ## process fields
         rval <- c(list(...), other)
-        rval <- rval[!sapply(rval, .is_not_nonempty_text)]
+        rval <- rval[!vapply(rval, .is_not_nonempty_text, NA)]
 	fields <- tolower(names(rval))
         names(rval) <- fields
         attr(rval, "bibtype") <- bibtype
@@ -616,8 +624,14 @@ function(bibtype, textVersion = NULL, header = NULL, footer = NULL, key = NULL,
     if(!.is_not_nonempty_text(mfooter))
         attr(rval, "mfooter") <- paste(mfooter, collapse = "\n")
 
-    class(rval) <- "bibentry"
-    rval
+    .bibentry(rval)
+}
+
+.bibentry <-
+function(x = list())
+{
+    class(x) <- "bibentry"
+    x
 }
 
 .bibentry_check_bibentry1 <-
@@ -630,7 +644,7 @@ function(x, force = FALSE)
         strsplit(tools:::BibTeX_entry_field_db[[bibtype]], "|",
                  fixed = TRUE)
     if(length(rfields) > 0L) {
-        ok <- sapply(rfields, function(f) any(f %in% fields))
+        ok <- vapply(rfields, function(f) any(f %in% fields), NA)
         if(any(!ok))
             stop(sprintf(ngettext(sum(!ok),
                                   "A bibentry of bibtype %s has to specify the field: %s",
@@ -841,7 +855,7 @@ function(x, more = list())
                          function(e)
                          tryCatch(.bibentry_check_bibentry1(e, TRUE),
                                   error = identity))
-        bad <- which(sapply(status, inherits, "error"))
+        bad <- which(vapply(status, inherits, NA, "error"))
         if(length(bad)) {
             for(b in bad) {
                 warning(gettextf("Dropping invalid entry %d:\n%s",
@@ -852,8 +866,7 @@ function(x, more = list())
         }
     }
 
-    class(x) <- "bibentry"
-    x
+    .bibentry(x)
 }
 
 print.bibentry <-
@@ -940,7 +953,7 @@ function(x, collapse = FALSE)
     s <- lapply(unclass(x),
                 function(e) {
                     a <- Filter(length, attributes(e)[anames])
-                    e <- e[!sapply(e, is.null)]
+                    e <- e[!vapply(e, is.null, NA)]
                     ind <- !is.na(match(names(e),
                                        c(anames, manames, "other")))
                     if(any(ind)) {
@@ -982,7 +995,7 @@ function(x)
 {
     s <- lapply(unclass(x),
                 function(e) {
-                    e <- e[!sapply(e, is.null)]
+                    e <- e[!vapply(e, is.null, NA)]
                     cargs <-
                         sprintf("%s = %s", names(e), sapply(e, deparse))
                     .format_call_RR("person", cargs)
@@ -1053,22 +1066,20 @@ function(x, name, value)
     ## check whether all elements still have their required fields
     for(i in seq_along(x)) .bibentry_check_bibentry1(x[[i]])
 
-    class(x) <- "bibentry"
-    x
+    .bibentry(x)
 }
 
 c.bibentry <-
 function(..., recursive = FALSE)
 {
     args <- list(...)
-    if(!all(sapply(args, inherits, "bibentry")))
+    if(!all(vapply(args, inherits, NA, "bibentry")))
         warning(gettextf("method is only applicable to %s objects",
                          sQuote("bibentry")),
                 domain = NA)
     args <- lapply(args, unclass)
     rval <- do.call("c", args)
-    class(rval) <- "bibentry"
-    rval
+    .bibentry(rval)
 }
 
 toBibtex.bibentry <-
@@ -1076,7 +1087,9 @@ function(object, ...)
 {
     format_author <- function(author) paste(sapply(author, function(p) {
 	fnms <- p$family
-	only_given_or_family <- is.null(fnms) || is.null(p$given)
+	only_given_or_family <-
+            (is.null(fnms) || is.null(p$given)) &&
+            !(identical(fnms, "others") || identical(p$given, "others"))
 	fbrc <- if(length(fnms) > 1L ||
                    any(grepl("[[:space:]]", fnms)) ||
                    only_given_or_family) c("{", "}") else ""
@@ -1112,7 +1125,7 @@ function(object, ...)
 sort.bibentry <-
 function(x, decreasing = FALSE, .bibstyle = NULL, drop = FALSE, ...)
 {
-    x[order(tools::bibstyle(.bibstyle)$sortKeys(x),
+    x[order(tools::bibstyle(.bibstyle, .default = FALSE)$sortKeys(x),
             decreasing = decreasing),
       drop = drop]
 }
@@ -1179,10 +1192,11 @@ function(file, meta = NULL)
             mfooter <- c(mfooter, x)
     }
 
-    rval <- if(length(rval) == 1L)
-        rval[[1L]]
-    else
-        do.call("c", rval)
+    rlen <- length(rval)
+    if(rlen == 1L)
+        rval <- rval[[1L]]
+    else if(rlen > 1L)
+        rval <- do.call("c", rval)
     if(!.is_not_nonempty_text(mheader))
         attr(rval, "mheader") <- paste(mheader, collapse = "\n")
     if(!.is_not_nonempty_text(mfooter))
@@ -1211,8 +1225,7 @@ function(package = "base", lib.loc = NULL, auto = NULL)
         auto_was_meta <- FALSE
         dir <- system.file(package = package, lib.loc = lib.loc)
         if(dir == "")
-            stop(gettextf("package %s not found", sQuote(package)),
-                 domain = NA)
+            stop(packageNotFoundError(package, lib.loc, sys.call()))
         meta <- packageDescription(pkg = package,
                                    lib.loc = dirname(dir))
         ## if(is.null(auto)): Use default auto-citation if no CITATION
@@ -1359,7 +1372,11 @@ function(package = "base", lib.loc = NULL, auto = NULL)
 
 .citation <-
 function(x, package = NULL)
-    structure(x, package = package, class = c("citation", "bibentry"))
+{
+    class(x) <- c("citation", "bibentry")
+    attr(x, "package") <- package
+    x
+}
 
 .read_authors_at_R_field <-
 function(x)
@@ -1370,7 +1387,7 @@ function(x)
         writeLines(x, con, useBytes = TRUE)
         eval(parse(con, encoding = "UTF-8"))
     } else {
-        eval(parse(text = x))
+        eval(str2expression(x))
     }
 
     ## Let's by nice ...
@@ -1480,7 +1497,7 @@ function(x)
     ## (RFC 5322 <https://tools.ietf.org/html/rfc5322>).
     if(any(ind <- grepl(",", display))) {
         display[ind] <- sprintf("\"%s\"",
-                                gsub("\"", "\\\\\"", display[ind]))
+                                gsub("\"", "\\\"", display[ind], fixed=TRUE))
     }
     paste(display, address)
 }

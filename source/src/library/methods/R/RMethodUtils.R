@@ -1,7 +1,7 @@
 #  File src/library/methods/R/RMethodUtils.R
 #  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2016 The R Core Team
+#  Copyright (C) 1995-2019 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@
         }
         fdef <- fdefault
         body(fdef) <- substitute(standardGeneric(NAME), list(NAME = f))
-        environment(fdef) <- asNamespace(package)
+        environment(fdef) <- .NamespaceOrPackage(package)
     }
     ## give the function a new environment, to cache methods later
     ev <- new.env()
@@ -84,11 +84,11 @@
     args <- formalArgs(fdef)
     if(is.null(signature))
         signature <- args
-    else if(any(is.na(match(signature, args))))
-        stop(sprintf(ngettext(sum(is.na(match(signature, args))),
+    else if(any(not.s.in.a <- is.na(match(signature, args))))
+        stop(sprintf(ngettext(sum(not.s.in.a),
                               "non-argument found in the signature: %s",
                               "non-arguments found in the signature: %s"),
-                     paste(signature[is.na(match(signature, args))], collapse = ", ")),
+                     paste(signature[not.s.in.a], collapse = ", ")),
              domain = NA)
     dots <- match("...", signature)
     if(!is.na(dots)) { # remove "..." unless it is the only element of the signature
@@ -164,11 +164,11 @@ makeGeneric <-
     args <- formalArgs(fdef)
     if(is.null(signature))
         signature <- args
-    else if(any(is.na(match(signature, args))))
-        stop(sprintf(ngettext(sum(is.na(match(signature, args))),
+    else if(any(not.s.in.a <- is.na(match(signature, args))))
+        stop(sprintf(ngettext(sum(not.s.in.a),
                               "non-argument found in the signature: %s",
                               "non-arguments found in the signature: %s"),
-                     paste(signature[is.na(match(signature, args))], collapse = ", ")),
+                     paste(signature[not.s.in.a], collapse = ", ")),
              domain = NA)
     attr(signature, "simpleOnly") <- simpleInheritanceOnly # usually NULL
     dots <- match("...", signature)
@@ -334,20 +334,18 @@ conformMethod <- function(signature, mnames, fnames,
     ##                       label, paste(missingFnames[foundNames], collapse = ", ")),
     ##              domain = NA)
     if(!any(omittedSig))
-      return(signature)
-    if(any(is.na(match(signature[omittedSig], c("ANY", "missing"))))) {
-        bad <- omittedSig & is.na(match(signature[omittedSig], c("ANY", "missing")))
+        return(signature)
+    if(any(iiN <- is.na(match(signature[omittedSig], c("ANY", "missing"))))) {
+        bad <- omittedSig & iiN
         bad2 <- paste0(fnames[bad], " = \"", signature[bad], "\"", collapse = ", ")
         stop(.renderSignature(f, sig0),
              gettextf("formal arguments (%s) omitted in the method definition cannot be in the signature", bad2),
              call. = TRUE, domain = NA)
     }
-    else if(!all(signature[omittedSig] == "missing")) {
-        omittedSig <- omittedSig && (signature[omittedSig] != "missing")
+    else if(any(omittedSig <- omittedSig & signature != "missing")) {
         .message("Note: ", .renderSignature(f, sig0),
                  gettextf("expanding the signature to include omitted arguments in definition: %s",
                           paste(sigNames[omittedSig], "= \"missing\"",collapse = ", ")))
-        omittedSig <- seq_along(omittedSig)[omittedSig] # logical index will extend signature!
         signature[omittedSig] <- "missing"
     }
     ## remove trailing "ANY"'s
@@ -361,54 +359,64 @@ conformMethod <- function(signature, mnames, fnames,
 
 rematchDefinition <- function(definition, generic, mnames, fnames, signature)
 {
-    added <- any(is.na(match(mnames, fnames)))
+    added <- anyNA(match(mnames, fnames))
     keepsDots <- !is.na(match("...", mnames))
     if(!added && keepsDots) {
         ## the formal args of the method must be identical to generic
-        formals(definition, envir = environment(definition)) <- formals(generic)
+        formals(definition) <- formals(generic)
         return(definition)
     }
     dotsPos <- match("...", fnames)
     if(added && is.na(dotsPos))
-        stop(gettextf("methods can add arguments to the generic %s only if '...' is an argument to the generic", sQuote(generic@generic)),
+        stop(gettextf("methods can add arguments to the generic %s only if '...' is an argument to the generic",
+                      sQuote(generic@generic)),
              call. = TRUE)
     ## pass down all the names in common between method & generic,
     ## plus "..."  even if the method doesn't have it.  But NOT any
     ## arguments having class "missing" implicitly (see conformMethod),
     ## i.e., are not among 'mnames':
-    useNames <- !is.na(imf <- match(fnames, mnames)) | fnames == "..."
-    newCall <- lapply(c(".local", fnames[useNames]), as.name)
-
+    useNames <- (useNm <- !is.na(imf <- match(fnames, mnames))) | fnames == "..."
     ## Should not be needed, if conformMethod() has already been called:
-    if(is.unsorted(imf[!is.na(imf)]))
+    if(is.unsorted(imf[useNm]))
 	stop(.renderSignature(generic@generic, signature),
              "formal arguments in method and generic do not appear in the same order",
              call. = FALSE)
-
+    clArgs <- fnames[useNames]
     ## leave newCall as a list while checking the trailing args
     if(keepsDots && dotsPos < length(fnames)) {
-	## Trailing arguments are required to match.  This is a little
+	## Trailing arguments (those after "...") are required to match.  This is a little
 	## stronger than necessary, but this is a dicey case, because
 	## the argument-matching may not be consistent otherwise (in
 	## the generic, such arguments have to be supplied by name).
 	## The important special case is replacement methods, where
 	## value is the last argument.
-
 	ntrail <- length(fnames) - dotsPos
 	trailingArgs <- fnames[seq.int(to = length(fnames), length.out = ntrail)]
-	if(!identical(	mnames[seq.int(to = length(mnames), length.out = ntrail)],
-		      trailingArgs))
+	if (!identical (mnames[seq.int(to = length(mnames), length.out = ntrail)],
+                        trailingArgs))
 	    stop(gettextf("%s arguments (%s) after %s in the generic must appear in the method, in the same place at the end of the argument list",
                           .renderSignature(generic@generic, signature),
 			  paste(sQuote(trailingArgs), collapse = ", "),
                           sQuote("...")),
                  call. = FALSE, domain = NA)
-	newCallNames <- character(length(newCall))
-	newCallNames[seq.int(to = length(newCallNames), length.out = ntrail)] <-
-	    trailingArgs
-	names(newCall) <- newCallNames
+	clNames <- character(length(clArgs))
+	clNames[seq.int(to = length(clNames), length.out = ntrail)] <- trailingArgs
+    } else
+        clNames <- NULL
+    if((iMi <- match("missing", signature, nomatch=0L)) && length(iNm <- which(useNm)) &&
+       any(i <- (iMi <= iNm & iNm <=
+                 if(is.na(dotsPos)) length(fnames) else dotsPos-1L))) {
+        ## name args in .local(..) call because we have "missing" in method signature
+	if(is.null(clNames))
+	    clNames <- character(length(clArgs))
+        ## fnames[iNm] == fnames[useNm] is subset of clArgs := fnames[useNames]
+        im <- match(fnames[iNm][i], clArgs)
+	clNames[im] <- clArgs[im]
     }
-    newCall <- as.call(newCall)
+    if(!is.null(clNames))
+        names(clArgs) <- clNames
+    newCall <- as.call(lapply(c(".local", clArgs), as.name))
+    ##== newCall <- as.call(c(quote(.local), lapply(clArgs, as.name)))
     newBody <- substitute({.local <- DEF; NEWCALL},
 			  list(DEF = definition, NEWCALL = newCall))
     generic <- .copyMethodDefaults(generic, definition)
@@ -790,12 +798,12 @@ getGenerics <- function(where, searchForm = FALSE)
     these <- these[startsWith(these, ".__T__")]
     if(length(these) == 0L)
         return(character())
-    funNames <- gsub("^.__T__(.*):([^:]+)", "\\1", these)
+    funNames <- gsub("^\\.__T__(.*):([^:]+)", "\\1", these)
     ## FIXME: length(funNames) == length(these) != 0   ==> this never triggers:
     ## if(length(funNames) == 0L && any(startsWith(these, ".__M__")))
     ##     warning(sprintf("package %s seems to have out-of-date methods; need to reinstall from source",
     ##                      sQuote(getPackageName(where[[1L]]))))
-    packageNames <- gsub(".__T__(.*):([^:]+(.*))", "\\2", these)
+    packageNames <- gsub("^\\.__T__(.*):([^:]+(.*))", "\\2", these)
     attr(funNames, "package") <- packageNames
     ## Would prefer following, but may be trouble bootstrapping methods
     ## funNames <- new("ObjectsWithPackage", funNames, package = packageNames)
@@ -804,9 +812,10 @@ getGenerics <- function(where, searchForm = FALSE)
     else if(isFALSE(trim))
         these
     else
-        gsub(".__T__", as.character(trim), these)
+        gsub(".__T__", as.character(trim), these, fixed=TRUE)
 }
 
+## also called from base::loadNamespace, unloadNamespace(), attach() & detach()
 cacheMetaData <-
     function(where, attach = TRUE, searchWhere = as.environment(where),
              doCheck = TRUE)
@@ -830,6 +839,11 @@ cacheMetaData <-
                identical(cldef@package, pkg)) {
                 .uncacheClass(cl, cldef)
                 .removeSuperclassBackRefs(cl, cldef, searchWhere)
+                if(is(cldef, "ClassUnionRepresentation")) {
+                    subclasses <- names(cldef@subclasses)
+                    for(subclass in subclasses)
+                        .removeSuperClass(subclass, cl)
+                }
             }
         }
     }
@@ -1056,7 +1070,12 @@ methodSignatureMatrix <- function(object, sigSlots = c("target", "defined"))
 {
     if(length(sigSlots)) {
         allSlots <- lapply(sigSlots, slot, object = object)
-        mm <- unlist(allSlots)
+        n <- max(lengths(allSlots))
+        mm <- unlist(lapply(allSlots, function(s) {
+            length(s) <- n
+            s[is.na(s)] <- "ANY"
+            s
+        }))
         mm <- matrix(mm, nrow = length(allSlots), byrow = TRUE)
         dimnames(mm) <- list(sigSlots, names(allSlots[[1L]]))
         mm
@@ -1098,7 +1117,7 @@ methodSignatureMatrix <- function(object, sigSlots = c("target", "defined"))
 #             deflt <- finalDefaultMethod(other)
 #         if(!is.null(deflt))
 #             allMethods <- insertMethod(allMethods, "ANY", argName, deflt)
-        }
+    }
     allMethods
 }
 
@@ -1109,7 +1128,7 @@ methodSignatureMatrix <- function(object, sigSlots = c("target", "defined"))
             name <- def
         def <- getFunction(def)
     }
-    if(is(def, "function"))
+    if(is.function(def))
         paste0(name, "(", paste(args, collapse=", "), ")")
     else
         ""
@@ -1208,7 +1227,7 @@ metaNameUndo <- function(strings, prefix, searchForm = FALSE)
     methods <- mlist@methods
     for(i in seq_along(methods)) {
         mi <- methods[[i]]
-        if(is(mi, "function")) {
+        if(is.function(mi)) {
             body(mi, envir = environment(mi)) <-
                 substitute({.Generic <- FF; BODY},
                            list(FF = f,BODY = body(mi)))
@@ -1246,11 +1265,11 @@ metaNameUndo <- function(strings, prefix, searchForm = FALSE)
 
 .ChangeFormals <- function(def, defForArgs, msg = "<unidentified context>")
 {
-    if(!is(def, "function"))
+    if(!is.function(def))
         stop(gettextf("trying to change the formal arguments in %s in an object of class %s; expected a function definition",
                       msg, dQuote(class(def))),
              domain = NA)
-    if(!is(defForArgs, "function"))
+    if(!is.function(defForArgs))
         stop(gettextf("trying to change the formal arguments in %s, but getting the new formals from an object of class %s; expected a function definition",
                       msg, dQuote(class(def))),
              domain = NA)
@@ -1342,7 +1361,7 @@ metaNameUndo <- function(strings, prefix, searchForm = FALSE)
     ev <- topenv(parent.frame()) # .GlobalEnv or the environment in which methods is being built.
     for(back in seq.int(from = -n, length.out = nmax)) {
         fun <- sys.function(back)
-        if(is(fun, "function")) {
+        if(is.function(fun)) {
             ## Note that "fun" may actually be a method definition, and still will be counted.
             ## This appears to be the correct semantics, in
             ## the sense that, if the call came from a method, it's the method's environment
@@ -1462,7 +1481,7 @@ getGroupMembers <- function(group, recursive = FALSE, character = TRUE)
                 members <- .recMembers(members, .methodsNamespace)
             }
             else
-                members <- .recMembers(members, .asEnvironmentPackage(where))
+                members <- .recMembers(members, .requirePackage(where))
         }
         if(character)
             sapply(members, function(x){
@@ -1824,7 +1843,7 @@ setLoadAction <- function(action,
     for(i in seq_along(actions)) {
         f <- actions[[i]]
         fname <- anames[[i]]
-        if(!is(f, "function"))
+        if(!is.function(f))
             stop(gettextf("non-function action: %s",
                           sQuote(fname)),
                  domain = NA)
@@ -1915,11 +1934,12 @@ evalqOnLoad <- function(expr, where = topenv(parent.frame()), aname = "")
         0L
 }
 
-## test whether this function could be an S3 generic, either
+## test whether this function  _could be_  an S3 generic, either
 ## a primitive or a function calling UseMethod()
 isS3Generic <- function(fdef) {
-    if(is.primitive(fdef))
-        identical(typeof(fdef), "builtin")
-    else
-        "UseMethod" %in% .getGlobalFuns(fdef) # from refClass.R
+    switch(typeof(fdef),
+           "special" = FALSE,
+           "builtin" = TRUE,
+           ## otherwise:
+           "UseMethod" %in% .getGlobalFuns(fdef)) # from refClass.R
 }

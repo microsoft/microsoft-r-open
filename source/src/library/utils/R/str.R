@@ -1,7 +1,7 @@
 #  File src/library/utils/R/str.R
 #  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2018 The R Core Team
+#  Copyright (C) 1995-2020 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -15,6 +15,10 @@
 #
 #  A copy of the GNU General Public License is available at
 #  https://www.R-project.org/Licenses/
+
+## A pearl from ggplot2 et al.  NB: often needs '(.)' :   <lhs> %||% ( <rhs> )
+## *not exported* [should rather be in 'base' than exported here]
+`%||%` <- function(L,R) if(is.null(L)) R else L
 
 ####------ str : show STRucture of an R object
 str <- function(object, ...) UseMethod("str")
@@ -40,7 +44,7 @@ str.data.frame <- function(object, ...)
     ## calling next method, usually  str.default:
     if(length(l <- list(...)) && any("give.length" == names(l)))
 	invisible(NextMethod("str", ...))
-    else invisible(NextMethod("str", give.length=FALSE,...))
+    else invisible(NextMethod("str", give.length=structure(FALSE, from="data.frame"), ...))
 }
 
 str.Date <- str.POSIXt <- function(object, ...) {
@@ -77,11 +81,14 @@ str.Date <- str.POSIXt <- function(object, ...) {
     do.call(str.f.obj, c(list(give.head = FALSE), larg))
 }
 
-strOptions <- function(strict.width = "no", digits.d = 3, vec.len = 4,
+## Called by .onLoad(), setting options(str = *)  >>>>> ./zzz.R
+strOptions <- function(strict.width = "no", digits.d = 3L, vec.len = 4L,
+                       list.len = 99L, deparse.lines = NULL,
                        drop.deparse.attr = TRUE,
 		       formatNum = function(x, ...)
 		       format(x, trim=TRUE, drop0trailing=TRUE, ...))
     list(strict.width = strict.width, digits.d = digits.d, vec.len = vec.len,
+         list.len = list.len, deparse.lines = deparse.lines,
 	 drop.deparse.attr = drop.deparse.attr,
 	 formatNum = match.fun(formatNum))
 
@@ -95,7 +102,8 @@ str.default <-
 	     indent.str= paste(rep.int(" ", max(0,nest.lev+1)), collapse= ".."),
 	     comp.str="$ ", no.list = FALSE, envir = baseenv(),
 	     strict.width = strO$strict.width,
-	     formatNum = strO$formatNum, list.len = 99,
+	     formatNum = strO$formatNum, list.len = strO$list.len,
+	     deparse.lines = strO$deparse.lines,
 	     ...)
 {
     ## Purpose: Display STRucture of any R - object (in a compact form).
@@ -105,7 +113,9 @@ str.default <-
 
     ## strOptions() defaults for
     oDefs <- c("vec.len", "digits.d", "strict.width", "formatNum",
-	       "drop.deparse.attr")
+	       "drop.deparse.attr",
+	       "list.len", "deparse.lines"
+               )
     ## from
     strO <- getOption("str")
     if (!is.list(strO)) {
@@ -132,6 +142,7 @@ str.default <-
 				 no.list= no.list || is.data.frame(object),
 				 envir = envir, strict.width = "no",
 				 formatNum = formatNum, list.len = list.len,
+				 deparse.lines = deparse.lines,
 					 ...) )
 	if(strict.width == "wrap") {
 	    nind <- nchar(indent.str) + 2
@@ -223,8 +234,10 @@ str.default <-
     if(give.attr) a <- attributes(object)#-- save for later...
     dCtrl <- eval(formals(deparse)$control)
     if(drop.deparse.attr) dCtrl <- dCtrl[dCtrl != "showAttributes"]
-    deParse <- function(.) deparse(., width.cutoff = min(500L, max(20L, width-10L)),
-				   control = dCtrl)
+    width.cutoff <- min(500L, max(20L, width-10L))
+    nlines <- deparse.lines %||% (1L + as.integer(max(nchar.max, width.cutoff) / 8))
+    deParse <- function(.) deparse(., width.cutoff = width.cutoff,
+				   control = dCtrl, nlines = nlines)
     n.of. <- function(n, singl, plural) paste(n, ngettext(n, singl, plural))
     n.of <- function(n, noun) n.of.(n, noun, paste0(noun,"s"))
     arrLenstr <- function(obj) {
@@ -245,6 +258,20 @@ str.default <-
     if (is.null(object))
 	cat(" NULL\n")
     else if(S4) {
+	trygetSlots <- function(x, nms) {
+	    r <- tryCatch(sapply(nms, methods::slot, object=x, simplify = FALSE),
+			  error = conditionMessage)
+	    if(is.list(r))
+		r
+	    else {
+		warning("Not a validObject(): ", r, call.=FALSE) # instead of error
+		r <- attributes(x) ## "FIXME" low-level assumption about S4 slots
+		r <- r[names(r) != "class"]
+		dp <- list(methods::getDataPart(x, NULL.for.none=TRUE))
+		if(!is.null(dp)) names(dp) <- methods:::.dataSlot(nms)
+		c(r, dp)
+	    }
+	}
 	if(methods::is(object,"envRefClass")) {
 	    cld <- tryCatch(object$getClass(), error=function(e)e)
 	    if(inherits(cld, "error")) {
@@ -275,20 +302,19 @@ str.default <-
 		else cat("\n")
 	    }
 	    if(length(sNms <- sNms[sNms != ".xData"])) {
-		sls <- sapply(sNms, methods::slot,
-			      object=object, simplify = FALSE)
 		cat(" and ", n.of(length(sNms), "slot"), "\n", sep="")
+		sls <- trygetSlots(object, sNms)
 		strSub(sls, comp.str = "@ ", no.list=TRUE, give.length=give.length,
 		       indent.str = paste(indent.str,".."), nest.lev = nest.lev + 1)
 	    }
 	    else if(lo == 0) cat(".\n")
 	}
 	else { ## S4 non-envRefClass
-	    a <- sapply(methods::.slotNames(object), methods::slot,
-			object=object, simplify = FALSE)
+	    sNms <- methods::.slotNames(object)
 	    cat("Formal class", " '", paste(cl, collapse = "', '"),
 		"' [package \"", attr(cl,"package"), "\"] with ",
-		n.of(length(a), "slot"), "\n", sep = "")
+		n.of(length(sNms), "slot"), "\n", sep = "")
+	    a <- trygetSlots(object, sNms)
 	    strSub(a, comp.str = "@ ", no.list=TRUE, give.length=give.length,
 		   indent.str = paste(indent.str,".."), nest.lev = nest.lev + 1)
 	}
@@ -596,10 +622,11 @@ str.default <-
 
     if(give.attr) { ## possible: || has.class && any(cl == "terms")
 	nam <- names(a)
+	give.L <- give.length || identical(attr(give.length,"from"), "data.frame")
 	for (i in seq_along(a))
 	    if (all(nam[i] != std.attr)) {# only `non-standard' attributes:
 		cat(indent.str, paste0('- attr(*, "', nam[i], '")='), sep = "")
-		strSub(a[[i]], give.length = give.length,
+		strSub(a[[i]], give.length = give.L,
 		       indent.str = paste(indent.str, ".."), nest.lev = nest.lev+1)
 	    }
     }
@@ -613,8 +640,7 @@ ls.str <-
     if(missing(envir)) ## [for "lazy" reasons, this fails as default]
         envir <- as.environment(pos)
     nms <- ls(name, envir = envir, all.names=all.names, pattern=pattern)
-    r <- unlist(lapply(nms, function(n)
-                       exists(n, envir= envir, mode= mode, inherits=FALSE)))
+    r <- vapply(nms, exists, NA, envir=envir, mode=mode, inherits=FALSE)
     structure(nms[r], envir = envir, mode = mode, class = "ls_str")
 }
 
@@ -640,6 +666,7 @@ print.ls_str <- function(x, max.level = 1, give.attr = FALSE,
     }
     strargs <- c(list(max.level = max.level, give.attr = give.attr,
                       digits.d = digits), args)
+    n. <- substr(tempfile("ls_str_", tmpdir=""), 2L, 20L)
     for(nam in x) {
 	cat(nam, ": ")
 	## check missingness, e.g. inside debug(.) :
@@ -652,8 +679,10 @@ print.ls_str <- function(x, max.level = 1, give.attr = FALSE,
 ##__	    str(get(nam, envir = E, mode = M),
 ##__		max.level = max.level, give.attr = give.attr, ...)
 
-	o <- tryCatch(get(nam, envir = E, mode = M), error = function(e)e)
-	if(inherits(o, "error")) {
+	eA <- sprintf("%s:%s", nam, n.)
+	o <- tryCatch(get(nam, envir = E, mode = M),
+		      error = function(e){ attr(e, eA) <- TRUE; e })
+	if(inherits(o, "error") &&  isTRUE(attr(o, eA))) {
 	    cat(## FIXME: only works with "C" (or English) LC_MESSAGES locale!
 		if(length(grep("missing|not found", o$message)))
 		"<missing>" else o$message, "\n", sep = "")

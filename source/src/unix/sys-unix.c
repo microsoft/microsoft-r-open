@@ -103,7 +103,9 @@ FILE *R_OpenInitFile(void)
      *   R_ChooseFile is interface-specific
      */
 
+#if defined(HAVE_LIBREADLINE) && defined(HAVE_TILDE_EXPAND_WORD)
 char *R_ExpandFileName_readline(const char *s, char *buff);  /* sys-std.c */
+#endif
 
 static char newFileName[PATH_MAX];
 static int HaveHOME=-1;
@@ -146,7 +148,7 @@ extern Rboolean UsingReadline;
 
 const char *R_ExpandFileName(const char *s)
 {
-#ifdef HAVE_LIBREADLINE
+#if defined(HAVE_LIBREADLINE) && defined(HAVE_TILDE_EXPAND_WORD)
     if(UsingReadline) {
 	const char * c = R_ExpandFileName_readline(s, newFileName);
 	/* we can return the result only if tilde_expand is not broken */
@@ -657,11 +659,11 @@ SEXP attribute_hidden do_system(SEXP call, SEXP op, SEXP args, SEXP rho)
     timeout = asInteger(CADDR(args));
     if (timeout == NA_INTEGER || timeout < 0)
 	error(_("invalid '%s' argument"), "timeout");
-    const char *cmd = translateChar(STRING_ELT(CAR(args), 0));
+    const char *cmd = translateCharFP(STRING_ELT(CAR(args), 0));
     if (timeout > 0) {
 	/* command ending with & is not supported by timeout */
 	const void *vmax = vmaxget();
-	const char *c = translateCharUTF8(STRING_ELT(CAR(args), 0));
+	const char *c = trCharUTF8(STRING_ELT(CAR(args), 0));
 	int last_is_amp = 0;
 	int len = 0;
 	for(;*c; c += len) {
@@ -864,7 +866,10 @@ SEXP do_sysinfo(SEXP call, SEXP op, SEXP args, SEXP rho)
 /* The pointer here is used in the Mac GUI */
 #include <R_ext/eventloop.h> /* for R_PolledEvents */
 #include <R_ext/Rdynload.h>
-DL_FUNC ptr_R_ProcessEvents;
+
+#define R_INTERFACE_PTRS 1
+#include <Rinterface.h> /* for ptr_R_ProcessEvents */
+
 void R_ProcessEvents(void)
 {
 #ifdef HAVE_AQUA

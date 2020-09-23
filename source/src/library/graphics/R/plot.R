@@ -1,7 +1,7 @@
 #  File src/library/graphics/R/plot.R
 #  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2015 The R Core Team
+#  Copyright (C) 1995-2020 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@
 
 ### xy.coords() is now in the imported 'grDevices' package
 
-plot <- function (x, y, ...)  UseMethod("plot")
+## Now in 'base' pkg:
+## plot <- function (x, y, ...)  UseMethod("plot")
 
 
 ## xlim = NULL (instead of "missing", since it will be passed to plot.default):
@@ -51,16 +52,17 @@ plot.default <-
     function(x, y = NULL, type = "p", xlim = NULL, ylim = NULL,
              log = "", main = NULL, sub = NULL, xlab = NULL, ylab = NULL,
              ann = par("ann"), axes = TRUE, frame.plot = axes,
-             panel.first = NULL, panel.last = NULL, asp = NA, ...)
+             panel.first = NULL, panel.last = NULL, asp = NA,
+             xgap.axis = NA, ygap.axis = NA, ...)
 {
     ## These col, bg, pch, cex can be vectors, so exclude them
     ## Also, axis and box accept some of these
-    localAxis <- function(..., col, bg, pch, cex, lty, lwd) Axis(...)
-    localBox <- function(..., col, bg, pch, cex, lty, lwd) box(...)
+    localAxis   <- function(..., col, bg, pch, cex, lty, lwd) Axis(...)
+    localBox    <- function(..., col, bg, pch, cex, lty, lwd) box(...)
     localWindow <- function(..., col, bg, pch, cex, lty, lwd) plot.window(...)
-    localTitle <- function(..., col, bg, pch, cex, lty, lwd) title(...)
-    xlabel <- if (!missing(x)) deparse(substitute(x))
-    ylabel <- if (!missing(y)) deparse(substitute(y))
+    localTitle  <- function(..., col, bg, pch, cex, lty, lwd) title(...)
+    xlabel <- if (!missing(x)) deparse1(substitute(x))
+    ylabel <- if (!missing(y)) deparse1(substitute(y))
     xy <- xy.coords(x, y, xlabel, ylabel, log)
     xlab <- if (is.null(xlab)) xy$xlab else xlab
     ylab <- if (is.null(ylab)) xy$ylab else ylab
@@ -73,8 +75,8 @@ plot.default <-
     plot.xy(xy, type, ...)
     panel.last
     if (axes) {
-	localAxis(if(is.null(y)) xy$x else x, side = 1, ...)
-	localAxis(if(is.null(y))  x   else y, side = 2, ...)
+	localAxis(if(is.null(y)) xy$x else x, side = 1, gap.axis = xgap.axis, ...)
+	localAxis(if(is.null(y))  x   else y, side = 2, gap.axis = ygap.axis, ...)
     }
     if (frame.plot) localBox(...)
     if (ann) localTitle(main = main, sub = sub, xlab = xlab, ylab = ylab, ...)
@@ -114,7 +116,7 @@ plot.table <-
     function(x, type = "h", ylim = c(0, max(x)), lwd = 2,
              xlab = NULL, ylab = NULL, frame.plot = is.num, ...)
 {
-    xnam <- deparse(substitute(x))
+    xnam <- deparse1(substitute(x))
     rnk <- length(dim(x))
     if(rnk == 0L) stop("invalid table 'x'")
     if(rnk == 1L) {
@@ -128,7 +130,7 @@ plot.table <-
 	plot(x0, unclass(x), type = type,
 	     ylim = ylim, xlab = xlab, ylab = ylab, frame.plot = frame.plot,
 	     lwd = lwd, ..., xaxt = "n")
-        localaxis <- function(..., col, bg, pch, cex, lty) axis(...)
+        localaxis <- function(..., col, bg, pch, cex, lty, log) axis(...)
 	if(!isFALSE(list(...)$axes))
             localaxis(1, at = x0, labels = nx, ...)
     } else {
@@ -152,9 +154,9 @@ function(formula, data = parent.frame(), ..., subset,
     ## need to avoid evaluation of expressions in do.call later.
     ## see PR#10525
     nmdots <- names(dots)
-    if ("main" %in% nmdots) dots[["main"]] <- enquote(dots[["main"]])
-    if ("sub" %in% nmdots) dots[["sub"]] <- enquote(dots[["sub"]])
-    if ("xlab" %in% nmdots) dots[["xlab"]] <- enquote(dots[["xlab"]])
+    for(nm in nmdots[match(c("main", "sub", "xlab"), nmdots, 0L)])
+        dots[[nm]] <- enquote(dots[[nm]])
+    if(!missing(ylab)) ylab <- enquote(ylab)
 
     m$ylab <- m$... <- m$ask <- NULL
     subset.expr <- m$subset
@@ -168,7 +170,7 @@ function(formula, data = parent.frame(), ..., subset,
 	l <- nrow(mf)
 	dosub <- function(x) if (length(x) == l) x[s] else x
 	dots <- lapply(dots, dosub)
-	mf <- mf[s, ]
+	mf <- mf[s, , drop=FALSE]
     }
     ## check for horizontal arg
     horizontal <- FALSE
@@ -205,8 +207,8 @@ function(formula, data = parent.frame(), ..., subset,
                 if(horizontal && is.factor(mf[[i]])) {yl <- xl; xl <- ylab}
                 do.call(funname,
                         c(list(mf[[i]], y, ylab = yl, xlab = xl), dots))
-               }
-	} else {
+	    }
+	} else { # no non-response variable names: only (y, ylab)
 	    if(length(varnames) == 1L && length(formula) == 3L &&
 	       identical(formula[[2L]], formula[[3L]]))
 		warning(gettextf("the formula '%s' is treated as '%s'",
@@ -341,6 +343,7 @@ text.formula <- function(formula, data = parent.frame(), ..., subset)
 	stop("must have a response variable")
 }
 
+## in base "graphics", this is called exactly from   {plot, points, lines}.default():
 plot.xy <- function(xy, type, pch = par("pch"), lty = par("lty"),
                     col = par("col"), bg = NA, cex = 1, lwd = par("lwd"),
                     ...)
@@ -404,7 +407,7 @@ plot.data.frame <- function (x, ...)
 ## }
 
 .units <- c("device", "ndc", "", "", "", "", "nic", "nfc", "", "", "", "",
-            "user", "inches", "", "", "npc")
+            "user", "inches", "lines", "chars", "npc")
 
 grconvertX <- function(x, from = "user", to = "user")
 {

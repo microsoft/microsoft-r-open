@@ -1,6 +1,6 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
- *  Copyright (C) 1998--2017  The R Core Team.
+ *  Copyright (C) 1998--2019  The R Core Team.
  *  Copyright (C) 1995, 1996  Robert Gentleman and Ross Ihaka
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -110,6 +110,23 @@ extern void *Rm_realloc(void * p, size_t n);
 
 static int gc_reporting = 0;
 static int gc_count = 0;
+
+/* Report error encountered during garbage collection where for detecting
+   problems it is better to abort, but for debugging (or some production runs,
+   where external validation of results is possible) it may be preferred to
+   continue. Configurable via _R_GC_FAIL_ON_ERROR_. Typically these problems
+   are due to memory corruption.
+*/
+static Rboolean gc_fail_on_error = FALSE;
+static void gc_error(const char *msg)
+{
+    if (gc_fail_on_error)
+	R_Suicide(msg);
+    else if (R_in_gc)
+	REprintf(msg);
+    else
+	error(msg);
+}
 
 /* These are used in profiling to separate out time in GC */
 int R_gc_running() { return R_in_gc; }
@@ -414,13 +431,13 @@ static int vsfac = 1; /* current units for vsize: changes at initialization */
 R_size_t attribute_hidden R_GetMaxVSize(void)
 {
     if (R_MaxVSize == R_SIZE_T_MAX) return R_SIZE_T_MAX;
-    return R_MaxVSize*vsfac;
+    return R_MaxVSize * vsfac;
 }
 
 void attribute_hidden R_SetMaxVSize(R_size_t size)
 {
     if (size == R_SIZE_T_MAX) return;
-    if (size / vsfac >= R_VSize) R_MaxVSize = (size+1)/vsfac;
+    if (size / vsfac >= R_VSize) R_MaxVSize = (size + 1) / vsfac;
 }
 
 R_size_t attribute_hidden R_GetMaxNSize(void)
@@ -437,6 +454,42 @@ void attribute_hidden R_SetPPSize(R_size_t size)
 {
     R_PPStackSize = (int) size;
 }
+
+SEXP attribute_hidden do_maxVSize(SEXP call, SEXP op, SEXP args, SEXP rho)
+{
+    const double MB = 1048576.0;
+    double newval = asReal(CAR(args));
+
+    if (newval > 0) {
+	if (newval == R_PosInf)
+	    R_MaxVSize = R_SIZE_T_MAX;
+	else
+	    R_SetMaxVSize((R_size_t) (newval * MB));
+    }
+
+    if (R_MaxVSize == R_SIZE_T_MAX)
+	return ScalarReal(R_PosInf);
+    else
+	return ScalarReal(R_GetMaxVSize() / MB);
+}
+
+SEXP attribute_hidden do_maxNSize(SEXP call, SEXP op, SEXP args, SEXP rho)
+{
+    double newval = asReal(CAR(args));
+
+    if (newval > 0) {
+	if (newval == R_PosInf)
+	    R_MaxNSize = R_SIZE_T_MAX;
+	else
+	    R_SetMaxNSize((R_size_t) newval);
+    }
+
+    if (R_MaxNSize == R_SIZE_T_MAX)
+	return ScalarReal(R_PosInf);
+    else
+	return ScalarReal(R_GetMaxNSize());
+}
+
 
 /* Miscellaneous Globals. */
 
@@ -672,15 +725,20 @@ static R_size_t R_NodesInUse = 0;
     dc__action__(ENCLOS(__n__), dc__extra__); \
     dc__action__(HASHTAB(__n__), dc__extra__); \
     break; \
+  case LISTSXP: \
+    dc__action__(TAG(__n__), dc__extra__); \
+    if (BOXED_BINDING_CELLS || BNDCELL_TAG(__n__) == 0) \
+      dc__action__(CAR0(__n__), dc__extra__); \
+    dc__action__(CDR(__n__), dc__extra__); \
+    break; \
   case CLOSXP: \
   case PROMSXP: \
-  case LISTSXP: \
   case LANGSXP: \
   case DOTSXP: \
   case SYMSXP: \
   case BCODESXP: \
     dc__action__(TAG(__n__), dc__extra__); \
-    dc__action__(CAR(__n__), dc__extra__); \
+    dc__action__(CAR0(__n__), dc__extra__); \
     dc__action__(CDR(__n__), dc__extra__); \
     break; \
   case EXTPTRSXP: \
@@ -765,7 +823,7 @@ static R_size_t R_NodesInUse = 0;
 static void CheckNodeGeneration(SEXP x, int g)
 {
     if (x && NODE_GENERATION(x) < g) {
-	REprintf("untraced old-to-new reference\n");
+	gc_error("untraced old-to-new reference\n");
     }
 }
 
@@ -781,7 +839,7 @@ static void DEBUG_CHECK_NODE_COUNTS(char *where)
 	     s = NEXT_NODE(s)) {
 	    NewCount++;
 	    if (i != NODE_CLASS(s))
-		REprintf("Inconsistent class assignment for node!\n");
+		gc_error("Inconsistent class assignment for node!\n");
 	}
 	for (gen = 0, OldCount = 0, OldToNewCount = 0;
 	     gen < NUM_OLD_GENERATIONS;
@@ -791,9 +849,9 @@ static void DEBUG_CHECK_NODE_COUNTS(char *where)
 		 s = NEXT_NODE(s)) {
 		OldCount++;
 		if (i != NODE_CLASS(s))
-		    REprintf("Inconsistent class assignment for node!\n");
+		    gc_error("Inconsistent class assignment for node!\n");
 		if (gen != NODE_GENERATION(s))
-		    REprintf("Inconsistent node generation\n");
+		    gc_error("Inconsistent node generation\n");
 		DO_CHILDREN(s, CheckNodeGeneration, gen);
 	    }
 	    for (s = NEXT_NODE(R_GenHeap[i].OldToNew[gen]);
@@ -801,9 +859,9 @@ static void DEBUG_CHECK_NODE_COUNTS(char *where)
 		 s = NEXT_NODE(s)) {
 		OldToNewCount++;
 		if (i != NODE_CLASS(s))
-		    REprintf("Inconsistent class assignment for node!\n");
+		    gc_error("Inconsistent class assignment for node!\n");
 		if (gen != NODE_GENERATION(s))
-		    REprintf("Inconsistent node generation\n");
+		    gc_error("Inconsistent node generation\n");
 	    }
 	}
 	REprintf("Class: %d, New = %d, Old = %d, OldToNew = %d, Total = %d\n",
@@ -956,7 +1014,8 @@ static void TryToReleasePages(void)
 
 	    maxrel = R_GenHeap[i].AllocCount;
 	    for (gen = 0; gen < NUM_OLD_GENERATIONS; gen++)
-		maxrel -= (1.0 + R_MaxKeepFrac) * R_GenHeap[i].OldCount[gen];
+		maxrel -= (int)((1.0 + R_MaxKeepFrac) * 
+				R_GenHeap[i].OldCount[gen]);
 	    maxrel_pages = maxrel > 0 ? maxrel / page_count : 0;
 
 	    /* all nodes in New space should be both free and unmarked */
@@ -1098,7 +1157,7 @@ static void AdjustHeapSize(R_size_t size_needed)
 	    R_NSize += change;
     }
     else if (node_occup < R_NShrinkFrac) {
-	R_NSize -= (R_NShrinkIncrMin + R_NShrinkIncrFrac * R_NSize);
+	R_NSize -= (R_size_t)(R_NShrinkIncrMin + R_NShrinkIncrFrac * R_NSize);
 	if (R_NSize < NNeeded)
 	    R_NSize = (NNeeded < R_MaxNSize) ? NNeeded: R_MaxNSize;
 	if (R_NSize < orig_R_NSize)
@@ -1113,7 +1172,7 @@ static void AdjustHeapSize(R_size_t size_needed)
 	    R_VSize += change;
     }
     else if (vect_occup < R_VShrinkFrac) {
-	R_VSize -= R_VShrinkIncrMin + R_VShrinkIncrFrac * R_VSize;
+	R_VSize -= (R_size_t)(R_VShrinkIncrMin + R_VShrinkIncrFrac * R_VSize);
 	if (R_VSize < VNeeded)
 	    R_VSize = VNeeded;
 	if (R_VSize < orig_R_VSize)
@@ -1149,7 +1208,7 @@ static void AgeNodeAndChildren(SEXP s, int gen)
 	s = forwarded_nodes;
 	forwarded_nodes = NEXT_NODE(forwarded_nodes);
 	if (NODE_GENERATION(s) != gen)
-	    REprintf("****snapping into wrong generation\n");
+	    gc_error("****snapping into wrong generation\n");
 	SNAP_NODE(s, R_GenHeap[NODE_CLASS(s)].Old[gen]);
 	R_GenHeap[NODE_CLASS(s)].OldCount[gen]++;
 	DO_CHILDREN(s, AGE_NODE, gen);
@@ -1167,18 +1226,35 @@ static void old_to_new(SEXP x, SEXP y)
 }
 
 #ifdef COMPUTE_REFCNT_VALUES
-#define FIX_REFCNT(x, old, new) do {					\
-	if (TRACKREFS(x)) {						\
+#define FIX_REFCNT_EX(x, old, new, chkpnd) do {				\
+	SEXP __x__ = (x);						\
+	if (TRACKREFS(__x__)) {						\
 	    SEXP __old__ = (old);					\
 	    SEXP __new__ = (new);					\
 	    if (__old__ != __new__) {					\
-		if (__old__) DECREMENT_REFCNT(__old__);			\
+		if (__old__) {						\
+		    if ((chkpnd) && ASSIGNMENT_PENDING(__x__))		\
+			SET_ASSIGNMENT_PENDING(__x__, FALSE);		\
+		    else						\
+			DECREMENT_REFCNT(__old__);			\
+		}							\
 		if (__new__) INCREMENT_REFCNT(__new__);			\
 	    }								\
 	}								\
     } while (0)
+#define FIX_REFCNT(x, old, new) FIX_REFCNT_EX(x, old, new, FALSE)
+#define FIX_BINDING_REFCNT(x, old, new)		\
+    FIX_REFCNT_EX(x, old, new, TRUE)
 #else
 #define FIX_REFCNT(x, old, new) do {} while (0)
+#define FIX_BINDING_REFCNT(x, old, new) do {\
+	SEXP __x__ = (x);						\
+	SEXP __old__ = (old);						\
+	SEXP __new__ = (new);						\
+	if (ASSIGNMENT_PENDING(__x__) && __old__ &&			\
+	    __old__ != __new__)						\
+	    SET_ASSIGNMENT_PENDING(__x__, FALSE);			\
+    } while (0)
 #endif
 
 #define CHECK_OLD_TO_NEW(x,y) do { \
@@ -1404,6 +1480,7 @@ void R_RunWeakRefFinalizer(SEXP w)
 
 static Rboolean RunFinalizers(void)
 {
+    R_CHECK_THREAD;
     /* Prevent this function from running again when already in
        progress. Jumps can only occur inside the top level context
        where they will be caught, so the flag is guaranteed to be
@@ -1549,7 +1626,7 @@ SEXP attribute_hidden do_regFinaliz(SEXP call, SEXP op, SEXP args, SEXP rho)
     } \
 } while (0)
 
-static void RunGenCollect(R_size_t size_needed)
+static int RunGenCollect(R_size_t size_needed)
 {
     int i, gen, gens_collected;
     RCNTXT *ctxt;
@@ -1586,7 +1663,7 @@ static void RunGenCollect(R_size_t size_needed)
 		DO_CHILDREN(s, AgeNodeAndChildren, gen);
 		UNSNAP_NODE(s);
 		if (NODE_GENERATION(s) != gen)
-		    REprintf("****snapping into wrong generation\n");
+		    gc_error("****snapping into wrong generation\n");
 		SNAP_NODE(s, R_GenHeap[i].Old[gen]);
 		s = next;
 	    }
@@ -1662,7 +1739,7 @@ static void RunGenCollect(R_size_t size_needed)
 	    SEXP s;
 	    for (s = R_SymbolTable[i]; s != R_NilValue; s = CDR(s))
 		if (ATTRIB(CAR(s)) != R_NilValue)
-		    REprintf("****found a symbol with attributes\n");
+		    gc_error("****found a symbol with attributes\n");
 	}
 
     if (R_CurrentExpr != NULL)	           /* Current expression */
@@ -1700,17 +1777,11 @@ static void RunGenCollect(R_size_t size_needed)
     FORWARD_NODE(R_VStack);		   /* R_alloc stack */
 
     for (R_bcstack_t *sp = R_BCNodeStackBase; sp < R_BCNodeStackTop; sp++) {
-#ifdef TYPED_STACK
 	if (sp->tag == RAWMEM_TAG)
 	    sp += sp->u.ival;
 	else if (sp->tag == 0 || IS_PARTIAL_SXP_TAG(sp->tag))
 	    FORWARD_NODE(sp->u.sxpval);
-#else
-	FORWARD_NODE(*sp);
-#endif
     }
-    FORWARD_NODE(R_CachedScalarReal);
-    FORWARD_NODE(R_CachedScalarInteger);
 
     /* main processing loop */
     PROCESS_NODES();
@@ -1882,18 +1953,9 @@ static void RunGenCollect(R_size_t size_needed)
 	SortNodes();
 #endif
 
-    if (R_check_constants > 2 ||
-	    (R_check_constants > 1 && gens_collected == NUM_OLD_GENERATIONS))
-	R_checkConstants(TRUE);
-
-    if (gc_reporting) {
-	REprintf("Garbage collection %d = %d", gc_count, gen_gc_counts[0]);
-	for (i = 0; i < NUM_OLD_GENERATIONS; i++)
-	    REprintf("+%d", gen_gc_counts[i + 1]);
-	REprintf(" (level %d) ... ", gens_collected);
-	DEBUG_GC_SUMMARY(gens_collected == NUM_OLD_GENERATIONS);
-    }
+    return gens_collected;
 }
+
 
 /* public interface for controlling GC torture settings */
 /* maybe, but in no header */
@@ -2069,9 +2131,16 @@ void attribute_hidden InitMemory()
 {
     int i;
     int gen;
+    char *arg;
 
     init_gctorture();
     init_gc_grow_settings();
+
+    arg = getenv("_R_GC_FAIL_ON_ERROR_");
+    if (arg != NULL && StringTrue(arg))
+	gc_fail_on_error = TRUE;
+    else if (arg != NULL && StringFalse(arg))
+	gc_fail_on_error = FALSE;
 
     gc_reporting = R_Verbose;
     R_StandardPPStackSize = R_PPStackSize;
@@ -2125,7 +2194,7 @@ void attribute_hidden InitMemory()
     INIT_REFCNT(R_NilValue);
     SET_REFCNT(R_NilValue, REFCNTMAX);
     SET_TYPEOF(R_NilValue, NILSXP);
-    CAR(R_NilValue) = R_NilValue;
+    CAR0(R_NilValue) = R_NilValue;
     CDR(R_NilValue) = R_NilValue;
     TAG(R_NilValue) = R_NilValue;
     ATTRIB(R_NilValue) = R_NilValue;
@@ -2135,18 +2204,9 @@ void attribute_hidden InitMemory()
 	(R_bcstack_t *) malloc(R_BCNODESTACKSIZE * sizeof(R_bcstack_t));
     if (R_BCNodeStackBase == NULL)
 	R_Suicide("couldn't allocate node stack");
-#ifdef BC_INT_STACK
-    R_BCIntStackBase =
-      (IStackval *) malloc(R_BCINTSTACKSIZE * sizeof(IStackval));
-    if (R_BCIntStackBase == NULL)
-	R_Suicide("couldn't allocate integer stack");
-#endif
     R_BCNodeStackTop = R_BCNodeStackBase;
     R_BCNodeStackEnd = R_BCNodeStackBase + R_BCNODESTACKSIZE;
-#ifdef BC_INT_STACK
-    R_BCIntStackTop = R_BCIntStackBase;
-    R_BCIntStackEnd = R_BCIntStackBase + R_BCINTSTACKSIZE;
-#endif
+    R_BCProtTop = R_BCNodeStackTop;
 
     R_weak_refs = R_NilValue;
 
@@ -2261,6 +2321,40 @@ char *S_realloc(char *p, long new, long old, int size)
     return q;
 }
 
+
+/* Allocation functions that GC on initial failure */
+
+void *R_malloc_gc(size_t n)
+{
+    void *np = malloc(n);
+    if (np == NULL) {
+	R_gc();
+	np = malloc(n);
+    }
+    return np;
+}
+
+void *R_calloc_gc(size_t n, size_t s)
+{
+    void *np = calloc(n, s);
+    if (np == NULL) {
+	R_gc();
+	np = calloc(n, s);
+    }
+    return np;
+}
+
+void *R_realloc_gc(void *p, size_t n)
+{
+    void *np = realloc(p, n);
+    if (np == NULL) {
+	R_gc();
+	np = realloc(p, n);
+    }
+    return np;
+}
+
+
 /* "allocSExp" allocate a SEXPREC */
 /* call gc if necessary */
 
@@ -2276,7 +2370,7 @@ SEXP allocSExp(SEXPTYPE t)
     s->sxpinfo = UnmarkedNodeTemplate.sxpinfo;
     INIT_REFCNT(s);
     SET_TYPEOF(s, t);
-    CAR(s) = R_NilValue;
+    CAR0(s) = R_NilValue;
     CDR(s) = R_NilValue;
     TAG(s) = R_NilValue;
     ATTRIB(s) = R_NilValue;
@@ -2326,14 +2420,14 @@ SEXP cons(SEXP car, SEXP cdr)
     s->sxpinfo = UnmarkedNodeTemplate.sxpinfo;
     INIT_REFCNT(s);
     SET_TYPEOF(s, LISTSXP);
-    CAR(s) = CHK(car); if (car) INCREMENT_REFCNT(car);
+    CAR0(s) = CHK(car); if (car) INCREMENT_REFCNT(car);
     CDR(s) = CHK(cdr); if (cdr) INCREMENT_REFCNT(cdr);
     TAG(s) = R_NilValue;
     ATTRIB(s) = R_NilValue;
     return s;
 }
 
-SEXP CONS_NR(SEXP car, SEXP cdr)
+SEXP attribute_hidden CONS_NR(SEXP car, SEXP cdr)
 {
     SEXP s;
     if (FORCE_GC || NO_FREE_NODES()) {
@@ -2358,7 +2452,7 @@ SEXP CONS_NR(SEXP car, SEXP cdr)
     INIT_REFCNT(s);
     DISABLE_REFCNT(s);
     SET_TYPEOF(s, LISTSXP);
-    CAR(s) = CHK(car);
+    CAR0(s) = CHK(car);
     CDR(s) = CHK(cdr);
     TAG(s) = R_NilValue;
     ATTRIB(s) = R_NilValue;
@@ -2470,7 +2564,7 @@ SEXP R_mkEVPROMISE(SEXP expr, SEXP val)
     return prom;
 }
 
-SEXP R_mkEVPROMISE_NR(SEXP expr, SEXP val)
+SEXP attribute_hidden R_mkEVPROMISE_NR(SEXP expr, SEXP val)
 {
     SEXP prom = mkPROMISE(expr, R_NilValue);
     DISABLE_REFCNT(prom);
@@ -2555,7 +2649,6 @@ SEXP allocVector3(SEXPTYPE type, R_xlen_t length, R_allocator_t *allocator)
 	    SET_TYPEOF(s, type);
 	    SET_STDVEC_LENGTH(s, (R_len_t) length); // is 1
 	    SET_STDVEC_TRUELENGTH(s, 0);
-	    SET_NAMED(s, 0);
 	    INIT_REFCNT(s);
 	    return(s);
 	}
@@ -2764,7 +2857,6 @@ SEXP allocVector3(SEXPTYPE type, R_xlen_t length, R_allocator_t *allocator)
     }
     SETALTREP(s, 0);
     SET_STDVEC_TRUELENGTH(s, 0);
-    SET_NAMED(s, 0);
     INIT_REFCNT(s);
 
     /* The following prevents disaster in the case */
@@ -2961,13 +3053,47 @@ static void gc_end_timing(void)
 
 #define R_MAX(a,b) (a) < (b) ? (b) : (a)
 
+#ifdef THREADCHECK
+# if !defined(Win32) && defined(HAVE_PTHREAD)
+#   include <pthread.h>
+void attribute_hidden R_check_thread(const char *s)
+{
+    static Rboolean main_thread_inited = FALSE;
+    static pthread_t main_thread;
+    if (! main_thread_inited) {
+        main_thread = pthread_self();
+        main_thread_inited = TRUE;
+    }
+    if (! pthread_equal(main_thread, pthread_self())) {
+        char buf[1024];
+	size_t bsize = sizeof buf;
+	memset(buf, 0, bsize);
+        snprintf(buf, bsize - 1, "Wrong thread calling '%s'", s);
+        R_Suicide(buf);
+    }
+}
+# else
+/* This could be implemented for Windows using their threading API */ 
+void attribute_hidden R_check_thread(const char *s) {}
+# endif
+#endif
+
 static void R_gc_internal(R_size_t size_needed)
 {
-    if (!R_GCEnabled) {
+    R_CHECK_THREAD;
+    if (!R_GCEnabled || R_in_gc) {
+      if (R_in_gc)
+        gc_error("*** recursive gc invocation\n");
       if (NO_FREE_NODES())
 	R_NSize = R_NodesInUse + 1;
+
+      if (num_old_gens_to_collect < NUM_OLD_GENERATIONS &&
+	  VHEAP_FREE() < size_needed + R_MinFreeFrac * R_VSize)
+	num_old_gens_to_collect++;
+
       if (size_needed > VHEAP_FREE())
 	R_VSize += size_needed - VHEAP_FREE();
+
       gc_pending = TRUE;
       return;
     }
@@ -2981,6 +3107,7 @@ static void R_gc_internal(R_size_t size_needed)
 #endif
     SEXP first_bad_sexp_type_sexp = NULL;
     int first_bad_sexp_type_line = 0;
+    int gens_collected = 0;
 
 #ifdef IMMEDIATE_FINALIZERS
     Rboolean first = TRUE;
@@ -2995,10 +3122,22 @@ static void R_gc_internal(R_size_t size_needed)
     BEGIN_SUSPEND_INTERRUPTS {
 	R_in_gc = TRUE;
 	gc_start_timing();
-	RunGenCollect(size_needed);
+	gens_collected = RunGenCollect(size_needed);
 	gc_end_timing();
 	R_in_gc = FALSE;
     } END_SUSPEND_INTERRUPTS;
+
+    if (R_check_constants > 2 ||
+	    (R_check_constants > 1 && gens_collected == NUM_OLD_GENERATIONS))
+	R_checkConstants(TRUE);
+
+    if (gc_reporting) {
+	REprintf("Garbage collection %d = %d", gc_count, gen_gc_counts[0]);
+	for (int i = 0; i < NUM_OLD_GENERATIONS; i++)
+	    REprintf("+%d", gen_gc_counts[i + 1]);
+	REprintf(" (level %d) ... ", gens_collected);
+	DEBUG_GC_SUMMARY(gens_collected == NUM_OLD_GENERATIONS);
+    }
 
     if (bad_sexp_type_seen != 0 && first_bad_sexp_type == 0) {
 	first_bad_sexp_type = bad_sexp_type_seen;
@@ -3040,43 +3179,47 @@ static void R_gc_internal(R_size_t size_needed)
 #endif
 
     if (first_bad_sexp_type != 0) {
+	char msg[256];
 #ifdef PROTECTCHECK
 	if (first_bad_sexp_type == FREESXP)
-	    error("GC encountered a node (%p) with type FREESXP (was %s)"
+	    snprintf(msg, 256,
+	          "GC encountered a node (%p) with type FREESXP (was %s)"
 		  " at memory.c:%d",
-		  first_bad_sexp_type_sexp,
+		  (void *) first_bad_sexp_type_sexp,
 		  sexptype2char(first_bad_sexp_type_old_type),
 		  first_bad_sexp_type_line);
 	else
-	    error("GC encountered a node (%p) with an unknown SEXP type: %s"
-		  " at memory.c:%d",
-		  first_bad_sexp_type_sexp,
-		  sexptype2char(first_bad_sexp_type),
-		  first_bad_sexp_type_line);
+	    snprintf(msg, 256,
+		     "GC encountered a node (%p) with an unknown SEXP type: %d"
+		     " at memory.c:%d",
+		     (void *) first_bad_sexp_type_sexp,
+		     first_bad_sexp_type,
+		     first_bad_sexp_type_line);
 #else
-	error("GC encountered a node (%p) with an unknown SEXP type: %s"
-	      " at memory.c:%d",
-	      first_bad_sexp_type_sexp,
-	      sexptype2char(first_bad_sexp_type),
-	      first_bad_sexp_type_line);
+	snprintf(msg, 256,
+		 "GC encountered a node (%p) with an unknown SEXP type: %d"
+		 " at memory.c:%d",
+		 (void *)first_bad_sexp_type_sexp,
+		 first_bad_sexp_type,
+		 first_bad_sexp_type_line);
+	gc_error(msg);
 #endif
     }
 
     /* sanity check on logical scalar values */
     if (R_TrueValue != NULL && LOGICAL(R_TrueValue)[0] != TRUE) {
 	LOGICAL(R_TrueValue)[0] = TRUE;
-	error("internal TRUE value has been modified");
+	gc_error("internal TRUE value has been modified");
     }
     if (R_FalseValue != NULL && LOGICAL(R_FalseValue)[0] != FALSE) {
 	LOGICAL(R_FalseValue)[0] = FALSE;
-	error("internal FALSE value has been modified");
+	gc_error("internal FALSE value has been modified");
     }
     if (R_LogicalNAValue != NULL &&
 	LOGICAL(R_LogicalNAValue)[0] != NA_LOGICAL) {
 	LOGICAL(R_LogicalNAValue)[0] = NA_LOGICAL;
-	error("internal logical NA value has been modified");
+	gc_error("internal logical NA value has been modified");
     }
-    /* compiler constants are checked in RunGenCollect */
 }
 
 
@@ -3161,6 +3304,7 @@ void NORET R_signal_unprotect_error(void)
 #ifndef INLINE_PROTECT
 SEXP protect(SEXP s)
 {
+    R_CHECK_THREAD;
     if (R_PPStackTop >= R_PPStackSize)
 	R_signal_protect_error();
     R_PPStack[R_PPStackTop++] = CHK(s);
@@ -3172,6 +3316,7 @@ SEXP protect(SEXP s)
 
 void unprotect(int l)
 {
+    R_CHECK_THREAD;
     if (R_PPStackTop >=  l)
 	R_PPStackTop -= l;
     else R_signal_unprotect_error();
@@ -3182,6 +3327,7 @@ void unprotect(int l)
 
 void unprotect_ptr(SEXP s)
 {
+    R_CHECK_THREAD;
     int i = R_PPStackTop;
 
     /* go look for  s  in  R_PPStack */
@@ -3203,6 +3349,7 @@ void unprotect_ptr(SEXP s)
 
 int Rf_isProtected(SEXP s)
 {
+    R_CHECK_THREAD;
     int i = R_PPStackTop;
 
     /* go look for  s  in  R_PPStack */
@@ -3235,6 +3382,7 @@ void NORET R_signal_reprotect_error(PROTECT_INDEX i)
 #ifndef INLINE_PROTECT
 void R_Reprotect(SEXP s, PROTECT_INDEX i)
 {
+    R_CHECK_THREAD;
     if (i >= R_PPStackTop || i < 0)
 	R_signal_reprotect_error(i);
     R_PPStack[i] = s;
@@ -3247,6 +3395,7 @@ void R_Reprotect(SEXP s, PROTECT_INDEX i)
    to old. */
 SEXP R_CollectFromIndex(PROTECT_INDEX i)
 {
+    R_CHECK_THREAD;
     SEXP res;
     int top = R_PPStackTop, j = 0;
     if (i > top) i = top;
@@ -3309,25 +3458,161 @@ void R_chk_free(void *ptr)
 
 void R_PreserveObject(SEXP object)
 {
+    R_CHECK_THREAD;
     R_PreciousList = CONS(object, R_PreciousList);
 }
 
-static SEXP RecursiveRelease(SEXP object, SEXP list)
+static SEXP DeleteFromList(SEXP object, SEXP list)
 {
-    if (!isNull(list)) {
-	if (object == CAR(list))
-	    return CDR(list);
-	else
-	    CDR(list) = RecursiveRelease(object, CDR(list));
+    if (CAR(list) == object)
+	return CDR(list);
+    else {
+	SEXP last = list;
+	for (SEXP head = CDR(list); head != R_NilValue; head = CDR(head)) {
+	    if (CAR(head) == object) {
+		SETCDR(last, CDR(head));
+		return list;
+	    }
+	    else last = head;
+	}
+	return list;
     }
-    return list;
 }
 
 void R_ReleaseObject(SEXP object)
 {
-    R_PreciousList =  RecursiveRelease(object, R_PreciousList);
+    R_CHECK_THREAD;
+    R_PreciousList =  DeleteFromList(object, R_PreciousList);
 }
 
+/* This code is similar to R_PreserveObject/R_ReleasObject, but objects are
+   kept in a provided multi-set (which needs to be itself protected).
+   When protected via PROTECT, the multi-set is automatically unprotected
+   during long jump, and thus all its members are eventually reclaimed.
+   These functions were introduced for parsers generated by bison, because
+   one cannot instruct bison to use PROTECT/UNPROTECT when working with
+   the stack of semantic values. */
+
+/* Multi-set is defined by a triple (store, npreserved, initialSize)
+     npreserved is the number of elements in the store (counting each instance
+       of the same value)
+     store is a VECSXP or R_NilValue
+       when VECSXP, preserved values are stored at the beginning, filled up by
+       R_NilValue
+     initialSize is the size for the VECSXP to be allocated if preserving values
+       while store is R_NilValue
+
+    The representation is CONS(store, npreserved) with TAG()==initialSize
+*/
+
+/* Create new multi-set for protecting objects. initialSize may be zero
+   (a hardcoded default is then used). */
+SEXP R_NewPreciousMSet(int initialSize)
+{
+    SEXP npreserved, mset, isize;
+
+    /* npreserved is modified in place */
+    npreserved = allocVector(INTSXP, 1);
+    SET_INTEGER_ELT(npreserved, 0, 0);
+    PROTECT(mset = CONS(R_NilValue, npreserved));
+    /* isize is not modified in place */
+    if (initialSize < 0)
+	error("'initialSize' must be non-negative");
+    isize = ScalarInteger(initialSize);
+    SET_TAG(mset, isize);
+    UNPROTECT(1); /* mset */
+    return mset;
+}
+
+static void checkMSet(SEXP mset)
+{
+    SEXP store = CAR(mset);
+    SEXP npreserved = CDR(mset);
+    SEXP isize = TAG(mset);
+    if (/*MAYBE_REFERENCED(mset) ||*/
+	((store != R_NilValue) &&
+	 (TYPEOF(store) != VECSXP /*|| MAYBE_REFERENCED(store)*/)) ||
+	(TYPEOF(npreserved) != INTSXP || XLENGTH(npreserved) != 1 /*||
+	 MAYBE_REFERENCED(npreserved)*/) ||
+	(TYPEOF(isize) != INTSXP || XLENGTH(isize) != 1))
+
+	error("Invalid mset");
+}
+
+/* Add object to multi-set. The object will be protected as long as the
+   multi-set is protected. */
+void R_PreserveInMSet(SEXP x, SEXP mset)
+{
+    if (x == R_NilValue || isSymbol(x))
+	return; /* no need to preserve */
+    PROTECT(x);
+    checkMSet(mset);
+    SEXP store = CAR(mset);
+    int *n = INTEGER(CDR(mset));
+    if (store == R_NilValue) {
+	R_xlen_t newsize = INTEGER_ELT(TAG(mset), 0);
+	if (newsize == 0)
+	    newsize = 4; /* default minimum size */
+	store = allocVector(VECSXP, newsize);
+	SETCAR(mset, store);
+    }
+    R_xlen_t size = XLENGTH(store);
+    if (*n == size) {
+	R_xlen_t newsize = 2 * size;
+	if (newsize >= INT_MAX || newsize < size)
+	    error("Multi-set overflow");
+	SEXP newstore = PROTECT(allocVector(VECSXP, newsize));
+	for(R_xlen_t i = 0; i < size; i++)
+	    SET_VECTOR_ELT(newstore, i, VECTOR_ELT(store, i));
+	SETCAR(mset, newstore);
+	UNPROTECT(1); /* newstore */
+	store = newstore;
+    }
+    UNPROTECT(1); /* x */
+    SET_VECTOR_ELT(store, (*n)++, x);
+}
+
+/* Remove (one instance of) the object from the multi-set. If there is another
+   instance of the object in the multi-set, it will still be protected. If there
+   is no instance of the object, the function does nothing. */
+void R_ReleaseFromMSet(SEXP x, SEXP mset)
+{
+    if (x == R_NilValue || isSymbol(x))
+	return; /* not preserved */
+    checkMSet(mset);
+    SEXP store = CAR(mset);
+    if (store == R_NilValue)
+	return; /* not preserved */
+    int *n = INTEGER(CDR(mset));
+    for(R_xlen_t i = (*n) - 1; i >= 0; i--) {
+	if (VECTOR_ELT(store, i) == x) {
+	    for(;i < (*n) - 1; i++)
+		SET_VECTOR_ELT(store, i, VECTOR_ELT(store, i + 1));
+	    SET_VECTOR_ELT(store, i, R_NilValue);
+	    (*n)--;
+	    return;
+	}
+    }
+    /* not preserved */
+}
+
+/* Release all objects from the multi-set, but the multi-set can be used for
+   preserving more objects. */
+void R_ReleaseMSet(SEXP mset, int keepSize)
+{
+    checkMSet(mset);
+    SEXP store = CAR(mset);
+    if (store == R_NilValue)
+	return; /* already empty */
+    int *n = INTEGER(CDR(mset));
+    if (XLENGTH(store) <= keepSize) {
+	/* just free the entries */
+	for(R_xlen_t i = 0; i < *n; i++)
+	    SET_VECTOR_ELT(store, i, R_NilValue);
+    } else
+	SETCAR(mset, R_NilValue);
+    *n = 0;
+}
 
 /* External Pointer Objects */
 SEXP R_MakeExternalPtr(void *p, SEXP tag, SEXP prot)
@@ -3421,6 +3706,18 @@ int (REFCNT)(SEXP x) { return REFCNT(CHK(x)); }
 int (TRACKREFS)(SEXP x) { return TRACKREFS(CHK(x)); }
 int (ALTREP)(SEXP x) { return ALTREP(CHK(x)); }
 int (IS_SCALAR)(SEXP x, int type) { return IS_SCALAR(CHK(x), type); }
+void (DECREMENT_REFCNT)(SEXP x) { DECREMENT_REFCNT(CHK(x)); }
+void (INCREMENT_REFCNT)(SEXP x) { INCREMENT_REFCNT(CHK(x)); }
+void (DISABLE_REFCNT)(SEXP x)  { DISABLE_REFCNT(CHK(x)); }
+void (ENABLE_REFCNT)(SEXP x) { ENABLE_REFCNT(CHK(x)); }
+void (MARK_NOT_MUTABLE)(SEXP x) { MARK_NOT_MUTABLE(CHK(x)); }
+int (ASSIGNMENT_PENDING)(SEXP x) { return ASSIGNMENT_PENDING(CHK(x)); }
+void (SET_ASSIGNMENT_PENDING)(SEXP x, int v)
+{
+    SET_ASSIGNMENT_PENDING(CHK(x), v);
+}
+int (IS_ASSIGNMENT_CALL)(SEXP x) { return IS_ASSIGNMENT_CALL(CHK(x)); }
+void (MARK_ASSIGNMENT_CALL)(SEXP x) { MARK_ASSIGNMENT_CALL(CHK(x)); }
 
 void (SET_ATTRIB)(SEXP x, SEXP v) {
     if(TYPEOF(v) != LISTSXP && TYPEOF(v) != NILSXP)
@@ -3432,7 +3729,12 @@ void (SET_ATTRIB)(SEXP x, SEXP v) {
 }
 void (SET_OBJECT)(SEXP x, int v) { SET_OBJECT(CHK(x), v); }
 void (SET_TYPEOF)(SEXP x, int v) { SET_TYPEOF(CHK(x), v); }
-void (SET_NAMED)(SEXP x, int v) { SET_NAMED(CHK(x), v); }
+void (SET_NAMED)(SEXP x, int v)
+{
+#ifndef SWITCH_TO_REFCNT
+    SET_NAMED(CHK(x), v);
+#endif
+}
 void (SET_RTRACE)(SEXP x, int v) { SET_RTRACE(CHK(x), v); }
 int (SETLEVELS)(SEXP x, int v) { return SETLEVELS(CHK(x), v); }
 void DUPLICATE_ATTRIB(SEXP to, SEXP from) {
@@ -3674,8 +3976,8 @@ void (SET_STRING_ELT)(SEXP x, R_xlen_t i, SEXP v) {
        error("Value of SET_STRING_ELT() must be a 'CHARSXP' not a '%s'",
 	     type2char(TYPEOF(v)));
     if (i < 0 || i >= XLENGTH(x))
-	error(_("attempt to set index %lu/%lu in SET_STRING_ELT"),
-	      i, XLENGTH(x));
+	error(_("attempt to set index %lld/%lld in SET_STRING_ELT"),
+	      (long long)i, (long long)XLENGTH(x));
     CHECK_OLD_TO_NEW(x, v);
     if (ALTREP(x))
 	ALTSTRING_SET_ELT(x, i, v);
@@ -3695,8 +3997,8 @@ SEXP (SET_VECTOR_ELT)(SEXP x, R_xlen_t i, SEXP v) {
 	      "SET_VECTOR_ELT", "list", type2char(TYPEOF(x)));
     }
     if (i < 0 || i >= XLENGTH(x))
-	error(_("attempt to set index %lu/%lu in SET_VECTOR_ELT"),
-	      i, XLENGTH(x));
+	error(_("attempt to set index %lld/%lld in SET_VECTOR_ELT"),
+	      (long long)i, (long long)XLENGTH(x));
     FIX_REFCNT(x, VECTOR_ELT(x, i), v);
     CHECK_OLD_TO_NEW(x, v);
     return VECTOR_ELT(x, i) = v;
@@ -3728,9 +4030,97 @@ static R_INLINE SEXP CHKCONS(SEXP e)
 #define CHKCONS(e) CHK(e)
 #endif
 
+attribute_hidden
+int (BNDCELL_TAG)(SEXP cell) { return BNDCELL_TAG(cell); }
+attribute_hidden
+void (SET_BNDCELL_TAG)(SEXP cell, int val) { SET_BNDCELL_TAG(cell, val); }
+attribute_hidden
+double (BNDCELL_DVAL)(SEXP cell) { return BNDCELL_DVAL(cell); }
+attribute_hidden
+int (BNDCELL_IVAL)(SEXP cell) { return BNDCELL_IVAL(cell); }
+attribute_hidden
+int (BNDCELL_LVAL)(SEXP cell) { return BNDCELL_LVAL(cell); }
+attribute_hidden
+void (SET_BNDCELL_DVAL)(SEXP cell, double v) { SET_BNDCELL_DVAL(cell, v); }
+attribute_hidden
+void (SET_BNDCELL_IVAL)(SEXP cell, int v) { SET_BNDCELL_IVAL(cell, v); }
+attribute_hidden
+void (SET_BNDCELL_LVAL)(SEXP cell, int v) { SET_BNDCELL_LVAL(cell, v); }
+attribute_hidden
+void (INIT_BNDCELL)(SEXP cell, int type) { INIT_BNDCELL(cell, type); }
+
+#define CLEAR_BNDCELL_TAG(cell) do {		\
+	if (BNDCELL_TAG(cell)) {		\
+	    CAR0(cell) = R_NilValue;		\
+	    SET_BNDCELL_TAG(cell, 0);		\
+	}					\
+    } while (0)
+
+attribute_hidden
+void SET_BNDCELL(SEXP cell, SEXP val)
+{
+    CLEAR_BNDCELL_TAG(cell);
+    SETCAR(cell, val);
+}
+
+attribute_hidden void R_expand_binding_value(SEXP b)
+{
+#if BOXED_BINDING_CELLS
+    SET_BNDCELL_TAG(b, 0);
+#else
+    int typetag = BNDCELL_TAG(b);
+    if (typetag) {
+	union {
+	    SEXP sxpval;
+	    double dval;
+	    int ival;
+	} vv;
+	SEXP val;
+	vv.sxpval = CAR0(b);
+	switch (typetag) {
+	case REALSXP:
+	    val = ScalarReal(vv.dval);
+	    SET_BNDCELL(b, val);
+	    INCREMENT_NAMED(val);
+	    break;
+	case INTSXP:
+	    val = ScalarInteger(vv.ival);
+	    SET_BNDCELL(b, val);
+	    INCREMENT_NAMED(val);
+	    break;
+	case LGLSXP:
+	    val = ScalarLogical(vv.ival);
+	    SET_BNDCELL(b, val);
+	    INCREMENT_NAMED(val);
+	    break;
+	}
+    }
+#endif
+}
+
+void attribute_hidden R_args_enable_refcnt(SEXP args)
+{
+#ifdef SWITCH_TO_REFCNT
+    /* args is escaping into user C code and might get captured, so
+       make sure it is reference counting. Should be able to get rid
+       of this function if we reduce use of CONS_NR. */
+    for (SEXP a = args; a != R_NilValue; a = CDR(a))
+	if (! TRACKREFS(a)) {
+	    ENABLE_REFCNT(a);
+	    INCREMENT_REFCNT(CAR(a));
+	    INCREMENT_REFCNT(CDR(a));
+#ifdef TESTING_WRITE_BARRIER
+	    /* this should not see non-tracking arguments */
+	    if (! TRACKREFS(CAR(a)))
+		error("argument not tracking references");
+#endif
+	}
+#endif
+}
+
 /* List Accessors */
 SEXP (TAG)(SEXP e) { return CHK(TAG(CHKCONS(e))); }
-SEXP (CAR)(SEXP e) { return CHK(CAR(CHKCONS(e))); }
+SEXP (CAR0)(SEXP e) { return CHK(CAR0(CHKCONS(e))); }
 SEXP (CDR)(SEXP e) { return CHK(CDR(CHKCONS(e))); }
 SEXP (CAAR)(SEXP e) { return CHK(CAAR(CHKCONS(e))); }
 SEXP (CDAR)(SEXP e) { return CHK(CDAR(CHKCONS(e))); }
@@ -3755,9 +4145,12 @@ SEXP (SETCAR)(SEXP x, SEXP y)
 {
     if (CHKCONS(x) == NULL || x == R_NilValue)
 	error(_("bad value"));
-    FIX_REFCNT(x, CAR(x), y);
+    CLEAR_BNDCELL_TAG(x);
+    if (y == CAR(x))
+	return y;
+    FIX_BINDING_REFCNT(x, CAR(x), y);
     CHECK_OLD_TO_NEW(x, y);
-    CAR(x) = y;
+    CAR0(x) = y;
     return y;
 }
 
@@ -3766,6 +4159,11 @@ SEXP (SETCDR)(SEXP x, SEXP y)
     if (CHKCONS(x) == NULL || x == R_NilValue)
 	error(_("bad value"));
     FIX_REFCNT(x, CDR(x), y);
+#ifdef TESTING_WRITE_BARRIER
+    /* this should not add a non-tracking CDR to a tracking cell */
+    if (TRACKREFS(x) && y && ! TRACKREFS(y))
+	error("inserting non-tracking CDR in tracking cell");
+#endif
     CHECK_OLD_TO_NEW(x, y);
     CDR(x) = y;
     return y;
@@ -3778,9 +4176,10 @@ SEXP (SETCADR)(SEXP x, SEXP y)
 	CHKCONS(CDR(x)) == NULL || CDR(x) == R_NilValue)
 	error(_("bad value"));
     cell = CDR(x);
+    CLEAR_BNDCELL_TAG(cell);
     FIX_REFCNT(cell, CAR(cell), y);
     CHECK_OLD_TO_NEW(cell, y);
-    CAR(cell) = y;
+    CAR0(cell) = y;
     return y;
 }
 
@@ -3792,9 +4191,10 @@ SEXP (SETCADDR)(SEXP x, SEXP y)
 	CHKCONS(CDDR(x)) == NULL || CDDR(x) == R_NilValue)
 	error(_("bad value"));
     cell = CDDR(x);
+    CLEAR_BNDCELL_TAG(cell);
     FIX_REFCNT(cell, CAR(cell), y);
     CHECK_OLD_TO_NEW(cell, y);
-    CAR(cell) = y;
+    CAR0(cell) = y;
     return y;
 }
 
@@ -3807,9 +4207,10 @@ SEXP (SETCADDDR)(SEXP x, SEXP y)
 	CHKCONS(CDDDR(x)) == NULL || CDDDR(x) == R_NilValue)
 	error(_("bad value"));
     cell = CDDDR(x);
+    CLEAR_BNDCELL_TAG(cell);
     FIX_REFCNT(cell, CAR(cell), y);
     CHECK_OLD_TO_NEW(cell, y);
-    CAR(cell) = y;
+    CAR0(cell) = y;
     return y;
 }
 
@@ -3825,11 +4226,14 @@ SEXP (SETCAD4R)(SEXP x, SEXP y)
 	CHKCONS(CD4R(x)) == NULL || CD4R(x) == R_NilValue)
 	error(_("bad value"));
     cell = CD4R(x);
+    CLEAR_BNDCELL_TAG(cell);
     FIX_REFCNT(cell, CAR(cell), y);
     CHECK_OLD_TO_NEW(cell, y);
-    CAR(cell) = y;
+    CAR0(cell) = y;
     return y;
 }
+
+void *(EXTPTR_PTR)(SEXP x) { return EXTPTR_PTR(CHK(x)); }
 
 void (SET_MISSING)(SEXP x, int v) { SET_MISSING(CHKCONS(x), v); }
 
@@ -3862,7 +4266,16 @@ SEXP (INTERNAL)(SEXP x) { return CHK(INTERNAL(CHK(x))); }
 int (DDVAL)(SEXP x) { return DDVAL(CHK(x)); }
 
 void (SET_PRINTNAME)(SEXP x, SEXP v) { FIX_REFCNT(x, PRINTNAME(x), v); CHECK_OLD_TO_NEW(x, v); PRINTNAME(x) = v; }
-void (SET_SYMVALUE)(SEXP x, SEXP v) { FIX_REFCNT(x, SYMVALUE(x), v); CHECK_OLD_TO_NEW(x, v); SYMVALUE(x) = v; }
+
+void (SET_SYMVALUE)(SEXP x, SEXP v)
+{
+    if (SYMVALUE(x) == v)
+	return;
+    FIX_BINDING_REFCNT(x, SYMVALUE(x), v);
+    CHECK_OLD_TO_NEW(x, v);
+    SYMVALUE(x) = v;
+}
+
 void (SET_INTERNAL)(SEXP x, SEXP v) { FIX_REFCNT(x, INTERNAL(x), v); CHECK_OLD_TO_NEW(x, v); INTERNAL(x) = v; }
 void (SET_DDVAL)(SEXP x, int v) { SET_DDVAL(CHK(x), v); }
 

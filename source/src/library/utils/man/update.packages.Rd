@@ -1,6 +1,6 @@
 % File src/library/utils/man/update.packages.Rd
 % Part of the R package, https://www.R-project.org
-% Copyright 1995-2017 R Core Team
+% Copyright 1995-2019 R Core Team
 % Distributed under GPL 2 or later
 
 \name{update.packages}
@@ -59,9 +59,11 @@ new.packages(lib.loc = NULL, repos = getOption("repos"),
     packages before they are downloaded and installed, or the character
     string \code{"graphics"}, which brings up a widget to allow the user
     to (de-)select from the list of packages which could be updated.
-    (The latter value only works on systems with a GUI version of
+    The latter value only works on systems with a GUI version of
     \code{\link{select.list}}, and is otherwise equivalent to
-    \code{ask = TRUE}.)
+    \code{ask = TRUE}. \code{ask} does not control questions asked before
+    installing packages from source via \code{type = "both"} (see option
+    \code{"install.packages.compile.from.source"}).
   }
   \item{available}{
     an object as returned by \code{\link{available.packages}}
@@ -106,9 +108,9 @@ new.packages(lib.loc = NULL, repos = getOption("repos"),
   but it is advertised as being suitable for this version.)
 
   \code{new.packages} does the same comparison but reports uninstalled
-  packages that are available at the repositories.  If \code{ask !=
-  FALSE} it asks which packages should be installed in the first element
-  of \code{lib.loc}.
+  packages that are available at the repositories.  If
+  \code{ask != FALSE} it asks which packages should be installed in the
+  first element of \code{lib.loc}.
 
   The main function of the set is \code{update.packages}.  First a list
   of all packages found in \code{lib.loc} is created and compared with

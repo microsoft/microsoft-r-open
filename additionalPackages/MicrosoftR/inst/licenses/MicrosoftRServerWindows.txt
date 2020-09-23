@@ -1,0 +1,29 @@
+Microsoft Machine Learning Server for Windows, supplement to Microsoft 
+SQL Server Enterprise
+
+PLEASE NOTE: Refer to your license terms for Microsoft SQL Server 
+Enterprise  software (the "software") to identify the entity licensing 
+this supplement to you and for support information. You may use a copy of 
+this supplement with each validly licensed copy of the software. You may not 
+use this supplement if you do not have (a) a valid license or subscription to 
+the software, and (b) active Software Assurance covering the software. The 
+license terms for the software apply to your use of this supplement.
+
+This supplement is governed by Microsoft's Modern Lifecycle Policy
+(https://support.microsoft.com/en-us/help/30881/modern-lifecycle-policy).
+
+Microsoft Machine Learning Server for Windows, supplément de Microsoft 
+SQL Server Enterprise 
+ 
+VEUILLEZ NOTER : Reportez-vous à vos conditions de licence pour le logiciel 
+Microsoft SQL Server Enterprise (le «logiciel») a fin d'identifier 
+l'entité qui vous accorde la licence pour ce supplément et pour obtenir les 
+détails de support. Vous pouvez utiliser une copie de ce supplément avec chaque 
+copie du logiciel valablement concédés sous licence.  Vous ne pouvez pas 
+utiliser ce supplément si vous n'avez pas (a) une licence valable ou un 
+abonnement au logiciel, et (b) une Software Assurance activée pour ce logiciel. 
+Les conditions de licence du logiciel s'appliquent à votre utilisation de ce 
+supplément.
+
+Ce supplément est gouverné par la Politique de cycle de vie moderne de 
+Microsoft (https://support.microsoft.com/fr-fr/help/30881).

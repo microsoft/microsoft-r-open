@@ -1,6 +1,6 @@
 % File src/library/grDevices/man/cairo.Rd
 % Part of the R package, https://www.R-project.org
-% Copyright 1995-2015 R Core Team
+% Copyright 1995-2018 R Core Team
 % Distributed under GPL 2 or later
 
 \name{cairo}
@@ -16,19 +16,20 @@
 svg(filename = if(onefile) "Rplots.svg" else "Rplot\%03d.svg",
     width = 7, height = 7, pointsize = 12,
     onefile = FALSE, family = "sans", bg = "white",
-    antialias = c("default", "none", "gray", "subpixel"))
+    antialias = c("default", "none", "gray", "subpixel"),
+    symbolfamily)
 
 cairo_pdf(filename = if(onefile) "Rplots.pdf" else "Rplot\%03d.pdf",
           width = 7, height = 7, pointsize = 12,
           onefile = FALSE, family = "sans", bg = "white",
           antialias = c("default", "none", "gray", "subpixel"),
-          fallback_resolution = 300)
+          fallback_resolution = 300, symbolfamily)
 
 cairo_ps(filename = if(onefile) "Rplots.ps" else "Rplot\%03d.ps",
          width = 7, height = 7, pointsize = 12,
          onefile = FALSE, family = "sans", bg = "white",
          antialias = c("default", "none", "gray", "subpixel"),
-         fallback_resolution = 300)
+         fallback_resolution = 300, symbolfamily)
 }
 \arguments{
   \item{filename}{the name of the output file.
@@ -45,9 +46,9 @@ cairo_ps(filename = if(onefile) "Rplots.ps" else "Rplot\%03d.ps",
     \code{"sans"}, \code{"serif"} and \code{"mono"}, or a character
     string specify a font family to be searched for in a
     system-dependent way.
-#ifdef unix
-    See, the \sQuote{Cairo fonts} section in the help for \code{\link{X11}}.
-#endif
+
+    On unix-alikes (incl.\ Mac), see
+    the \sQuote{Cairo fonts} section in the help for \code{\link{X11}}.
   }
   \item{bg}{the initial background colour: can be overridden by setting
     par("bg").}
@@ -56,6 +57,9 @@ cairo_ps(filename = if(onefile) "Rplots.ps" else "Rplot\%03d.ps",
   \item{fallback_resolution}{numeric: the resolution in dpi used when
     falling back to bitmap output.  Prior to \R 3.3.0 this depended on
     the cairo implementation but was commonly 300.}
+  \item{symbolfamily}{
+      a length-one character string that specifies the font family to
+      be used as the "symbol" font (e.g., for \link{plotmath} output).}
 }
 \details{
   SVG (Scalar Vector Graphics) is a W3C standard for vector graphics.
@@ -89,7 +93,7 @@ cairo_ps(filename = if(onefile) "Rplots.ps" else "Rplot\%03d.ps",
 
 \note{
   Cairo 1.2.4 (seen in Centos/RHEL 5) is known to give incorrect SVG output.
-  
+
   In principle these devices are independent of X11 (as is seen by their
   presence on Windows).  But on a Unix-alike the cairo libraries may be
   distributed as part of the X11 system and hence that (on macOS,

@@ -1,4 +1,78 @@
 
+Changes from grid_4.0.* to grid_4.1.0:
+-------------------------------------
+
+1.  Bug fix for grid.curve() with vertical or horizontal "curve".
+    Thanks to Patrick Breheney for the report.
+
+
+Changes from grid_3.6.* to grid_4.0.0:
+-------------------------------------
+
+1.  upViewport() or popViewport() now correctly reverts to previous
+    gpar() settings.  
+
+    It used to always revert to previous viewport gpar() settings, 
+    but that is wrong if we are coming out of a viewport that 
+    is a 'childrenvp' of a gTree and the gTree has gpar() settings
+    (in that case we should revert to the gTree gpar() settings).
+
+    Reported by Nicolas Coutin.
+
+2.  Internal reimplementation of units, thanks to Thomas Lin Pedersen,
+    which makes operations on units MUCH faster.
+
+    Only user-visible change is printing of results of unit arithmetic,
+    which now always looks like a call to sum(), and a new unit.psum()
+    function.
+
+    Internally, there are now just "simpleUnit" and "unit" (no more
+    "unit.arithmetic" and "unit.list").
+
+
+Changes from grid_3.5.* to grid_3.6.0:
+-------------------------------------
+
+1.  New functions deviceLoc() and deviceDim().
+
+2.  Improve handling of graphics devices in grid.grabExpr().
+    Should now work when multiple graphics devices already open
+    (e.g., within 'knitr' document).
+
+3.  Fix bug in grid.layout() when viewport has negative width/height
+    (e.g., due to being sized in "native" units within viewport
+     with flipped scales).
+
+    Thanks to report by Silas Dean.
+
+4.  Add 'wrap.grob' argument to grid.grab() and grid.grabExpr()
+    to allow wrapping of grobs as well as viewports (if both
+    'wrap' and 'wrap.grob' are TRUE.
+
+    Also, no longer check for duplicate grob names at top-level
+    if 'wrap' is TRUE.
+
+    Also, do not start new page if 'wrap' is TRUE.
+
+    Thanks to report from John Bullock.
+
+5.  Exported makeContent.default() (so that
+    external packages can do more stuff with grobs)
+
+6.  New 'pathId' and 'pathId.lengths' arguments for grid.path()
+    to allow multiple paths to be drawn at once.
+
+    Contributed by Thomas Lin Pedersen.
+
+7.  New grobCoords() and grobPoints() functions to calculate points 
+    along the perimeter (or length) of a grob.
+
+8.  Internal changes to graphical parameter setting to speed things
+    up a bit.  
+    
+    Contributed by Thomas Lin Pedersen.
+
+
 Changes from grid_3.4.* to grid_3.5.0:
 -------------------------------------
 

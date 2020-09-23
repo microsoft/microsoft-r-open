@@ -295,6 +295,7 @@ static int timingInstalled = 0;
 static void addBuffering(pX11Desc xd)
 {
     Xdl xdln = (Xdl) malloc(sizeof(struct xd_list));
+    if(!xdln) error("allocation failed in addBuffering");
     xdln->this = xd;
     xdln->next = xdl->next;
     xdl->next = xdln;
@@ -2257,7 +2258,7 @@ static void X11_Raster(unsigned int *raster, int w, int h,
         imageWidth = (int) -(width - .5);
         x = x - imageWidth*cos(angle);
         if (angle != 0)
-            y = y - imageWidth*sin(angle);
+            y = y + imageWidth*sin(angle);
         invertX = 1;
     } else {
         imageWidth = (int) (width + .5);
@@ -2273,6 +2274,16 @@ static void X11_Raster(unsigned int *raster, int w, int h,
                          rasterImage, imageWidth, imageHeight);
     }
     
+    if (invertX || invertY) {
+        unsigned int *flippedRaster;
+
+        flippedRaster = (unsigned int *) R_alloc(imageWidth * imageHeight,
+                                                 sizeof(unsigned int));
+        flipRaster(rasterImage, imageWidth, imageHeight, 
+                   invertX, invertY, flippedRaster);
+        rasterImage = flippedRaster;
+    }
+
     if (rot != 0) {
         
         int newW, newH;
@@ -2302,16 +2313,6 @@ static void X11_Raster(unsigned int *raster, int w, int h,
         rasterImage = rotatedRaster;
         imageWidth = newW;
         imageHeight = newH;
-    }
-
-    if (invertX || invertY) {
-        unsigned int *flippedRaster;
-
-        flippedRaster = (unsigned int *) R_alloc(imageWidth * imageHeight,
-                                                 sizeof(unsigned int));
-        flipRaster(rasterImage, imageWidth, imageHeight, 
-                   invertX, invertY, flippedRaster);
-        rasterImage = flippedRaster;
     }
 
     image = XCreateImage(display, visual, depth,
@@ -2746,7 +2747,9 @@ Rboolean X11DeviceDriver(pDevDesc dd,
 			 const char *title,
 			 int useCairo,
 			 int antialias,
-			 const char *family)
+			 const char *family,
+			 const char *symbolfamily,
+                         Rboolean usePUA)
 {
     pX11Desc xd;
     const char *fn;
@@ -2793,7 +2796,12 @@ Rboolean X11DeviceDriver(pDevDesc dd,
 	if(strlen(fn = CHAR(STRING_ELT(sfonts, 1))) > 499)
 	    strcpy(xd->symbolfamily, symbolname);
 	else strcpy(xd->symbolfamily, fn);
-    } else strcpy(xd->basefontfamily, family);
+        xd->usePUA = TRUE;
+    } else {
+        strcpy(xd->basefontfamily, family);
+        strcpy(xd->symbolfamily, symbolfamily);
+        xd->usePUA = usePUA;
+    }
 
     /*	Start the Device Driver and Hardcopy.  */
 
@@ -2819,10 +2827,6 @@ Rboolean X11DeviceDriver(pDevDesc dd,
     xd->fill = 0xffffffff; /* this is needed to ensure that the
 			      first newpage does set whitecolor
 			      if par("bg") is not transparent */
-
-#if BUG
-    R_ProcessX11Events((void*) NULL);
-#endif
 
     return TRUE;
 }
@@ -3107,7 +3111,8 @@ Rf_addX11Device(const char *display, double width, double height, double ps,
 		double gamma, int colormodel, int maxcubesize,
 		int bgcolor, int canvascolor, const char *devname, SEXP sfonts,
 		int res, int xpos, int ypos, const char *title,
-		int useCairo, int antialias, const char * family, SEXP call)
+		int useCairo, int antialias, const char * family, 
+                const char * symbolfamily, Rboolean usePUA, SEXP call)
 {
     pDevDesc dev = NULL;
     pGEDevDesc dd;
@@ -3120,23 +3125,29 @@ Rf_addX11Device(const char *display, double width, double height, double ps,
 	if (!X11DeviceDriver(dev, display, width, height,
 			     ps, gamma, colormodel, maxcubesize,
 			     bgcolor, canvascolor, sfonts, res,
-			     xpos, ypos, title, useCairo, antialias, family)) {
+			     xpos, ypos, title, useCairo, antialias, family,
+                             symbolfamily, usePUA)) {
 	    free(dev);
 	    errorcall(call, _("unable to start device %s"), devname);
 	}
 	dd = GEcreateDevDesc(dev);
 	GEaddDevice2(dd, devname);
+
+	/* Requires dd to be set up first. */
+	R_ProcessX11Events((void*) NULL);
+
     } END_SUSPEND_INTERRUPTS;
 }
 
 static SEXP in_do_X11(SEXP call, SEXP op, SEXP args, SEXP env)
 {
-    const char *display, *cname, *devname, *title, *family;
+    const char *display, *cname, *devname, *title, *family, *symbolfamily;
     const void *vmax;
     double height, width, ps, gamma;
     int colormodel, maxcubesize, bgcolor, canvascolor, res, xpos, ypos,
 	useCairo, antialias;
-    SEXP sc, sfonts;
+    SEXP sc, sfonts, scsymbol, scusePUA;
+    Rboolean usePUA;
 
     checkArity(op, args);
     vmax = vmaxget();
@@ -3215,7 +3226,14 @@ static SEXP in_do_X11(SEXP call, SEXP op, SEXP args, SEXP env)
     if (!isString(sc) || LENGTH(sc) != 1)
 	errorcall(call, _("invalid '%s' value"), "family");
     family = CHAR(STRING_ELT(sc, 0));
-
+    args = CDR(args);
+    scsymbol = CAR(args);
+    if (!isString(scsymbol) || LENGTH(scsymbol) != 1)
+	errorcall(call, _("invalid '%s' value"), "symbolfamily");
+    symbolfamily = CHAR(STRING_ELT(scsymbol, 0));
+    /* scsymbol forced to have "usePUA" attribute in R code */
+    scusePUA = getAttrib(scsymbol, install("usePUA"));
+    usePUA = LOGICAL(scusePUA)[0];
 
     if (!strncmp(display, "png::", 5)) devname = "PNG";
     else if (!strncmp(display, "jpeg::", 6)) devname = "JPEG";
@@ -3227,7 +3245,8 @@ static SEXP in_do_X11(SEXP call, SEXP op, SEXP args, SEXP env)
 
     Rf_addX11Device(display, width, height, ps, gamma, colormodel,
 		    maxcubesize, bgcolor, canvascolor, devname, sfonts,
-		    res, xpos, ypos, title, useCairo, antialias, family, call);
+		    res, xpos, ypos, title, useCairo, antialias, family, 
+                    symbolfamily, usePUA, call);
     vmaxset(vmax);
     return R_NilValue;
 }

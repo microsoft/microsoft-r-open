@@ -32,22 +32,19 @@
 	  else gettext("See help(\"Deprecated\")"))
     }
     else as.character(msg)
-    warning(paste(msg, collapse=""), call. = FALSE, domain = NA)
+    msg <- paste(msg, collapse = "")
+
+    if (missing(new)) new <- NULL
+    warning(warningCondition(msg, old = old, new = new, package = package,
+                             class = "deprecatedWarning"))
 }
 
 ## consider keeping one (commented) entry here, for easier additions
 
 ## <entry>
-## Deprecated in 3.0.0
-## .find.package <- function(...)
-## {
-##     .Deprecated("find.package")
-##     find.package(...)
-## }
-
-## .path.package <- function(...)
-## {
-##     .Deprecated("path.package")
-##     path.package(...)
-## }
+## Deprecated in 3.4.0
+unix.time <- function(...) {
+    .Deprecated("system.time")
+    system.time(...)
+}
 ## </entry>

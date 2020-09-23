@@ -1,7 +1,7 @@
 #  File src/library/stats/R/t.test.R
 #  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2015 The R Core Team
+#  Copyright (C) 1995-2019 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -32,8 +32,8 @@ function(x, y = NULL, alternative = c("two.sided", "less", "greater"),
         conf.level < 0 || conf.level > 1))
         stop("'conf.level' must be a single number between 0 and 1")
     if( !is.null(y) ) {
-	dname <- paste(deparse(substitute(x)),"and",
-		       deparse(substitute(y)))
+	dname <- paste(deparse1(substitute(x)),"and",
+		       deparse1(substitute(y)))
 	if(paired)
 	    xok <- yok <- complete.cases(x,y)
 	else {
@@ -43,7 +43,7 @@ function(x, y = NULL, alternative = c("two.sided", "less", "greater"),
 	y <- y[yok]
     }
     else {
-	dname <- deparse(substitute(x))
+	dname <- deparse1(substitute(x))
 	if (paired) stop("'y' is missing for paired test")
 	xok <- !is.na(x)
 	yok <- NULL
@@ -116,36 +116,54 @@ function(x, y = NULL, alternative = c("two.sided", "less", "greater"),
     attr(cint,"conf.level") <- conf.level
     rval <- list(statistic = tstat, parameter = df, p.value = pval,
 	       conf.int = cint, estimate = estimate, null.value = mu,
+	       stderr = stderr,
 	       alternative = alternative,
 	       method = method, data.name = dname)
     class(rval) <- "htest"
-    return(rval)
+    rval
 }
 
 t.test.formula <-
-function(formula, data, subset, na.action, ...)
+function (formula, data, subset, na.action, ...) 
 {
-    if(missing(formula)
-       || (length(formula) != 3L)
-       || (length(attr(terms(formula[-2L]), "term.labels")) != 1L))
+    if (missing(formula) || (length(formula) != 3L))
         stop("'formula' missing or incorrect")
+    oneSampleOrPaired <- FALSE
+    if (length(attr(terms(formula[-2L]), "term.labels")) != 1L) 
+        if (formula[[3]] == 1L)
+            oneSampleOrPaired <- TRUE
+        else
+            stop("'formula' missing or incorrect")
     m <- match.call(expand.dots = FALSE)
-    if(is.matrix(eval(m$data, parent.frame())))
+    if (is.matrix(eval(m$data, parent.frame()))) 
         m$data <- as.data.frame(data)
     ## need stats:: for non-standard evaluation
     m[[1L]] <- quote(stats::model.frame)
     m$... <- NULL
     mf <- eval(m, parent.frame())
-    DNAME <- paste(names(mf), collapse = " by ")
+    DNAME <- paste(names(mf), collapse = " by ") # works in all cases
     names(mf) <- NULL
     response <- attr(attr(mf, "terms"), "response")
-    g <- factor(mf[[-response]])
-    if(nlevels(g) != 2L)
-        stop("grouping factor must have exactly 2 levels")
-    DATA <- setNames(split(mf[[response]], g), c("x", "y"))
-    y <- do.call("t.test", c(DATA, list(...)))
+    if (! oneSampleOrPaired) {
+        g <- factor(mf[[-response]])
+        if (nlevels(g) != 2L) 
+            stop("grouping factor must have exactly 2 levels")
+        DATA <- setNames(split(mf[[response]], g), c("x", "y"))
+        y <- do.call("t.test", c(DATA, list(...)))
+        if (length(y$estimate) == 2L) 
+            names(y$estimate) <- paste("mean in group", levels(g))
+    }
+    else { # 1-sample and paired tests
+        respVar <- mf[[response]]
+        if (inherits(respVar, "Pair")){
+            DATA <- list(x = respVar[,1], y = respVar[,2], paired=TRUE)
+            y <- do.call("t.test", c(DATA, list(...)))
+        }
+        else {
+            DATA <- list(x = respVar)
+            y <- do.call("t.test", c(DATA, list(...)))
+        }
+    }
     y$data.name <- DNAME
-    if(length(y$estimate) == 2L)
-        names(y$estimate) <- paste("mean in group", levels(g))
     y
 }

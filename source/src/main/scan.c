@@ -1,7 +1,7 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
  *  Copyright (C) 1995, 1996  Robert Gentleman and Ross Ihaka
- *  Copyright (C) 1998-2017   The R Core Team.
+ *  Copyright (C) 1998-2020   The R Core Team.
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -42,6 +42,10 @@
 #include <Print.h>
 
 #include <rlocale.h> /* for btowc */
+
+#ifdef Win32
+#include <trioremap.h> /* for %lld */
+#endif
 
 /* The size of vector initially allocated by scan */
 #define SCAN_BLOCKSIZE		1000
@@ -330,7 +334,7 @@ fillBuffer(SEXPTYPE type, int strip, int *bch, LocalData *d,
 */
     char *bufp;
     int c, quote, filled, nbuf = MAXELTSIZE, m, mm = 0;
-    Rboolean dbcslocale = (MB_CUR_MAX == 2);
+    Rboolean dbcslocale = (MB_CUR_MAX == 2) && !d->isUTF8 && !d->isLatin1;
 
     m = 0;
     filled = 1;
@@ -454,7 +458,7 @@ fillBuffer(SEXPTYPE type, int strip, int *bch, LocalData *d,
     *bufp = '\0';
     /* Remove UTF-8 BOM */
     if(d->atStart && utf8locale &&
-       !memcmp(buffer->data, "\xef\xbb\xbf", 3))
+       !strncmp(buffer->data, "\xef\xbb\xbf", 3))
 	memmove(buffer->data, buffer->data+3, strlen(buffer->data) + 1);
     d->atStart = FALSE;
     *bch = filled;
@@ -484,7 +488,7 @@ static R_INLINE void NORET expected(char *what, char *got, LocalData *d)
     error(_("scan() expected '%s', got '%s'"), what, got);
 }
 
-static void extractItem(char *buffer, SEXP ans, int i, LocalData *d)
+static void extractItem(char *buffer, SEXP ans, R_xlen_t i, LocalData *d)
 {
     char *endp;
     switch(TYPEOF(ans)) {
@@ -546,11 +550,12 @@ static void extractItem(char *buffer, SEXP ans, int i, LocalData *d)
     }
 }
 
-static SEXP scanVector(SEXPTYPE type, int maxitems, int maxlines,
+static SEXP scanVector(SEXPTYPE type, R_xlen_t maxitems, R_xlen_t maxlines,
 		       int flush, SEXP stripwhite, int blskip, LocalData *d)
 {
     SEXP ans, bns;
-    int blocksize, c, i, n, linesread, nprev,strip, bch;
+    int c, strip, bch;
+    R_xlen_t i, blocksize, linesread, n, nprev;
     char *buffer;
     R_StringBuffer strBuf = {NULL, 0, MAXELTSIZE};
 
@@ -562,7 +567,8 @@ static SEXP scanVector(SEXPTYPE type, int maxitems, int maxlines,
 
     nprev = 0; n = 0; linesread = 0; bch = 1;
 
-    if (d->ttyflag) sprintf(ConsolePrompt, "1: ");
+    if (d->ttyflag)
+	snprintf(ConsolePrompt, CONSOLE_PROMPT_SIZE, "1: ");
 
     strip = asLogical(stripwhite);
 
@@ -576,13 +582,15 @@ static SEXP scanVector(SEXPTYPE type, int maxitems, int maxlines,
 	    linesread++;
 	    if (linesread == maxlines)
 		break;
-	    if (d->ttyflag) sprintf(ConsolePrompt, "%d: ", n + 1);
+	    if (d->ttyflag)
+		snprintf(ConsolePrompt, CONSOLE_PROMPT_SIZE,
+		         "%lld: ", (long long) (n + 1));
 	    nprev = n;
 	}
 	if (n == blocksize) {
 	    /* enlarge the vector*/
 	    bns = ans;
-	    if(blocksize > INT_MAX/2) error(_("too many items"));
+	    if(blocksize > R_XLEN_T_MAX/2) error(_("too many items"));
 	    blocksize = 2 * blocksize;
 	    ans = allocVector(type, blocksize);
 	    UNPROTECT(1);
@@ -610,7 +618,8 @@ static SEXP scanVector(SEXPTYPE type, int maxitems, int maxlines,
 	    bch = c;
 	}
     }
-    if (!d->quiet) REprintf("Read %d item%s\n", n, (n == 1) ? "" : "s");
+    if (!d->quiet)
+	REprintf("Read %lld item%s\n", (long long) n, (n == 1) ? "" : "s");
     if (d->ttyflag) ConsolePrompt[0] = '\0';
 
     if (n == 0) {
@@ -656,17 +665,18 @@ static SEXP scanVector(SEXPTYPE type, int maxitems, int maxlines,
 }
 
 
-static SEXP scanFrame(SEXP what, int maxitems, int maxlines, int flush,
-		      int fill, SEXP stripwhite, int blskip, int multiline,
-		      LocalData *d)
+static SEXP scanFrame(SEXP what, R_xlen_t maxitems, R_xlen_t maxlines,
+                      int flush, int fill, SEXP stripwhite, int blskip,
+                      int multiline, LocalData *d)
 {
     SEXP ans, new, old, w;
     char *buffer = NULL;
-    int blksize, c, i, ii, j, n, nc, linesread, colsread, strip, bch;
-    int badline, nstring = 0;
+    int c, strip, bch;
+    R_xlen_t blksize, i, ii, j, n, nc, linesread, colsread;
+    R_xlen_t badline, nstring = 0;
     R_StringBuffer buf = {NULL, 0, MAXELTSIZE};
 
-    nc = length(what);
+    nc = xlength(what);
     if (!nc) {
 	    error(_("empty 'what' specified"));
     }
@@ -694,11 +704,12 @@ static SEXP scanFrame(SEXP what, int maxitems, int maxlines, int flush,
     bch = 1;
     c = 0;			/* -Wall */
 
-    if (d->ttyflag) sprintf(ConsolePrompt, "1: ");
+    if (d->ttyflag)
+	snprintf(ConsolePrompt, CONSOLE_PROMPT_SIZE, "1: ");
 
     // we checked its type in do_scan
     int *lstrip = LOGICAL(stripwhite);
-    Rboolean vec_strip = (length(stripwhite) == length(what));
+    Rboolean vec_strip = (xlength(stripwhite) == xlength(what));
     strip = lstrip[0];
 
     for (;;) {
@@ -722,17 +733,19 @@ static SEXP scanFrame(SEXP what, int maxitems, int maxlines, int flush,
 		} else if (!badline && !multiline)
 		    badline = linesread;
 		if(badline && !multiline)
-		error(_("line %d did not have %d elements"), badline, nc);
+		error(_("line %lld did not have %lld elements"),
+		    (long long) badline, (long long) nc);
 	    }
 	    if (maxitems > 0 && n >= maxitems)
 		goto done;
 	    if (maxlines > 0 && linesread == maxlines)
 		goto done;
 	    if (d->ttyflag)
-		sprintf(ConsolePrompt, "%d: ", n + 1);
+		snprintf(ConsolePrompt, CONSOLE_PROMPT_SIZE,
+		         "%lld: ", (long long) (n + 1));
 	}
 	if (n == blksize && colsread == 0) {
-	    if(blksize > INT_MAX/2) error(_("too many items"));
+	    if(blksize > R_XLEN_T_MAX/2) error(_("too many items"));
 	    blksize = 2 * blksize;
 	    for (i = 0; i < nc; i++) {
 		old = VECTOR_ELT(ans, i);
@@ -779,7 +792,8 @@ static SEXP scanFrame(SEXP what, int maxitems, int maxlines, int flush,
 	}
 	n++;
     }
-    if (!d->quiet) REprintf("Read %d record%s\n", n, (n == 1) ? "" : "s");
+    if (!d->quiet)
+	REprintf("Read %lld record%s\n", (long long) n, (n == 1) ? "" : "s");
     if (d->ttyflag) ConsolePrompt[0] = '\0';
 
     for (i = 0; i < nc; i++) {
@@ -822,8 +836,8 @@ static SEXP scanFrame(SEXP what, int maxitems, int maxlines, int flush,
 SEXP attribute_hidden do_scan(SEXP call, SEXP op, SEXP args, SEXP rho)
 {
     SEXP ans, file, sep, what, stripwhite, dec, quotes, comstr;
-    int i, c, nlines, nmax, nskip, flush, fill, blskip, multiline,
-	escapes, skipNul;
+    int c, flush, fill, blskip, multiline, escapes, skipNul;
+    R_xlen_t nmax, nlines, nskip;
     const char *p, *encoding;
     RCNTXT cntxt;
     LocalData data = {NULL, 0, 0, '.', NULL, NO_COMCHAR, 0, NULL, FALSE,
@@ -834,12 +848,12 @@ SEXP attribute_hidden do_scan(SEXP call, SEXP op, SEXP args, SEXP rho)
 
     file = CAR(args);		   args = CDR(args);
     what = CAR(args);		   args = CDR(args);
-    nmax = asInteger(CAR(args));   args = CDR(args);
+    nmax = asXLength(CAR(args));   args = CDR(args);
     sep = CAR(args);		   args = CDR(args);
     dec = CAR(args);		   args = CDR(args);
     quotes = CAR(args);		   args = CDR(args);
-    nskip = asInteger(CAR(args));  args = CDR(args);
-    nlines = asInteger(CAR(args)); args = CDR(args);
+    nskip = asXLength(CAR(args));  args = CDR(args);
+    nlines = asXLength(CAR(args)); args = CDR(args);
     data.NAstrings = CAR(args);	   args = CDR(args);
     flush = asLogical(CAR(args));  args = CDR(args);
     fill  = asLogical(CAR(args));  args = CDR(args);
@@ -859,13 +873,13 @@ SEXP attribute_hidden do_scan(SEXP call, SEXP op, SEXP args, SEXP rho)
     if (data.quiet == NA_LOGICAL)		data.quiet = 0;
     if (blskip == NA_LOGICAL)			blskip = 1;
     if (multiline == NA_LOGICAL)		multiline = 1;
-    if (nskip < 0 || nskip == NA_INTEGER)	nskip = 0;
-    if (nlines < 0 || nlines == NA_INTEGER)	nlines = 0;
-    if (nmax < 0 || nmax == NA_INTEGER)		nmax = 0;
+    if (nskip < 0)				nskip = 0;
+    if (nlines < 0)				nlines = 0;
+    if (nmax < 0)				nmax = 0;
 
     if (TYPEOF(stripwhite) != LGLSXP)
 	error(_("invalid '%s' argument"), "strip.white");
-    if (length(stripwhite) != 1 && length(stripwhite) != length(what))
+    if (xlength(stripwhite) != 1 && xlength(stripwhite) != xlength(what))
 	error(_("invalid 'strip.white' length"));
     if (TYPEOF(data.NAstrings) != STRSXP)
 	error(_("invalid '%s' argument"), "na.strings");
@@ -917,9 +931,9 @@ SEXP attribute_hidden do_scan(SEXP call, SEXP op, SEXP args, SEXP rho)
 	error(_("invalid '%s' argument"), "skipNul");
     data.skipNul = skipNul != 0;
 
-    i = asInteger(file);
-    data.con = getConnection(i);
-    if(i == 0) {
+    int ii = asInteger(file);
+    data.con = getConnection(ii);
+    if(ii == 0) {
 	data.atStart = FALSE;
 	data.ttyflag = 1;
     } else {
@@ -939,7 +953,7 @@ SEXP attribute_hidden do_scan(SEXP call, SEXP op, SEXP args, SEXP rho)
 	    if(!data.con->canread)
 		error(_("cannot read from this connection"));
 	}
-	for (i = 0; i < nskip; i++) /* MBCS-safe */
+	for (R_xlen_t i = 0; i < nskip; i++) /* MBCS-safe */
 	    while ((c = scanchar(FALSE, &data)) != '\n' && c != R_EOF);
     }
 

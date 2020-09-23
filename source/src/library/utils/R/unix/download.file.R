@@ -1,7 +1,7 @@
 #  File src/library/utils/R/unix/download.file.R
 #  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2018 The R Core Team
+#  Copyright (C) 1995-2020 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@
 
 download.file <-
     function(url, destfile, method, quiet = FALSE, mode = "w",
-             cacheOK = TRUE, extra = getOption("download.file.extra"), ...)
+             cacheOK = TRUE, extra = getOption("download.file.extra"),
+             headers = NULL, ...)
 {
     destfile # check supplied
     method <- if (missing(method))
@@ -30,17 +31,25 @@ download.file <-
         if(length(url) != 1L || typeof(url) != "character")
             stop("'url' must be a length-one character vector");
         ## As from 3.3.0 all Unix-alikes support libcurl.
-	method <- if(grepl("^file:", url)) "internal" else "libcurl"
+	method <- if(startsWith(url, "file:")) "internal" else "libcurl"
     }
+
+    nh <- names(headers)
+    if(length(nh) != length(headers) || any(nh == "") || anyNA(headers) || anyNA(nh))
+	stop("'headers' must have names and must not be NA")
 
     switch(method,
 	   "internal" = {
-	       status <- .External(C_download, url, destfile, quiet, mode, cacheOK)
+	       headers <- if(length(headers)) paste0(nh, ": ", headers, "\r\n", collapse = "")
+	       status <- .External(C_download, url, destfile, quiet, mode,
+				   cacheOK, headers)
 	       ## needed for Mac GUI from download.packages etc
 	       if(!quiet) flush.console()
 	   },
 	   "libcurl" = {
-	       status <- .Internal(curlDownload(url, destfile, quiet, mode, cacheOK))
+	       headers <- if(length(headers)) paste0(nh, ": ", headers)
+	       status <- .Internal(curlDownload(url, destfile, quiet, mode,
+						cacheOK, headers))
 	       if(!quiet) flush.console()
 	   },
 	   "wget" = {

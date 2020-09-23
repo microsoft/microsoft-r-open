@@ -1,10 +1,11 @@
 % File src/library/graphics/man/plotdefault.Rd
 % Part of the R package, https://www.R-project.org
-% Copyright 1995-2016 R Core Team
+% Copyright 1995-2018 R Core Team
 % Distributed under GPL 2 or later
 
 \name{plot.default}
 \alias{plot.default}
+\alias{plot}
 \title{The Default Scatterplot Function}
 \description{
   Draw a scatter plot with decorations such as axes and titles
@@ -14,7 +15,9 @@
 \method{plot}{default}(x, y = NULL, type = "p",  xlim = NULL, ylim = NULL,
      log = "", main = NULL, sub = NULL, xlab = NULL, ylab = NULL,
      ann = par("ann"), axes = TRUE, frame.plot = axes,
-     panel.first = NULL, panel.last = NULL, asp = NA, \dots)
+     panel.first = NULL, panel.last = NULL, asp = NA,
+     xgap.axis = NA, ygap.axis = NA,
+     \dots)
 }
 \arguments{
   \item{x, y}{the \code{x} and \code{y} arguments provide the x and y
@@ -65,6 +68,11 @@
     comments about \code{panel.first}.}
 
   \item{asp}{the \eqn{y/x} aspect ratio, see \code{\link{plot.window}}.}
+
+  \item{xgap.axis, ygap.axis}{the \eqn{x/y} axis gap factors, passed as
+    \code{gap.axis} to the two \code{\link{axis}()} calls (when
+    \code{axes} is true, as per default).}
+
   \item{\dots}{other \link{graphical parameters} (see \code{\link{par}} and
     section \sQuote{Details} below).}
 }
@@ -102,6 +110,11 @@
   \code{\link{title}}, and plots can be built up by calling these
   individually, or by calling \code{plot(type = "n")} and adding further
   elements.
+
+  The \code{plot} generic was moved from the \pkg{graphics} package to
+  the \pkg{base} package in \R 4.0.0. It is currently re-exported from
+  the \pkg{graphics} namespace to allow packages importing it from there
+  to continue working, but this may change in future versions of \R.
 }
 
 \references{

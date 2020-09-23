@@ -1,6 +1,6 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
- *  Copyright (C) 1999-2018  The R Core Team
+ *  Copyright (C) 1999-2020  The R Core Team
  *  Copyright (C) 1995-1998  Robert Gentleman and Ross Ihaka
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -143,17 +143,19 @@ SEXP attribute_hidden do_onexit(SEXP call, SEXP op, SEXP args, SEXP rho)
                                               install("add"),
                                               install("after"));
 
-    PROTECT(argList =  matchArgs(do_onexit_formals, args, call));
+    PROTECT(argList =  matchArgs_NR(do_onexit_formals, args, call));
     if (CAR(argList) == R_MissingArg) code = R_NilValue;
     else code = CAR(argList);
 
     if (CADR(argList) != R_MissingArg) {
-	addit = asLogical(eval(CADR(args), rho));
+	addit = asLogical(PROTECT(eval(CADR(argList), rho)));
+	UNPROTECT(1);
 	if (addit == NA_INTEGER)
 	    errorcall(call, _("invalid '%s' argument"), "add");
     }
     if (CADDR(argList) != R_MissingArg) {
-        after = asLogical(eval(CADDR(args), rho));
+	after = asLogical(PROTECT(eval(CADDR(argList), rho)));
+	UNPROTECT(1);
         if (after == NA_INTEGER)
             errorcall(call, _("invalid '%s' argument"), "lifo");
     }
@@ -313,7 +315,8 @@ SEXP attribute_hidden do_envirgets(SEXP call, SEXP op, SEXP args, SEXP rho)
 	    isNull(env))) {
 	if (isNull(env))
 	    error(_("use of NULL environment is defunct"));
-	if(MAYBE_SHARED(s))
+	if(MAYBE_SHARED(s) ||
+	   ((! IS_ASSIGNMENT_CALL(call)) && MAYBE_REFERENCED(s)))
 	    /* this copies but does not duplicate args or code */
 	    s = duplicate(s);
 	if (TYPEOF(BODY(s)) == BCODESXP)
@@ -942,6 +945,7 @@ SEXP attribute_hidden do_lengthgets(SEXP call, SEXP op, SEXP args, SEXP rho)
 
     x = CAR(args);
 
+    /* DispatchOrEval internal generic: length<- */
     if(isObject(x) && DispatchOrEval(call, op, "length<-", args,
 				     rho, &ans, 0, 1))
 	return(ans);
@@ -1058,8 +1062,8 @@ SEXP attribute_hidden do_switch(SEXP call, SEXP op, SEXP args, SEXP rho)
 			    if (TAG(y) == R_NilValue) dflt = setDflt(y, dflt);
 			}
 			if (y == R_NilValue) {
-			    R_Visible = FALSE;
 			    UNPROTECT(2);
+			    R_Visible = FALSE;
 			    return R_NilValue;
 			}
 			/* Check for multiple defaults following y.  This loop

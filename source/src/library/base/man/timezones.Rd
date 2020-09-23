@@ -1,6 +1,6 @@
 % File src/library/base/man/timezones.Rd
 % Part of the R package, https://www.R-project.org
-% Copyright 1995-2017 R Core Team
+% Copyright 1995-2020 R Core Team
 % Distributed under GPL 2 or later
 
 \name{timezones}
@@ -130,8 +130,8 @@ OlsonNames(tzdir = NULL)
   (Australian) Eastern Standard Time.)  The designation can also be an
   optional colon prepended to the path to a file giving complied zone
   information (and the examples above are all files in a system-specific
-  location).  See \url{http://www.twinsun.com/tz/tz-link.htm} for more
-  details and references.  By convention, regions with a unique
+  location).  See \url{https://data.iana.org/time-zones/tz-link.html}
+  for more details and references.  By convention, regions with a unique
   time-zone history since 1970 have specific names in the database, but
   those with different earlier histories may not.  Each time zone has
   one or two (the second for DST) \emph{abbreviations} used when
@@ -229,11 +229,11 @@ OlsonNames(tzdir = NULL)
 
 \note{
   Since 2007 there has been considerable disruption over changes to the
-  timings of the DST transitions, aimed at energy conservation.  These
-  often have short notice and time-zone databases may not be up to date.
-  (Morocco in 2013 announced a change to the end of DST at \emph{a days}
-  notice, and in 2015 North Korea gave imprecise information about a
-  change a week in advance.)
+  timings of the DST transitions, originally aimed at energy
+  conservation.  These often have short notice and time-zone databases
+  may not be up to date.  (Morocco in 2013 announced a change to the end
+  of DST at \emph{a days} notice, and in 2015 North Korea gave imprecise
+  information about a change a week in advance.)
 
   On platforms with case-insensitive file systems, time zone names will be
   case-insensitive.  They may or may not be on other platforms and so,
@@ -267,7 +267,7 @@ OlsonNames(tzdir = NULL)
   \sQuote{Because the time zone identifier is extracted from the symlink
     target name of \file{/etc/localtime}, this file may not be a normal
     file or hardlink.}
-  
+
   Nevertheless, some Linux distributions (including the one from which
   that quote was taken) or sysadmins have chosen to copy a time-zone file
   to \file{localtime}.  For a non-symlink, the ultimate fallback is to
@@ -282,15 +282,15 @@ OlsonNames(tzdir = NULL)
     (Unfortunately RHEL/Centos 6.x are not \sQuote{modern}.)
 
     \item Debian-derived systems since \emph{ca} 2007 have supplied a
-    file \file{/etc/timezone}.  Its format is undocumented but it
+    file \file{/etc/timezone}.  Its format is undocumented but
     empirically it contains a single line of text naming the time zone.
   }
   In each case a sanity check is performed that the time-zone name is the
   name of a file in the time-zone database.  (The systems probably use
   the time-zone file (symlinked to) \file{/etc/localtime}, but the
-  \code{Sys.timezone} code
-  does not check that is the same as the named file in the database.  This is deliberate
-  as they may be from different dates.)
+  \code{Sys.timezone} code does not check that is the same as the named
+  file in the database.  This is deliberate as they may be from
+  different dates.)
 }
 #endif
 
@@ -298,7 +298,8 @@ OlsonNames(tzdir = NULL)
   \code{\link{Sys.time}}, \code{\link{as.POSIXlt}}.
 
   \url{https://en.wikipedia.org/wiki/Time_zone} and
-  \url{http://www.twinsun.com/tz/tz-link.htm} for extensive sets of links.
+  \url{https://data.iana.org/time-zones/tz-link.html}
+  for extensive sets of links.
 
   \url{https://data.iana.org/time-zones/theory.html} for the
   \sQuote{rules} of the Olson/IANA database.

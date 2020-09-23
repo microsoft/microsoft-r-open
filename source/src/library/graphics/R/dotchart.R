@@ -1,7 +1,7 @@
 #  File src/library/graphics/R/dotchart.R
 #  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2014 The R Core Team
+#  Copyright (C) 1995-2020 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -17,16 +17,17 @@
 #  https://www.R-project.org/Licenses/
 
 dotchart <-
-function(x, labels = NULL, groups = NULL, gdata = NULL,
+function(x, labels = NULL, groups = NULL, gdata = NULL, offset = 1/8,
+         ann = par("ann"), xaxt = par("xaxt"), frame.plot = TRUE, log = "",
          cex = par("cex"), pt.cex = cex,
-	 pch = 21, gpch = 21, bg = par("bg"), color = par("fg"),
-	 gcolor = par("fg"), lcolor = "gray",
+	 pch = 21, gpch = 21, bg = par("bg"),
+	 color = par("fg"), gcolor = par("fg"), lcolor = "gray",
 	 xlim = range(x[is.finite(x)]),
 	 main = NULL, xlab = NULL, ylab = NULL, ...)
 {
-    ## old-style "graphics" `design-bug: ("mar"), ("mai"), ("mar", "mai")
-    ##			     all fail, just the following, ("mai", "mar") is ok:
-    opar <- par("mai", "mar", "cex", "yaxs")
+    ## old-style "graphics" design-bug: ("mar"), ("mai"), ("mar", "mai")
+    ##			    all fail, just the following, ("mai", "mar") is ok:
+    opar <- par("mai", "mar", "mgp", "cex", "yaxs")
     on.exit(par(opar))
     par(cex = cex, yaxs = "i")
 
@@ -37,7 +38,7 @@ function(x, labels = NULL, groups = NULL, gdata = NULL,
 	if (is.null(labels))
 	    labels <- rownames(x)
 	if (is.null(labels))
-	    labels <- as.character(1L:nrow(x))
+	    labels <- as.character(seq_len(nrow(x)))
 	labels <- rep_len(labels, n)
 	if (is.null(groups))
 	    groups <- col(x, as.factor = TRUE)
@@ -61,40 +62,45 @@ function(x, labels = NULL, groups = NULL, gdata = NULL,
     }
     else {
 	ginch <- max(strwidth(glabels, "inch"), na.rm = TRUE)
-	goffset <- 0.4
+	goffset <- offset
     }
+    nmai <- opar[["mai"]]
+    if(ann)
+        nm.2 <- nmai[2L]
     if (!(is.null(labels) && is.null(glabels))) {
         ## The intention seems to be to balance the whitespace
-        ## on each side of the labels+plot.
-	nmai <- par("mai")
-	nmai[2L] <- nmai[4L] + max(linch + goffset, ginch) + 0.1
-	par(mai = nmai)
+        ## on each side (2 & 4) of the labels+plot.
+	yi <- if(is.null(ylab) || !ann) 0 else offset
+	nm.2 <- nmai[4L] + max(yi + linch + goffset, ginch) + 1/16
+	if (nmai[2L] <	nm.2) { ## add space for ylab + glabels on left margin
+	    nmai[2L] <- nm.2
+	    par(mai = nmai)
+	}
     }
 
     if (is.null(groups)) {
-	o <- 1L:n
+	o <- seq_len(n)
 	y <- o
 	ylim <- c(0, n + 1)
     }
     else {
 	o <- sort.list(as.numeric(groups), decreasing = TRUE)
-	x <- x[o]
+	x      <- x     [o]
 	groups <- groups[o]
-	color <- rep_len(color, length(groups))[o]
+	color  <- rep_len(color,  length(groups))[o]
 	lcolor <- rep_len(lcolor, length(groups))[o]
+	pch    <- rep_len(pch,    length(groups))[o]
 	offset <- cumsum(c(0, diff(as.numeric(groups)) != 0))
-	y <- 1L:n + 2 * offset
+	y <- seq_len(n) + 2 * offset
 	ylim <- range(0, y + 2)
     }
 
-    plot.window(xlim = xlim, ylim = ylim, log = "")
+    plot.window(xlim = xlim, ylim = ylim, log = log)
 #    xmin <- par("usr")[1L]
     lheight <- par("csi")
     if (!is.null(labels)) {
-	linch <- max(strwidth(labels, "inch"), na.rm = TRUE)
 	loffset <- (linch + 0.1)/lheight
-	labs <- labels[o]
-        mtext(labs, side = 2, line = loffset, at = y, adj = 0,
+        mtext(labels[o], side = 2, line = loffset, at = y, adj = 0,
               col = color, las = 2, cex = cex, ...)
     }
     abline(h = y, lty = "dotted", col = lcolor)
@@ -102,7 +108,7 @@ function(x, labels = NULL, groups = NULL, gdata = NULL,
     if (!is.null(groups)) {
 	gpos <- rev(cumsum(rev(tapply(groups, groups, length)) + 2) - 1)
 	ginch <- max(strwidth(glabels, "inch"), na.rm = TRUE)
-	goffset <- (max(linch+0.2, ginch, na.rm = TRUE) + 0.1)/lheight
+	goffset <- (max(linch+offset, ginch, na.rm = TRUE) + 1/16)/lheight
         mtext(glabels, side = 2, line = goffset, at = gpos,
               adj = 0, col = gcolor, las = 2, cex = cex, ...)
 	if (!is.null(gdata)) {
@@ -111,8 +117,15 @@ function(x, labels = NULL, groups = NULL, gdata = NULL,
                    cex = pt.cex/cex, ...)
 	}
     }
-    axis(1)
-    box()
-    title(main=main, xlab=xlab, ylab=ylab, ...)
+    axis(1, xaxt=xaxt) # FIXME? add '...' or use localAxis() as plot.default()
+    if(frame.plot)
+	box()
+    if(ann) {
+	title(main=main, xlab=xlab, ...) # with default "mgp"
+	## y-axis label must be left of the (regular + group) labels:
+	mgp <- par("mgp")
+	par(mgp = c(max(mgp[1], nm.2 / lheight - 1.5), mgp[-1]))
+	title(ylab=ylab, ...)
+    }
     invisible()
 }

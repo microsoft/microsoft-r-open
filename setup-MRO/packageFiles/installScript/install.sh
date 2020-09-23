@@ -100,12 +100,13 @@ function check_getopt {
 }
 
 function detect_package_manager {
+  OS_NAME="$(cat /etc/os-release|grep PRETTY_NAME|awk -F "\"" '{print $2}'|awk '{print $1}')"
   if [ -f /etc/redhat-release ]; then
     USE_YUM=true
     DISTRO_NAME="rhel"
   elif [ -f /etc/debian_version ]; then
     USE_DPKG=true
-  elif [ -f /etc/SuSE-brand ] || [ -f /etc/SuSE-release ] || [ -f /etc/os-release ]; then
+  elif  [ "$OS_NAME" == "SUSE" ]; then
     USE_ZYPPER=true
     DISTRO_NAME="sles"
   else

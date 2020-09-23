@@ -1,7 +1,7 @@
 #  File src/library/methods/R/SClasses.R
 #  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2016 The R Core Team
+#  Copyright (C) 1995-2019 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -67,10 +67,10 @@ setClass <-
         classDef@sealed <- FALSE # to allow setIs to work anyway; will be reset later
         assignClassDef(Class, classDef, where)
         badContains <- character()
-### FIXME: need to iterate over contains, not superclass to get
-### package for getClassDef()
-        for(class2 in superClasses) {
-            if(is(try(setIs(Class, class2, classDef = classDef, where = where)), "try-error"))
+        for(ext in classDef@contains) {
+            class2 <- ext@superClass
+            if(is(try(setIs(Class, class2, classDef = classDef, where = where)),
+                  "try-error"))
                 badContains <- c(badContains, class2)
             else { # update class definition
                 classDef <- getClassDef(Class, where = where)
@@ -205,8 +205,9 @@ makeClassRepresentation <-
         what <- whatClassDef@className # includes package name as attribute
         ## Create the SClassExtension objects (will be simple, possibly dataPart).
         ## The slots are supplied explicitly, since `name' is currently an undefined class
-        contains[[what]] <- makeExtends(name, what, slots = slots,
-                                              classDef2 = whatClassDef, package = package)
+        contains[[what]] <- makeExtends(name, slots = slots,
+                                        classDef2 = whatClassDef,
+                                        package = package)
     }
     validity <- .makeValidityMethod(name, validity)
     if(is.na(virtual)) {
@@ -252,10 +253,13 @@ getClassDef <-
         if(is.character(where)) {
             package <- where
         }
-	if(isTRUE(nzchar(package))) {
-	    whereP <- .requirePackage(package)
-	    value <- get0(cname, whereP, inherits = inherits) # NULL if not existing
-	}
+
+        if(isTRUE(nzchar(package))) {
+	    package <- .requirePackage(package)
+        }
+        if (is.environment(package)) {
+            value <- get0(cname, package, inherits = inherits)
+        }
 	if(is.null(value))
 	    value <- get0(cname, where, inherits = inherits) # NULL if not existing
     }
@@ -506,7 +510,7 @@ validObject <- function(object, test = FALSE, complete = FALSE)
 	    errors <- c(errors,
 			paste0("invalid object for slot \"", slotNames[[i]],
 			       "\" in class \"", Class,
-			       "\": got class \"", class(sloti),
+			       "\": got class \"", class(sloti)[[1L]],
 			       "\", should be or extend class \"", classi, "\""))
 	    next
 	}
@@ -525,7 +529,7 @@ validObject <- function(object, test = FALSE, complete = FALSE)
 	superClass <- exti@superClass
 	if(!exti@simple && !is(object, superClass))
 	    next ## skip conditional relations that don't hold for this object
-	superDef <- getClassDef(superClass, package = packageSlot(exti))
+	superDef <- getClassDef(superClass)
 	if(is.null(superDef)) {
 	    errors <- c(errors,
 			paste0("superclass \"", superClass,
@@ -533,14 +537,14 @@ validObject <- function(object, test = FALSE, complete = FALSE)
 	    break
 	}
 	validityMethod <- superDef@validity
-	if(is(validityMethod, "function")) {
+	if(is.function(validityMethod)) {
 	    errors <- c(errors, anyStrings(validityMethod(as(object, superClass))))
 	    if(length(errors))
 		break
 	}
     }
     validityMethod <- classDef@validity
-    if(length(errors) == 0L && is(validityMethod, "function")) {
+    if(length(errors) == 0L && is.function(validityMethod)) {
 	errors <- c(errors, anyStrings(validityMethod(object)))
     }
     if(length(errors)) {
@@ -569,7 +573,7 @@ setValidity <- function(Class, method, where = topenv(parent.frame())) {
     }
     method <- .makeValidityMethod(Class, method)
     if(is.null(method) ||
-       (is(method, "function") && length(formalArgs(method)) == 1L))
+       (is.function(method) && length(formalArgs(method)) == 1L))
 	ClassDef@validity <- method
     else
 	stop("validity method must be NULL or a function of one argument")
@@ -813,8 +817,8 @@ sealClass <- function(Class, where = topenv(parent.frame())) {
     invisible(classDef)
 }
 
-## see $RHOME/src/main/duplicate.c for the corresponding datatypes
-## not copied by duplicate1
+## see src/main/duplicate.c for the corresponding datatypes not copied
+## by duplicate1
 .AbnormalTypes <- c("environment", "name", "externalptr",  "NULL")
 
 

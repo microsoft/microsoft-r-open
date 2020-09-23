@@ -1,7 +1,7 @@
 #  File src/library/base/R/lazyload.R
 #  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2015 The R Core Team
+#  Copyright (C) 1995-2018 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -44,15 +44,14 @@ lazyLoadDBexec <- function(filebase, fun, filter)
     `parent.env<-` <-
         function (env, value) .Internal(`parent.env<-`(env, value))
     existsInFrame <- function (x, env) .Internal(exists(x, env, "any", FALSE))
-    ## getFromFrame <- function (x,  env) .Internal(get(x,  env,  "any",  FALSE))
-    ## set <- function (x,  value,  env) .Internal(assign(x,  value,  env,  FALSE))
+    list2env <- function (x, envir) .Internal(list2env(x, envir))
     environment <- function () .Internal(environment(NULL))
     mkenv <- function() .Internal(new.env(TRUE, baseenv(), 29L))
 
     ##
     ## main body
     ##
-    mapfile <- glue(filebase, "rdx", sep = ".")
+    mapfile  <- glue(filebase, "rdx", sep = ".")
     datafile <- glue(filebase, "rdb", sep = ".")
     env <- mkenv()
     map <- readRDS(mapfile)
@@ -67,7 +66,8 @@ lazyLoadDBexec <- function(filebase, fun, filter)
             e <- mkenv()
             envenv[[n]] <- e           # MUST do this immediately
             key <- env[[n]]
-            data <- lazyLoadDBfetch(key, datafile, compressed, envhook)
+            ekey <- if (is.list(key)) key$eagerKey else key
+            data <- lazyLoadDBfetch(ekey, datafile, compressed, envhook)
             ## comment from r41494
             ## modified the loading of old environments, so that those
             ## serialized with parent.env NULL are loaded with the
@@ -80,6 +80,14 @@ lazyLoadDBexec <- function(filebase, fun, filter)
                 attributes(e) <- data$attributes
             if (! is.null(data$isS4) && data$isS4)
                 .Internal(setS4Object(e, TRUE, TRUE))
+
+            ## lazily loaded bindings (used e.g. for parseData and lines from
+            ## source references)
+            if (is.list(key)) {
+                expr <- quote(lazyLoadDBfetch(KEY, datafile, compressed, envhook))
+                .Internal(makeLazy(names(key$lazyKeys), key$lazyKeys, expr,
+                    parent.env(environment()), e))
+            }
             if (! is.null(data$locked) && data$locked)
                 .Internal(lockEnvironment(e, FALSE))
             e

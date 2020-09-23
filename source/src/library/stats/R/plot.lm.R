@@ -1,7 +1,7 @@
 #  File src/library/stats/R/plot.lm.R
 #  Part of the R package, https://www.R-project.org
 #
-#  Copyright (C) 1995-2016 The R Core Team
+#  Copyright (C) 1995-2019 The R Core Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -17,17 +17,20 @@
 #  https://www.R-project.org/Licenses/
 
 plot.lm <-
-function (x, which = c(1L:3L,5L), ## was which = 1L:4L,
+function (x, which = c(1,2,3,5), ## was which = 1L:4L,
 	  caption = list("Residuals vs Fitted", "Normal Q-Q",
 	  "Scale-Location", "Cook's distance",
 	  "Residuals vs Leverage",
 	  expression("Cook's dist vs Leverage  " * h[ii] / (1 - h[ii]))),
-	  panel = if(add.smooth) panel.smooth else points,
+	  panel = if(add.smooth) function(x, y, ...)
+              panel.smooth(x, y, iter=iter.smooth, ...) else points,
 	  sub.caption = NULL, main = "",
 	  ask = prod(par("mfcol")) < length(which) && dev.interactive(), ...,
 	  id.n = 3, labels.id = names(residuals(x)), cex.id = 0.75,
 	  qqline = TRUE, cook.levels = c(0.5, 1.0),
 	  add.smooth = getOption("add.smooth"),
+          iter.smooth = if(isGlm # && binomialLike
+                           ) 0 else 3,
 	  label.pos = c(4,2), cex.caption = 1, cex.oma.main = 1.25)
 {
     dropInf <- function(x, h) {
@@ -44,10 +47,11 @@ function (x, which = c(1L:3L,5L), ## was which = 1L:4L,
 	stop("use only with \"lm\" objects")
     if(!is.numeric(which) || any(which < 1) || any(which > 6))
 	stop("'which' must be in 1:6")
-    isGlm <- inherits(x, "glm")
+    if((isGlm <- inherits(x, "glm")))
+        binomialLike <- family(x)$family == "binomial" # || "multinomial" (maybe)
     show <- rep(FALSE, 6)
     show[which] <- TRUE
-    r <- residuals(x)
+    r <- if(isGlm) residuals(x, type="pearson") else residuals(x)
     yh <- predict(x) # != fitted() for glm
     w <- weights(x)
     if(!is.null(w)) { # drop obs with zero wt: PR#6640
@@ -64,17 +68,19 @@ function (x, which = c(1L:3L,5L), ## was which = 1L:4L,
 	     else sqrt(deviance(x)/df.residual(x))
 	hii <- (infl <- influence(x, do.coef = FALSE))$hat
 	if (any(show[4L:6L])) {
-	    cook <-
-		if (isGlm)
-		    cooks.distance (x, infl = infl)
-		else cooks.distance(x, infl = infl, sd = s, res = r, hat = hii)
+            cook <- cooks.distance(x, infl)
+	    ## cook <-
+	    ##     if (isGlm)
+	    ##         cooks.distance (x, infl = infl)
+	    ##     else cooks.distance(x, infl = infl, sd = s, res = r, hat = hii)
 	}
     }
-    if (any(show[2L:3L])) {
-	ylab23 <- if(isGlm) "Std. deviance resid." else "Standardized residuals"
+    if (any(show[c(2L,3L,5L)])) {
+        ## (Defensive programming used when fusing code for 2:3 and 5)
+	ylab5 <- ylab23 <- if(isGlm) "Std. Pearson resid." else "Standardized residuals"
 	r.w <- if (is.null(w)) r else sqrt(w) * r
         ## NB: rs is already NaN if r=0, hii=1
-	rs <- dropInf( r.w/(s * sqrt(1 - hii)), hii )
+	rsp <- rs <- dropInf( if (isGlm) rstandard(x, type="pearson") else r.w/(s * sqrt(1 - hii)), hii )
     }
 
     if (any(show[5L:6L])) { # using 'leverages'
@@ -190,10 +196,11 @@ function (x, which = c(1L:3L,5L), ## was which = 1L:4L,
         dev.flush()
     }
     if (show[5L]) {
-        ylab5 <- if (isGlm) "Std. Pearson resid." else "Standardized residuals"
-        r.w <- residuals(x, "pearson")
-        if(!is.null(w)) r.w <- r.w[wind] # drop 0-weight cases
- 	rsp <- dropInf( r.w/(s * sqrt(1 - hii)), hii )
+        ### Now handled earlier, consistently with 2:3, except variable naming
+        ## ylab5 <- if (isGlm) "Std. Pearson resid." else "Standardized residuals"
+        ## r.w <- residuals(x, "pearson")
+        ## if(!is.null(w)) r.w <- r.w[wind] # drop 0-weight cases
+ 	## rsp <- dropInf( r.w/(s * sqrt(1 - hii)), hii )
 	ylim <- range(rsp, na.rm = TRUE)
 	if (id.n > 0) {
 	    ylim <- extendrange(r = ylim, f = 0.08)
@@ -295,9 +302,9 @@ function (x, which = c(1L:3L,5L), ## was which = 1L:4L,
 	axis(1, at = athat/(1-athat), labels = paste(athat))
 	if (one.fig)
 	    title(sub = sub.caption, ...)
+        ## Draw pretty "contour" lines through origin and label them
 	p <- x$rank
 	bval <- pretty(sqrt(p*cook/g), 5)
-
 	usr <- par("usr")
 	xmax <- usr[2L]
 	ymax <- usr[4L]

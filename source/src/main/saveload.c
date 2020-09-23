@@ -1861,7 +1861,7 @@ static int defaultSaveVersion()
 	if (val == 2 || val == 3)
 	    dflt = val;
 	else
-	    dflt = 2; /* the default */
+	    dflt = 3; /* the default */
     }
     return dflt;
 }
@@ -1961,6 +1961,56 @@ SEXP attribute_hidden R_LoadFromFile(FILE *fp, int startup)
 	}
 	return(R_NilValue);/* for -Wall */
     }
+}
+
+SEXP attribute_hidden do_loadfile(SEXP call, SEXP op, SEXP args, SEXP env)
+{
+    SEXP file, s;
+    FILE *fp;
+
+    checkArity(op, args);
+
+    PROTECT(file = coerceVector(CAR(args), STRSXP));
+
+    if (! isValidStringF(file))
+	error(_("bad file name"));
+
+    fp = RC_fopen(STRING_ELT(file, 0), "rb", TRUE);
+    if (!fp)
+	error(_("unable to open 'file'"));
+    s = R_LoadFromFile(fp, 0);
+    fclose(fp);
+
+    UNPROTECT(1);
+    return s;
+}
+
+SEXP attribute_hidden do_savefile(SEXP call, SEXP op, SEXP args, SEXP env)
+{
+    FILE *fp;
+    int version;
+
+    checkArity(op, args);
+
+    if (!isValidStringF(CADR(args)))
+	error(_("'file' must be non-empty string"));
+    if (TYPEOF(CADDR(args)) != LGLSXP)
+	error(_("'ascii' must be logical"));
+    if (CADDDR(args) == R_NilValue)
+	version = defaultSaveVersion();
+    else
+	version = asInteger(CADDDR(args));
+    if (version == NA_INTEGER || version <= 0)
+	error(_("invalid '%s' argument"), "version");
+
+    fp = RC_fopen(STRING_ELT(CADR(args), 0), "wb", TRUE);
+    if (!fp)
+	error(_("unable to open 'file'"));
+
+    R_SaveToFileV(CAR(args), fp, INTEGER(CADDR(args))[0], version);
+
+    fclose(fp);
+    return R_NilValue;
 }
 
 static void saveload_cleanup(void *data)
@@ -2427,9 +2477,12 @@ SEXP attribute_hidden do_loadFromConn2(SEXP call, SEXP op, SEXP args, SEXP env)
 	strncmp((char*)buf, "RDX3\n", 5) == 0) {
 	R_InitConnInPStream(&in, con, R_pstream_any_format, NULL, NULL);
 	if (PRIMVAL(op) == 0) {
+	    int old_InitReadItemDepth = R_InitReadItemDepth,
+		old_ReadItemDepth = R_ReadItemDepth;
 	    R_InitReadItemDepth = R_ReadItemDepth = -asInteger(CADDR(args));
 	    res = RestoreToEnv(R_Unserialize(&in), aenv);
-	    R_ReadItemDepth = 0;
+	    R_InitReadItemDepth = old_InitReadItemDepth;
+	    R_ReadItemDepth = old_ReadItemDepth;
 	} else 
 	    res = R_SerializeInfo(&in);
 	if(!wasopen) {
