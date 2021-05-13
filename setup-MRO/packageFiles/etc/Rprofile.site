@@ -115,7 +115,7 @@ local(
 		MKLmsg <- ""
 	}
 	
-	quiet <- any(match(c("-q", "--silent", "--quiet", "--slave"), commandArgs()), na.rm=TRUE)
+	quiet <- any(match(c("-q", "--silent", "--quiet", "--slave", "-no-echo"), commandArgs()), na.rm=TRUE)
 	if (!quiet && !identical(system.file(package="RevoScaleR") , "")) {
         cat("Microsoft R Open ",R.version$major,".",R.version$minor,"\n",sep="")
         cat("The enhanced R distribution from Microsoft\n",sep="")
